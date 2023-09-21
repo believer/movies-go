@@ -1,0 +1,24 @@
+<div class="max-w-6xl mx-auto py-8">
+  <ol class="grid grid-cols-4 gap-5">
+    {{ range .Movies }}
+    <li class="grid grid-rows-[subgrid] row-span-2 gap-2">
+      <a href="/movies/{{ .Id }}" hx-swap="innerHTML transition:true">
+        <img
+          alt="{{ .Title }} poster"
+          class="rounded-lg w-full h-full object-cover shadow-lg object-center movie-poster-animation"
+          src="https://image.tmdb.org/t/p/w500{{ .Poster }}"
+          style="--poster-transition: movie-poster-{{ .Id }}"
+        />
+      </a>
+      <div class="grid gap-1">
+        <h2 class="font-semibold text-sm truncate text-slate-700">
+          {{ .Title }}
+        </h2>
+        <p class="text-xs text-slate-500">
+          {{ .ReleaseDate.Format "2006" }} - {{ .WatchedAt.Format "Jan 02" }}
+        </p>
+      </div>
+    </li>
+    {{ end }}
+  </ol>
+</div>

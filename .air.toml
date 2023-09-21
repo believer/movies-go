@@ -1,0 +1,5 @@
+[build]
+kill_delay = "10s"
+delay = 500
+exclude_dir = ["public", "tmp", "vendor", "node_modules"]
+

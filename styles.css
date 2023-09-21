@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.movie-poster-animation {
+  view-transition-name: var(--poster-transition);
+}
