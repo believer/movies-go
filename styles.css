@@ -2,6 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-.movie-poster-animation {
-  view-transition-name: var(--poster-transition);
+.movie-title-transition {
+  view-transition-name: var(--title-transition);
 }

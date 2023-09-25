@@ -1,0 +1,41 @@
+<div
+  class="max-w-xl mx-auto py-8 px-5 flex flex-col gap-8"
+  style="view-transition-name: person-{{ .Person.Id }}"
+>
+  <h1 class="text-xl font-semibold flex gap-2 items-baseline">
+    <a
+      class="text-sm text-slate-500"
+      href="#"
+      hx-swap="innerHTML transition:true"
+      _="on click go back"
+    >
+      ..
+    </a>
+    <span class="text-slate-400 font-regular">/</span>{{ .Person.Name }}
+  </h1>
+
+  <section class="flex flex-col gap-4 text-sm text-slate-600">
+    <h2
+      class="font-medium text-slate-700 flex items-center gap-4 after:flex-grow after:bg-slate-300 after:h-[0.5px]"
+    >
+      Movies
+    </h2>
+    <ol class="flex flex-col gap-2">
+      {{ range .Person.Movies }}
+      <li class="flex justify-between items-baseline gap-4">
+        <a
+          href="/movies/{{ .Id }}"
+          hx-swap="innerHTML transition:true"
+          style="view-transition-name: movie-{{ .Id }}"
+        >
+          {{ .Title }}
+        </a>
+        <hr class="flex-1 border-dotted m-0 border-slate-300" />
+        <span class="text-slate-500 tabular-nums">
+          {{ .ReleaseDate.Format "2006" }}
+        </span>
+      </li>
+      {{ end }}
+    </ol>
+  </section>
+</div>

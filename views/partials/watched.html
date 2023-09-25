@@ -1,0 +1,7 @@
+<section class="flex flex-col gap-4 text-sm text-slate-600">
+  <ol class="flex flex-col gap-2">
+    {{ range .WatchedAt }}
+    <li class="tabular-nums">{{ .Format "2006-01-02 15:04" }}</li>
+    {{ end }}
+  </ol>
+</section>

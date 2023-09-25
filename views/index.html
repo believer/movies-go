@@ -1,24 +1,46 @@
-<div class="max-w-6xl mx-auto py-8">
-  <ol class="grid grid-cols-4 gap-5">
+<div class="max-w-xl mx-auto py-8 pr-6 flex flex-col gap-4">
+  <input
+    class="w-full px-4 py-2 border border-slate-200 rounded-full focus:outline-none ring-offset-2 focus:ring-2 focus:ring-emerald-500"
+    type="search"
+    name="search"
+    placeholder="Find a movie"
+    hx-post="/search"
+    hx-select="li[role='article']"
+    hx-trigger="keyup changed delay:500ms, search"
+    hx-target="ol"
+  />
+
+  <ol
+    role="feed"
+    class="relative flex flex-col gap-6 pl-6 text-sm before:absolute before:top-0 before:left-6 before:h-full before:border before:-translate-x-1/2 before:border-slate-200 before:border-dashed"
+  >
     {{ range .Movies }}
-    <li class="grid grid-rows-[subgrid] row-span-2 gap-2">
-      <a href="/movies/{{ .Id }}" hx-swap="innerHTML transition:true">
-        <img
-          alt="{{ .Title }} poster"
-          class="rounded-lg w-full h-full object-cover shadow-lg object-center movie-poster-animation"
-          src="https://image.tmdb.org/t/p/w500{{ .Poster }}"
-          style="--poster-transition: movie-poster-{{ .Id }}"
-        />
+    <li
+      class="relative pl-6 before:absolute before:z-10 before:left-0 before:top-2 before:h-2 before:w-2 before:-translate-x-1/2 before:rounded-full before:bg-emerald-500 before:ring-2 before:ring-white"
+      role="article"
+    >
+      <a
+        href="/movies/{{ .Id }}"
+        hx-swap="innerHTML transition:true"
+        class="flex flex-col gap-4"
+      >
+        <header class="flex flex-col gap-1">
+          <h2 class="font-medium text-base truncate text-slate-700">
+            {{ .Title }}
+          </h2>
+          <p class="text-xs text-slate-500">
+            {{ .WatchedAt.Format "January 02 2006 15:04" }}
+          </p>
+        </header>
+        <p class="text-slate-500 line-clamp-3">{{ .Overview }}</p>
       </a>
-      <div class="grid gap-1">
-        <h2 class="font-semibold text-sm truncate text-slate-700">
-          {{ .Title }}
-        </h2>
-        <p class="text-xs text-slate-500">
-          {{ .ReleaseDate.Format "2006" }} - {{ .WatchedAt.Format "Jan 02" }}
-        </p>
-      </div>
     </li>
     {{ end }}
+    <li
+      hx-get="/?page={{ .NextPage }}"
+      hx-trigger="revealed"
+      hx-swap="outerHTML"
+      hx-select="li"
+    ></li>
   </ol>
 </div>

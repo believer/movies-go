@@ -11,17 +11,14 @@ var Client *sqlx.DB
 
 func InitializeConnection() {
 	connectionString := os.Getenv("DATABASE_URL")
-	db, err := sqlx.Connect("postgres", connectionString)
+
+	db := sqlx.MustConnect("postgres", connectionString)
+	err := db.Ping()
 
 	if err != nil {
 		panic(err)
-	}
-
-	// Check if connection is alive
-	err = db.Ping()
-
-	if err != nil {
-		panic(err)
+	} else {
+		println("Connected to database")
 	}
 
 	// Set the global DBClient variable to the db connection
