@@ -232,7 +232,7 @@ JOIN LATERAL (
       public.movie_person as mp
       INNER JOIN public.movie as m ON m.id = mp.movie_id
    WHERE
-      p.id = mp.person_id
+      p.id = mp.person_id AND mp.job = 'cast'
    ORDER BY m.release_date DESC
 ) as m ON true
 WHERE p.id = $1
