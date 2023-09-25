@@ -1,6 +1,6 @@
-<div class="max-w-xl mx-auto py-8 pr-6 flex flex-col gap-4">
+<div class="max-w-xl mx-auto py-8 px-5 flex flex-col gap-6">
   <input
-    class="w-full px-4 py-2 border border-slate-200 rounded-full focus:outline-none ring-offset-2 focus:ring-2 focus:ring-emerald-500"
+    class="w-full px-4 py-2 border border-slate-200 rounded-full focus:outline-none ring-offset-2 focus:ring-2 focus:ring-emerald-500 bg-transparent"
     type="search"
     name="search"
     placeholder="Find a movie"
@@ -12,7 +12,7 @@
 
   <ol
     role="feed"
-    class="relative flex flex-col gap-6 pl-6 text-sm before:absolute before:top-0 before:left-6 before:h-full before:border before:-translate-x-1/2 before:border-slate-200 before:border-dashed"
+    class="relative flex flex-col gap-6 text-sm before:absolute before:top-0 before:h-full before:border before:-translate-x-1/2 before:border-slate-200 before:border-dashed"
   >
     {{ range .Movies }}
     <li
