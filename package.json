@@ -19,6 +19,8 @@
   },
   "homepage": "https://github.com/believer/movies-go#readme",
   "devDependencies": {
-    "tailwindcss": "^3.3.3"
+    "prettier": "3.0.3",
+    "prettier-plugin-tailwindcss": "0.5.4",
+    "tailwindcss": "3.3.3"
   }
 }

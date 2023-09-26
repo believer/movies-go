@@ -1,8 +1,8 @@
 <div
-  class="max-w-xl mx-auto py-8 px-5 flex flex-col gap-8"
+  class="mx-auto flex max-w-xl flex-col gap-8 px-5 py-8"
   style="view-transition-name: person-{{ .Person.Id }}"
 >
-  <h1 class="text-xl font-semibold flex gap-2 items-baseline">
+  <h1 class="flex items-baseline gap-2 text-xl font-semibold">
     <a
       class="text-sm text-slate-500"
       href="#"
@@ -11,18 +11,18 @@
     >
       ..
     </a>
-    <span class="text-slate-400 font-regular">/</span>{{ .Person.Name }}
+    <span class="font-regular text-slate-400">/</span>{{ .Person.Name }}
   </h1>
 
   <section class="flex flex-col gap-4 text-sm text-slate-600">
     <h2
-      class="font-medium text-slate-700 flex items-center gap-4 after:flex-grow after:bg-slate-300 after:h-[0.5px]"
+      class="flex items-center gap-4 font-medium text-slate-700 after:h-[0.5px] after:flex-grow after:bg-slate-300"
     >
       Cast
     </h2>
     <ol class="flex flex-col gap-2">
       {{ range .Person.Movies }}
-      <li class="flex justify-between items-baseline gap-4">
+      <li class="flex items-baseline justify-between gap-4">
         <a
           href="/movies/{{ .Id }}"
           hx-swap="innerHTML transition:true"
@@ -30,8 +30,8 @@
         >
           {{ .Title }}
         </a>
-        <hr class="flex-1 border-dotted m-0 border-slate-300" />
-        <span class="text-slate-500 tabular-nums">
+        <hr class="m-0 flex-1 border-dotted border-slate-300" />
+        <span class="tabular-nums text-slate-500">
           {{ .ReleaseDate.Format "2006" }}
         </span>
       </li>

@@ -2,11 +2,11 @@
   {{ range .Cast }}
   <section class="flex flex-col gap-4">
     <h2
-      class="font-medium text-slate-700 flex items-center gap-4 after:flex-grow after:bg-slate-300 after:h-[0.5px]"
+      class="flex items-center gap-4 font-medium text-slate-700 after:h-[0.5px] after:flex-grow after:bg-slate-300"
     >
       {{ .Job }}
     </h2>
-    <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+    <ul class="grid grid-cols-1 gap-2 sm:grid-cols-2">
       {{ range .Person }}
       <li>
         <a

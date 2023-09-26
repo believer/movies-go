@@ -1,6 +1,6 @@
-<div class="max-w-xl mx-auto py-8 px-5 flex flex-col gap-8">
+<div class="mx-auto flex max-w-xl flex-col gap-8 px-5 py-8">
   <h1
-    class="text-xl font-semibold flex gap-2 items-baseline"
+    class="flex items-baseline gap-2 text-xl font-semibold"
     style="view-transition-name: movie-{{ .Movie.Id }}"
   >
     <a
@@ -11,18 +11,18 @@
     >
       ..
     </a>
-    <span class="text-slate-400 font-regular">/</span>{{ .Movie.Title }}
+    <span class="font-regular text-slate-400">/</span>{{ .Movie.Title }}
   </h1>
 
   <p class="text-slate-500">{{ .Movie.Overview }}</p>
 
-  <div class="text-sm text-slate-600 flex flex-col gap-4">
+  <div class="flex flex-col gap-4 text-sm text-slate-600">
     <h2
-      class="font-medium text-slate-700 flex items-center gap-4 after:flex-grow after:bg-slate-300 after:h-[0.5px]"
+      class="flex items-center gap-4 font-medium text-slate-700 after:h-[0.5px] after:flex-grow after:bg-slate-300"
     >
       Metadata
     </h2>
-    <dl class="grid gap-x-6 gap-y-2 grid-cols-[max-content_1fr]">
+    <dl class="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2">
       <dd class="font-semibold">Release date</dd>
       <dt>{{ .Movie.ReleaseDate.Format "2006-01-02" }}</dt>
       <dd class="font-semibold">Runtime</dd>
