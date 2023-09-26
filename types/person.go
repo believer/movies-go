@@ -6,9 +6,13 @@ import (
 )
 
 type Person struct {
-	ID     int    `json:"id" db:"id"`
-	Name   string `json:"name" db:"name"`
-	Movies Movies `json:"movies" db:"movies"`
+	ID       int    `json:"id" db:"id"`
+	Name     string `json:"name" db:"name"`
+	Cast     Movies `json:"cast" db:"cast"`
+	Director Movies `json:"director" db:"director"`
+	Writer   Movies `json:"writer" db:"writer"`
+	Composer Movies `json:"composer" db:"composer"`
+	Producer Movies `json:"producer" db:"producer"`
 }
 
 type Persons []Person

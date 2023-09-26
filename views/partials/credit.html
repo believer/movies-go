@@ -1,0 +1,30 @@
+{{define "credit"}} {{ if .Data }}
+<section
+  class="flex flex-col gap-4 text-sm text-neutral-500 dark:text-neutral-400"
+>
+  <h2
+    class="flex items-center gap-4 font-medium text-neutral-700 dark:text-neutral-300 after:h-[0.5px] after:flex-grow after:bg-neutral-300 dark:after:bg-neutral-700"
+  >
+    {{ .Title }}
+  </h2>
+  <ol class="flex flex-col gap-2">
+    {{ range .Data }}
+    <li class="flex items-baseline justify-between gap-4">
+      <a
+        href="/movies/{{ .ID }}"
+        hx-swap="innerHTML transition:true"
+        style="view-transition-name: movie-{{ .ID }}"
+      >
+        {{ .Title }}
+      </a>
+      <hr
+        class="m-0 flex-1 border-dotted border-neutral-300 dark:border-neutral-700"
+      />
+      <span class="tabular-nums text-neutral-500 dark:text-neutral-400">
+        {{ .ReleaseDate.Format "2006" }}
+      </span>
+    </li>
+    {{ end }}
+  </ol>
+</section>
+{{end}} {{end}}
