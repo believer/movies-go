@@ -18,7 +18,7 @@ type Movie struct {
 	Cast        []CastAndCrew   `db:"cast"`
 	CreatedAt   time.Time       `db:"created_at"`
 	Genres      pq.StringArray  `db:"genres"`
-	Id          int             `db:"id" json:"id"`
+	ID          int             `db:"id" json:"id"`
 	ImdbId      string          `db:"imdb_id"`
 	ImdbRating  sql.NullFloat64 `db:"imdb_rating"`
 	Overview    string          `db:"overview"`

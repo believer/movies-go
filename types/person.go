@@ -6,7 +6,7 @@ import (
 )
 
 type Person struct {
-	Id     int    `json:"id" db:"id"`
+	ID     int    `json:"id" db:"id"`
 	Name   string `json:"name" db:"name"`
 	Movies Movies `json:"movies" db:"movies"`
 }

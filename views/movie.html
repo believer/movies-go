@@ -1,7 +1,7 @@
 <div class="mx-auto flex max-w-xl flex-col gap-8 px-5 py-8">
   <h1
     class="flex items-baseline gap-2 text-xl font-semibold"
-    style="view-transition-name: movie-{{ .Movie.Id }}"
+    style="view-transition-name: movie-{{ .Movie.ID }}"
   >
     <a
       class="text-sm text-slate-500"
@@ -41,12 +41,12 @@
       <dd class="font-semibold">Genres</dd>
       <dt>{{ StringsJoin .Movie.Genres ", " }}</dt>
       <dd class="font-semibold">Watched</dd>
-      <dt hx-get="/movies/{{ .Movie.Id }}/seen" hx-trigger="load"></dt>
+      <dt hx-get="/movies/{{ .Movie.ID }}/seen" hx-trigger="load"></dt>
     </dl>
   </div>
 
   <div
-    hx-get="/movies/{{ .Movie.Id }}/cast"
+    hx-get="/movies/{{ .Movie.ID }}/cast"
     hx-trigger="load"
     hx-swap="outerHTML"
   ></div>
