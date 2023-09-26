@@ -3,6 +3,7 @@ package handlers
 import (
 	"believer/movies/db"
 	"believer/movies/types"
+	"database/sql"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -17,17 +18,19 @@ func HandleMovieSearch(c *fiber.Ctx) error {
 	}
 
 	err := db.Client.Select(&movies, `
-SELECT m.id, m.title, m.overview, m.release_date, s.date AS watched_at
-FROM public.seen AS s
-	INNER JOIN public.movie AS m ON m.id = s.movie_id
-WHERE
-	user_id = 1
-	AND m.title ILIKE '%' || $1 || '%'
-ORDER BY s.date DESC
+SELECT m.id, m.title, m.overview, m.release_date AS watched_at
+FROM public.movie AS m
+WHERE m.title ILIKE '%' || $1 || '%'
+ORDER BY m.release_date DESC
 `, search)
 
 	if err != nil {
-		panic(err)
+		// TODO: Display 404 page
+		if err == sql.ErrNoRows {
+			return c.Status(fiber.StatusNotFound).SendString("Movie not found")
+		}
+
+		return err
 	}
 
 	return c.Render("index", fiber.Map{
