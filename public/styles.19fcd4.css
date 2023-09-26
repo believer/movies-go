@@ -538,10 +538,6 @@ video {
   position: static;
 }
 
-.absolute {
-  position: absolute;
-}
-
 .relative {
   position: relative;
 }
@@ -550,8 +546,8 @@ video {
   right: 2rem;
 }
 
-.top-8 {
-  top: 2rem;
+.top-10 {
+  top: 2.5rem;
 }
 
 .m-0 {
@@ -626,12 +622,20 @@ video {
   gap: 0.25rem;
 }
 
+.gap-12 {
+  gap: 3rem;
+}
+
 .gap-2 {
   gap: 0.5rem;
 }
 
 .gap-4 {
   gap: 1rem;
+}
+
+.gap-5 {
+  gap: 1.25rem;
 }
 
 .gap-6 {
@@ -692,6 +696,11 @@ video {
   border-color: rgb(115 115 115 / var(--tw-border-opacity));
 }
 
+.bg-neutral-200 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(229 229 229 / var(--tw-bg-opacity));
+}
+
 .bg-transparent {
   background-color: transparent;
 }
@@ -704,6 +713,11 @@ video {
 .px-5 {
   padding-left: 1.25rem;
   padding-right: 1.25rem;
+}
+
+.px-6 {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
 }
 
 .py-2 {
@@ -776,11 +790,6 @@ video {
   view-transition-name: var(--title-transition);
 }
 
-.text-stroke-3 {
-  -webkit-text-stroke: 2px;
-  -webkit-text-stroke-color: #fff;
-}
-
 .before\:relative::before {
   content: var(--tw-content);
   position: relative;
@@ -822,9 +831,9 @@ video {
   content: var(--tw-content);
 }
 
-.before\:\[-webkit-text-stroke-color\:_\#fff\]::before {
+.before\:\[-webkit-text-stroke-color\:_\#000\]::before {
   content: var(--tw-content);
-  -webkit-text-stroke-color: #fff;
+  -webkit-text-stroke-color: #000;
 }
 
 .before\:\[-webkit-text-stroke-width\:_2px\]::before {
@@ -887,9 +896,19 @@ video {
     border-color: rgb(64 64 64 / var(--tw-border-opacity));
   }
 
+  .dark\:bg-neutral-700 {
+    --tw-bg-opacity: 1;
+    background-color: rgb(64 64 64 / var(--tw-bg-opacity));
+  }
+
   .dark\:bg-neutral-900 {
     --tw-bg-opacity: 1;
     background-color: rgb(23 23 23 / var(--tw-bg-opacity));
+  }
+
+  .dark\:text-neutral-200 {
+    --tw-text-opacity: 1;
+    color: rgb(229 229 229 / var(--tw-text-opacity));
   }
 
   .dark\:text-neutral-300 {
@@ -904,6 +923,11 @@ video {
 
   .dark\:ring-offset-neutral-900 {
     --tw-ring-offset-color: #171717;
+  }
+
+  .dark\:before\:\[-webkit-text-stroke-color\:_\#fff\]::before {
+    content: var(--tw-content);
+    -webkit-text-stroke-color: #fff;
   }
 
   .dark\:after\:bg-neutral-700::after {
@@ -925,6 +949,12 @@ video {
 @media (min-width: 640px) {
   .sm\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 768px) {
+  .md\:absolute {
+    position: absolute;
   }
 }
 
