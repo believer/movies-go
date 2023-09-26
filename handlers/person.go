@@ -22,7 +22,7 @@ SELECT
   get_person_role_json(p.id, 'writer') as writer,
   get_person_role_json(p.id, 'composer') as composer,
   get_person_role_json(p.id, 'producer') as producer
-FROM public.person AS p
+FROM person AS p
 WHERE p.id = $1
 `, c.Params("id"))
 

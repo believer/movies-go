@@ -20,8 +20,8 @@ func HandleFeed(c *fiber.Ctx) error {
 
 	err = db.Client.Select(&movies, `
 SELECT m.id, m.title, m.overview, m.release_date, s.date AS watched_at
-FROM public.seen AS s
-	INNER JOIN public.movie AS m ON m.id = s.movie_id
+FROM seen AS s
+	INNER JOIN movie AS m ON m.id = s.movie_id
 WHERE
 	user_id = 1
 ORDER BY s.date DESC

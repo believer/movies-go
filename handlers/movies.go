@@ -16,9 +16,9 @@ SELECT
 	m.*,
   ARRAY_AGG(g.name) AS genres
 FROM
-	public.movie AS m
-	INNER JOIN public.movie_genre AS mg ON mg.movie_id = m.id
-	INNER JOIN public.genre AS g ON g.id = mg.genre_id
+	movie AS m
+	INNER JOIN movie_genre AS mg ON mg.movie_id = m.id
+	INNER JOIN genre AS g ON g.id = mg.genre_id
 WHERE m.id = $1
 GROUP BY 1
 `, c.Params("id"))
@@ -40,8 +40,8 @@ SELECT
     INITCAP(mp.job::text) as job,
     JSONB_AGG(JSON_BUILD_OBJECT('name',p.name, 'id', p.id)) AS person
 FROM 
-    public.movie_person AS mp
-    INNER JOIN public.person AS p ON p.id = mp.person_id
+    movie_person AS mp
+    INNER JOIN person AS p ON p.id = mp.person_id
 WHERE movie_id = $1
 GROUP BY mp.job
 ORDER BY
@@ -68,7 +68,7 @@ func HandleGetMovieSeenByID(c *fiber.Ctx) error {
 
 	err := db.Client.Select(&watchedAt, `
 SELECT date
-FROM public.seen
+FROM seen
 WHERE movie_id = $1 AND user_id = 1
 ORDER BY date DESC
 `, c.Params("id"))

@@ -19,7 +19,7 @@ func HandleMovieSearch(c *fiber.Ctx) error {
 
 	err := db.Client.Select(&movies, `
 SELECT m.id, m.title, m.overview, m.release_date AS watched_at
-FROM public.movie AS m
+FROM movie AS m
 WHERE m.title ILIKE '%' || $1 || '%'
 ORDER BY m.release_date DESC
 `, search)
