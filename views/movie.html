@@ -4,21 +4,23 @@
     style="view-transition-name: movie-{{ .Movie.ID }}"
   >
     <a
-      class="text-sm text-slate-500"
+      class="text-sm text-neutral-500 dark:text-neutral-400"
       href="#"
       hx-swap="innerHTML transition:true"
       _="on click go back"
     >
       ..
     </a>
-    <span class="font-regular text-slate-400">/</span>{{ .Movie.Title }}
+    <span class="font-regular text-neutral-400">/</span>{{ .Movie.Title }}
   </h1>
 
-  <p class="text-slate-500">{{ .Movie.Overview }}</p>
+  <p class="text-neutral-500 dark:text-neutral-400">{{ .Movie.Overview }}</p>
 
-  <div class="flex flex-col gap-4 text-sm text-slate-600">
+  <section
+    class="flex flex-col gap-4 text-sm text-neutral-500 dark:text-neutral-400"
+  >
     <h2
-      class="flex items-center gap-4 font-medium text-slate-700 after:h-[0.5px] after:flex-grow after:bg-slate-300"
+      class="flex items-center gap-4 font-medium text-neutral-700 dark:text-neutral-300 after:h-[0.5px] after:flex-grow after:bg-neutral-300 dark:after:bg-neutral-700"
     >
       Metadata
     </h2>
@@ -43,8 +45,7 @@
       <dd class="font-semibold">Watched</dd>
       <dt hx-get="/movies/{{ .Movie.ID }}/seen" hx-trigger="load"></dt>
     </dl>
-  </div>
-
+  </section>
   <div
     hx-get="/movies/{{ .Movie.ID }}/cast"
     hx-trigger="load"

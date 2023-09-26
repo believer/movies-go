@@ -1,6 +1,6 @@
 <div class="mx-auto flex max-w-xl flex-col gap-6 px-5 py-8">
   <input
-    class="w-full rounded-full border border-slate-200 bg-transparent px-4 py-2 ring-offset-2 focus:outline-none focus:ring-2 focus:ring-slate-400"
+    class="w-full rounded-full border border-neutral-200 dark:border-neutral-700 bg-transparent ring-offset-white dark:ring-offset-neutral-900 px-4 py-2 ring-offset-2 focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:focus:ring-neutral-500"
     type="search"
     name="search"
     placeholder="Find a movie"
@@ -16,21 +16,21 @@
       <a
         href="/movies/{{ .ID }}"
         hx-swap="innerHTML transition:true"
-        class="flex flex-col gap-4"
+        class="flex flex-col gap-4 focus:outline-none focus:ring-2 ring-offset-8 focus:ring-neutral-400 dark:focus:ring-neutral-600 ring-offset-white dark:ring-offset-neutral-900 rounded"
       >
         <header class="flex flex-col gap-1">
-          <h2 class="truncate text-base font-medium text-slate-700">
+          <h2 class="truncate text-base dark:text-neutral-300 font-medium text-neutral-700">
             {{ .Title }}
           </h2>
-          <p class="text-xs text-slate-500">
+          <p class="text-xs text-neutral-500 dark:text-neutral-400">
           <time
-              title="{{ .WatchedAt.Format "2006-01-02 15:04" }}" 
+            title="{{ .WatchedAt.Format "2006-01-02 15:04" }}" 
             datetime="{{ .WatchedAt.Format "2006-01-02T15:04:05Z" }}">
             {{ .WatchedAt.Format "January 02 2006" }}
           </time>
           </p>
         </header>
-        <p class="line-clamp-3 text-slate-500">{{ .Overview }}</p>
+        <p class="line-clamp-3 text-neutral-500 dark:text-neutral-400">{{ .Overview }}</p>
       </a>
     </li>
     {{ end }}
