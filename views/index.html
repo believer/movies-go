@@ -30,7 +30,9 @@
           </time>
           </p>
         </header>
+        {{ if .Overview }}
         <p class="line-clamp-3 text-neutral-500 dark:text-neutral-400">{{ .Overview }}</p>
+        {{ end }}
       </a>
     </li>
     {{ end }}

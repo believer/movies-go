@@ -14,7 +14,9 @@
     <span class="font-regular text-neutral-400">/</span>{{ .Movie.Title }}
   </h1>
 
+  {{ if .Movie.Overview }}
   <p class="text-neutral-500 dark:text-neutral-400">{{ .Movie.Overview }}</p>
+  {{ end }}
 
   <section
     class="flex flex-col gap-4 text-sm text-neutral-500 dark:text-neutral-400"
