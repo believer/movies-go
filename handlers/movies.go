@@ -46,10 +46,10 @@ WHERE movie_id = $1
 GROUP BY mp.job
 ORDER BY
 	CASE mp.job
-		WHEN 'cast' THEN 1
-		WHEN 'director' THEN 2
-    WHEN 'composer' THEN 3
-		WHEN 'writer' THEN 4
+		WHEN 'director' THEN 1
+		WHEN 'writer' THEN 2
+		WHEN 'cast' THEN 3
+    WHEN 'composer' THEN 4
 		WHEN 'producer' THEN 5
 	END
 `, c.Params("id"))
