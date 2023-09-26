@@ -16,6 +16,7 @@
     {{ range .Data }}
     <li class="flex items-baseline justify-between gap-4">
       <a
+        class="border-b border-dashed border-neutral-500 dark:border-neutral-400"
         href="/movies/{{ .ID }}"
         hx-swap="innerHTML transition:true"
         style="view-transition-name: movie-{{ .ID }}"
