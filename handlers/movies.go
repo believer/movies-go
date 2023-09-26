@@ -3,6 +3,7 @@ package handlers
 import (
 	"believer/movies/db"
 	"believer/movies/types"
+	"database/sql"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -24,7 +25,27 @@ GROUP BY 1
 `, c.Params("id"))
 
 	if err != nil {
-		panic(err)
+		err := db.Client.Get(&movie, `
+    SELECT
+	m.*,
+  ARRAY_AGG(g.name) AS genres
+FROM
+	movie AS m
+	INNER JOIN movie_genre AS mg ON mg.movie_id = m.id
+	INNER JOIN genre AS g ON g.id = mg.genre_id
+-- Slugify function is defined in the database
+WHERE slugify(m.title) ILIKE '%' || slugify($1) || '%'
+GROUP BY 1
+  `, c.Params("id"))
+
+		if err != nil {
+			// TODO: Handle this better
+			if err == sql.ErrNoRows {
+				return c.Status(404).SendString("Movie not found")
+			}
+
+			return err
+		}
 	}
 
 	return c.Render("movie", fiber.Map{
@@ -80,4 +101,14 @@ ORDER BY date DESC
 	return c.Render("partials/watched", fiber.Map{
 		"WatchedAt": watchedAt,
 	}, "")
+}
+
+// Render the add movie page
+func HandleGetMovieNew(c *fiber.Ctx) error {
+	return c.Render("add", nil)
+}
+
+// Handle adding a movies
+func HandlePostMovieNew(c *fiber.Ctx) error {
+	return c.SendString("TODO: Handle adding a movie")
 }
