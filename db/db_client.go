@@ -1,6 +1,7 @@
 package db
 
 import (
+	"log"
 	"os"
 
 	"github.com/jmoiron/sqlx"
@@ -9,18 +10,28 @@ import (
 
 var Client *sqlx.DB
 
-func InitializeConnection() {
+func InitializeConnection() error {
 	connectionString := os.Getenv("DATABASE_URL")
 
 	db := sqlx.MustConnect("postgres", connectionString)
 	err := db.Ping()
 
 	if err != nil {
-		panic(err)
+		return err
 	} else {
-		println("Connected to database")
+		log.Println("Connected to database")
 	}
 
 	// Set the global DBClient variable to the db connection
 	Client = db
+
+	return nil
+}
+
+func CloseConnection() {
+	err := Client.Close()
+
+	if err != nil {
+		log.Fatal("Failed to close connection to database")
+	}
 }
