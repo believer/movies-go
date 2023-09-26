@@ -8,9 +8,12 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/template/html/v2"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	godotenv.Load()
+
 	db.InitializeConnection()
 
 	engine := html.New("./views", ".html")
@@ -23,6 +26,10 @@ func main() {
 	})
 
 	app.Use(logger.New())
+
+	app.Get("/health", func(c *fiber.Ctx) error {
+		return c.SendString("OK")
+	})
 
 	app.Get("/", routes.FeedHandler)
 

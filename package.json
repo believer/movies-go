@@ -4,8 +4,7 @@
   "description": "",
   "main": "tailwind.config.js",
   "scripts": {
-    "css": "tailwindcss -i ./styles.css -o ./public/styles.css --watch --minify",
-    "start": "godotenv air"
+    "css": "tailwindcss -i ./styles.css -o ./public/styles.css --watch --minify"
   },
   "repository": {
     "type": "git",
