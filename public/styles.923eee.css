@@ -538,8 +538,20 @@ video {
   position: static;
 }
 
+.absolute {
+  position: absolute;
+}
+
 .relative {
   position: relative;
+}
+
+.right-8 {
+  right: 2rem;
+}
+
+.top-8 {
+  top: 2rem;
 }
 
 .m-0 {
@@ -564,6 +576,14 @@ video {
 
 .grid {
   display: grid;
+}
+
+.h-6 {
+  height: 1.5rem;
+}
+
+.w-6 {
+  width: 1.5rem;
 }
 
 .w-full {
@@ -756,6 +776,62 @@ video {
   view-transition-name: var(--title-transition);
 }
 
+.text-stroke-3 {
+  -webkit-text-stroke: 2px;
+  -webkit-text-stroke-color: #fff;
+}
+
+.before\:relative::before {
+  content: var(--tw-content);
+  position: relative;
+}
+
+.before\:mb-4::before {
+  content: var(--tw-content);
+  margin-bottom: 1rem;
+}
+
+.before\:block::before {
+  content: var(--tw-content);
+  display: block;
+}
+
+.before\:text-4xl::before {
+  content: var(--tw-content);
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+}
+
+.before\:text-transparent::before {
+  content: var(--tw-content);
+  color: transparent;
+}
+
+.before\:opacity-10::before {
+  content: var(--tw-content);
+  opacity: 0.1;
+}
+
+.before\:content-\[attr\(data-year\)\]::before {
+  --tw-content: attr(data-year);
+  content: var(--tw-content);
+}
+
+.before\:content-none::before {
+  --tw-content: none;
+  content: var(--tw-content);
+}
+
+.before\:\[-webkit-text-stroke-color\:_\#fff\]::before {
+  content: var(--tw-content);
+  -webkit-text-stroke-color: #fff;
+}
+
+.before\:\[-webkit-text-stroke-width\:_2px\]::before {
+  content: var(--tw-content);
+  -webkit-text-stroke-width: 2px;
+}
+
 .after\:h-\[0\.5px\]::after {
   content: var(--tw-content);
   height: 0.5px;
@@ -849,5 +925,50 @@ video {
 @media (min-width: 640px) {
   .sm\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .lg\:before\:absolute::before {
+    content: var(--tw-content);
+    position: absolute;
+  }
+
+  .lg\:before\:-left-52::before {
+    content: var(--tw-content);
+    left: -13rem;
+  }
+
+  .lg\:before\:-top-0::before {
+    content: var(--tw-content);
+    top: -0px;
+  }
+
+  .lg\:before\:mb-0::before {
+    content: var(--tw-content);
+    margin-bottom: 0px;
+  }
+
+  .lg\:before\:mt-0::before {
+    content: var(--tw-content);
+    margin-top: 0px;
+  }
+
+  .lg\:before\:text-7xl::before {
+    content: var(--tw-content);
+    font-size: 4.5rem;
+    line-height: 1;
+  }
+}
+
+.\[\&\:not\(\:first-child\)\]\:before\:mt-8:not(:first-child)::before {
+  content: var(--tw-content);
+  margin-top: 2rem;
+}
+
+@media (min-width: 1024px) {
+  .\[\&\:not\(\:first-child\)\]\:before\:lg\:-top-8:not(:first-child)::before {
+    content: var(--tw-content);
+    top: -2rem;
   }
 }
