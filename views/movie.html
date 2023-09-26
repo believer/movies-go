@@ -26,14 +26,14 @@
     </h2>
     <dl class="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2">
       <dd class="font-semibold">Release date</dd>
-      <dt>{{ .Movie.ReleaseDate.Format "2006-01-02" }}</dt>
+      <dt class="tabular-nums">{{ .Movie.ReleaseDate.Format "2006-01-02" }}</dt>
       <dd class="font-semibold">Runtime</dd>
       <dt>{{ .Movie.RuntimeFormatted }}</dt>
       <dd class="font-semibold">IMDb</dd>
       <dt>
         <a
           href="https://www.imdb.com/title/{{ .Movie.ImdbId }}"
-          class="border-b border-dotted border-emerald-600"
+          class="border-b border-dashed border-neutral-500 dark:border-neutral-400"
           target="_blank"
           rel="noopener noreferrer"
         >

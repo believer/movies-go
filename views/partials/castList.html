@@ -10,6 +10,7 @@
       {{ range .Person }}
       <li>
         <a
+          class="border-b border-dashed border-neutral-500 dark:border-neutral-400"
           href="/person/{{ .ID }}"
           hx-swap="innerHTML transition:true"
           style="view-transition-name: person-{{ .ID }}"
