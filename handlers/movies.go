@@ -164,73 +164,12 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 		return err
 	}
 
-	imdbId := parseImdbId(data.ImdbID)
-	// The returned data looks like
-	// map[
-	// adult:false
-	// backdrop_path:/kXfqcdQKsToO0OUXHcrrNCHDBzO.jpg
-	// belongs_to_collection:<nil>
-	// budget:2.5e+07
-	// genres:[map[id:18 name:Drama]
-	// map[id:80 name:Crime]]
-	// homepage:
-	// id:278
-	// imdb_id:tt0111161
-	// original_language:en
-	// original_title:The Shawshank Redemption
-	// overview:Framed in the 1940s for the double murder of his wife and her lover, upstanding banker Andy Dufresne begins a new life at the Shawshank prison, where he puts his accounting skills to work for an amoral warden. During his long stretch in prison, Dufresne comes to be admired by the other inmates -- including an older prisoner named Red -- for his integrity and unquenchable sense of hope.
-	// popularity:104.343
-	// poster_path:/lyQBXzOQSuE59IsHyhrp0qIiPAz.jpg
-	// production_companies:[map[id:97 logo_path:/qv3ih9pR9w2XNKZDsqDqAGuZjqc.pngname:Castle Rock Entertainment origin_country:US]]
-	// production_countries:[map[iso_3166_1:US name:United States of America]]
-	// release_date:1994-09-23
-	// revenue:2.8341469e+07
-	// runtime:142
-	// spoken_languages:[map[english_name:English iso_639_1:en name:English]]
-	// status:Released
-	// tagline:Fear can hold you prisoner. Hope can set you free.
-	// title:The Shawshank Redemption
-	// video:false
-	// vote_average:8.702
-	// vote_count:24642
-	// ]
-	movieInformation := tmdbFetchMovie("/" + imdbId)
-	// [{
-	// "cast": [
-	// {
-	//   "adult": false,
-	//   "gender": 2,
-	//   "id": 819,
-	//   "known_for_department": "Acting",
-	//   "name": "Edward Norton",
-	//   "original_name": "Edward Norton",
-	//   "popularity": 26.99,
-	//   "profile_path": "/8nytsqL59SFJTVYVrN72k6qkGgJ.jpg",
-	//   "cast_id": 4,
-	//   "character": "The Narrator",
-	//   "credit_id": "52fe4250c3a36847f80149f3",
-	//   "order": 0
-	// },
-	// ],
-	// "crew": [
-	// {
-	//   "adult": false,
-	//   "gender": 2,
-	//   "id": 376,
-	//   "known_for_department": "Production",
-	//   "name": "Arnon Milchan",
-	//   "original_name": "Arnon Milchan",
-	//   "popularity": 2.931,
-	//   "profile_path": "/b2hBExX4NnczNAnLuTBF4kmNhZm.jpg",
-	//   "credit_id": "55731b8192514111610027d7",
-	//   "department": "Production",
-	//   "job": "Executive Producer"
-	// },
-	// ]
-	// }]
-	movieCast := tmdbFetchMovie("/" + imdbId + "/credits")
-
-	movieId := 0
+	var (
+		imdbId           = parseImdbId(data.ImdbID)
+		movieInformation = tmdbFetchMovie("/" + imdbId)
+		movieCast        = tmdbFetchMovie("/" + imdbId + "/credits")
+		movieId          = 0
+	)
 
 	watchedAt, err := time.Parse("2006-01-02T15:04", data.WatchedAt)
 
