@@ -10,10 +10,7 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"net/url"
 	"os"
-	"path"
-	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -124,19 +121,6 @@ func HandleGetMovieNew(c *fiber.Ctx) error {
 	return c.Render("add", nil)
 }
 
-func parseImdbId(s string) string {
-	parsedUrl, err := url.Parse(s)
-
-	if err != nil {
-		return ""
-	}
-
-	imdbId := path.Base(parsedUrl.Path)
-	imdbId = strings.TrimRight(imdbId, "/")
-
-	return imdbId
-}
-
 func tmdbFetchMovie(route string) map[string]interface{} {
 	tmdbBaseUrl := "https://api.themoviedb.org/3/movie"
 	tmdbKey := os.Getenv("TMDB_API_KEY")
@@ -177,8 +161,13 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 		return err
 	}
 
+	imdbId, err := utils.ParseImdbId(data.ImdbID)
+
+	if err != nil {
+		return err
+	}
+
 	var (
-		imdbId           = parseImdbId(data.ImdbID)
 		movieInformation = tmdbFetchMovie("/" + imdbId)
 		movieCast        = tmdbFetchMovie("/" + imdbId + "/credits")
 		movieId          = 0
@@ -231,9 +220,13 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 func HandleGetByImdbId(c *fiber.Ctx) error {
 	var movie types.Movie
 
-	imdbId := parseImdbId(c.Query("imdb_id"))
+	imdbId, err := utils.ParseImdbId(c.Query("imdb_id"))
 
-	err := db.Client.Get(&movie, `
+	if err != nil {
+		return err
+	}
+
+	err = db.Client.Get(&movie, `
 SELECT id, title FROM movie WHERE imdb_id = $1
 `, imdbId)
 
