@@ -10,12 +10,14 @@
         hx-trigger="keyup changed delay:500ms, search"
         hx-target="ol"
         />
+    {{ if .IsAdmin }}
     <a class="md:absolute top-10 right-8 focus:outline-none focus-visible:outline-dashed focus-visible:outline-offset-8 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 rounded" href="/movies/new"
       >
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
       </svg>
     </a>
+    {{ end }}
   </nav>
 
   <ol role="feed" class="relative flex flex-col gap-6 text-sm">

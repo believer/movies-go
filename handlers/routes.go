@@ -3,6 +3,7 @@ package handlers
 import (
 	"believer/movies/db"
 	"believer/movies/types"
+	"believer/movies/utils"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -34,6 +35,7 @@ LIMIT 20
 	}
 
 	return c.Render("index", fiber.Map{
+		"IsAdmin":  utils.IsAuthenticated(c),
 		"Movies":   movies,
 		"NextPage": page + 1,
 	})

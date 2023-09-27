@@ -3,6 +3,7 @@ package handlers
 import (
 	"believer/movies/db"
 	"believer/movies/types"
+	"believer/movies/utils"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -114,6 +115,12 @@ ORDER BY date DESC
 
 // Render the add movie page
 func HandleGetMovieNew(c *fiber.Ctx) error {
+	isAuth := utils.IsAuthenticated(c)
+
+	if isAuth == false {
+		return c.Redirect("/")
+	}
+
 	return c.Render("add", nil)
 }
 
@@ -154,6 +161,12 @@ func tmdbFetchMovie(route string) map[string]interface{} {
 
 // Handle adding a movies
 func HandlePostMovieNew(c *fiber.Ctx) error {
+	isAuth := utils.IsAuthenticated(c)
+
+	if isAuth == false {
+		return c.SendStatus(fiber.StatusUnauthorized)
+	}
+
 	data := new(struct {
 		ImdbID    string `form:"imdb_id"`
 		Rating    int    `form:"rating"`
@@ -234,6 +247,12 @@ SELECT id, title FROM movie WHERE imdb_id = $1
 }
 
 func HandlePostMovieSeenNew(c *fiber.Ctx) error {
+	isAuth := utils.IsAuthenticated(c)
+
+	if isAuth == false {
+		return c.SendStatus(fiber.StatusUnauthorized)
+	}
+
 	tx := db.Client.MustBegin()
 
 	tx.MustExec(`INSERT INTO seen (user_id, movie_id) VALUES ($1, $2)`, 1, c.Params("id"))
