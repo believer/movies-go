@@ -1,0 +1,7 @@
+<strong>{{ .Movie.Title }}</strong> exists in your library. Would you like to
+<a
+  href="#"
+  hx-post="/movies/{{ .Movie.ID }}/seen"
+  class="border-b border-dashed border-neutral-500 dark:border-neutral-400"
+  >add a new watch</a
+>?
