@@ -6,9 +6,14 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
+	"github.com/qustavo/dotsql"
+	"github.com/swithek/dotsqlx"
 )
 
-var Client *sqlx.DB
+var (
+	Client *sqlx.DB
+	Dot    *dotsqlx.DotSqlx
+)
 
 func InitializeConnection() error {
 	connectionString := os.Getenv("DATABASE_URL")
@@ -22,8 +27,17 @@ func InitializeConnection() error {
 		log.Println("Connected to database")
 	}
 
+	dot, err := dotsql.LoadFromFile("./db/queries.sql")
+
+	if err != nil {
+		return err
+	}
+
+	dotx := dotsqlx.Wrap(dot)
+
 	// Set the global DBClient variable to the db connection
 	Client = db
+	Dot = dotx
 
 	return nil
 }
