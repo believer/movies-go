@@ -857,6 +857,10 @@ video {
   background-color: rgb(212 212 212 / var(--tw-bg-opacity));
 }
 
+.empty\:hidden:empty {
+  display: none;
+}
+
 .focus\:outline-none:focus {
   outline: 2px solid transparent;
   outline-offset: 2px;
@@ -959,6 +963,42 @@ video {
 }
 
 @media (min-width: 1024px) {
+  .lg\:absolute {
+    position: absolute;
+  }
+
+  .lg\:-right-52 {
+    right: -13rem;
+  }
+
+  .lg\:top-6 {
+    top: 1.5rem;
+  }
+
+  .lg\:w-48 {
+    width: 12rem;
+  }
+
+  .lg\:rounded {
+    border-radius: 0.25rem;
+  }
+
+  .lg\:p-2 {
+    padding: 0.5rem;
+  }
+
+  .lg\:outline-dashed {
+    outline-style: dashed;
+  }
+
+  .lg\:outline-offset-4 {
+    outline-offset: 4px;
+  }
+
+  .lg\:outline-neutral-500 {
+    outline-color: #737373;
+  }
+
   .lg\:before\:absolute::before {
     content: var(--tw-content);
     position: absolute;
