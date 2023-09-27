@@ -570,12 +570,24 @@ video {
   display: flex;
 }
 
+.inline-flex {
+  display: inline-flex;
+}
+
 .grid {
   display: grid;
 }
 
+.h-4 {
+  height: 1rem;
+}
+
 .h-6 {
   height: 1.5rem;
+}
+
+.w-4 {
+  width: 1rem;
 }
 
 .w-6 {
@@ -784,10 +796,6 @@ video {
 
 .ring-offset-white {
   --tw-ring-offset-color: #fff;
-}
-
-.movie-title-transition {
-  view-transition-name: var(--title-transition);
 }
 
 .before\:relative::before {
