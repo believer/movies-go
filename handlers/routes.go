@@ -4,7 +4,10 @@ import (
 	"believer/movies/db"
 	"believer/movies/types"
 	"believer/movies/utils"
+	"encoding/base64"
+	"os"
 	"strconv"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -39,4 +42,33 @@ LIMIT 20
 		"Movies":   movies,
 		"NextPage": page + 1,
 	})
+}
+
+func HandleGetLogin(c *fiber.Ctx) error {
+	return c.Render("login", fiber.Map{})
+}
+
+func HandlePostLogin(c *fiber.Ctx) error {
+	data := new(struct {
+		Password string `form:"password"`
+		Username string `form:"username"`
+	})
+
+	if err := c.BodyParser(data); err != nil {
+		return err
+	}
+
+	encoded := base64.StdEncoding.EncodeToString([]byte(data.Username + ":" + data.Password))
+
+	if encoded == os.Getenv("ADMIN_SECRET") {
+		c.Cookie(&fiber.Cookie{
+			Name:    "admin_secret",
+			Value:   encoded,
+			Expires: time.Now().AddDate(0, 0, 30),
+		})
+	}
+
+	c.Set("HX-Redirect", "/")
+
+	return c.SendStatus(200)
 }

@@ -9,6 +9,8 @@ import (
 func SetupRoutes(app *fiber.App) {
 	app.Get("/health", handlers.HandleHealthCheck)
 	app.Get("/", handlers.HandleFeed)
+	app.Get("/login", handlers.HandleGetLogin)
+	app.Post("/login", handlers.HandlePostLogin)
 
 	// Movies
 	// --------------------------
