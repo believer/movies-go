@@ -8,7 +8,7 @@ primary_region = "arn"
   buildpacks = ["gcr.io/paketo-buildpacks/go"]
 
 [build.args]
-  BP_KEEP_FILES = "public/*:views/*"
+  BP_KEEP_FILES = "public/*:views/*:db/*.sql"
 
 [env]
   PORT = "8080"
