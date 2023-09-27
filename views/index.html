@@ -13,11 +13,12 @@
   <ol role="feed" class="relative flex flex-col gap-6 text-sm">
     {{ range .Movies }}
     <li role="article"
-        class="relative before:relative lg:before:absolute lg:before:-left-52 lg:before:-top-0 [&:not(:first-child)]:before:lg:-top-8 before:text-4xl before:mb-4 [&:not(:first-child)]:before:mt-8 lg:before:mb-0 lg:before:mt-0 before:block lg:before:text-7xl before:[-webkit-text-stroke-width:_2px] before:[-webkit-text-stroke-color:_#fff] before:opacity-10 before:text-transparent"
+        class="relative before:relative lg:before:absolute lg:before:-left-52 lg:before:-top-0 [&:not(:first-child)]:before:lg:-top-8 before:text-4xl before:mb-4 [&:not(:first-child)]:before:mt-8 lg:before:mb-0 lg:before:mt-0 before:block lg:before:text-7xl before:[-webkit-text-stroke-width:_2px] before:[-webkit-text-stroke-color:_#000] dark:before:[-webkit-text-stroke-color:_#fff] before:opacity-10 before:text-transparent before:content-none"
         data-year="{{ .WatchedAt.Format "2006" }}"
         _="on load if my @data-year is not equal to @data-year of previous <li/>
-           then add .{'before:content-[attr(data-year)]'}
-           else add .before:content-none
+           then
+            remove .before:content-none
+            add .{'before:content-[attr(data-year)]'}
            end
           "
       >
