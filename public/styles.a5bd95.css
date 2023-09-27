@@ -550,6 +550,10 @@ video {
   top: 2.5rem;
 }
 
+.col-span-2 {
+  grid-column: span 2 / span 2;
+}
+
 .m-0 {
   margin: 0px;
 }

@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/lib/pq"
 )
 
 func HandleGetMovieByID(c *fiber.Ctx) error {
@@ -60,34 +61,66 @@ GROUP BY 1
 	})
 }
 
-func HandleGetMovieCastByID(c *fiber.Ctx) error {
-	var cast []types.Cast
+type CastDB struct {
+	Job        string         `db:"job"`
+	Names      pq.StringArray `db:"people_names"`
+	Ids        pq.Int32Array  `db:"people_ids"`
+	Characters pq.StringArray `db:"characters"`
+}
 
-	err := db.Client.Select(&cast, `
-SELECT 
-    INITCAP(mp.job::text) as job,
-    JSONB_AGG(JSON_BUILD_OBJECT('name',p.name, 'id', p.id)) AS person
-FROM 
-    movie_person AS mp
-    INNER JOIN person AS p ON p.id = mp.person_id
-WHERE movie_id = $1
-GROUP BY mp.job
-ORDER BY
-	CASE mp.job
-		WHEN 'director' THEN 1
-		WHEN 'writer' THEN 2
-		WHEN 'cast' THEN 3
-    WHEN 'composer' THEN 4
-		WHEN 'producer' THEN 5
-	END
-`, c.Params("id"))
+type CastAndCrewDTO struct {
+	Name      string
+	ID        int32
+	Character string
+}
+
+type CastDTO struct {
+	Job    string
+	People []CastAndCrewDTO
+}
+
+func ZipCast(names []string, ids []int32, characters []string) []CastAndCrewDTO {
+	zipped := make([]CastAndCrewDTO, len(names))
+	for i := range names {
+		zipped[i] = CastAndCrewDTO{names[i], ids[i], characters[i]}
+	}
+	return zipped
+}
+
+func HandleGetMovieCastByID(c *fiber.Ctx) error {
+	var castOrCrew []CastDB
+
+	err := db.Dot.Select(db.Client, &castOrCrew, "cast-by-id", c.Params("id"))
 
 	if err != nil {
-		panic(err)
+		return err
+	}
+
+	updatedCastOrCrew := make([]CastDTO, len(castOrCrew))
+	hasCharacters := false
+
+	for i, cast := range castOrCrew {
+		characters := cast.Characters
+
+		if cast.Job == "Cast" {
+			for _, value := range characters {
+				if value != "" {
+					hasCharacters = true
+					break
+				}
+			}
+		}
+
+		if len(characters) == 0 {
+			characters = make([]string, len(cast.Names))
+		}
+
+		updatedCastOrCrew[i] = CastDTO{cast.Job, ZipCast(cast.Names, cast.Ids, characters)}
 	}
 
 	return c.Render("partials/castList", fiber.Map{
-		"Cast": cast,
+		"CastOrCrew":    updatedCastOrCrew,
+		"HasCharacters": hasCharacters,
 	}, "")
 }
 
