@@ -889,8 +889,16 @@ video {
   --tw-ring-color: rgb(163 163 163 / var(--tw-ring-opacity));
 }
 
+.focus-visible\:rounded-sm:focus-visible {
+  border-radius: 0.125rem;
+}
+
 .focus-visible\:outline-dashed:focus-visible {
   outline-style: dashed;
+}
+
+.focus-visible\:outline-offset-2:focus-visible {
+  outline-offset: 2px;
 }
 
 .focus-visible\:outline-offset-8:focus-visible {
@@ -971,6 +979,11 @@ video {
 @media (min-width: 768px) {
   .md\:absolute {
     position: absolute;
+  }
+
+  .md\:text-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
   }
 }
 

@@ -118,7 +118,7 @@ func HandleGetMovieCastByID(c *fiber.Ctx) error {
 		updatedCastOrCrew[i] = CastDTO{cast.Job, ZipCast(cast.Names, cast.Ids, characters)}
 	}
 
-	return c.Render("partials/castList", fiber.Map{
+	return c.Render("partials/cast-list", fiber.Map{
 		"CastOrCrew":    updatedCastOrCrew,
 		"HasCharacters": hasCharacters,
 	}, "")
@@ -267,7 +267,7 @@ SELECT id, title FROM movie WHERE imdb_id = $1
 		return c.SendString("")
 	}
 
-	return c.Render("partials/movieExists", fiber.Map{
+	return c.Render("partials/movie-exists", fiber.Map{
 		"Movie": movie,
 	}, "")
 }
