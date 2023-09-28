@@ -20,31 +20,10 @@ import (
 func HandleGetMovieByID(c *fiber.Ctx) error {
 	var movie types.Movie
 
-	err := db.Client.Get(&movie, `
-SELECT
-	m.*,
-  ARRAY_AGG(g.name) AS genres
-FROM
-	movie AS m
-	INNER JOIN movie_genre AS mg ON mg.movie_id = m.id
-	INNER JOIN genre AS g ON g.id = mg.genre_id
-WHERE m.id = $1
-GROUP BY 1
-`, c.Params("id"))
+	err := db.Dot.Get(db.Client, &movie, "movie-by-id", c.Params("id"))
 
 	if err != nil {
-		err := db.Client.Get(&movie, `
-    SELECT
-	m.*,
-  ARRAY_AGG(g.name) AS genres
-FROM
-	movie AS m
-	INNER JOIN movie_genre AS mg ON mg.movie_id = m.id
-	INNER JOIN genre AS g ON g.id = mg.genre_id
--- Slugify function is defined in the database
-WHERE slugify(m.title) ILIKE '%' || slugify($1) || '%'
-GROUP BY 1
-  `, c.Params("id"))
+		err := db.Dot.Get(db.Client, &movie, "movie-by-name", c.Params("id"))
 
 		if err != nil {
 			// TODO: Handle this better
@@ -127,15 +106,10 @@ func HandleGetMovieCastByID(c *fiber.Ctx) error {
 func HandleGetMovieSeenByID(c *fiber.Ctx) error {
 	var watchedAt []time.Time
 
-	err := db.Client.Select(&watchedAt, `
-SELECT date
-FROM seen
-WHERE movie_id = $1 AND user_id = 1
-ORDER BY date DESC
-`, c.Params("id"))
+	err := db.Dot.Select(db.Client, &watchedAt, "seen-by-user-id", c.Params("id"))
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	return c.Render("partials/watched", fiber.Map{

@@ -1,3 +1,5 @@
+-- Gets cast and crew for a movie.
+-- The names, ids, and jobs are separated into arrays that are later zipped together in the backend.
 -- name: cast-by-id
 SELECT
     INITCAP(mp.job::text) AS job,
@@ -25,6 +27,8 @@ WHERE
     mp.movie_id = $1
 GROUP BY
     mp.job
+    -- Sorts the cast and crew in a consistent order since UI renders
+    -- it by looping through the array.
 ORDER BY
     CASE mp.job
     WHEN 'director' THEN
@@ -38,4 +42,77 @@ ORDER BY
     WHEN 'producer' THEN
         5
     END;
+
+-- Used for the start page feed. Returns the 20 most recently watched.
+-- Implements an infinite scroll that loads the next 20 when the user scrolls to the bottom.
+-- name: feed
+SELECT
+    m.id,
+    m.title,
+    m.overview,
+    m.release_date,
+    s.date AS watched_at
+FROM
+    seen AS s
+    INNER JOIN movie AS m ON m.id = s.movie_id
+WHERE
+    user_id = 1
+ORDER BY
+    s.date DESC OFFSET $1
+LIMIT 20;
+
+-- name: movie-by-id
+SELECT
+    m.*,
+    ARRAY_AGG(g.name) AS genres
+FROM
+    movie AS m
+    INNER JOIN movie_genre AS mg ON mg.movie_id = m.id
+    INNER JOIN genre AS g ON g.id = mg.genre_id
+WHERE
+    m.id = $1
+GROUP BY
+    1;
+
+-- name: movie-by-name
+SELECT
+    m.*,
+    ARRAY_AGG(g.name) AS genres
+FROM
+    movie AS m
+    INNER JOIN movie_genre AS mg ON mg.movie_id = m.id
+    INNER JOIN genre AS g ON g.id = mg.genre_id
+WHERE
+    -- Slugify function is defined in the database
+    slugify (m.title)
+    ILIKE '%' || slugify ($1) || '%'
+GROUP BY
+    1;
+
+-- name: seen-by-user-id
+SELECT
+    date
+FROM
+    seen
+WHERE
+    movie_id = $1
+    AND user_id = 1
+ORDER BY
+    date DESC;
+
+-- name: person-by-id
+SELECT
+    p.id,
+    p.name,
+    -- Function get_person_role_json returns a JSON array of movies
+    -- The function is defined in the database
+    get_person_role_json (p.id, 'director'::job) AS director,
+    get_person_role_json (p.id, 'cast') AS cast,
+    get_person_role_json (p.id, 'writer') AS writer,
+    get_person_role_json (p.id, 'composer') AS composer,
+    get_person_role_json (p.id, 'producer') AS producer
+FROM
+    person AS p
+WHERE
+    p.id = $1;
 
