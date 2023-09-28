@@ -45,3 +45,11 @@ func ParseImdbId(s string) (string, error) {
 
 	return imdbId, nil
 }
+
+func FormatRuntime(runtime int) string {
+	days := runtime / 1440
+	hours := runtime / 60 % 24
+	minutes := runtime % 60
+
+	return fmt.Sprintf("%dd %dh %dm", days, hours, minutes)
+}

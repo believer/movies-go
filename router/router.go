@@ -33,4 +33,8 @@ func SetupRoutes(app *fiber.App) {
 	// Search
 	// --------------------------
 	app.Post("/search", handlers.HandleMovieSearch)
+
+	// Stats
+	// --------------------------
+	app.Get("/stats", handlers.HandleGetStats)
 }
