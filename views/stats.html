@@ -1,16 +1,27 @@
 <div class="mx-auto flex max-w-xl flex-col gap-8 px-5 py-8">
   <section
+    hx-get="/stats/ratings"
+    hx-trigger="load"
+    hx-swap="outerHTML"
+  ></section>
+
+  <section
     class="flex flex-col md:text-sm gap-4 text-neutral-500 dark:text-neutral-400"
   >
+    {{ template "partials/data-section-title" "Stats"}}
     <dl class="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2">
       <dd class="font-semibold">Unique movies seen</dd>
       <dt class="tabular-nums">{{ .Stats.UniqueMovies }}</dt>
       <dd class="font-semibold">Movies seen with rewatches</dd>
       <dt class="tabular-nums">{{ .Stats.SeenWithRewatches }}</dt>
-      <dd class="font-semibold">Minutes</dd>
-      <dt class="tabular-nums">
-        {{ .Stats.TotalRuntime }} min ({{ .FormattedTotalRuntime }})
-      </dt>
+      <dd class="font-semibold">Time watched</dd>
+      <dt class="tabular-nums">{{ .FormattedTotalRuntime }}</dt>
     </dl>
   </section>
+
+  <section
+    hx-get="/stats/most-watched-movies"
+    hx-trigger="load"
+    hx-swap="outerHTML"
+  ></section>
 </div>

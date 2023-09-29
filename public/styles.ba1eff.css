@@ -721,6 +721,18 @@ video {
   background-color: transparent;
 }
 
+.fill-neutral-100 {
+  fill: #f5f5f5;
+}
+
+.fill-neutral-500 {
+  fill: #737373;
+}
+
+.stroke-neutral-400 {
+  stroke: #a3a3a3;
+}
+
 .px-4 {
   padding-left: 1rem;
   padding-right: 1rem;
@@ -802,9 +814,24 @@ video {
   --tw-ring-offset-color: #fff;
 }
 
+.before\:absolute::before {
+  content: var(--tw-content);
+  position: absolute;
+}
+
 .before\:relative::before {
   content: var(--tw-content);
   position: relative;
+}
+
+.before\:-left-6::before {
+  content: var(--tw-content);
+  left: -1.5rem;
+}
+
+.before\:top-1\/2::before {
+  content: var(--tw-content);
+  top: 50%;
 }
 
 .before\:mb-4::before {
@@ -817,10 +844,38 @@ video {
   display: block;
 }
 
+.before\:w-\[2ch\]::before {
+  content: var(--tw-content);
+  width: 2ch;
+}
+
+.before\:-translate-y-1\/2::before {
+  content: var(--tw-content);
+  --tw-translate-y: -50%;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.before\:text-right::before {
+  content: var(--tw-content);
+  text-align: right;
+}
+
 .before\:text-4xl::before {
   content: var(--tw-content);
   font-size: 2.25rem;
   line-height: 2.5rem;
+}
+
+.before\:text-xs::before {
+  content: var(--tw-content);
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.before\:tabular-nums::before {
+  content: var(--tw-content);
+  --tw-numeric-spacing: tabular-nums;
+  font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction);
 }
 
 .before\:text-transparent::before {
@@ -831,6 +886,11 @@ video {
 .before\:opacity-10::before {
   content: var(--tw-content);
   opacity: 0.1;
+}
+
+.before\:content-\[attr\(data-position\)\]::before {
+  --tw-content: attr(data-position);
+  content: var(--tw-content);
 }
 
 .before\:content-\[attr\(data-year\)\]::before {
@@ -928,6 +988,18 @@ video {
   .dark\:bg-neutral-900 {
     --tw-bg-opacity: 1;
     background-color: rgb(23 23 23 / var(--tw-bg-opacity));
+  }
+
+  .dark\:fill-neutral-400 {
+    fill: #a3a3a3;
+  }
+
+  .dark\:fill-neutral-800 {
+    fill: #262626;
+  }
+
+  .dark\:stroke-neutral-600 {
+    stroke: #525252;
   }
 
   .dark\:text-neutral-200 {

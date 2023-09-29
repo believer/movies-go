@@ -51,5 +51,5 @@ func FormatRuntime(runtime int) string {
 	hours := runtime / 60 % 24
 	minutes := runtime % 60
 
-	return fmt.Sprintf("%dd %dh %dm", days, hours, minutes)
+	return fmt.Sprintf("%d days %d hours %d minutes", days, hours, minutes)
 }

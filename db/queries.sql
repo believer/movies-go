@@ -116,3 +116,34 @@ FROM
 WHERE
     p.id = $1;
 
+-- name: stats-most-watched-movies
+SELECT
+    COUNT(*) AS count,
+    m.title,
+    m.id
+FROM
+    seen AS s
+    INNER JOIN movie AS m ON m.id = s.movie_id
+WHERE
+    user_id = 1
+GROUP BY
+    m.id
+HAVING
+    COUNT(*) > 1
+ORDER BY
+    count DESC
+LIMIT 20;
+
+-- name: stats-ratings
+SELECT
+    COUNT(*) AS count,
+    rating
+FROM
+    rating
+WHERE
+    user_id = 1
+GROUP BY
+    rating
+ORDER BY
+    rating;
+

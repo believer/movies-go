@@ -1,0 +1,23 @@
+<svg role="img" viewBox="0 0 {{ .Width }} {{ .Height }}">
+  {{ range .Data}}
+  <g class="fill-neutral-100 dark:fill-neutral-800">
+    <rect
+      class="stroke-neutral-400 dark:stroke-neutral-600"
+      width="{{ .BarWidth }}"
+      height="{{ .BarHeight }}"
+      stroke-dasharray="4 2"
+      rx="2"
+      ry="2"
+      x="{{ .BarX }}"
+      y="{{ .BarY }}"
+    ></rect>
+    <text
+      class="fill-neutral-500 dark:fill-neutral-400 text-xs tabular-nums"
+      x="{{ .ValueX }}"
+      y="{{ .ValueY }}"
+    >
+      {{ .Value }}
+    </text>
+  </g>
+  {{ end }}
+</svg>

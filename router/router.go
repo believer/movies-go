@@ -36,5 +36,9 @@ func SetupRoutes(app *fiber.App) {
 
 	// Stats
 	// --------------------------
-	app.Get("/stats", handlers.HandleGetStats)
+	statsGroup := app.Group("/stats")
+
+	statsGroup.Get("/", handlers.HandleGetStats)
+	statsGroup.Get("/most-watched-movies", handlers.HandleGetMostWatchedMovies)
+	statsGroup.Get("/ratings", handlers.HandleGetRatings)
 }
