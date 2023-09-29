@@ -542,6 +542,10 @@ video {
   position: relative;
 }
 
+.left-8 {
+  left: 2rem;
+}
+
 .right-8 {
   right: 2rem;
 }
@@ -756,6 +760,10 @@ video {
 .py-8 {
   padding-top: 2rem;
   padding-bottom: 2rem;
+}
+
+.pt-8 {
+  padding-top: 2rem;
 }
 
 .text-base {

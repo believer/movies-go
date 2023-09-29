@@ -1,56 +1,82 @@
-<div class="mx-auto flex max-w-xl flex-col gap-12 px-5 py-8">
+<div class="mx-auto flex max-w-xl flex-col gap-12 px-5 pt-8">
   <nav class="flex items-center gap-5">
+    <a
+      class="border-b border-dashed border-neutral-500 dark:border-neutral-400 focus:outline-none focus-visible:outline-dashed focus-visible:rounded-sm focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 md:absolute left-8 top-10"
+      href="/stats"
+      >Stats</a
+    >
     <input
-        class="w-full rounded-full border border-neutral-200 dark:border-neutral-700 bg-transparent ring-offset-white dark:ring-offset-neutral-900 px-4 py-2 ring-offset-2 focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:focus:ring-neutral-500"
-        type="search"
-        name="search"
-        placeholder="Find a movie"
-        hx-post="/search"
-        hx-select="li[role='article']"
-        hx-trigger="keyup changed delay:500ms, search"
-        hx-target="ol"
-        />
+      class="w-full rounded-full border border-neutral-200 dark:border-neutral-700 bg-transparent ring-offset-white dark:ring-offset-neutral-900 px-4 py-2 ring-offset-2 focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:focus:ring-neutral-500"
+      type="search"
+      name="search"
+      placeholder="Find a movie"
+      hx-post="/search"
+      hx-select="li[role='article']"
+      hx-trigger="keyup changed delay:500ms, search"
+      hx-target="ol"
+    />
     {{ if .IsAdmin }}
-    <a class="md:absolute top-10 right-8 focus:outline-none focus-visible:outline-dashed focus-visible:outline-offset-8 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 rounded" href="/movies/new"
+    <a
+      class="md:absolute top-10 right-8 focus:outline-none focus-visible:outline-dashed focus-visible:outline-offset-8 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 rounded"
+      href="/movies/new"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-6 h-6"
       >
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M12 4.5v15m7.5-7.5h-15"
+        />
       </svg>
     </a>
     {{ end }}
   </nav>
+</div>
 
+<div class="mx-auto flex max-w-xl flex-col gap-12 px-5 py-8">
   <ol role="feed" class="relative flex flex-col gap-6 text-sm">
     {{ range .Movies }}
-    <li role="article"
-        class="relative before:relative lg:before:absolute lg:before:-left-52 lg:before:-top-0 [&:not(:first-child)]:before:lg:-top-8 before:text-4xl before:mb-4 [&:not(:first-child)]:before:mt-8 lg:before:mb-0 lg:before:mt-0 before:block lg:before:text-7xl before:[-webkit-text-stroke-width:_2px] before:[-webkit-text-stroke-color:_#000] dark:before:[-webkit-text-stroke-color:_#fff] before:opacity-10 before:text-transparent before:content-none"
-        data-year="{{ .WatchedAt.Format "2006" }}"
-        _="on load if my @data-year is not equal to @data-year of previous <li/>
+    <li
+      role="article"
+      class="relative before:relative lg:before:absolute lg:before:-left-52 lg:before:-top-0 [&:not(:first-child)]:before:lg:-top-8 before:text-4xl before:mb-4 [&:not(:first-child)]:before:mt-8 lg:before:mb-0 lg:before:mt-0 before:block lg:before:text-7xl before:[-webkit-text-stroke-width:_2px] before:[-webkit-text-stroke-color:_#000] dark:before:[-webkit-text-stroke-color:_#fff] before:opacity-10 before:text-transparent before:content-none"
+      data-year="{{ .WatchedAt.Format "2006" }}"
+      _="on load if my @data-year is not equal to @data-year of previous <li/>
            then
             remove .before:content-none
             add .{'before:content-[attr(data-year)]'}
            end
           "
-      >
+    >
       <a
         href="/movies/{{ .ID }}"
         hx-swap="innerHTML transition:true"
         class="flex flex-col gap-4 focus:outline-none focus-visible:outline-dashed focus-visible:outline-offset-8 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 rounded"
       >
         <header class="flex flex-col gap-1">
-          <h2 class="truncate text-base dark:text-neutral-300 font-medium text-neutral-700">
+          <h2
+            class="truncate text-base dark:text-neutral-300 font-medium text-neutral-700"
+          >
             {{ .Title }}
           </h2>
           <p class="text-xs text-neutral-500 dark:text-neutral-400">
-          <time
-            title="{{ .WatchedAt.Format "2006-01-02 15:04" }}" 
-            datetime="{{ .WatchedAt.Format "2006-01-02T15:04:05Z" }}">
-            {{ .WatchedAt.Format "January 02 2006" }}
-          </time>
+            <time
+              title="{{ .WatchedAt.Format "2006-01-02 15:04" }}"
+              datetime="{{ .WatchedAt.Format "2006-01-02T15:04:05Z" }}"
+            >
+              {{ .WatchedAt.Format "January 02 2006" }}
+            </time>
           </p>
         </header>
         {{ if .Overview }}
-        <p class="line-clamp-3 text-neutral-500 dark:text-neutral-400">{{ .Overview }}</p>
+        <p class="line-clamp-3 text-neutral-500 dark:text-neutral-400">
+          {{ .Overview }}
+        </p>
         {{ end }}
       </a>
     </li>
