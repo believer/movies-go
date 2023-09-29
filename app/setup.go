@@ -34,6 +34,14 @@ func SetupAndRunApp() error {
 	// Add custom functions to the template engine
 	engine.AddFunc("StringsJoin", strings.Join)
 
+	// Simple add function
+	engine.AddFunc(
+		"add", func(x, y int) int {
+			return x + y
+		},
+	)
+
+	// Add possibility to send a map to the template
 	engine.AddFunc("map", func(pairs ...any) (map[string]any, error) {
 		if len(pairs)%2 != 0 {
 			return nil, errors.New("misaligned map")
