@@ -18,18 +18,57 @@
     class="flex flex-col md:text-sm gap-4 text-neutral-500 dark:text-neutral-400"
   >
     {{ template "partials/data-section-title" "Stats"}}
-    <dl class="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2">
+    <dl class="grid sm:grid-cols-[max-content_1fr] gap-x-6 gap-y-2">
       <dd class="font-semibold">Unique movies seen</dd>
       <dt class="tabular-nums">{{ .Stats.UniqueMovies }}</dt>
       <dd class="font-semibold">Movies seen with rewatches</dd>
       <dt class="tabular-nums">{{ .Stats.SeenWithRewatches }}</dt>
       <dd class="font-semibold">Time watched</dd>
       <dt class="tabular-nums">{{ .FormattedTotalRuntime }}</dt>
+      <dd class="font-semibold">Top IMDb rating</dd>
+      <dt class="tabular-nums">
+        <a
+          class="border-b border-dashed border-neutral-500 dark:border-neutral-400 focus:outline-none focus-visible:outline-dashed focus-visible:rounded-sm focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
+          href="/movies/{{ .Stats.TopImdbID }}"
+          >{{ .Stats.TopImdbTitle }}</a
+        >
+        <span class="text-xs"> ({{ .Stats.TopImdbRating }}) </span>
+      </dt>
     </dl>
   </section>
 
   <section
     hx-get="/stats/most-watched-movies"
+    hx-trigger="load"
+    hx-swap="outerHTML"
+  ></section>
+
+  <section
+    hx-get="/stats/most-watched-person/cast"
+    hx-trigger="load"
+    hx-swap="outerHTML"
+  ></section>
+
+  <section
+    hx-get="/stats/most-watched-person/director"
+    hx-trigger="load"
+    hx-swap="outerHTML"
+  ></section>
+
+  <section
+    hx-get="/stats/most-watched-person/writer"
+    hx-trigger="load"
+    hx-swap="outerHTML"
+  ></section>
+
+  <section
+    hx-get="/stats/most-watched-person/composer"
+    hx-trigger="load"
+    hx-swap="outerHTML"
+  ></section>
+
+  <section
+    hx-get="/stats/most-watched-person/producer"
     hx-trigger="load"
     hx-swap="outerHTML"
   ></section>

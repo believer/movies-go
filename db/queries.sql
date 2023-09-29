@@ -116,6 +116,38 @@ FROM
 WHERE
     p.id = $1;
 
+-- name: stats-data
+SELECT
+    COUNT(DISTINCT movie_id) AS unique_movies,
+    COUNT(movie_id) seen_with_rewatches,
+    SUM(m.runtime) AS total_runtime,
+    MAX(m.imdb_rating) AS top_imdb_rating,
+    (
+        SELECT
+            title
+        FROM
+            movie
+        WHERE
+            imdb_rating IS NOT NULL
+        ORDER BY
+            imdb_rating DESC
+        LIMIT 1) AS top_imdb_title,
+(
+    SELECT
+        id
+    FROM
+        movie
+    WHERE
+        imdb_rating IS NOT NULL
+    ORDER BY
+        imdb_rating DESC
+    LIMIT 1) AS top_imdb_id
+FROM
+    seen AS s
+    INNER JOIN movie AS m ON m.id = s.movie_id
+WHERE
+    user_id = 1;
+
 -- name: stats-most-watched-movies
 SELECT
     COUNT(*) AS count,
@@ -146,4 +178,22 @@ GROUP BY
     rating
 ORDER BY
     rating;
+
+-- name: stats-most-watched-by-job
+SELECT
+    COUNT(*) AS count,
+    p.name,
+    p.id
+FROM
+    seen AS s
+    INNER JOIN movie_person AS mp ON mp.movie_id = s.movie_id
+    INNER JOIN person AS p ON p.id = mp.person_id
+WHERE
+    user_id = 1
+    AND mp.job = $1
+GROUP BY
+    p.id
+ORDER BY
+    count DESC
+LIMIT 10;
 

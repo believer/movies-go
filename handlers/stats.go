@@ -5,6 +5,7 @@ import (
 	"believer/movies/utils"
 	"cmp"
 	"strconv"
+	"strings"
 
 	"slices"
 
@@ -13,22 +14,15 @@ import (
 
 func HandleGetStats(c *fiber.Ctx) error {
 	var stats struct {
-		UniqueMovies      int `db:"unique_movies"`
-		SeenWithRewatches int `db:"seen_with_rewatches"`
-		TotalRuntime      int `db:"total_runtime"`
+		UniqueMovies      int     `db:"unique_movies"`
+		SeenWithRewatches int     `db:"seen_with_rewatches"`
+		TotalRuntime      int     `db:"total_runtime"`
+		TopImdbRating     float64 `db:"top_imdb_rating"`
+		TopImdbTitle      string  `db:"top_imdb_title"`
+		TopImdbID         string  `db:"top_imdb_id"`
 	}
 
-	err := db.Client.Get(&stats, `
-SELECT
-	COUNT(DISTINCT movie_id) AS unique_movies,
-	COUNT(movie_id) seen_with_rewatches,
-  SUM(m.runtime) AS total_runtime
-FROM
-	seen AS s
-INNER JOIN movie as m ON m.id = s.movie_id 
-WHERE
-	user_id = 1;
-    `)
+	err := db.Dot.Get(db.Client, &stats, "stats-data")
 
 	if err != nil {
 		return err
@@ -55,6 +49,27 @@ func HandleGetMostWatchedMovies(c *fiber.Ctx) error {
 
 	return c.Render("partials/stats/most-watched-movies", fiber.Map{
 		"Data": movies,
+	})
+}
+
+func HandleGetMostWatchedByJob(c *fiber.Ctx) error {
+	var persons []struct {
+		Name  string `db:"name"`
+		ID    string `db:"id"`
+		Count int    `db:"count"`
+	}
+
+	job := c.Params("job")
+
+	err := db.Dot.Select(db.Client, &persons, "stats-most-watched-by-job", job)
+
+	if err != nil {
+		return err
+	}
+
+	return c.Render("partials/stats/most-watched-person", fiber.Map{
+		"Data": persons,
+		"Job":  strings.Title(job),
 	})
 }
 
