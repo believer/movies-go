@@ -16,6 +16,13 @@
         y="{{ .BarY }}"
       ></rect>
       <text
+        class="opacity-0 transition-opacity fill-neutral-400 dark:fill-neutral-400 text-xs tabular-nums"
+        x="{{ .LabelX }}"
+        y="{{ .LabelY }}"
+      >
+        {{ .Label }}
+      </text>
+      <text
         class="fill-neutral-400 dark:fill-neutral-500 opacity-0 transition-opacity text-xs tabular-nums"
         x="{{ .ValueX }}"
         y="{{ .ValueY }}"
