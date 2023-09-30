@@ -729,6 +729,10 @@ video {
   fill: #f5f5f5;
 }
 
+.fill-neutral-200 {
+  fill: #e5e5e5;
+}
+
 .fill-neutral-400 {
   fill: #a3a3a3;
 }
@@ -944,14 +948,6 @@ video {
   display: none;
 }
 
-.hover\:fill-neutral-200:hover {
-  fill: #e5e5e5;
-}
-
-.focus\:fill-neutral-200:focus {
-  fill: #e5e5e5;
-}
-
 .focus\:outline-none:focus {
   outline: 2px solid transparent;
   outline-offset: 2px;
@@ -1017,6 +1013,10 @@ video {
     fill: #737373;
   }
 
+  .dark\:fill-neutral-700 {
+    fill: #404040;
+  }
+
   .dark\:fill-neutral-800 {
     fill: #262626;
   }
@@ -1069,14 +1069,6 @@ video {
     content: var(--tw-content);
     --tw-bg-opacity: 1;
     background-color: rgb(64 64 64 / var(--tw-bg-opacity));
-  }
-
-  .dark\:hover\:fill-neutral-700:hover {
-    fill: #404040;
-  }
-
-  .dark\:focus\:fill-neutral-700:focus {
-    fill: #404040;
   }
 
   .dark\:focus\:ring-neutral-500:focus {
@@ -1188,5 +1180,19 @@ video {
   .\[\&\:not\(\:first-child\)\]\:before\:lg\:-top-8:not(:first-child)::before {
     content: var(--tw-content);
     top: -2rem;
+  }
+}
+
+@media(any-hover:hover) {
+  .\[\@media\(any-hover\:hover\)\{\&\:hover\}\]\:fill-neutral-200:hover {
+    fill: #e5e5e5;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  @media(any-hover:hover) {
+    .dark\:\[\@media\(any-hover\:hover\)\{\&\:hover\}\]\:fill-neutral-700:hover {
+      fill: #404040;
+    }
   }
 }

@@ -86,7 +86,7 @@ type Bar struct {
 	BarX      int
 	BarY      int
 	LabelX    float64
-	LabelY    int
+	LabelY    float64
 	ValueX    float64
 	ValueY    int
 }
@@ -124,7 +124,7 @@ func HandleGetRatings(c *fiber.Ctx) error {
 		)
 
 		// Position centered on the bar. Subtract 3.4 which is half the width of the text.
-		charWidth := 7.56 // Uses tabular nums so all characters are the same width
+		charWidth := 8.67 // Uses tabular nums so all characters are the same width
 		numberOfCharsInCount := len(strconv.Itoa(rating.Count))
 		numberOfCharsInRating := len(strconv.Itoa(rating.Rating))
 
@@ -136,8 +136,8 @@ func HandleGetRatings(c *fiber.Ctx) error {
 
 		// Subtract 8 to put some space between the text and the bar
 		valueY := barY - 8
-		// 14 is the height of the text
-		labelY := barY + barHeight/2 + 14/2
+		// 16,5 is the height of the text
+		labelY := float64(barY) + float64(barHeight)/2 + 16.5/2
 
 		// Add the data to the graphData slice
 		graphData = append(graphData, Bar{
