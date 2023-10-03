@@ -64,30 +64,37 @@ LIMIT 20;
 -- name: movie-by-id
 SELECT
     m.*,
+    r.rating,
     ARRAY_AGG(g.name) AS genres
 FROM
     movie AS m
     INNER JOIN movie_genre AS mg ON mg.movie_id = m.id
     INNER JOIN genre AS g ON g.id = mg.genre_id
+    INNER JOIN rating AS r ON r.movie_id = m.id
 WHERE
     m.id = $1
+    AND r.user_id = 1
 GROUP BY
-    1;
+    1,
+    r.rating;
 
 -- name: movie-by-name
 SELECT
     m.*,
+    r.rating,
     ARRAY_AGG(g.name) AS genres
 FROM
     movie AS m
     INNER JOIN movie_genre AS mg ON mg.movie_id = m.id
     INNER JOIN genre AS g ON g.id = mg.genre_id
+    INNER JOIN rating AS r ON r.movie_id = m.id
 WHERE
     -- Slugify function is defined in the database
     slugify (m.title)
     ILIKE '%' || slugify ($1) || '%'
 GROUP BY
-    1;
+    1,
+    r.rating;
 
 -- name: seen-by-user-id
 SELECT
