@@ -31,6 +31,7 @@ func ParseImdbId(s string) (string, error) {
 
 	imdbId := path.Base(parsedUrl.Path)
 	imdbId = strings.TrimRight(imdbId, "/")
+	imdbId = strings.ToLower(imdbId)
 
 	if imdbId == "" {
 		return "", fmt.Errorf("Empty IMDb ID")

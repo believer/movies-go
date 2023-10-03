@@ -15,6 +15,7 @@ func TestParseImdbId(t *testing.T) {
 		{"https://www.imdb.com/title/tt0068646", "tt0068646", nil},
 		{"https://www.imdb.com/title/tt0339230/?ref_=ext_shr_lnk", "tt0339230", nil},
 		{"https://www.imdb.com/", "", fmt.Errorf("Empty IMDb ID")},
+		{"TT0111161", "tt0111161", nil},
 		{"", "", fmt.Errorf("Empty IMDb ID")},
 		{"not_a_url", "", fmt.Errorf("Invalid IMDb ID format: not_a_url")},
 	}
