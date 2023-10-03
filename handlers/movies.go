@@ -230,7 +230,7 @@ func HandleGetByImdbId(c *fiber.Ctx) error {
 	imdbId, err := utils.ParseImdbId(c.Query("imdb_id"))
 
 	if err != nil {
-		return err
+		return c.SendString("")
 	}
 
 	err = db.Client.Get(&movie, `
