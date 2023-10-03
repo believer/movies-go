@@ -57,9 +57,13 @@ func HandlePostLogin(c *fiber.Ctx) error {
 			Value:   encoded,
 			Expires: time.Now().AddDate(0, 0, 30),
 		})
+
+		c.Set("HX-Redirect", "/")
+
+		return c.SendStatus(200)
 	}
 
-	c.Set("HX-Redirect", "/")
-
-	return c.SendStatus(200)
+	return c.Render("login", fiber.Map{
+		"Error": "Invalid username or password",
+	}, "")
 }
