@@ -41,7 +41,7 @@
 </div>
 
 <div class="mx-auto flex max-w-xl flex-col gap-12 px-5 py-8">
-  {{ if lt (len .Movies) 0 }}
+  {{ if gt (len .Movies) 0 }}
   <ol role="feed" class="relative flex flex-col gap-6 text-sm">
     {{ range .Movies }}
     <li
