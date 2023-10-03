@@ -1,7 +1,7 @@
 <div class="mx-auto flex max-w-xl flex-col gap-8 px-5 py-8">
   <nav class="flex items-center gap-5">
     <a
-      class="border-b border-dashed border-neutral-500 dark:border-neutral-400 focus:outline-none focus-visible:outline-dashed focus-visible:rounded-sm focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 md:absolute left-8 top-10"
+      class="left-8 top-10 border-b border-dashed border-neutral-500 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600 md:absolute"
       href="/"
     >
       Home
@@ -15,10 +15,10 @@
   ></section>
 
   <section
-    class="flex flex-col md:text-sm gap-4 text-neutral-500 dark:text-neutral-400"
+    class="flex flex-col gap-4 text-neutral-500 dark:text-neutral-400 md:text-sm"
   >
     {{ template "partials/data-section-title" "Stats"}}
-    <dl class="grid sm:grid-cols-[max-content_1fr] gap-x-6 gap-y-2">
+    <dl class="grid gap-x-6 gap-y-2 sm:grid-cols-[max-content_1fr]">
       <dd class="font-semibold">Unique movies seen</dd>
       <dt class="tabular-nums">{{ .Stats.UniqueMovies }}</dt>
       <dd class="font-semibold">Movies seen with rewatches</dd>
@@ -28,7 +28,7 @@
       <dd class="font-semibold">Top IMDb rating</dd>
       <dt class="tabular-nums">
         <a
-          class="border-b border-dashed border-neutral-500 dark:border-neutral-400 focus:outline-none focus-visible:outline-dashed focus-visible:rounded-sm focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
+          class="border-b border-dashed border-neutral-500 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600"
           href="/movies/{{ .Stats.TopImdbID }}"
           >{{ .Stats.TopImdbTitle }}</a
         >
