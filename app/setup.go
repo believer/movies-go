@@ -62,8 +62,10 @@ func SetupAndRunApp() error {
 
 	// Setup the app
 	app := fiber.New(fiber.Config{
-		Views:       engine,
-		ViewsLayout: "layouts/main",
+		Views:                 engine,
+		ViewsLayout:           "layouts/main",
+		DisableStartupMessage: true,
+		PassLocalsToViews:     true,
 	})
 
 	// Setup middleware
@@ -71,6 +73,15 @@ func SetupAndRunApp() error {
 	app.Use(recover.New())
 	// Logger middleware will log the HTTP requests.
 	app.Use(logger.New())
+
+	// Pass app environment to all views
+	app.Use(func(c *fiber.Ctx) error {
+		appEnv := os.Getenv("APP_ENV")
+
+		c.Locals("AppEnv", appEnv)
+
+		return c.Next()
+	})
 
 	// Serve static files
 	app.Static("/public", "./public")
