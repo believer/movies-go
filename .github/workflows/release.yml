@@ -5,6 +5,11 @@ on:
     branches:
       - main
 
+# Cancel previously running workflows
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   deploy:
     name: Deploy app
