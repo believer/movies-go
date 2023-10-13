@@ -10,7 +10,10 @@ require (
 	github.com/lib/pq v1.10.9
 )
 
-require github.com/qustavo/dotsql v1.1.0
+require (
+	github.com/qustavo/dotsql v1.1.0
+	golang.org/x/text v0.8.0
+)
 
 require (
 	github.com/andybalholm/brotli v1.0.5 // indirect

@@ -5,11 +5,12 @@ import (
 	"believer/movies/utils"
 	"cmp"
 	"strconv"
-	"strings"
 
 	"slices"
 
 	"github.com/gofiber/fiber/v2"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 type Person struct {
@@ -89,7 +90,7 @@ func HandleGetMostWatchedByJob(c *fiber.Ctx) error {
 
 	return c.Render("partials/stats/most-watched-person", fiber.Map{
 		"Data": persons,
-		"Job":  strings.Title(job),
+		"Job":  cases.Title(language.English).String(job),
 	})
 }
 
