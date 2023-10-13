@@ -150,7 +150,7 @@ func tmdbFetchMovie(route string) map[string]interface{} {
 	return result
 }
 
-// Handle adding a movies
+// Handle adding a movie
 func HandlePostMovieNew(c *fiber.Ctx) error {
 	isAuth := utils.IsAuthenticated(c)
 
@@ -197,13 +197,47 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 	// Insert rating
 	tx.MustExec(`INSERT INTO rating (user_id, movie_id, rating) VALUES ($1, $2, $3)`, 1, movieId, data.Rating)
 
+	type Genre struct {
+		Name    string `db:"name"`
+		MovieId int    `db:"movie_id"`
+	}
+
+	var genres []Genre
+
 	// Insert genres
 	for _, genre := range movieInformation["genres"].([]interface{}) {
 		name := genre.(map[string]interface{})["name"]
 
-		tx.MustExec(`INSERT INTO genre (name) VALUES ($1) ON CONFLICT (name) DO NOTHING`, name)
-		tx.MustExec(`INSERT INTO movie_genre (movie_id, genre_id) VALUES ($1, (SELECT id FROM genre WHERE name = $2)) ON CONFLICT DO NOTHING`, movieId, name)
+		genres = append(genres, Genre{
+			Name:    name.(string),
+			MovieId: movieId,
+		})
 	}
+
+	_, err = tx.NamedExec(`INSERT INTO genre (name) VALUES (:name) ON CONFLICT (name) DO NOTHING`, genres)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.NamedExec(`INSERT INTO movie_genre (movie_id, genre_id) VALUES (:movie_id, (SELECT id FROM genre WHERE name = :name)) ON CONFLICT DO NOTHING`, genres)
+
+	if err != nil {
+		return err
+	}
+
+	type NewPerson struct {
+		ID             int            `db:"id"`
+		Name           string         `db:"name"`
+		Job            sql.NullString `db:"job"`
+		Character      sql.NullString `db:"character"`
+		Popularity     float64        `db:"popularity"`
+		ProfilePicture sql.NullString `db:"profile_picture"`
+		MovieId        int            `db:"movie_id"`
+	}
+
+	var castStructs []NewPerson
+	var crewStructs []NewPerson
 
 	// Insert cast
 	for _, cast := range movieCast["cast"].([]interface{}) {
@@ -213,8 +247,130 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 		popularity := cast.(map[string]interface{})["popularity"]
 		profilePicture := cast.(map[string]interface{})["profile_path"]
 
-		tx.MustExec(`INSERT INTO person (name, original_id, popularity, profile_picture) VALUES ($1, $2, $3, $4) ON CONFLICT (original_id) DO UPDATE SET popularity = $3, profile_picture = $4`, name, id, popularity, profilePicture)
-		tx.MustExec(`INSERT INTO movie_person (movie_id, person_id, job, character) VALUES ($1, (SELECT id FROM person WHERE original_id = $4), $2, $3) ON CONFLICT (movie_id, person_id, job) DO UPDATE SET character = excluded.character`, movieId, "cast", character, id)
+		var pfp sql.NullString
+		var char sql.NullString
+
+		if profilePicture == nil {
+			pfp = sql.NullString{String: "", Valid: false}
+		} else {
+			pfp = sql.NullString{String: profilePicture.(string), Valid: true}
+		}
+
+		if character == nil {
+			char = sql.NullString{String: "", Valid: false}
+		} else {
+			char = sql.NullString{String: character.(string), Valid: true}
+		}
+
+		idInt := int(id.(float64))
+
+		castStructs = append(castStructs, NewPerson{
+			ID:             idInt,
+			Name:           name.(string),
+			Character:      char,
+			Popularity:     popularity.(float64),
+			ProfilePicture: pfp,
+			MovieId:        movieId,
+		})
+	}
+
+	// Crew
+	for _, crew := range movieCast["crew"].([]interface{}) {
+		department := crew.(map[string]interface{})["department"]
+
+		if department != "Directing" && department != "Writing" && department != "Production" && department != "Sound" {
+			continue
+		}
+
+		job := crew.(map[string]interface{})["job"]
+
+		if job == "Screenplay" || job == "Writer" || job == "Novel" {
+			job = "writer"
+		} else if job == "Original Music Composer" {
+			job = "composer"
+		} else if job == "Producer" || job == "Associate Producer" || job == "Executive Producer" {
+			job = "producer"
+		} else if job == "Director" {
+			job = "director"
+		} else {
+			continue
+		}
+
+		id := crew.(map[string]interface{})["id"]
+		name := crew.(map[string]interface{})["name"]
+		popularity := crew.(map[string]interface{})["popularity"]
+		profilePicture := crew.(map[string]interface{})["profile_path"]
+
+		var pfp sql.NullString
+		var jobStr sql.NullString
+
+		if profilePicture == nil {
+			pfp = sql.NullString{String: "", Valid: false}
+		} else {
+			pfp = sql.NullString{String: profilePicture.(string), Valid: true}
+		}
+
+		if job == nil {
+			jobStr = sql.NullString{String: "", Valid: false}
+		} else {
+			jobStr = sql.NullString{String: job.(string), Valid: true}
+		}
+
+		idInt := int(id.(float64))
+
+		crewStructs = append(crewStructs, NewPerson{
+			ID:             idInt,
+			Name:           name.(string),
+			Job:            jobStr,
+			Popularity:     popularity.(float64),
+			ProfilePicture: pfp,
+			MovieId:        movieId,
+		})
+	}
+
+	_, err = tx.NamedExec(`
+	INSERT INTO person (name, original_id, popularity, profile_picture)
+	VALUES (:name, :id, :popularity, :profile_picture)
+	ON CONFLICT (original_id)
+	DO UPDATE SET
+	  popularity = excluded.popularity,
+	  profile_picture = excluded.profile_picture
+	`, castStructs)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.NamedExec(`
+	INSERT INTO movie_person (movie_id, person_id, job, character)
+	    VALUES (:movie_id, (SELECT id FROM person WHERE original_id = :id), 'cast', :character)
+	ON CONFLICT (movie_id, person_id, job)
+	DO UPDATE SET character = excluded.character
+	`, castStructs)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.NamedExec(`
+	INSERT INTO person (name, original_id, popularity, profile_picture)
+	VALUES (:name, :id, :popularity, :profile_picture)
+	ON CONFLICT DO NOTHING
+	`, crewStructs)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.NamedExec(`
+	INSERT INTO movie_person (movie_id, person_id, job)
+    VALUES (:movie_id, (SELECT id FROM person WHERE original_id = :id), :job)
+	ON CONFLICT (movie_id, person_id, job)
+	DO UPDATE SET job = excluded.job
+	`, crewStructs)
+
+	if err != nil {
+		return err
 	}
 
 	tx.Commit()
