@@ -3,7 +3,7 @@
 >
   {{ template "partials/data-section-title" "Most watched movies" }}
   <ol class="flex flex-col gap-2">
-    {{ range $i, $movie := .Data }}
+    {{ range $i, $movie := . }}
     <li
       class="flex items-baseline justify-between gap-4 before:content-[attr(data-position)] before:text-right before:tabular-nums before:w-[2ch] before:text-neutral-400 dark:before:text-neutral-600"
       data-position="{{ add $i 1 }}"

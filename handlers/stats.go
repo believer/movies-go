@@ -12,6 +12,24 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+type Person struct {
+	Name  string `db:"name"`
+	ID    string `db:"id"`
+	Count int    `db:"count"`
+}
+
+func getPersonsByJob(job string) ([]Person, error) {
+	var persons []Person
+
+	err := db.Dot.Select(db.Client, &persons, "stats-most-watched-by-job", job)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return persons, nil
+}
+
 func HandleGetStats(c *fiber.Ctx) error {
 	var stats struct {
 		UniqueMovies      int     `db:"unique_movies"`
@@ -22,19 +40,6 @@ func HandleGetStats(c *fiber.Ctx) error {
 		TopImdbID         string  `db:"top_imdb_id"`
 	}
 
-	err := db.Dot.Get(db.Client, &stats, "stats-data")
-
-	if err != nil {
-		return err
-	}
-
-	return c.Render("stats", fiber.Map{
-		"Stats":                 stats,
-		"FormattedTotalRuntime": utils.FormatRuntime(stats.TotalRuntime),
-	})
-}
-
-func HandleGetMostWatchedMovies(c *fiber.Ctx) error {
 	var movies []struct {
 		Title string `db:"title"`
 		ID    string `db:"id"`
@@ -47,21 +52,36 @@ func HandleGetMostWatchedMovies(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Render("partials/stats/most-watched-movies", fiber.Map{
-		"Data": movies,
+	err = db.Dot.Get(db.Client, &stats, "stats-data")
+
+	if err != nil {
+		return err
+	}
+
+	cast, err := getPersonsByJob("cast")
+
+	if err != nil {
+		return err
+	}
+
+	ratings, err := getRatings()
+
+	if err != nil {
+		return err
+	}
+
+	return c.Render("stats", fiber.Map{
+		"Stats":                 stats,
+		"FormattedTotalRuntime": utils.FormatRuntime(stats.TotalRuntime),
+		"MostWatched":           movies,
+		"MostWatchedCast":       cast,
+		"Ratings":               ratings,
 	})
 }
 
 func HandleGetMostWatchedByJob(c *fiber.Ctx) error {
-	var persons []struct {
-		Name  string `db:"name"`
-		ID    string `db:"id"`
-		Count int    `db:"count"`
-	}
-
 	job := c.Params("job")
-
-	err := db.Dot.Select(db.Client, &persons, "stats-most-watched-by-job", job)
+	persons, err := getPersonsByJob(job)
 
 	if err != nil {
 		return err
@@ -91,14 +111,14 @@ type Bar struct {
 	ValueY    int
 }
 
-func HandleGetRatings(c *fiber.Ctx) error {
+func getRatings() ([]Bar, error) {
 	var ratings []Rating
 	var graphData []Bar
 
 	err := db.Dot.Select(db.Client, &ratings, "stats-ratings")
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	graphHeight := 200
@@ -154,9 +174,5 @@ func HandleGetRatings(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Render("partials/stats/ratings", fiber.Map{
-		"Data":   graphData,
-		"Width":  graphWidth,
-		"Height": graphHeight,
-	})
+	return graphData, nil
 }

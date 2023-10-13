@@ -8,11 +8,7 @@
     </a>
   </nav>
 
-  <section
-    hx-get="/stats/ratings"
-    hx-trigger="load"
-    hx-swap="outerHTML"
-  ></section>
+  {{ template "partials/stats/ratings" .Ratings }}
 
   <section
     class="flex flex-col gap-4 text-neutral-500 dark:text-neutral-400 md:text-sm"
@@ -37,39 +33,61 @@
     </dl>
   </section>
 
-  <section
-    hx-get="/stats/most-watched-movies"
-    hx-trigger="load"
-    hx-swap="outerHTML"
-  ></section>
+  <!-- prettier-ignore -->
+  {{ template "partials/stats/most-watched-movies" .MostWatched }}
 
   <section
-    hx-get="/stats/most-watched-person/cast"
-    hx-trigger="load"
-    hx-swap="outerHTML"
-  ></section>
+    class="flex flex-col gap-4 md:text-sm text-neutral-500 dark:text-neutral-400"
+  >
+    {{ template "partials/data-section-title" "Cast" }}
+    <ol class="flex flex-col gap-2">
+      {{ range $i, $d := .MostWatchedCast }}
+      <li
+        class="flex items-baseline justify-between gap-4 before:content-[attr(data-position)] before:text-right before:tabular-nums before:w-[2ch] before:text-neutral-400 dark:before:text-neutral-600"
+        data-position="{{ add $i 1 }}"
+      >
+        <a
+          class="border-b border-dashed border-neutral-500 dark:border-neutral-400 truncate focus:outline-none focus-visible:outline-dashed focus-visible:rounded-sm focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
+          href="/person/{{ $d.ID }}"
+          hx-swap="innerHTML transition:true"
+          style="view-transition-name: movie-{{ .ID }}"
+        >
+          {{ $d.Name }}
+        </a>
+        <hr
+          class="m-0 flex-1 border-dashed border-neutral-300 dark:border-neutral-700"
+        />
+        <span
+          class="tabular-nums text-sm text-neutral-500 dark:text-neutral-400"
+        >
+          {{ $d.Count }}
+        </span>
+      </li>
+      {{ end }}
+    </ol>
+  </section>
 
   <section
     hx-get="/stats/most-watched-person/director"
-    hx-trigger="load"
+    hx-trigger="revealed"
     hx-swap="outerHTML"
   ></section>
 
   <section
     hx-get="/stats/most-watched-person/writer"
-    hx-trigger="load"
+    hx-trigger="revealed"
     hx-swap="outerHTML"
   ></section>
 
   <section
     hx-get="/stats/most-watched-person/composer"
-    hx-trigger="load"
+    hx-trigger="revealed"
     hx-swap="outerHTML"
   ></section>
 
   <section
     hx-get="/stats/most-watched-person/producer"
-    hx-trigger="load"
+    hx-trigger="revealed"
     hx-swap="outerHTML"
   ></section>
 </div>

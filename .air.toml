@@ -1,5 +1,12 @@
 [build]
-kill_delay = "10s"
-delay = 500
-exclude_dir = ["public", "tmp", "vendor", "node_modules"]
+  kill_delay = "10s"
+  delay = 500
+  exclude_dir = ["public", "tmp", "vendor", "node_modules"]
+
+[misc]
+  clean_on_exit = true
+
+[screen]
+  clear_on_rebuild = true
+  keep_scroll = true
 

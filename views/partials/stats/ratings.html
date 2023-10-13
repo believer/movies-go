@@ -1,7 +1,7 @@
 <section class="flex flex-col gap-4">
   {{ template "partials/data-section-title" "Ratings"}}
-  <svg role="img" viewBox="0 0 {{ .Width }} {{ .Height }}">
-    {{ range .Data}}
+  <svg role="img" viewBox="0 0 536 200">
+    {{ range . }}
     <g
       class="fill-neutral-100 [@media(any-hover:hover){&:hover}]:fill-neutral-200 dark:fill-neutral-800 dark:[@media(any-hover:hover){&:hover}]:fill-neutral-700"
       _="on mouseenter add .opacity-100 to <text /> in me
