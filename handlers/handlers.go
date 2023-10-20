@@ -53,9 +53,10 @@ func HandlePostLogin(c *fiber.Ctx) error {
 
 	if encoded == os.Getenv("ADMIN_SECRET") {
 		c.Cookie(&fiber.Cookie{
-			Name:    "admin_secret",
-			Value:   encoded,
-			Expires: time.Now().AddDate(0, 0, 30),
+			Name:     "admin_secret",
+			Value:    encoded,
+			Expires:  time.Now().AddDate(0, 0, 30),
+			HTTPOnly: true,
 		})
 
 		c.Set("HX-Redirect", "/")
