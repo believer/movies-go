@@ -106,7 +106,10 @@ func HandleGetMovieCastByID(c *fiber.Ctx) error {
 func HandleGetMovieSeenByID(c *fiber.Ctx) error {
 	var watchedAt []time.Time
 
-	err := db.Dot.Select(db.Client, &watchedAt, "seen-by-user-id", c.Params("id"))
+	isAuth := utils.IsAuthenticated(c)
+	id := c.Params("id")
+
+	err := db.Dot.Select(db.Client, &watchedAt, "seen-by-user-id", id)
 
 	if err != nil {
 		return err
@@ -114,6 +117,8 @@ func HandleGetMovieSeenByID(c *fiber.Ctx) error {
 
 	return c.Render("partials/watched", fiber.Map{
 		"WatchedAt": watchedAt,
+		"ID":        id,
+		"IsAdmin":   isAuth,
 	}, "")
 }
 
