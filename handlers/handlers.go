@@ -68,3 +68,16 @@ func HandlePostLogin(c *fiber.Ctx) error {
 		"Error": "Invalid username or password",
 	}, "")
 }
+
+func HandlePostLogout(c *fiber.Ctx) error {
+	c.Cookie(&fiber.Cookie{
+		Name:     "admin_secret",
+		Value:    "",
+		Expires:  time.Now().AddDate(0, 0, -1),
+		HTTPOnly: true,
+	})
+
+	c.Set("HX-Redirect", "/")
+
+	return c.SendStatus(200)
+}

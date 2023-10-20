@@ -11,6 +11,7 @@ func SetupRoutes(app *fiber.App) {
 	app.Get("/", handlers.HandleFeed)
 	app.Get("/login", handlers.HandleGetLogin)
 	app.Post("/login", handlers.HandlePostLogin)
+	app.Post("/logout", handlers.HandlePostLogout)
 
 	// Movies
 	// --------------------------
