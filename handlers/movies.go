@@ -189,13 +189,23 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 	tx := db.Client.MustBegin()
 
 	// Insert movie information
-	tx.Get(&movieId, `INSERT INTO movie (title, runtime, release_date, imdb_id, overview, poster, tagline) VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (imdb_id) DO UPDATE SET title = $1 RETURNING id`, movieInformation["title"], movieInformation["runtime"], movieInformation["release_date"], imdbId, movieInformation["overview"], movieInformation["poster_path"], movieInformation["tagline"])
+	err = tx.Get(&movieId, `INSERT INTO movie (title, runtime, release_date, imdb_id, overview, poster, tagline) VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (imdb_id) DO UPDATE SET title = $1 RETURNING id`, movieInformation["title"], movieInformation["runtime"], movieInformation["release_date"], imdbId, movieInformation["overview"], movieInformation["poster_path"], movieInformation["tagline"])
+
+	if err != nil {
+		return err
+	}
+
+	log.Println("Movie inserted with id", movieId)
 
 	// Insert a view
 	tx.MustExec(`INSERT INTO seen (user_id, movie_id, date) VALUES ($1, $2, $3)`, 1, movieId, watchedAt)
 
+	log.Println("Inserted a view")
+
 	// Insert rating
 	tx.MustExec(`INSERT INTO rating (user_id, movie_id, rating) VALUES ($1, $2, $3)`, 1, movieId, data.Rating)
+
+	log.Println("Inserted a rating")
 
 	type Genre struct {
 		Name    string `db:"name"`
@@ -220,11 +230,15 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 		return err
 	}
 
+	log.Println("Inserted genres", genres)
+
 	_, err = tx.NamedExec(`INSERT INTO movie_genre (movie_id, genre_id) VALUES (:movie_id, (SELECT id FROM genre WHERE name = :name)) ON CONFLICT DO NOTHING`, genres)
 
 	if err != nil {
 		return err
 	}
+
+	log.Println("Inserted movie genres")
 
 	type NewPerson struct {
 		ID             int            `db:"id"`
@@ -341,6 +355,8 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 		return err
 	}
 
+	log.Println("Inserted people")
+
 	_, err = tx.NamedExec(`
 	INSERT INTO movie_person (movie_id, person_id, job, character)
 	    VALUES (:movie_id, (SELECT id FROM person WHERE original_id = :id), 'cast', :character)
@@ -352,6 +368,8 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 		return err
 	}
 
+	log.Println("Inserted cast")
+
 	_, err = tx.NamedExec(`
 	INSERT INTO person (name, original_id, popularity, profile_picture)
 	VALUES (:name, :id, :popularity, :profile_picture)
@@ -361,6 +379,8 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
+
+	log.Println("Inserted crew people")
 
 	_, err = tx.NamedExec(`
 	INSERT INTO movie_person (movie_id, person_id, job)
@@ -372,6 +392,8 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
+
+	log.Println("Inserted crew")
 
 	tx.Commit()
 
