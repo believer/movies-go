@@ -1,23 +1,23 @@
 {
   "name": "movies",
   "version": "1.0.0",
-  "description": "",
-  "main": "tailwind.config.js",
-  "scripts": {
-    "css": "tailwindcss -i ./styles.css -o ./public/styles.css --watch --minify"
-  },
+  "author": "Rickard Natt och Dag",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/believer/movies-go.git"
   },
-  "keywords": [],
-  "author": "Rickard Natt och Dag",
-  "license": "ISC",
+  "main": "tailwind.config.js",
+  "devDependencies": {
+    "tailwindcss": "3.3.5"
+  },
   "bugs": {
     "url": "https://github.com/believer/movies-go/issues"
   },
+  "description": "",
   "homepage": "https://github.com/believer/movies-go#readme",
-  "devDependencies": {
-    "tailwindcss": "3.3.3"
+  "keywords": [],
+  "license": "ISC",
+  "scripts": {
+    "css": "tailwindcss -i ./styles.css -o ./public/styles.css --watch --minify"
   }
 }
