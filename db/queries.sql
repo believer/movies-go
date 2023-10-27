@@ -70,10 +70,10 @@ FROM
     movie AS m
     INNER JOIN movie_genre AS mg ON mg.movie_id = m.id
     INNER JOIN genre AS g ON g.id = mg.genre_id
-    INNER JOIN rating AS r ON r.movie_id = m.id
+    LEFT JOIN rating AS r ON r.movie_id = m.id
+        AND r.user_id = 1
 WHERE
     m.id = $1
-    AND r.user_id = 1
 GROUP BY
     1,
     r.rating;

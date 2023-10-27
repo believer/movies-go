@@ -23,7 +23,7 @@ type Movie struct {
 	ImdbRating  sql.NullFloat64 `db:"imdb_rating"`
 	Overview    string          `db:"overview"`
 	Poster      string          `db:"poster"`
-	Rating      int             `db:"rating"`
+	Rating      sql.NullInt16   `db:"rating"`
 	ReleaseDate time.Time       `db:"release_date" json:"release_date"`
 	Runtime     int             `db:"runtime"`
 	Tagline     string          `db:"tagline"`

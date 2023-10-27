@@ -58,8 +58,10 @@
       <dt>{{ StringsJoin .Movie.Genres ", " }}</dt>
       <dd class="font-semibold">Watched</dd>
       <dt hx-get="/movies/{{ .Movie.ID }}/seen" hx-trigger="load"></dt>
+      {{ if .Movie.Rating.Valid }}
       <dd class="font-semibold">Rating</dd>
-      <dt>{{ .Movie.Rating }}</dt>
+      <dt>{{ .Movie.Rating.Value }}</dt>
+      {{ end }}
     </dl>
   </section>
   <div
