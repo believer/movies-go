@@ -175,8 +175,8 @@ LIMIT 20;
 
 -- name: stats-ratings
 SELECT
-    COUNT(*) AS count,
-    rating
+    COUNT(*) AS value,
+    rating AS label
 FROM
     rating
 WHERE
@@ -203,4 +203,21 @@ GROUP BY
 ORDER BY
     count DESC
 LIMIT 10;
+
+-- name: stats-watched-by-year
+SELECT
+    EXTRACT(YEAR FROM date) AS label,
+    COUNT(*) AS value
+FROM
+    seen
+WHERE
+    user_id = 1
+    -- 2011 is where all the data that I hadn't tracked
+    -- before I started ended up. So, there's a bunch of
+    -- movies that year.
+    AND EXTRACT(YEAR FROM date) > 2011
+GROUP BY
+    label
+ORDER BY
+    label;
 

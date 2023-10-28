@@ -65,7 +65,13 @@ func HandleGetStats(c *fiber.Ctx) error {
 		return err
 	}
 
-	ratings, err := getRatings()
+	ratings, err := getGraphWithQuery("stats-ratings")
+
+	if err != nil {
+		return err
+	}
+
+	watchedByYear, err := getGraphWithQuery("stats-watched-by-year")
 
 	if err != nil {
 		return err
@@ -77,6 +83,7 @@ func HandleGetStats(c *fiber.Ctx) error {
 		"MostWatched":           movies,
 		"MostWatchedCast":       cast,
 		"Ratings":               ratings,
+		"WatchedByYear":         watchedByYear,
 	})
 }
 
@@ -94,9 +101,9 @@ func HandleGetMostWatchedByJob(c *fiber.Ctx) error {
 	})
 }
 
-type Rating struct {
-	Rating int `db:"rating"`
-	Count  int `db:"count"`
+type GraphData struct {
+	Label int `db:"label"`
+	Value int `db:"value"`
 }
 
 type Bar struct {
@@ -112,42 +119,44 @@ type Bar struct {
 	ValueY    int
 }
 
-func getRatings() ([]Bar, error) {
-	var ratings []Rating
-	var graphData []Bar
+func getGraphWithQuery(query string) ([]Bar, error) {
+	var data []GraphData
 
-	err := db.Dot.Select(db.Client, &ratings, "stats-ratings")
+	err := db.Dot.Select(db.Client, &data, query)
 
 	if err != nil {
 		return nil, err
 	}
 
+	return constructGraphFromData(data)
+}
+
+func constructGraphFromData(data []GraphData) ([]Bar, error) {
+	var graphData []Bar
+
 	graphHeight := 200
 	graphWidth := 536
-	maxCountInRatings := slices.MaxFunc(ratings, func(a, b Rating) int {
-		return cmp.Compare(a.Count, b.Count)
+	maxCount := slices.MaxFunc(data, func(a, b GraphData) int {
+		return cmp.Compare(a.Value, b.Value)
 	})
 
 	// The data is used for a bar chart, so we need to convert the data
-	for i, rating := range ratings {
+	for i, row := range data {
 		var (
 			// Calcualte the bar Height
 			// Subtract 20 from the maxBarHeight to make room for the text
-			barHeight = int(float64(rating.Count) / float64(maxCountInRatings.Count) * float64(graphHeight-20))
-			barWidth  = int(float64(graphWidth)/float64(len(ratings))) - 5
+			barHeight = int(float64(row.Value) / float64(maxCount.Value) * float64(graphHeight-40))
+			barWidth  = int(float64(graphWidth)/float64(len(data))) - 5
 
 			// Space the bars evenly across the graph
-			barX = (graphWidth / len(ratings)) * i
-
-			// Subtract the barHeight from the maxBarHeight to position the bar at the bottom.
-			// This is because the SVG coordinate system starts at the top left corner.
-			barY = graphHeight - barHeight
+			barX = (graphWidth / len(data)) * i
+			barY = graphHeight - barHeight - 20
 		)
 
 		// Position centered on the bar. Subtract 3.4 which is half the width of the text.
 		charWidth := 8.67 // Uses tabular nums so all characters are the same width
-		numberOfCharsInCount := len(strconv.Itoa(rating.Count))
-		numberOfCharsInRating := len(strconv.Itoa(rating.Rating))
+		numberOfCharsInCount := len(strconv.Itoa(row.Value))
+		numberOfCharsInRating := len(strconv.Itoa(row.Label))
 
 		halfWidthOfCount := charWidth * float64(numberOfCharsInCount) / 2
 		halfWidthOfRating := charWidth * float64(numberOfCharsInRating) / 2
@@ -158,12 +167,12 @@ func getRatings() ([]Bar, error) {
 		// Subtract 8 to put some space between the text and the bar
 		valueY := barY - 8
 		// 16,5 is the height of the text
-		labelY := float64(barY) + float64(barHeight)/2 + 16.5/2
+		labelY := float64(barY) + float64(barHeight) + 20
 
 		// Add the data to the graphData slice
 		graphData = append(graphData, Bar{
-			Label:     rating.Rating,
-			Value:     rating.Count,
+			Label:     row.Label,
+			Value:     row.Value,
 			BarHeight: barHeight,
 			BarWidth:  barWidth,
 			BarX:      barX,
