@@ -6,6 +6,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+func redirectToHome(c *fiber.Ctx) error {
+	return c.Redirect("/")
+}
+
 func SetupRoutes(app *fiber.App) {
 	app.Get("/health", handlers.HandleHealthCheck)
 	app.Get("/", handlers.HandleFeed)
@@ -17,6 +21,7 @@ func SetupRoutes(app *fiber.App) {
 	// --------------------------
 	movieGroup := app.Group("/movies")
 
+	movieGroup.Get("/", redirectToHome)
 	movieGroup.Get("/imdb", handlers.HandleGetByImdbId)
 	movieGroup.Get("/new", handlers.HandleGetMovieNew)
 	movieGroup.Post("/new", handlers.HandlePostMovieNew)
@@ -29,6 +34,8 @@ func SetupRoutes(app *fiber.App) {
 	// Person
 	// --------------------------
 	personGroup := app.Group("/person")
+
+	personGroup.Get("/", redirectToHome)
 	personGroup.Get("/:id", handlers.HandleGetPersonByID)
 
 	// Search
