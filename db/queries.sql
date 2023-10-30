@@ -51,7 +51,7 @@ SELECT
     m.title,
     m.overview,
     m.release_date,
-    s.date AS watched_at
+    s.date at time zone 'UTC' at time zone 'Europe/Stockholm' AS watched_at
 FROM
     seen AS s
     INNER JOIN movie AS m ON m.id = s.movie_id
@@ -98,7 +98,7 @@ GROUP BY
 
 -- name: seen-by-user-id
 SELECT
-    date
+    date at time zone 'UTC' at time zone 'Europe/Stockholm' AS date
 FROM
     seen
 WHERE
