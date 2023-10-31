@@ -133,16 +133,21 @@ func HandleGetMovieNew(c *fiber.Ctx) error {
 	return c.Render("add", nil)
 }
 
-func tmdbFetchMovie(route string) map[string]interface{} {
+func tmdbFetchMovie(route string) (map[string]interface{}, error) {
 	tmdbBaseUrl := "https://api.themoviedb.org/3/movie"
 	tmdbKey := os.Getenv("TMDB_API_KEY")
 
 	resp, err := http.Get(tmdbBaseUrl + route + "?api_key=" + tmdbKey)
+
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	defer resp.Body.Close()
+
+	if resp.StatusCode == 404 {
+		return nil, fmt.Errorf("movie not found")
+	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -152,7 +157,7 @@ func tmdbFetchMovie(route string) map[string]interface{} {
 	var result map[string]interface{}
 	json.Unmarshal([]byte(body), &result)
 
-	return result
+	return result, nil
 }
 
 // Handle adding a movie
@@ -179,11 +184,18 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 		return err
 	}
 
-	var (
-		movieInformation = tmdbFetchMovie("/" + imdbId)
-		movieCast        = tmdbFetchMovie("/" + imdbId + "/credits")
-		movieId          = 0
-	)
+	movieId := 0
+	movieInformation, err := tmdbFetchMovie("/" + imdbId)
+
+	if err != nil {
+		log.Println("Error fetching movie information")
+	}
+
+	movieCast, err := tmdbFetchMovie("/" + imdbId + "/credits")
+
+	if err != nil {
+		log.Println("Error fetching movie cast")
+	}
 
 	watchedAt, err := time.Parse("2006-01-02T15:04", data.WatchedAt)
 
@@ -223,16 +235,18 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 		})
 	}
 
-	_, err = tx.NamedExec(`INSERT INTO genre (name) VALUES (:name) ON CONFLICT (name) DO NOTHING`, genres)
+	if len(genres) > 0 {
+		_, err = tx.NamedExec(`INSERT INTO genre (name) VALUES (:name) ON CONFLICT (name) DO NOTHING`, genres)
 
-	if err != nil {
-		return err
-	}
+		if err != nil {
+			return err
+		}
 
-	_, err = tx.NamedExec(`INSERT INTO movie_genre (movie_id, genre_id) VALUES (:movie_id, (SELECT id FROM genre WHERE name = :name)) ON CONFLICT DO NOTHING`, genres)
+		_, err = tx.NamedExec(`INSERT INTO movie_genre (movie_id, genre_id) VALUES (:movie_id, (SELECT id FROM genre WHERE name = :name)) ON CONFLICT DO NOTHING`, genres)
 
-	if err != nil {
-		return err
+		if err != nil {
+			return err
+		}
 	}
 
 	type NewPerson struct {
@@ -337,7 +351,8 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 		})
 	}
 
-	_, err = tx.NamedExec(`
+	if len(castStructs) > 0 {
+		_, err = tx.NamedExec(`
 	INSERT INTO person (name, original_id, popularity, profile_picture)
 	VALUES (:name, :id, :popularity, :profile_picture)
 	ON CONFLICT (original_id)
@@ -346,39 +361,42 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 	  profile_picture = excluded.profile_picture
 	`, castStructs)
 
-	if err != nil {
-		return err
-	}
+		if err != nil {
+			return err
+		}
 
-	_, err = tx.NamedExec(`
+		_, err = tx.NamedExec(`
 	INSERT INTO movie_person (movie_id, person_id, job, character)
 	    VALUES (:movie_id, (SELECT id FROM person WHERE original_id = :id), 'cast', :character)
 	ON CONFLICT (movie_id, person_id, job)
 	DO UPDATE SET character = excluded.character
 	`, castStructs)
 
-	if err != nil {
-		return err
+		if err != nil {
+			return err
+		}
 	}
 
-	_, err = tx.NamedExec(`
+	if len(crewStructs) > 0 {
+		_, err = tx.NamedExec(`
 	INSERT INTO person (name, original_id, popularity, profile_picture)
 	VALUES (:name, :id, :popularity, :profile_picture)
 	ON CONFLICT DO NOTHING
 	`, crewStructs)
 
-	if err != nil {
-		return err
-	}
+		if err != nil {
+			return err
+		}
 
-	_, err = tx.NamedExec(`
+		_, err = tx.NamedExec(`
 	INSERT INTO movie_person (movie_id, person_id, job)
     VALUES (:movie_id, (SELECT id FROM person WHERE original_id = :id), :job)
 	ON CONFLICT DO NOTHING
 	`, crewStructs)
 
-	if err != nil {
-		return err
+		if err != nil {
+			return err
+		}
 	}
 
 	tx.Commit()
