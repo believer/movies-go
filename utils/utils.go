@@ -8,7 +8,9 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/a-h/templ"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/adaptor"
 )
 
 func IsAuthenticated(c *fiber.Ctx) bool {
@@ -53,4 +55,8 @@ func FormatRuntime(runtime int) string {
 	minutes := runtime % 60
 
 	return fmt.Sprintf("%d days %d hours %d minutes", days, hours, minutes)
+}
+
+func TemplRender(c *fiber.Ctx, component templ.Component) error {
+	return adaptor.HTTPHandler(templ.Handler(component))(c)
 }

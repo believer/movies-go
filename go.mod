@@ -4,21 +4,19 @@ go 1.21.0
 
 require (
 	github.com/gofiber/fiber/v2 v2.49.2
-	github.com/gofiber/template/html/v2 v2.0.5
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/joho/godotenv v1.5.1
 	github.com/lib/pq v1.10.9
 )
 
 require (
+	github.com/a-h/templ v0.2.432
 	github.com/qustavo/dotsql v1.1.0
 	golang.org/x/text v0.8.0
 )
 
 require (
 	github.com/andybalholm/brotli v1.0.5 // indirect
-	github.com/gofiber/template v1.8.2 // indirect
-	github.com/gofiber/utils v1.1.0 // indirect
 	github.com/google/uuid v1.3.1 // indirect
 	github.com/klauspost/compress v1.17.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect

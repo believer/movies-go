@@ -1,9 +1,12 @@
 package handlers
 
 import (
+	"believer/movies/components"
 	"believer/movies/db"
 	"believer/movies/types"
+	"believer/movies/utils"
 	"database/sql"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -11,13 +14,19 @@ import (
 func HandleMovieSearch(c *fiber.Ctx) error {
 	var movies types.Movies
 
+	pageQuery := c.Query("page", "1")
+	page, err := strconv.Atoi(pageQuery)
+
+	if err != nil {
+		page = 1
+	}
 	search := c.FormValue("search")
 
 	if search == "" {
 		return c.Redirect("/")
 	}
 
-	err := db.Client.Select(&movies, `
+	err = db.Client.Select(&movies, `
 SELECT m.id, m.title, m.overview, m.release_date AS watched_at
 FROM movie AS m
 WHERE m.title ILIKE '%' || $1 || '%'
@@ -33,7 +42,9 @@ ORDER BY m.release_date DESC
 		return err
 	}
 
-	return c.Render("index", fiber.Map{
-		"Movies": movies,
-	})
+	return utils.TemplRender(c, components.Feed(
+		utils.IsAuthenticated(c),
+		movies,
+		page+1,
+	))
 }

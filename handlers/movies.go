@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"believer/movies/components"
 	"believer/movies/db"
 	"believer/movies/types"
 	"believer/movies/utils"
@@ -35,9 +36,7 @@ func HandleGetMovieByID(c *fiber.Ctx) error {
 		}
 	}
 
-	return c.Render("movie", fiber.Map{
-		"Movie": movie,
-	})
+	return utils.TemplRender(c, components.Movie(movie))
 }
 
 type CastDB struct {
@@ -47,21 +46,14 @@ type CastDB struct {
 	Characters pq.StringArray `db:"characters"`
 }
 
-type CastAndCrewDTO struct {
-	Name      string
-	ID        int32
-	Character string
-}
-
-type CastDTO struct {
-	Job    string
-	People []CastAndCrewDTO
-}
-
-func ZipCast(names []string, ids []int32, characters []string) []CastAndCrewDTO {
-	zipped := make([]CastAndCrewDTO, len(names))
+func ZipCast(names []string, ids []int32, characters []string) []components.CastAndCrewDTO {
+	zipped := make([]components.CastAndCrewDTO, len(names))
 	for i := range names {
-		zipped[i] = CastAndCrewDTO{names[i], ids[i], characters[i]}
+		zipped[i] = components.CastAndCrewDTO{
+			Name:      names[i],
+			ID:        ids[i],
+			Character: characters[i],
+		}
 	}
 	return zipped
 }
@@ -75,7 +67,7 @@ func HandleGetMovieCastByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	updatedCastOrCrew := make([]CastDTO, len(castOrCrew))
+	updatedCastOrCrew := make([]components.CastDTO, len(castOrCrew))
 	hasCharacters := false
 
 	for i, cast := range castOrCrew {
@@ -94,13 +86,13 @@ func HandleGetMovieCastByID(c *fiber.Ctx) error {
 			characters = make([]string, len(cast.Names))
 		}
 
-		updatedCastOrCrew[i] = CastDTO{cast.Job, ZipCast(cast.Names, cast.Ids, characters)}
+		updatedCastOrCrew[i] = components.CastDTO{
+			Job:    cast.Job,
+			People: ZipCast(cast.Names, cast.Ids, characters),
+		}
 	}
 
-	return c.Render("partials/cast-list", fiber.Map{
-		"CastOrCrew":    updatedCastOrCrew,
-		"HasCharacters": hasCharacters,
-	}, "")
+	return utils.TemplRender(c, components.CastList(updatedCastOrCrew, hasCharacters))
 }
 
 func HandleGetMovieSeenByID(c *fiber.Ctx) error {
@@ -115,11 +107,7 @@ func HandleGetMovieSeenByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Render("partials/watched", fiber.Map{
-		"WatchedAt": watchedAt,
-		"ID":        id,
-		"IsAdmin":   isAuth,
-	}, "")
+	return utils.TemplRender(c, components.Watched(watchedAt, isAuth, id))
 }
 
 // Render the add movie page
@@ -130,7 +118,7 @@ func HandleGetMovieNew(c *fiber.Ctx) error {
 		return c.Redirect("/")
 	}
 
-	return c.Render("add", nil)
+	return utils.TemplRender(c, components.NewMovie())
 }
 
 func tmdbFetchMovie(route string) (map[string]interface{}, error) {
@@ -401,7 +389,7 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 
 	tx.Commit()
 
-	c.Set("HX-Redirect", "/movies/"+fmt.Sprint(movieId))
+	c.Set("HX-Redirect", fmt.Sprintf("/movies/%d", movieId))
 
 	return c.SendStatus(fiber.StatusOK)
 }
@@ -423,9 +411,7 @@ SELECT id, title FROM movie WHERE imdb_id = $1
 		return c.SendString("")
 	}
 
-	return c.Render("partials/movie-exists", fiber.Map{
-		"Movie": movie,
-	}, "")
+	return utils.TemplRender(c, components.MovieExists(movie))
 }
 
 func HandlePostMovieSeenNew(c *fiber.Ctx) error {
@@ -446,7 +432,7 @@ func HandlePostMovieSeenNew(c *fiber.Ctx) error {
 		return err
 	}
 
-	c.Set("HX-Redirect", "/movies/"+c.Params("id"))
+	c.Set("HX-Redirect", fmt.Sprintf("/movies/%s", c.Params("id")))
 
 	return c.SendStatus(fiber.StatusOK)
 }

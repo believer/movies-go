@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"believer/movies/components"
 	"believer/movies/db"
 	"believer/movies/types"
 	"believer/movies/utils"
@@ -28,15 +29,17 @@ func HandleFeed(c *fiber.Ctx) error {
 		panic(err)
 	}
 
-	return c.Render("index", fiber.Map{
-		"IsAdmin":  utils.IsAuthenticated(c),
-		"Movies":   movies,
-		"NextPage": page + 1,
-	})
+	feed := components.Feed(
+		utils.IsAuthenticated(c),
+		movies,
+		page+1,
+	)
+
+	return utils.TemplRender(c, feed)
 }
 
 func HandleGetLogin(c *fiber.Ctx) error {
-	return c.Render("login", fiber.Map{})
+	return utils.TemplRender(c, components.Login(""))
 }
 
 func HandlePostLogin(c *fiber.Ctx) error {
@@ -64,9 +67,7 @@ func HandlePostLogin(c *fiber.Ctx) error {
 		return c.SendStatus(200)
 	}
 
-	return c.Render("login", fiber.Map{
-		"Error": "Invalid username or password",
-	}, "")
+	return utils.TemplRender(c, components.Login("Invalid username or password"))
 }
 
 func HandlePostLogout(c *fiber.Ctx) error {

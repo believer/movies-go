@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"believer/movies/components"
 	"believer/movies/db"
+	"believer/movies/types"
 	"believer/movies/utils"
 	"cmp"
 	"strconv"
@@ -13,14 +15,8 @@ import (
 	"golang.org/x/text/language"
 )
 
-type Person struct {
-	Name  string `db:"name"`
-	ID    string `db:"id"`
-	Count int    `db:"count"`
-}
-
-func getPersonsByJob(job string) ([]Person, error) {
-	var persons []Person
+func getPersonsByJob(job string) ([]types.PersonStats, error) {
+	var persons []types.PersonStats
 
 	err := db.Dot.Select(db.Client, &persons, "stats-most-watched-by-job", job)
 
@@ -32,20 +28,8 @@ func getPersonsByJob(job string) ([]Person, error) {
 }
 
 func HandleGetStats(c *fiber.Ctx) error {
-	var stats struct {
-		UniqueMovies      int     `db:"unique_movies"`
-		SeenWithRewatches int     `db:"seen_with_rewatches"`
-		TotalRuntime      int     `db:"total_runtime"`
-		TopImdbRating     float64 `db:"top_imdb_rating"`
-		TopImdbTitle      string  `db:"top_imdb_title"`
-		TopImdbID         string  `db:"top_imdb_id"`
-	}
-
-	var movies []struct {
-		Title string `db:"title"`
-		ID    string `db:"id"`
-		Count int    `db:"count"`
-	}
+	var stats types.Stats
+	var movies []types.MovieStats
 
 	err := db.Dot.Select(db.Client, &movies, "stats-most-watched-movies")
 
@@ -77,14 +61,14 @@ func HandleGetStats(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Render("stats", fiber.Map{
-		"Stats":                 stats,
-		"FormattedTotalRuntime": utils.FormatRuntime(stats.TotalRuntime),
-		"MostWatched":           movies,
-		"MostWatchedCast":       cast,
-		"Ratings":               ratings,
-		"WatchedByYear":         watchedByYear,
-	})
+	return utils.TemplRender(c, components.Stats(
+		stats,
+		utils.FormatRuntime(stats.TotalRuntime),
+		cast,
+		watchedByYear,
+		ratings,
+		movies,
+	))
 }
 
 func HandleGetMostWatchedByJob(c *fiber.Ctx) error {
@@ -95,32 +79,13 @@ func HandleGetMostWatchedByJob(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Render("partials/stats/most-watched-person", fiber.Map{
-		"Data": persons,
-		"Job":  cases.Title(language.English).String(job),
-	})
+	return utils.TemplRender(c, components.MostWatchedPerson(persons,
+		cases.Title(language.English).String(job),
+	))
 }
 
-type GraphData struct {
-	Label int `db:"label"`
-	Value int `db:"value"`
-}
-
-type Bar struct {
-	Label     int
-	Value     int
-	BarHeight int
-	BarWidth  int
-	BarX      int
-	BarY      int
-	LabelX    float64
-	LabelY    float64
-	ValueX    float64
-	ValueY    int
-}
-
-func getGraphWithQuery(query string) ([]Bar, error) {
-	var data []GraphData
+func getGraphWithQuery(query string) ([]types.Bar, error) {
+	var data []types.GraphData
 
 	err := db.Dot.Select(db.Client, &data, query)
 
@@ -131,12 +96,12 @@ func getGraphWithQuery(query string) ([]Bar, error) {
 	return constructGraphFromData(data)
 }
 
-func constructGraphFromData(data []GraphData) ([]Bar, error) {
-	var graphData []Bar
+func constructGraphFromData(data []types.GraphData) ([]types.Bar, error) {
+	var graphData []types.Bar
 
 	graphHeight := 200
 	graphWidth := 536
-	maxCount := slices.MaxFunc(data, func(a, b GraphData) int {
+	maxCount := slices.MaxFunc(data, func(a, b types.GraphData) int {
 		return cmp.Compare(a.Value, b.Value)
 	})
 
@@ -170,7 +135,7 @@ func constructGraphFromData(data []GraphData) ([]Bar, error) {
 		labelY := float64(barY) + float64(barHeight) + 20
 
 		// Add the data to the graphData slice
-		graphData = append(graphData, Bar{
+		graphData = append(graphData, types.Bar{
 			Label:     row.Label,
 			Value:     row.Value,
 			BarHeight: barHeight,

@@ -1,0 +1,31 @@
+package components
+
+import "time"
+import "fmt"
+
+templ Watched(watchedAt []time.Time, isAdmin bool, id string) {
+	<section
+ 		class="flex flex-col gap-4 text-neutral-500 dark:text-neutral-400 md:text-sm"
+	>
+		if len(watchedAt) > 0 {
+			<ol class="flex flex-col gap-2">
+				for _, w := range watchedAt {
+					<li class="tabular-nums">{ w.Format("2006-01-02 15:04") }</li>
+				}
+				if isAdmin {
+					<li>
+						<a
+ 							href="#"
+ 							hx-post={ fmt.Sprintf("/movies/%s/seen", id) }
+ 							class="border-b border-dashed border-neutral-500 dark:border-neutral-400"
+						>
+							Add new watch
+						</a>
+					</li>
+				}
+			</ol>
+		} else {
+			<span>No watches found</span>
+		}
+	</section>
+}
