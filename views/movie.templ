@@ -21,8 +21,10 @@ templ Movie(movie types.Movie) {
 			}
 			@components.Section("Metadata", 0) {
 				@components.DescriptionList() {
-					@components.DescriptionListItem("Tagline", false) {
-						{ movie.Tagline }
+					if movie.Tagline != "" {
+						@components.DescriptionListItem("Tagline", false) {
+							{ movie.Tagline }
+						}
 					}
 					@components.DescriptionListItem("Release date", true) {
 						{ movie.ReleaseDate.Format("2006-01-02") }
