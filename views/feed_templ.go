@@ -17,6 +17,11 @@ import (
 	"strconv"
 )
 
+// TODO: Escaping of class and hyperscript in feed list item when
+// templ gets updated to v0.2.470
+// Hyperscript doesn't work when html entities are used
+// Class breaks the syntax highlighting
+
 func Feed(isAdmin bool, movies types.Movies, nextPage int) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
