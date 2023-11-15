@@ -21,6 +21,9 @@ templ Movie(movie types.Movie) {
 			}
 			@components.Section("Metadata", 0) {
 				@components.DescriptionList() {
+					@components.DescriptionListItem("Tagline", false) {
+						{ movie.Tagline }
+					}
 					@components.DescriptionListItem("Release date", true) {
 						{ movie.ReleaseDate.Format("2006-01-02") }
 					}
@@ -58,13 +61,13 @@ templ Movie(movie types.Movie) {
 					@components.DescriptionListItem("Genres", false) {
 						{ strings.Join(movie.Genres,", ") }
 					}
-					@components.DescriptionListItem("Watched", false) {
-						<span hx-get={ fmt.Sprintf("/movies/%d/seen", movie.ID) } hx-trigger="load"></span>
-					}
 					if movie.Rating.Valid {
 						@components.DescriptionListItem("Rating", false) {
 							{ strconv.FormatInt(movie.Rating.Int64, 16) }
 						}
+					}
+					@components.DescriptionListItem("Watched", false) {
+						<span hx-get={ fmt.Sprintf("/movies/%d/seen", movie.ID) } hx-trigger="load"></span>
 					}
 				}
 			}
