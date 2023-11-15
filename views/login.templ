@@ -8,9 +8,10 @@ templ Login(loginError string) {
  			hx-post="/login"
  			class="mx-auto flex max-w-xl flex-col gap-6 px-4 py-8"
  			hx-swap="outerHTML"
+ 			hx-replace-url="/"
 		>
 			@components.TextInput("username", "Username", "")
-			@components.TextInput("password", "Password", "")
+			@components.PasswordInput("password", "Password", "")
 			<footer class="flex flex-col gap-4">
 				if loginError != "" {
 					<div class="text-sm text-red-500">{ loginError }</div>

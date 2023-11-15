@@ -31,7 +31,7 @@ func Login(loginError string) templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form hx-post=\"/login\" class=\"mx-auto flex max-w-xl flex-col gap-6 px-4 py-8\" hx-swap=\"outerHTML\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form hx-post=\"/login\" class=\"mx-auto flex max-w-xl flex-col gap-6 px-4 py-8\" hx-swap=\"outerHTML\" hx-replace-url=\"/\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -39,7 +39,7 @@ func Login(loginError string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.TextInput("password", "Password", "").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.PasswordInput("password", "Password", "").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
