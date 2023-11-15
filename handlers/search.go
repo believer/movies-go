@@ -1,10 +1,10 @@
 package handlers
 
 import (
-	"believer/movies/components"
 	"believer/movies/db"
 	"believer/movies/types"
 	"believer/movies/utils"
+	"believer/movies/views"
 	"database/sql"
 	"strconv"
 
@@ -42,7 +42,7 @@ ORDER BY m.release_date DESC
 		return err
 	}
 
-	return utils.TemplRender(c, components.Feed(
+	return utils.TemplRender(c, views.Feed(
 		utils.IsAuthenticated(c),
 		movies,
 		page+1,

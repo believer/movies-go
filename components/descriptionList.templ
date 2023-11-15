@@ -1,0 +1,26 @@
+package components
+
+templ descriptionDetail(text string) {
+	<dd class="font-semibold">
+		{ text }
+	</dd>
+}
+
+templ descriptionTerm(isTabular bool) {
+	<dt class={ templ.KV("tabular-nums", isTabular) }>
+		{ children... }
+	</dt>
+}
+
+templ DescriptionList() {
+	<dl class="grid sm:grid-cols-[max-content_1fr] gap-x-6 gap-y-2">
+		{ children... }
+	</dl>
+}
+
+templ DescriptionListItem(detail string, isTabular bool) {
+	@descriptionDetail(detail)
+	@descriptionTerm(isTabular) {
+		{ children... }
+	}
+}

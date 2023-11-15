@@ -18,8 +18,7 @@ templ CastList(castOrCrew []CastDTO, hasCharacters bool) {
  		class="flex flex-col gap-8 text-neutral-500 dark:text-neutral-400 md:text-sm"
 	>
 		for _, job := range castOrCrew {
-			<section class="flex flex-col gap-4">
-				@SectionTitle(job.Job)
+			@Section(job.Job, 0) {
 				<ul class="grid grid-cols-1 gap-2 sm:grid-cols-2">
 					for _, person := range job.People {
 						if hasCharacters {
@@ -49,7 +48,7 @@ templ CastList(castOrCrew []CastDTO, hasCharacters bool) {
 						}
 					}
 				</ul>
-			</section>
+			}
 		}
 	</div>
 }

@@ -1,24 +1,14 @@
-package components
+package views
 
-import "believer/movies/types"
-import "strconv"
-import "fmt"
+import (
+	"believer/movies/types"
+	"believer/movies/components"
+	"fmt"
+)
 
 templ Credit(title string, data types.Movies) {
 	if len(data) > 0 {
-		<section
- 			class="flex flex-col gap-4 text-neutral-500 dark:text-neutral-400 md:text-sm"
-		>
-			<h2
- 				class="flex items-center gap-4 font-medium text-neutral-700 after:h-[0.5px] after:flex-grow after:bg-neutral-300 dark:text-neutral-300 dark:after:bg-neutral-700"
-			>
-				<span>
-					{ title }
-					<span class="font-regular text-xs dark:text-neutral-400">
-						({ strconv.Itoa(len(data)) })
-					</span>
-				</span>
-			</h2>
+		@components.Section(title, len(data)) {
 			<ol class="flex flex-col gap-2">
 				for _, movie := range data {
 					<li class="flex items-baseline justify-between gap-4">
@@ -37,7 +27,7 @@ templ Credit(title string, data types.Movies) {
 					</li>
 				}
 			</ol>
-		</section>
+		}
 	}
 }
 

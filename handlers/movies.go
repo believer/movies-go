@@ -5,6 +5,7 @@ import (
 	"believer/movies/db"
 	"believer/movies/types"
 	"believer/movies/utils"
+	"believer/movies/views"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -36,7 +37,7 @@ func HandleGetMovieByID(c *fiber.Ctx) error {
 		}
 	}
 
-	return utils.TemplRender(c, components.Movie(movie))
+	return utils.TemplRender(c, views.Movie(movie))
 }
 
 type CastDB struct {
@@ -118,7 +119,7 @@ func HandleGetMovieNew(c *fiber.Ctx) error {
 		return c.Redirect("/")
 	}
 
-	return utils.TemplRender(c, components.NewMovie())
+	return utils.TemplRender(c, views.NewMovie())
 }
 
 func tmdbFetchMovie(route string) (map[string]interface{}, error) {

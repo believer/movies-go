@@ -7,7 +7,7 @@ import (
 
 templ Graph(data []types.Bar, title string) {
 	<section class="flex flex-col gap-4">
-		@SectionTitle(title)
+		@SectionTitle(title, 0)
 		<svg role="img" viewBox="0 0 536 200">
 			for _, bar := range data {
 				<g

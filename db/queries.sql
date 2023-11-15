@@ -158,7 +158,7 @@ WHERE
 -- name: stats-most-watched-movies
 SELECT
     COUNT(*) AS count,
-    m.title,
+    m.title AS name,
     m.id
 FROM
     seen AS s

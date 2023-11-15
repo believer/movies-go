@@ -1,10 +1,10 @@
 package handlers
 
 import (
-	"believer/movies/components"
 	"believer/movies/db"
 	"believer/movies/types"
 	"believer/movies/utils"
+	"believer/movies/views"
 	"database/sql"
 
 	"github.com/gofiber/fiber/v2"
@@ -24,5 +24,5 @@ func HandleGetPersonByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.TemplRender(c, components.Person(person))
+	return utils.TemplRender(c, views.Person(person))
 }

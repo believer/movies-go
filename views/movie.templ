@@ -1,8 +1,12 @@
-package components
+package views
 
-import "believer/movies/types"
-import "strings"
-import "fmt"
+import (
+	"believer/movies/types"
+	"strings"
+	"fmt"
+	"believer/movies/components"
+	"strconv"
+)
 
 // TODO: View transition of elements doesn't work because we can't have a
 // parameterized "style" attribute in the template. At least yet...
@@ -29,13 +33,14 @@ templ Movie(movie types.Movie) {
 			<section
  				class="flex flex-col gap-4 text-neutral-500 dark:text-neutral-400 md:text-sm"
 			>
-				<dl class="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2">
-					<dd class="font-semibold">Release date</dd>
-					<dt class="tabular-nums">{ movie.ReleaseDate.Format("2006-01-02") }</dt>
-					<dd class="font-semibold">Runtime</dd>
-					<dt>{ movie.RuntimeFormatted() }</dt>
-					<dd class="font-semibold">IMDb</dd>
-					<dt>
+				@components.DescriptionList() {
+					@components.DescriptionListItem("Release date", true) {
+						{ movie.ReleaseDate.Format("2006-01-02") }
+					}
+					@components.DescriptionListItem("Runtime", false) {
+						{ movie.RuntimeFormatted() }
+					}
+					@components.DescriptionListItem("IMDb", false) {
 						<a
  							href={ templ.URL(fmt.Sprintf("https://www.imdb.com/title/%s", movie.ImdbId)) }
  							class="inline-flex items-center gap-1 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
@@ -62,15 +67,19 @@ templ Movie(movie types.Movie) {
 								></path>
 							</svg>
 						</a>
-					</dt>
-					<dd class="font-semibold">Genres</dd>
-					<dt>{ strings.Join(movie.Genres,", ") }</dt>
-					<dd class="font-semibold">Watched</dd>
-					<dt hx-get={ fmt.Sprintf("/movies/%d/seen", movie.ID) } hx-trigger="load"></dt>
-					if movie.Rating.Valid {
-						<dd class="font-semibold">Rating</dd>
 					}
-				</dl>
+					@components.DescriptionListItem("Genres", false) {
+						{ strings.Join(movie.Genres,", ") }
+					}
+					@components.DescriptionListItem("Watched", false) {
+						<span hx-get={ fmt.Sprintf("/movies/%d/seen", movie.ID) } hx-trigger="load"></span>
+					}
+					if movie.Rating.Valid {
+						@components.DescriptionListItem("Rating", false) {
+							{ strconv.FormatInt(movie.Rating.Int64, 16) }
+						}
+					}
+				}
 			</section>
 			<div
  				hx-get={ fmt.Sprintf("/movies/%d/cast", movie.ID) }

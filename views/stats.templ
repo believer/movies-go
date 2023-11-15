@@ -1,12 +1,13 @@
-package components
+package views
 
 import (
 	"believer/movies/types"
+	"believer/movies/components"
 	"strconv"
 	"fmt"
 )
 
-templ Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []types.PersonStats, watchedByYear []types.Bar, ratings []types.Bar, mostWatchedMovies []types.MovieStats) {
+templ Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []components.ListItem, watchedByYear []types.Bar, ratings []types.Bar, mostWatchedMovies []components.ListItem) {
 	@Layout("Stats") {
 		<div class="mx-auto flex max-w-xl flex-col gap-8 px-5 py-8">
 			<nav class="flex items-center gap-5">
@@ -17,34 +18,36 @@ templ Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []t
 					Home
 				</a>
 			</nav>
-			@Graph(watchedByYear, "Watched by year")
-			@Graph(ratings, "Ratings")
-			<section
- 				class="flex flex-col gap-4 text-neutral-500 dark:text-neutral-400 md:text-sm"
-			>
-				@SectionTitle("Stats")
-				<dl class="grid gap-x-6 gap-y-2 sm:grid-cols-[max-content_1fr]">
-					<dd class="font-semibold">Unique movies seen</dd>
-					<dt class="tabular-nums">{ strconv.Itoa(stats.UniqueMovies) }</dt>
-					<dd class="font-semibold">Movies seen with rewatches</dd>
-					<dt class="tabular-nums">{ strconv.Itoa(stats.SeenWithRewatches) }</dt>
-					<dd class="font-semibold">Time watched</dd>
-					<dt class="tabular-nums">{ formattedTotalRuntime }</dt>
-					<dd class="font-semibold">Top IMDb rating</dd>
-					<dt class="tabular-nums">
+			@components.Graph(watchedByYear, "Watched by year")
+			@components.Graph(ratings, "Ratings")
+			@components.Section("Stats", 0) {
+				@components.DescriptionList() {
+					@components.DescriptionListItem("Unique movies seen", true) {
+						{ strconv.Itoa(stats.UniqueMovies) }
+					}
+					@components.DescriptionListItem("Movies seen with rewatches", true) {
+						{ strconv.Itoa(stats.SeenWithRewatches) }
+					}
+					@components.DescriptionListItem("Time watched", true) {
+						{ formattedTotalRuntime }
+					}
+					@components.DescriptionListItem("Top IMDb rating", true) {
 						<a
  							class="border-b border-dashed border-neutral-500 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600"
  							href={ templ.URL(fmt.Sprintf("/movies/%s", stats.TopImdbID)) }
-						>{ stats.TopImdbTitle }</a>
-						<span class="text-xs">({ strconv.FormatFloat(stats.TopImdbRating, 'f', 1, 64) })</span>
-					</dt>
-				</dl>
-			</section>
-			@MostWatchedMovies(mostWatchedMovies)
-			<section
- 				class="flex flex-col gap-4 md:text-sm text-neutral-500 dark:text-neutral-400"
-			>
-				@SectionTitle("Cast")
+						>
+							{ stats.TopImdbTitle }
+						</a>
+						<span class="text-xs">
+							({ strconv.FormatFloat(stats.TopImdbRating, 'f', 1, 64) })
+						</span>
+					}
+				}
+			}
+			@components.Section("Most watched movies", 0) {
+				@components.OrderedList(mostWatchedMovies, "movie")
+			}
+			@components.Section("Cast", 0) {
 				<ol class="flex flex-col gap-2">
 					for i, cast := range mostWatchedCast {
 						<li
@@ -68,7 +71,7 @@ templ Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []t
 						</li>
 					}
 				</ol>
-			</section>
+			}
 			<section
  				hx-get="/stats/most-watched-person/director"
  				hx-trigger="revealed"

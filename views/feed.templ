@@ -1,8 +1,10 @@
-package components
+package views
 
-import "believer/movies/types"
-import "fmt"
-import "strconv"
+import (
+	"believer/movies/types"
+	"fmt"
+	"strconv"
+)
 
 templ Feed(isAdmin bool, movies types.Movies, nextPage int) {
 	@Layout("") {

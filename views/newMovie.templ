@@ -1,7 +1,7 @@
-package components
+package views
 
 templ NewMovie() {
-	@Layout("") {
+	@Layout("Add movie") {
 		<form
  			hx-post="/movies/new"
  			class="mx-auto flex max-w-xl flex-col gap-6 px-4 py-8"
@@ -10,7 +10,9 @@ templ NewMovie() {
 				<label
  					for="imdb_id"
  					class="text-sm font-semibold text-neutral-500 dark:text-neutral-400"
-				>IMDb ID</label>
+				>
+					IMDb ID
+				</label>
 				<input
  					required
  					type="text"

@@ -1,0 +1,31 @@
+package components
+
+import (
+	"strconv"
+)
+
+templ SectionTitle(title string, numberOfItems int) {
+	<h2
+ 		class="flex items-center gap-4 font-medium text-neutral-700 after:h-[0.5px] after:flex-grow after:bg-neutral-300 dark:text-neutral-300 dark:after:bg-neutral-700"
+	>
+		if numberOfItems == 0 {
+			{ title }
+		} else {
+			<span>
+				{ title }
+				<span class="font-regular text-xs dark:text-neutral-400">
+					({ strconv.Itoa(numberOfItems) })
+				</span>
+			</span>
+		}
+	</h2>
+}
+
+templ Section(title string, numberOfItems int) {
+	<section
+ 		class="flex flex-col gap-4 md:text-sm text-neutral-500 dark:text-neutral-400"
+	>
+		@SectionTitle(title, numberOfItems)
+		{ children... }
+	</section>
+}

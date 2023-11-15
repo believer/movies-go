@@ -5,6 +5,7 @@ import (
 	"believer/movies/db"
 	"believer/movies/types"
 	"believer/movies/utils"
+	"believer/movies/views"
 	"cmp"
 	"strconv"
 
@@ -15,8 +16,8 @@ import (
 	"golang.org/x/text/language"
 )
 
-func getPersonsByJob(job string) ([]types.PersonStats, error) {
-	var persons []types.PersonStats
+func getPersonsByJob(job string) ([]components.ListItem, error) {
+	var persons []components.ListItem
 
 	err := db.Dot.Select(db.Client, &persons, "stats-most-watched-by-job", job)
 
@@ -29,7 +30,7 @@ func getPersonsByJob(job string) ([]types.PersonStats, error) {
 
 func HandleGetStats(c *fiber.Ctx) error {
 	var stats types.Stats
-	var movies []types.MovieStats
+	var movies []components.ListItem
 
 	err := db.Dot.Select(db.Client, &movies, "stats-most-watched-movies")
 
@@ -61,7 +62,7 @@ func HandleGetStats(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.TemplRender(c, components.Stats(
+	return utils.TemplRender(c, views.Stats(
 		stats,
 		utils.FormatRuntime(stats.TotalRuntime),
 		cast,
