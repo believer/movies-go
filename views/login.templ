@@ -1,5 +1,7 @@
 package views
 
+import "believer/movies/components"
+
 templ Login(loginError string) {
 	@Layout("Login") {
 		<form
@@ -7,36 +9,8 @@ templ Login(loginError string) {
  			class="mx-auto flex max-w-xl flex-col gap-6 px-4 py-8"
  			hx-swap="outerHTML"
 		>
-			<div class="relative flex flex-col gap-2">
-				<label
- 					for="username"
- 					class="text-sm font-semibold text-neutral-500 dark:text-neutral-400"
-				>
-					Username
-				</label>
-				<input
- 					required
- 					type="text"
- 					name="username"
- 					id="username"
- 					class="w-full rounded border border-neutral-200 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500"
-				/>
-			</div>
-			<div class="relative flex flex-col gap-2">
-				<label
- 					for="password"
- 					class="text-sm font-semibold text-neutral-500 dark:text-neutral-400"
-				>
-					Password
-				</label>
-				<input
- 					required
- 					type="password"
- 					name="password"
- 					id="password"
- 					class="w-full rounded border border-neutral-200 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500"
-				/>
-			</div>
+			@components.TextInput("username", "Username", "")
+			@components.TextInput("password", "Password", "")
 			<footer class="flex flex-col gap-4">
 				if loginError != "" {
 					<div class="text-sm text-red-500">{ loginError }</div>

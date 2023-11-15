@@ -1,12 +1,12 @@
 package components
 
-import "time"
-import "fmt"
+import (
+	"time"
+	"fmt"
+)
 
 templ Watched(watchedAt []time.Time, isAdmin bool, id string) {
-	<section
- 		class="flex flex-col gap-4 text-neutral-500 dark:text-neutral-400 md:text-sm"
-	>
+	@Section("", 0) {
 		if len(watchedAt) > 0 {
 			<ol class="flex flex-col gap-2">
 				for _, w := range watchedAt {
@@ -17,7 +17,7 @@ templ Watched(watchedAt []time.Time, isAdmin bool, id string) {
 						<a
  							href="#"
  							hx-post={ fmt.Sprintf("/movies/%s/seen", id) }
- 							class="border-b border-dashed border-neutral-500 dark:border-neutral-400"
+ 							class="truncate border-b border-dashed border-neutral-500 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600"
 						>
 							Add new watch
 						</a>
@@ -27,5 +27,5 @@ templ Watched(watchedAt []time.Time, isAdmin bool, id string) {
 		} else {
 			<span>No watches found</span>
 		}
-	</section>
+	}
 }

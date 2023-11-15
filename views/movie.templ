@@ -15,24 +15,11 @@ import (
 templ Movie(movie types.Movie) {
 	@Layout(movie.Title) {
 		<div class="mx-auto flex max-w-xl flex-col gap-8 px-5 py-8">
-			<h1
- 				class="flex items-baseline gap-2 text-xl font-semibold"
-			>
-				<a
- 					class="text-sm text-neutral-500 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:text-neutral-400 dark:focus-visible:outline-neutral-600"
- 					href="#"
- 					_="on click go back"
-				>
-					..
-				</a>
-				<span class="font-regular text-neutral-400">/</span>{ movie.Title }
-			</h1>
+			@components.H1(movie.Title)
 			if movie.Overview != "" {
 				<p class="text-neutral-500 dark:text-neutral-400">{ movie.Overview }</p>
 			}
-			<section
- 				class="flex flex-col gap-4 text-neutral-500 dark:text-neutral-400 md:text-sm"
-			>
+			@components.Section("Metadata", 0) {
 				@components.DescriptionList() {
 					@components.DescriptionListItem("Release date", true) {
 						{ movie.ReleaseDate.Format("2006-01-02") }
@@ -80,7 +67,7 @@ templ Movie(movie types.Movie) {
 						}
 					}
 				}
-			</section>
+			}
 			<div
  				hx-get={ fmt.Sprintf("/movies/%d/cast", movie.ID) }
  				hx-trigger="load"

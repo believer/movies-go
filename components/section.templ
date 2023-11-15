@@ -25,7 +25,9 @@ templ Section(title string, numberOfItems int) {
 	<section
  		class="flex flex-col gap-4 md:text-sm text-neutral-500 dark:text-neutral-400"
 	>
-		@SectionTitle(title, numberOfItems)
+		if title != "" {
+			@SectionTitle(title, numberOfItems)
+		}
 		{ children... }
 	</section>
 }

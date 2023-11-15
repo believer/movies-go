@@ -11,12 +11,11 @@ templ Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []c
 	@Layout("Stats") {
 		<div class="mx-auto flex max-w-xl flex-col gap-8 px-5 py-8">
 			<nav class="flex items-center gap-5">
-				<a
- 					class="left-8 top-10 border-b border-dashed border-neutral-500 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600 md:absolute"
- 					href="/"
-				>
-					Home
-				</a>
+				<div class="left-8 top-10 md:absolute">
+					@components.Link("/", "") {
+						Home
+					}
+				</div>
 			</nav>
 			@components.Graph(watchedByYear, "Watched by year")
 			@components.Graph(ratings, "Ratings")
@@ -48,29 +47,7 @@ templ Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []c
 				@components.OrderedList(mostWatchedMovies, "movie")
 			}
 			@components.Section("Cast", 0) {
-				<ol class="flex flex-col gap-2">
-					for i, cast := range mostWatchedCast {
-						<li
- 							class="flex items-baseline justify-between gap-4 before:content-[attr(data-position)] before:text-right before:tabular-nums before:w-[2ch] before:text-neutral-400 dark:before:text-neutral-600"
- 							data-position={ strconv.Itoa(i + 1) }
-						>
-							<a
- 								class="border-b border-dashed border-neutral-500 dark:border-neutral-400 truncate focus:outline-none focus-visible:outline-dashed focus-visible:rounded-sm focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
- 								href={ templ.URL(fmt.Sprintf("/person/%s", cast.ID)) }
-							>
-								{ cast.Name }
-							</a>
-							<hr
- 								class="m-0 flex-1 border-dashed border-neutral-300 dark:border-neutral-700"
-							/>
-							<span
- 								class="tabular-nums text-sm text-neutral-500 dark:text-neutral-400"
-							>
-								{ strconv.Itoa(cast.Count) }
-							</span>
-						</li>
-					}
-				</ol>
+				@components.OrderedList(mostWatchedCast, "person")
 			}
 			<section
  				hx-get="/stats/most-watched-person/director"
