@@ -105,7 +105,20 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" _=\"init if my @data-year is not equal to @data-year of previous &lt;li/&gt;\n         then\n          remove .before:content-none\n          add .{&#39;before:content-[attr(data-year)]&#39;}\n         end\n        \"><a href=\"")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" _=\"")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(`init if my @data-year is not equal to @data-year of previous <li/>
+         then
+          remove .before:content-none
+          add .{'before:content-[attr(data-year)]'}
+         end
+        `))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><a href=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
