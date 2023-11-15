@@ -63,7 +63,13 @@ LIMIT 20;
 
 -- name: movie-by-id
 SELECT
-    m.*,
+    m.id,
+    m.title,
+    m.release_date,
+    m.runtime,
+    m.imdb_id,
+    m.overview,
+    m.tagline,
     r.rating,
     ARRAY_AGG(g.name) AS genres
 FROM
