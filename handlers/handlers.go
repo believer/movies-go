@@ -62,9 +62,7 @@ func HandlePostLogin(c *fiber.Ctx) error {
 			HTTPOnly: true,
 		})
 
-		c.Set("HX-Redirect", "/")
-
-		return c.SendStatus(200)
+		return c.Redirect("/", 303)
 	}
 
 	return utils.TemplRender(c, views.Login("Invalid username or password"))
