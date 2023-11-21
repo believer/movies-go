@@ -17,11 +17,6 @@ import (
 	"strconv"
 )
 
-// TODO: Escaping of class and hyperscript in feed list item when
-// templ gets updated to v0.2.470
-// Hyperscript doesn't work when html entities are used
-// Class breaks the syntax highlighting
-
 func Feed(isAdmin bool, movies types.Movies, nextPage int) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
@@ -110,20 +105,7 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" _=\"")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(`init if my @data-year is not equal to @data-year of previous <li/>
-         then
-          remove .before:content-none
-          add .{'before:content-[attr(data-year)]'}
-         end
-        `))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><a href=\"")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" _=\"init if my @data-year is not equal to @data-year of previous &lt;li/&gt;\n         then\n          remove .before:content-none\n          add .{&#39;before:content-[attr(data-year)]&#39;}\n         end\n        \"><a href=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
