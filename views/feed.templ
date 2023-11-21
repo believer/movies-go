@@ -57,7 +57,7 @@ templ Feed(isAdmin bool, movies types.Movies, nextPage int) {
 				<ol class="relative flex flex-col gap-6 text-sm">
 					for _, movie := range movies {
 						<li
- 							class="relative before:relative before:mb-4 before:block before:text-4xl before:text-transparent before:opacity-10 before:content-none before:[-webkit-text-stroke-color:_#000] before:[-webkit-text-stroke-width:_2px] dark:before:[-webkit-text-stroke-color:_#fff] lg:before:absolute lg:before:-left-52 lg:before:-top-0 lg:before:mb-0 lg:before:mt-0 lg:before:text-7xl [&:not(:first-child)]:before:mt-8 [&:not(:first-child)]:before:lg:-top-8"
+ 							class="relative before:relative before:mb-4 before:block before:text-4xl before:text-transparent before:opacity-10 before:content-none before:[-webkit-text-stroke-color:_#000] before:[-webkit-text-stroke-width:_2px] dark:before:[-webkit-text-stroke-color:_#fff] lg:before:absolute lg:before:-left-52 lg:before:-top-0 lg:before:mb-0 lg:before:mt-0 lg:before:text-7xl [&:not(:first-child)]:before:mt-8 [&:not(:first-child)]:before:lg:-top-8 before:font-mono"
  							data-movie={ strconv.Itoa(movie.ID) }
  							data-year={ movie.WatchedAt.Format("2006") }
  							_="init if my @data-year is not equal to @data-year of previous <li/>

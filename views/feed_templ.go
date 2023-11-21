@@ -89,7 +89,7 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				for _, movie := range movies {
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li class=\"relative before:relative before:mb-4 before:block before:text-4xl before:text-transparent before:opacity-10 before:content-none before:[-webkit-text-stroke-color:_#000] before:[-webkit-text-stroke-width:_2px] dark:before:[-webkit-text-stroke-color:_#fff] lg:before:absolute lg:before:-left-52 lg:before:-top-0 lg:before:mb-0 lg:before:mt-0 lg:before:text-7xl [&amp;:not(:first-child)]:before:mt-8 [&amp;:not(:first-child)]:before:lg:-top-8\" data-movie=\"")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li class=\"relative before:relative before:mb-4 before:block before:text-4xl before:text-transparent before:opacity-10 before:content-none before:[-webkit-text-stroke-color:_#000] before:[-webkit-text-stroke-width:_2px] dark:before:[-webkit-text-stroke-color:_#fff] lg:before:absolute lg:before:-left-52 lg:before:-top-0 lg:before:mb-0 lg:before:mt-0 lg:before:text-7xl [&amp;:not(:first-child)]:before:mt-8 [&amp;:not(:first-child)]:before:lg:-top-8 before:font-mono\" data-movie=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
