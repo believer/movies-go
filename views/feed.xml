@@ -39,12 +39,5 @@
     </body>
   </screen>
 
-<screen id="loading">
-<styles>
-  <style id="Spinner" backgroundColor="rgb(23,23,23)" flex="1" alignItems="center" justifyContent="center"></style>
-    </styles>
-    <body style="Spinner">
-      <spinner color="rgba(63,63,63)" />
-    </body>
-  </screen>
+  {{ template "loading" }}
 </doc>

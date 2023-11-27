@@ -9,7 +9,7 @@
       fontSize="16" fontWeight="600"></style>
       <style id="Content" padding="20" rowGap="32"></style>
       <style id="Title" gap="4" flexDirection="row"
-      alignItems="center"></style>
+      alignItems="baseline"></style>
       <style id="Title__Text" color="rgb(212,212,212)"
       fontSize="20" fontWeight="500"></style>
       <style id="Movie__Overview" color="rgb(163,163,163)"
@@ -94,12 +94,5 @@
     </body>
     </screen>
 
-    <screen id="loading">
-<styles>
-  <style id="Spinner" backgroundColor="rgb(23,23,23)" flex="1" alignItems="center" justifyContent="center"></style>
-    </styles>
-    <body style="Spinner">
-      <spinner color="rgba(63,63,63)" />
-    </body>
-  </screen>
+  {{ template "loading" }}
 </doc>
