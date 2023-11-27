@@ -1,0 +1,64 @@
+<doc xmlns="https://hyperview.org/hyperview">
+  <screen id="add">
+    <styles>
+      <style id="Header" paddingHorizontal="20" paddingTop="24" flexDirection="row"></style>
+      <style id="Body" backgroundColor="rgb(23,23,23)" flex="1"></style>
+      <style id="Body__Text" color="rgb(212,212,212)" fontSize="16"></style>
+      <style id="Link" borderBottomWidth="1" borderBottomColor="rgb(212,212,212)" borderStyle="solid"></style>
+      <style id="Link__Text" color="rgb(212,212,212)" fontSize="16"></style>
+      <style id="Form" rowGap="24" padding="20"></style>
+      <style id="Input" rowGap="8"></style>
+      <style id="Input__Label" color="rgb(163,163,163)" fontSize="14" fontWeight="600"></style>
+      <style id="Input__HelpText" color="rgb(163,163,163)" fontSize="12" fontWeight="400" lineHeight="16"></style>
+      <style id="Input__TextField" borderWidth="1" borderColor="rgb(64,64,64)" paddingHorizontal="16" paddingVertical="12" borderRadius="4" color="rgb(212,212,212)" fontSize="16">
+        <modifier focused="true">
+          <style borderColor="#4778FF" />
+        </modifier>
+      </style>
+      <style id="Input__DateField__Text" color="rgb(212,212,212)" fontSize="16"></style>
+      <style id="Input__DateField__Modal" paddingHorizontal="20"></style>
+      <style id="Button" backgroundColor="rgb(64,64,64)" color="rgb(229,229,229)" fontSize="16" paddingHorizontal="24" paddingVertical="12" borderRadius="4"></style>
+      <style id="Footer" flexDirection="row"></style>
+    </styles>
+    <body style="Body">
+      <header style="Header">
+        <view style="Link">
+          <text style="Link__Text">
+            <behavior action="back" href="#" trigger="press" />
+            Feed
+          </text>
+        </view>
+      </header>
+      <form id="addMovieForm" style="Form">
+        <view style="Input">
+          <text style="Input__Label">IMDb ID</text>
+          <text-field name="imdb_id" style="Input__TextField" />
+          <text style="Input__HelpText">
+For example, https://www.imdb.com/title/tt0111161/, or just tt0111161.
+          </text>
+        </view>
+        <view style="Input">
+          <text style="Input__Label">Rating</text>
+          <text-field name="rating" style="Input__TextField" keyboard-type="number-pad" mask="99" />
+<text style="Input__HelpText">
+A value between 0 and 10
+          </text>
+        </view>
+        <view style="Input">
+          <text style="Input__Label">Watched at</text>
+          <date-field name="watched_at"
+            modal-style="Input__DateField__Modal"
+            modal-text-style="Input__DateField__Text"
+            label-format="YYYY-MM-DD HH:mm" field-text-style="Input__TextField" keyboard-type="number-pad" />
+<text style="Input__HelpText">
+Defaults to current time if left empty.
+  </text>
+        </view>
+        <view style="Footer">
+          <text style="Button" verb="post" href="/movies/new" target="addMovieForm"
+            action="replace">Add</text>
+        </view>
+      </form>
+    </body>
+  </screen>
+</doc>

@@ -6,6 +6,7 @@ import (
 	"believer/movies/utils"
 	"believer/movies/views"
 	"database/sql"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -22,6 +23,12 @@ func HandleGetPersonByID(c *fiber.Ctx) error {
 		}
 
 		return err
+	}
+
+	if strings.Contains(c.Get("Accept"), "application/xml") {
+		return c.Render("person", fiber.Map{
+			"Person": person,
+		})
 	}
 
 	return utils.TemplRender(c, views.Person(person))

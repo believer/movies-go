@@ -1,0 +1,40 @@
+{{ $year := .LastMovieYear }}
+
+<items xmlns="https://hyperview.org/hyperview" id="movie-items">
+  {{ range .Movies }}
+    {{if ne $year (.WatchedAt.Format "2006")}}
+      <item key="year-{{ .ID }}" style="Year__Wrap">
+        <text style="Year">
+          {{ .WatchedAt.Format "2006" }}
+        </text>
+      </item>
+      {{ $year = (.WatchedAt.Format "2006") }}
+    {{end}}
+    <item key="{{ .ID }}-{{ .WatchedAt.Format "2006-01-02 15:04" }}" style="Movie">
+      <behavior action="push" href="/movies/{{ .ID }}" show-during-load="loading" />
+      <view style="Movie__Header">
+        <text style="Movie__Title">
+          {{ .Title }}
+        </text>
+        <text style="Movie__WatchedAt">
+          {{ .WatchedAt.Format "January 02 2006" }}
+        </text>
+      </view>
+      {{ if .Overview }}
+      <text style="Movie__Overview" numberOfLines="3">
+        {{ .Overview }}
+      </text>
+      {{ end }}
+    </item>
+  {{ end }}
+  <item
+    key="loadMore-{{ .Page }}"
+    trigger="visible"
+    once="true"
+    href="/?page={{ .Page }}&lastMovieYear={{ $year }}"
+    action="replace"
+    style="Spinner"
+  >
+    <spinner />
+  </item>
+</items>

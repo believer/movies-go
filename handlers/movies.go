@@ -13,6 +13,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -35,6 +36,12 @@ func HandleGetMovieByID(c *fiber.Ctx) error {
 
 			return err
 		}
+	}
+
+	if strings.Contains(c.Get("Accept"), "application/xml") {
+		return c.Render("movie", fiber.Map{
+			"Movie": movie,
+		})
 	}
 
 	return utils.TemplRender(c, views.Movie(movie))
@@ -93,6 +100,13 @@ func HandleGetMovieCastByID(c *fiber.Ctx) error {
 		}
 	}
 
+	if strings.Contains(c.Get("Accept"), "application/xml") {
+		return c.Render("cast", fiber.Map{
+			"Cast":          updatedCastOrCrew,
+			"HasCharacters": hasCharacters,
+		})
+	}
+
 	return utils.TemplRender(c, components.CastList(updatedCastOrCrew, hasCharacters))
 }
 
@@ -108,6 +122,12 @@ func HandleGetMovieSeenByID(c *fiber.Ctx) error {
 		return err
 	}
 
+	if strings.Contains(c.Get("Accept"), "application/xml") {
+		return c.Render("watched", fiber.Map{
+			"WatchedAt": watchedAt,
+		})
+	}
+
 	return utils.TemplRender(c, components.Watched(watchedAt, isAuth, id))
 }
 
@@ -117,6 +137,10 @@ func HandleGetMovieNew(c *fiber.Ctx) error {
 
 	if isAuth == false {
 		return c.Redirect("/")
+	}
+
+	if strings.Contains(c.Get("Accept"), "application/xml") {
+		return c.Render("newMovie", fiber.Map{})
 	}
 
 	return utils.TemplRender(c, views.NewMovie())
@@ -151,6 +175,7 @@ func tmdbFetchMovie(route string) (map[string]interface{}, error) {
 
 // Handle adding a movie
 func HandlePostMovieNew(c *fiber.Ctx) error {
+	log.Println("HandlePostMovieNew", c.FormValue("watched_at"))
 	isAuth := utils.IsAuthenticated(c)
 
 	if isAuth == false {
@@ -189,7 +214,15 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 	watchedAt, err := time.Parse("2006-01-02T15:04", data.WatchedAt)
 
 	if err != nil {
-		watchedAt = time.Now()
+		now := time.Now()
+		watchedAt, err = time.Parse("2006-01-02", data.WatchedAt)
+
+		if err != nil {
+			watchedAt = now
+		}
+
+		// Add 12 hours to the date if it doesn't have a time
+		watchedAt.Add(time.Duration(now.Hour()))
 	}
 
 	tx := db.Client.MustBegin()
@@ -389,6 +422,12 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 	}
 
 	tx.Commit()
+
+	if strings.Contains(c.Get("Accept"), "application/xml") {
+		return c.Render("newMovieAdded", fiber.Map{
+			"Title": movieInformation["title"],
+		})
+	}
 
 	c.Set("HX-Redirect", fmt.Sprintf("/movies/%d", movieId))
 

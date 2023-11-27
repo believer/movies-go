@@ -1,0 +1,50 @@
+<doc xmlns="https://hyperview.org/hyperview">
+  <screen id="feed">
+    <styles>
+      <style id="Body" backgroundColor="rgb(23,23,23)" flex="1"></style>
+      <style id="Loading" backgroundColor="red" flex="1"></style>
+      <style id="Link" borderBottomWidth="1" borderBottomColor="rgb(212,212,212)" borderStyle="solid"></style>
+      <style id="Link__Text" color="rgb(212,212,212)" fontSize="16"></style>
+      <style id="movieList" flex="1" paddingHorizontal="20" paddingTop="24"></style>
+      <style id="Movie" marginBottom="24" rowGap="16"></style>
+      <style id="Movie__Header" rowGap="4"></style>
+      <style id="Movie__Title" color="rgb(212,212,212)" fontSize="16" fontWeight="500"></style>
+      <style id="Movie__Overview" color="rgb(163,163,163)" fontSize="14" fontWeight="400" lineHeight="20"></style>
+      <style id="Spinner" alignItems="center" flex="1" height="48" justifyContent="center" ></style>
+      <style id="Movie__WatchedAt" color="rgb(163,163,163)" fontSize="12" fontWeight="400" lineHeight="16"></style>
+      <style id="FAB" position="absolute" bottom="24" right="24" backgroundColor="#262626" borderRadius="24" justifyContent="center" alignItems="center" height="56" width="56">
+        <modifier pressed="true">
+          <style backgroundColor="#404040" />
+        </modifier>
+      </style>
+      <style id="FAB__Text" color="rgb(229,229,229)" fontSize="24" fontWeight="400"></style>
+      <style id="Year__Wrap" marginVertical="16"></style>
+      <style id="Year" color="rgb(23,23,23)" fontSize="48" fontWeight="400" textShadowColor="rgba(255,255,255,0.8)" textShadowRadius="1"></style>
+    </styles>
+    <body style="Body" safe-area="true">
+      <list style="movieList" id="movies" trigger="refresh" href="/?refresh=true" action="replace-inner" target="movie-items">
+        <item style="Year__Wrap">
+          <text style="Year">
+            {{ .CurrentYear }}
+          </text>
+        </item>
+        {{ template "feed_pages" .}}
+      </list>
+      <view style="FAB">
+        <behavior show-during-load="loading" action="push" trigger="press" href="/movies/new" />
+        <text style="FAB__Text">
+          +
+        </text>
+      </view>
+    </body>
+  </screen>
+
+<screen id="loading">
+<styles>
+  <style id="Spinner" backgroundColor="rgb(23,23,23)" flex="1" alignItems="center" justifyContent="center"></style>
+    </styles>
+    <body style="Spinner">
+      <spinner color="rgba(63,63,63)" />
+    </body>
+  </screen>
+</doc>

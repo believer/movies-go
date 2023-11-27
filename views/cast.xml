@@ -1,0 +1,30 @@
+<view xmlns="https://hyperview.org/hyperview" style="Cast__List">
+  {{ range $i, $cast := .Cast}}
+  <view style="Section">
+    <view style="Divider">
+      <text style="Divider__Text">{{ $cast.Job }}</text>
+      <view style="Divider__Line"></view>
+    </view>
+  {{ range $cast.People }}
+    {{ if $.HasCharacters }}
+    <view style="Cast__Row" key="{{ .Name }}-{{ $cast.Job }}">
+      <text style="Body__Text">
+        <behavior action="push" href="/person/{{ .ID }}" show-during-load="loading" />
+          {{ .Name }}
+      </text>
+      {{ if .Character }}
+      <view style="Cast__Row__Line"></view>
+      {{ end }}
+      <view style="Cast__Character">
+        <text style="Body__Text" numberOfLines="1">{{ .Character }}</text>
+      </view>
+    </view>
+    {{ else }}
+    <view style="Cast__Row" key="{{ .Name }}-{{ $cast.Job }}">
+      <text style="Body__Text">{{ .Name }}</text>
+    </view>
+    {{ end }}
+  {{ end }}
+  </view>
+  {{ end }}
+</view>

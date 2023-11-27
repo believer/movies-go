@@ -1,0 +1,105 @@
+<doc xmlns="https://hyperview.org/hyperview">
+  <screen>
+    <styles>
+      <style id="Body" backgroundColor="rgb(23,23,23)" flex="1">
+      </style>
+      <style id="Body__Text" color="rgb(163,163,163)" fontSize="16"
+      fontWeight="400"></style>
+      <style id="Body__Strong" color="rgb(163,163,163)"
+      fontSize="16" fontWeight="600"></style>
+      <style id="Content" padding="20" rowGap="32"></style>
+      <style id="Title" gap="4" flexDirection="row"
+      alignItems="center"></style>
+      <style id="Title__Text" color="rgb(212,212,212)"
+      fontSize="20" fontWeight="500"></style>
+      <style id="Movie__Overview" color="rgb(163,163,163)"
+      fontSize="16" fontWeight="400" lineHeight="24"></style>
+      <style id="Section" rowGap="16"></style>
+      <style id="Divider" flexDirection="row" alignItems="center"
+      gap="8"></style>
+      <style id="Divider__Text" color="rgb(212,212,212)"
+      fontSize="16" fontWeight="500"></style>
+      <style id="Divider__Line" backgroundColor="rgb(64,64,64)"
+      height="1" flex="1"></style>
+      <style id="DescriptionList" rowGap="8"></style>
+      <style id="DescriptionList__Item" rowGap="4"></style>
+      <style id="Cast__List" rowGap="32"></style>
+      <style id="Cast__Character" maxWidth="50%"></style>
+      <style id="Cast__Row" flexDirection="row" alignItems="baseline" justifyContent="space-between" gap="16">
+      </style>
+      <style id="Cast__Row__Line" backgroundColor="#262626" height="1" flex="1"></style>
+    </styles>
+    <body style="Body" safe-area="true">
+      <view content-container-style="Content" scroll="true">
+        <view style="Title">
+          <text style="Title__Text">
+            <behavior action="back" href="#"
+            trigger="press" />..</text>
+            <text style="Title__Text">/</text>
+            <text style="Title__Text">{{ .Movie.Title }}</text>
+          </view>
+          {{ if .Movie.Overview }} 
+            <view>
+              <text style="Movie__Overview">
+                {{ .Movie.Overview }}
+              </text>
+            </view>
+          {{ end }} 
+        <view style="Section">
+          <view style="Divider">
+            <text style="Divider__Text">Metadata</text>
+            <view style="Divider__Line" />
+          </view>
+          <view style="DescriptionList">
+          <view style="DescriptionList__Item">
+            <text style="Body__Strong">Tagline</text>
+            <text style="Body__Text">{{ .Movie.Tagline }}</text>
+          </view>
+          <view style="DescriptionList__Item">
+            <text style="Body__Strong">Release date</text>
+            <text style="Body__Text">{{ .Movie.ReleaseDate.Format
+            "2006-01-02" }}</text>
+          </view>
+          <view style="DescriptionList__Item">
+            <text style="Body__Strong">Runtime</text>
+            <text style="Body__Text">{{ .Movie.RuntimeFormatted
+            }}</text>
+          </view>
+          <view style="DescriptionList__Item">
+            <text style="Body__Strong">Runtime</text>
+            <text style="Body__Text">
+              {{ StringsJoin .Movie.Genres ", " }}
+            </text>
+          </view>
+          {{ if .Movie.Rating.Valid }} 
+          <view style="DescriptionList__Item">
+            <text style="Body__Strong">Rating</text>
+            <text style="Body__Text">
+              {{ .Movie.Rating.Value }}
+            </text>
+          </view>
+            {{ end }}
+          <view style="DescriptionList__Item">
+            <text style="Body__Strong">Rating</text>
+            <text style="Body__Text">
+              <behavior action="replace" href="/movies/{{ .Movie.ID }}/seen" trigger="load" />
+            </text>
+          </view>
+        </view>
+      </view>
+      <view>
+        <behavior action="replace" href="/movies/{{ .Movie.ID }}/cast" trigger="load" />
+      </view>
+</view>
+    </body>
+    </screen>
+
+    <screen id="loading">
+<styles>
+  <style id="Spinner" backgroundColor="rgb(23,23,23)" flex="1" alignItems="center" justifyContent="center"></style>
+    </styles>
+    <body style="Spinner">
+      <spinner color="rgba(63,63,63)" />
+    </body>
+  </screen>
+</doc>

@@ -4,10 +4,12 @@ import (
 	"believer/movies/db"
 	"believer/movies/router"
 	"os"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/gofiber/template/html/v2"
 	"github.com/joho/godotenv"
 )
 
@@ -24,8 +26,15 @@ func SetupAndRunApp() error {
 	// Close database connection when the app exits
 	defer db.CloseConnection()
 
+	// Setup templates
+	engine := html.New("./views", ".xml")
+
+	// Add custom functions to the template engine
+	engine.AddFunc("StringsJoin", strings.Join)
+
 	// Setup the app
 	app := fiber.New(fiber.Config{
+		Views:                 engine,
 		DisableStartupMessage: true,
 		PassLocalsToViews:     true,
 	})

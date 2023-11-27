@@ -1,0 +1,152 @@
+<doc xmlns="https://hyperview.org/hyperview">
+  <screen>
+    <styles>
+      <style id="Body" backgroundColor="rgb(23,23,23)" flex="1">
+      </style>
+      <style id="Body__Text" color="rgb(163,163,163)" fontSize="16"
+      fontWeight="400"></style>
+      <style id="Body__Strong" color="rgb(163,163,163)"
+      fontSize="16" fontWeight="600"></style>
+      <style id="Content" padding="20" rowGap="32"></style>
+      <style id="Title" gap="4" flexDirection="row"
+      alignItems="center"></style>
+      <style id="Title__Text" color="rgb(212,212,212)"
+      fontSize="20" fontWeight="500"></style>
+      <style id="Movie__Overview" color="rgb(163,163,163)"
+      fontSize="16" fontWeight="400" lineHeight="24"></style>
+      <style id="Section" rowGap="16"></style>
+      <style id="Divider" flexDirection="row" alignItems="center"
+      gap="8"></style>
+      <style id="Divider__Text" color="rgb(163,163,163)"
+      fontSize="16" fontWeight="400"></style>
+      <style id="Divider__Line" backgroundColor="rgb(64,64,64)"
+      height="1" flex="1"></style>
+      <style id="DescriptionList" rowGap="8"></style>
+      <style id="DescriptionList__Item" rowGap="4"></style>
+      <style id="Cast__List" rowGap="32"></style>
+      <style id="Cast__List__Name" maxWidth="80%"></style>
+      <style id="Cast__Row" flexDirection="row" alignItems="baseline" justifyContent="space-between" gap="16">
+      </style>
+      <style id="Cast__Row__Line" backgroundColor="#262626" height="1" flex="1"></style>
+    </styles>
+    <body style="Body" safe-area="true">
+      <view content-container-style="Content" scroll="true">
+        <view style="Title">
+          <text style="Title__Text">
+            <behavior action="back" href="#"
+              trigger="press" />..</text>
+          <text style="Title__Text">/</text>
+          <text style="Title__Text">{{ .Person.Name }}</text>
+        </view>
+        {{ if gt (len .Person.Cast) 0 }}
+        <view style="Section">
+          <view style="Divider">
+            <text style="Divider__Text">Cast ({{ len .Person.Cast }})</text>
+            <view style="Divider__Line" />
+          </view>
+          {{ range .Person.Cast }}
+          <view style="Cast__Row">
+            <view style="Cast__List__Name">
+              <text style="Body__Text" numberOfLines="1">
+                <behavior action="push" href="/movies/{{ .ID }}" show-during-load="loading" />
+                {{ .Title }}
+              </text>
+            </view>
+            <view style="Cast__Row__Line"></view>
+            <text style="Body__Text">{{ .ReleaseDate.Format "2006" }}</text>
+          </view>
+          {{ end }}
+        </view>
+        {{ end }}
+        {{ if gt (len .Person.Director) 0 }}
+        <view style="Section">
+          <view style="Divider">
+            <text style="Divider__Text">Director ({{ len .Person.Director }})</text>
+            <view style="Divider__Line" />
+          </view>
+          {{ range .Person.Director }}
+          <view style="Cast__Row">
+            <view style="Cast__List__Name">
+            <text style="Body__Text" numberOfLines="1">
+              <behavior action="push" href="/movies/{{ .ID }}" show-during-load="loading" />
+              {{ .Title }}
+            </text>
+          </view>
+            <view style="Cast__Row__Line"></view>
+            <text style="Body__Text">{{ .ReleaseDate.Format "2006" }}</text>
+          </view>
+          {{ end }}
+        </view>
+        {{ end }}
+        {{ if gt (len .Person.Writer) 0 }}
+        <view style="Section">
+          <view style="Divider">
+            <text style="Divider__Text">Writer ({{ len .Person.Writer }})</text>
+            <view style="Divider__Line" />
+          </view>
+          {{ range .Person.Writer }}
+          <view style="Cast__Row">
+            <view style="Cast__List__Name">
+            <text style="Body__Text" numberOfLines="1">
+              <behavior action="push" href="/movies/{{ .ID }}" show-during-load="loading" />
+              {{ .Title }}
+            </text>
+          </view>
+            <view style="Cast__Row__Line"></view>
+            <text style="Body__Text">{{ .ReleaseDate.Format "2006" }}</text>
+          </view>
+          {{ end }}
+        </view>
+        {{ end }}
+        {{ if gt (len .Person.Producer) 0 }}
+        <view style="Section">
+          <view style="Divider">
+            <text style="Divider__Text">Producer ({{ len .Person.Producer }})</text>
+            <view style="Divider__Line" />
+          </view>
+          {{ range .Person.Producer }}
+          <view style="Cast__Row">
+            <view style="Cast__List__Name">
+            <text style="Body__Text" numberOfLines="1">
+              <behavior action="push" href="/movies/{{ .ID }}" show-during-load="loading" />
+              {{ .Title }}
+            </text>
+          </view>
+            <view style="Cast__Row__Line"></view>
+            <text style="Body__Text">{{ .ReleaseDate.Format "2006" }}</text>
+          </view>
+          {{ end }}
+        </view>
+        {{ end }}
+        {{ if gt (len .Person.Composer) 0 }}
+        <view style="Section">
+          <view style="Divider">
+            <text style="Divider__Text">Composer ({{ len .Person.Composer }})</text>
+            <view style="Divider__Line" />
+          </view>
+          {{ range .Person.Composer }}
+          <view style="Cast__Row">
+            <view style="Cast__List__Name">
+            <text style="Body__Text" numberOfLines="1">
+              <behavior action="push" href="/movies/{{ .ID }}" show-during-load="loading" />
+              {{ .Title }}
+            </text>
+          </view>
+            <view style="Cast__Row__Line"></view>
+            <text style="Body__Text">{{ .ReleaseDate.Format "2006" }}</text>
+          </view>
+          {{ end }}
+        </view>
+        {{ end }}
+    </view></body>
+  </screen>
+
+  <screen id="loading">
+<styles>
+      <style id="Body" backgroundColor="rgb(23,23,23)" flex="1"></style>
+    </styles>
+    <body style="Body">
+      <text>Loading...</text>
+    </body>
+  </screen>
+</doc>
