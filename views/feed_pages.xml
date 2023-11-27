@@ -1,6 +1,21 @@
 {{ $year := .LastMovieYear }}
 
 <items xmlns="https://hyperview.org/hyperview" id="movie-items">
+  {{ if .SearchQuery}}
+  <item>
+    <text style="Body__Text">
+      <behavior action="replace-inner" href="/?refresh=true" target="movie-items" />
+      Search results for "{{ .SearchQuery }}". Click to reset.
+    </text>
+  </item>
+  {{ end }}
+  {{ if .Refresh }}
+  <item style="Year__Wrap">
+    <text style="Year">
+      {{ .CurrentYear }}
+    </text>
+  </item>
+  {{ end }}
   {{ range .Movies }}
     {{if ne $year (.WatchedAt.Format "2006")}}
       <item key="year-{{ .ID }}" style="Year__Wrap">

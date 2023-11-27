@@ -44,6 +44,7 @@ func HandleFeed(c *fiber.Ctx) error {
 			"Page":          page + 1,
 			"CurrentYear":   time.Now().Year(),
 			"LastMovieYear": lastMovieYear,
+			"Refresh":       c.Query("refresh"),
 		})
 	}
 

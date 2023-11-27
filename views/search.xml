@@ -1,0 +1,9 @@
+<form style="SearchForm" xmlns="https://hyperview.org/hyperview">
+  <view style="SearchField">
+    <text-field name="search" style="Search" placeholder="Find a movie" />
+    <view style="SearchButton">
+      <behavior action="replace-inner" href="/search" verb="post" target="movies" />
+      <text>🔍</text>
+    </view>
+  </view>
+</form>
