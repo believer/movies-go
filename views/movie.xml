@@ -21,7 +21,7 @@
       fontSize="16" fontWeight="500"></style>
       <style id="Divider__Line" backgroundColor="rgb(64,64,64)"
       height="1" flex="1"></style>
-      <style id="DescriptionList" rowGap="8"></style>
+      <style id="DescriptionList" rowGap="12"></style>
       <style id="DescriptionList__Item" rowGap="4"></style>
       <style id="Cast__List" rowGap="32"></style>
       <style id="Cast__Character" maxWidth="50%"></style>
