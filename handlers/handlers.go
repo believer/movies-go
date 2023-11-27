@@ -30,7 +30,7 @@ func HandleFeed(c *fiber.Ctx) error {
 		panic(err)
 	}
 
-	if strings.Contains(c.Get("Accept"), "application/xml") {
+	if strings.Contains(c.Get("Accept"), "hyperview") {
 		template := "feed"
 
 		if page != 1 || c.Query("refresh") == "true" {

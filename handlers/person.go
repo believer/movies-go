@@ -25,7 +25,7 @@ func HandleGetPersonByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	if strings.Contains(c.Get("Accept"), "application/xml") {
+	if strings.Contains(c.Get("Accept"), "hyperview") {
 		return c.Render("person", fiber.Map{
 			"Person": person,
 		})
