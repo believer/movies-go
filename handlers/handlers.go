@@ -32,8 +32,9 @@ func HandleFeed(c *fiber.Ctx) error {
 
 	if strings.Contains(c.Get("Accept"), "hyperview") {
 		template := "feed"
+		shouldUpdate := c.Query("refresh") == "true" || c.Query("reset") == "true"
 
-		if page != 1 || c.Query("refresh") == "true" {
+		if page != 1 || shouldUpdate {
 			template = "feed_pages"
 		}
 
@@ -44,7 +45,7 @@ func HandleFeed(c *fiber.Ctx) error {
 			"Page":          page + 1,
 			"CurrentYear":   time.Now().Year(),
 			"LastMovieYear": lastMovieYear,
-			"Refresh":       c.Query("refresh"),
+			"DisplayYear":   c.Query("reset") == "true" || page == 1,
 		})
 	}
 

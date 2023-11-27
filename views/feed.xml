@@ -47,11 +47,6 @@
       <view style="Body" keyboard-dismiss-mode="interactive">
         {{ template "search" . }}
         <list style="movieList" id="movies" trigger="refresh" href="/?refresh=true" action="replace-inner" target="movie-items">
-          <item style="Year__Wrap">
-            <text style="Year">
-              {{ .CurrentYear }}
-            </text>
-          </item>
           {{ template "feed_pages" .}}
         </list>
         <view style="FAB">
