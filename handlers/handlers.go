@@ -30,6 +30,10 @@ func HandleFeed(c *fiber.Ctx) error {
 		panic(err)
 	}
 
+	if c.Get("Accept") == "application/json" {
+		return c.JSON(movies)
+	}
+
 	if strings.Contains(c.Get("Accept"), "hyperview") {
 		template := "feed"
 		shouldUpdate := c.Query("refresh") == "true" || c.Query("reset") == "true"

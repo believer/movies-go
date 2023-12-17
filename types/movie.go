@@ -21,7 +21,7 @@ type Movie struct {
 	ID          int             `db:"id" json:"id"`
 	ImdbId      string          `db:"imdb_id"`
 	ImdbRating  sql.NullFloat64 `db:"imdb_rating"`
-	Overview    string          `db:"overview"`
+	Overview    string          `db:"overview" json:"overview"`
 	Poster      string          `db:"poster"`
 	Rating      sql.NullInt64   `db:"rating"`
 	ReleaseDate time.Time       `db:"release_date" json:"release_date"`
@@ -29,7 +29,7 @@ type Movie struct {
 	Tagline     string          `db:"tagline"`
 	Title       string          `db:"title" json:"title"`
 	UpdatedAt   time.Time       `db:"updated_at"`
-	WatchedAt   time.Time       `db:"watched_at"`
+	WatchedAt   time.Time       `db:"watched_at" json:"watchedAt"`
 }
 
 type Movies []Movie
