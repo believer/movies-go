@@ -1,6 +1,0 @@
-<view xmlns="https://hyperview.org/hyperview">
-  <text style="Body__Text">{{ .Title }}</text>
-  <text href="#" action="back" style="Button">
-    Go back
-  </text>
-</view>

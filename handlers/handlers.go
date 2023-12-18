@@ -8,7 +8,6 @@ import (
 	"encoding/base64"
 	"os"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -32,25 +31,6 @@ func HandleFeed(c *fiber.Ctx) error {
 
 	if c.Get("Accept") == "application/json" {
 		return c.JSON(movies)
-	}
-
-	if strings.Contains(c.Get("Accept"), "hyperview") {
-		template := "feed"
-		shouldUpdate := c.Query("refresh") == "true" || c.Query("reset") == "true"
-
-		if page != 1 || shouldUpdate {
-			template = "feed_pages"
-		}
-
-		lastMovieYear := c.Query("lastMovieYear", movies[len(movies)-1].WatchedAt.Format("2006"))
-
-		return c.Render(template, fiber.Map{
-			"Movies":        movies,
-			"Page":          page + 1,
-			"CurrentYear":   time.Now().Year(),
-			"LastMovieYear": lastMovieYear,
-			"DisplayYear":   c.Query("reset") == "true" || page == 1,
-		})
 	}
 
 	feed := views.Feed(

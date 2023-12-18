@@ -13,7 +13,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -36,12 +35,6 @@ func HandleGetMovieByID(c *fiber.Ctx) error {
 
 			return err
 		}
-	}
-
-	if strings.Contains(c.Get("Accept"), "hyperview") {
-		return c.Render("movie", fiber.Map{
-			"Movie": movie,
-		})
 	}
 
 	return utils.TemplRender(c, views.Movie(movie))
@@ -100,13 +93,6 @@ func HandleGetMovieCastByID(c *fiber.Ctx) error {
 		}
 	}
 
-	if strings.Contains(c.Get("Accept"), "hyperview") {
-		return c.Render("cast", fiber.Map{
-			"Cast":          updatedCastOrCrew,
-			"HasCharacters": hasCharacters,
-		})
-	}
-
 	return utils.TemplRender(c, components.CastList(updatedCastOrCrew, hasCharacters))
 }
 
@@ -122,12 +108,6 @@ func HandleGetMovieSeenByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	if strings.Contains(c.Get("Accept"), "hyperview") {
-		return c.Render("watched", fiber.Map{
-			"WatchedAt": watchedAt,
-		})
-	}
-
 	return utils.TemplRender(c, components.Watched(watchedAt, isAuth, id))
 }
 
@@ -137,10 +117,6 @@ func HandleGetMovieNew(c *fiber.Ctx) error {
 
 	if isAuth == false {
 		return c.Redirect("/")
-	}
-
-	if strings.Contains(c.Get("Accept"), "hyperview") {
-		return c.Render("newMovie", fiber.Map{})
 	}
 
 	return utils.TemplRender(c, views.NewMovie())
@@ -421,12 +397,6 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 	}
 
 	tx.Commit()
-
-	if strings.Contains(c.Get("Accept"), "hyperview") {
-		return c.Render("newMovieAdded", fiber.Map{
-			"Title": movieInformation["title"],
-		})
-	}
 
 	c.Set("HX-Redirect", fmt.Sprintf("/movies/%d", movieId))
 

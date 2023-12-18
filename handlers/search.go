@@ -7,8 +7,6 @@ import (
 	"believer/movies/views"
 	"database/sql"
 	"strconv"
-	"strings"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -42,18 +40,6 @@ ORDER BY m.release_date DESC
 		}
 
 		return err
-	}
-
-	if strings.Contains(c.Get("Accept"), "hyperview") {
-		lastMovieYear := c.Query("lastMovieYear", movies[len(movies)-1].WatchedAt.Format("2006"))
-
-		return c.Render("feed_pages", fiber.Map{
-			"Movies":        movies,
-			"Page":          page + 1,
-			"LastMovieYear": lastMovieYear,
-			"CurrentYear":   time.Now().Year(),
-			"SearchQuery":   search,
-		})
 	}
 
 	return utils.TemplRender(c, views.Feed(

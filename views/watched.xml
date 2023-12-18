@@ -1,5 +1,0 @@
-<view xmlns="https://hyperview.org/hyperview">
- {{ range .WatchedAt }}
-  <text style="Body__Text">{{ .Format "2006-01-02 15:04" }}</text>
- {{ end }}
-</view>
