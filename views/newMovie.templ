@@ -8,6 +8,11 @@ templ NewMovie() {
  			hx-post="/movies/new"
  			class="mx-auto flex max-w-xl flex-col gap-6 px-4 py-8"
 		>
+			<div>
+				@components.Link("/", "") {
+					Back
+				}
+			</div>
 			<div class="relative flex flex-col gap-2">
 				@components.Label("imdb_id", "IMDb ID")
 				<input
