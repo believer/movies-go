@@ -175,7 +175,6 @@ func tmdbFetchMovie(route string) (map[string]interface{}, error) {
 
 // Handle adding a movie
 func HandlePostMovieNew(c *fiber.Ctx) error {
-	log.Println("HandlePostMovieNew", c.FormValue("watched_at"))
 	isAuth := utils.IsAuthenticated(c)
 
 	if isAuth == false {
