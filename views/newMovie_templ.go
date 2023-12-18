@@ -31,7 +31,7 @@ func NewMovie() templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form hx-post=\"/movies/new\" class=\"mx-auto flex max-w-xl flex-col gap-6 px-4 py-8\"><div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form hx-post=\"/movies/new\" hx-indicator=\"#sending\" class=\"mx-auto flex max-w-xl flex-col gap-6 px-4 py-8\"><div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -92,7 +92,7 @@ func NewMovie() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button><div class=\"htmx-indicator\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button><div id=\"sending\" class=\"htmx-indicator\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
