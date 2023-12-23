@@ -4,6 +4,7 @@ import (
 	"believer/movies/types"
 	"believer/movies/components"
 	"fmt"
+	"strconv"
 )
 
 templ Credit(title string, data types.Movies) {
@@ -28,12 +29,15 @@ templ Credit(title string, data types.Movies) {
 	}
 }
 
-templ Person(person types.Person) {
+templ Person(person types.Person, totalCredits int) {
 	@Layout(person.Name) {
 		<div
  			class="mx-auto flex max-w-xl flex-col gap-8 px-5 py-8"
 		>
 			@components.H1(person.Name)
+			<div>
+				{ strconv.Itoa(totalCredits) } credits
+			</div>
 			@Credit("Cast", person.Cast)
 			@Credit("Director", person.Director)
 			@Credit("Writer", person.Writer)

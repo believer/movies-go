@@ -24,5 +24,18 @@ func HandleGetPersonByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.TemplRender(c, views.Person(person))
+	fields := []int{
+		len(person.Cast),
+		len(person.Director),
+		len(person.Writer),
+		len(person.Producer),
+		len(person.Composer),
+	}
+
+	totalCredits := 0
+	for _, field := range fields {
+		totalCredits += field
+	}
+
+	return utils.TemplRender(c, views.Person(person, totalCredits))
 }
