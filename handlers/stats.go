@@ -62,6 +62,12 @@ func HandleGetStats(c *fiber.Ctx) error {
 		return err
 	}
 
+	seenThisYearByMonth, err := getGraphWithQuery("stats-watched-this-year-by-month")
+
+	if err != nil {
+		return err
+	}
+
 	return utils.TemplRender(c, views.Stats(
 		stats,
 		utils.FormatRuntime(stats.TotalRuntime),
@@ -69,6 +75,7 @@ func HandleGetStats(c *fiber.Ctx) error {
 		watchedByYear,
 		ratings,
 		movies,
+		seenThisYearByMonth,
 	))
 }
 

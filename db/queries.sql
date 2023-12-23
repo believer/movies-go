@@ -227,3 +227,23 @@ GROUP BY
 ORDER BY
     label;
 
+-- name: stats-watched-this-year-by-month
+WITH months (
+    month
+) AS (
+    SELECT
+        generate_series(DATE_TRUNC('year', CURRENT_DATE), DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '1 year' - INTERVAL '1 day', INTERVAL '1 month'))
+SELECT
+    EXTRACT(MONTH FROM months.month)::integer AS label,
+    COALESCE(count(seen.id), 0) AS value
+FROM
+    months
+    LEFT JOIN seen ON DATE_TRUNC('month', seen.date) = months.month
+WHERE
+    EXTRACT(YEAR FROM seen.date) = EXTRACT(YEAR FROM CURRENT_DATE)
+    OR seen.date IS NULL
+GROUP BY
+    months.month
+ORDER BY
+    months.month;
+

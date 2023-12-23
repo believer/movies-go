@@ -7,7 +7,7 @@ import (
 	"fmt"
 )
 
-templ Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []components.ListItem, watchedByYear []types.Bar, ratings []types.Bar, mostWatchedMovies []components.ListItem) {
+templ Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []components.ListItem, watchedByYear []types.Bar, ratings []types.Bar, mostWatchedMovies []components.ListItem, seenThisYear []types.Bar) {
 	@Layout("Stats") {
 		<div class="mx-auto flex max-w-xl flex-col gap-8 px-5 py-8">
 			<nav class="flex items-center gap-5">
@@ -17,8 +17,6 @@ templ Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []c
 					}
 				</div>
 			</nav>
-			@components.Graph(watchedByYear, "Watched by year")
-			@components.Graph(ratings, "Ratings")
 			@components.Section("Stats", 0) {
 				@components.DescriptionList() {
 					@components.DescriptionListItem("Unique movies seen", true) {
@@ -43,6 +41,9 @@ templ Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []c
 					}
 				}
 			}
+			@components.Graph(watchedByYear, "Watched by year")
+			@components.Graph(ratings, "Ratings")
+			@components.Graph(seenThisYear, "Seen this year by month")
 			@components.Section("Most watched movies", 0) {
 				@components.OrderedList(mostWatchedMovies, "movie")
 			}
