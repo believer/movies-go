@@ -7,7 +7,7 @@ import (
 	"fmt"
 )
 
-templ Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []components.ListItem, watchedByYear []types.Bar, ratings []types.Bar, mostWatchedMovies []components.ListItem, seenThisYear []types.Bar) {
+templ Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []components.ListItem, watchedByYear []types.Bar, ratings []types.Bar, mostWatchedMovies []components.ListItem, seenThisYear []types.Bar, bestOfTheYear types.Movie) {
 	@Layout("Stats") {
 		<div class="mx-auto flex max-w-xl flex-col gap-8 px-5 py-8">
 			<nav class="flex items-center gap-5">
@@ -38,6 +38,16 @@ templ Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []c
 						<span class="text-xs">
 							({ strconv.FormatFloat(stats.TopImdbRating, 'f', 1, 64) })
 						</span>
+					}
+					@components.DescriptionListItem("Best of the Year", true) {
+						@components.Link(fmt.Sprintf("/movies/%d", bestOfTheYear.ID), "") {
+							{ bestOfTheYear.Title }
+						}
+						if bestOfTheYear.Rating.Valid {
+							<span class="text-xs">
+								({ strconv.FormatInt(bestOfTheYear.Rating.Int64, 16) })
+							</span>
+						}
 					}
 				}
 			}

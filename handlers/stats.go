@@ -68,6 +68,13 @@ func HandleGetStats(c *fiber.Ctx) error {
 		return err
 	}
 
+	var bestOfTheYear types.Movie
+	err = db.Dot.Get(db.Client, &bestOfTheYear, "stats-best-of-the-year")
+
+	if err != nil {
+		return err
+	}
+
 	return utils.TemplRender(c, views.Stats(
 		stats,
 		utils.FormatRuntime(stats.TotalRuntime),
@@ -76,6 +83,7 @@ func HandleGetStats(c *fiber.Ctx) error {
 		ratings,
 		movies,
 		seenThisYearByMonth,
+		bestOfTheYear,
 	))
 }
 

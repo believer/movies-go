@@ -17,7 +17,7 @@ import (
 	"strconv"
 )
 
-func Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []components.ListItem, watchedByYear []types.Bar, ratings []types.Bar, mostWatchedMovies []components.ListItem, seenThisYear []types.Bar) templ.Component {
+func Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []components.ListItem, watchedByYear []types.Bar, ratings []types.Bar, mostWatchedMovies []components.ListItem, seenThisYear []types.Bar, bestOfTheYear types.Movie) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -204,6 +204,74 @@ func Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []co
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Var19 := templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
+						templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
+						if !templ_7745c5c3_IsBuffer {
+							templ_7745c5c3_Buffer = templ.GetBuffer()
+							defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
+						}
+						templ_7745c5c3_Var20 := templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
+							templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
+							if !templ_7745c5c3_IsBuffer {
+								templ_7745c5c3_Buffer = templ.GetBuffer()
+								defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
+							}
+							var templ_7745c5c3_Var21 string = bestOfTheYear.Title
+							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
+							if templ_7745c5c3_Err != nil {
+								return templ_7745c5c3_Err
+							}
+							if !templ_7745c5c3_IsBuffer {
+								_, templ_7745c5c3_Err = io.Copy(templ_7745c5c3_W, templ_7745c5c3_Buffer)
+							}
+							return templ_7745c5c3_Err
+						})
+						templ_7745c5c3_Err = components.Link(fmt.Sprintf("/movies/%d", bestOfTheYear.ID), "").Render(templ.WithChildren(ctx, templ_7745c5c3_Var20), templ_7745c5c3_Buffer)
+						if templ_7745c5c3_Err != nil {
+							return templ_7745c5c3_Err
+						}
+						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" ")
+						if templ_7745c5c3_Err != nil {
+							return templ_7745c5c3_Err
+						}
+						if bestOfTheYear.Rating.Valid {
+							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<span class=\"text-xs\">")
+							if templ_7745c5c3_Err != nil {
+								return templ_7745c5c3_Err
+							}
+							templ_7745c5c3_Var22 := `(`
+							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var22)
+							if templ_7745c5c3_Err != nil {
+								return templ_7745c5c3_Err
+							}
+							var templ_7745c5c3_Var23 string = strconv.FormatInt(bestOfTheYear.Rating.Int64, 16)
+							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
+							if templ_7745c5c3_Err != nil {
+								return templ_7745c5c3_Err
+							}
+							templ_7745c5c3_Var24 := `)`
+							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var24)
+							if templ_7745c5c3_Err != nil {
+								return templ_7745c5c3_Err
+							}
+							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span>")
+							if templ_7745c5c3_Err != nil {
+								return templ_7745c5c3_Err
+							}
+						}
+						if !templ_7745c5c3_IsBuffer {
+							_, templ_7745c5c3_Err = io.Copy(templ_7745c5c3_W, templ_7745c5c3_Buffer)
+						}
+						return templ_7745c5c3_Err
+					})
+					templ_7745c5c3_Err = components.DescriptionListItem("Best of the Year", true).Render(templ.WithChildren(ctx, templ_7745c5c3_Var19), templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
 					if !templ_7745c5c3_IsBuffer {
 						_, templ_7745c5c3_Err = io.Copy(templ_7745c5c3_W, templ_7745c5c3_Buffer)
 					}
@@ -234,7 +302,7 @@ func Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []co
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Var19 := templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_Var25 := templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 				if !templ_7745c5c3_IsBuffer {
 					templ_7745c5c3_Buffer = templ.GetBuffer()
@@ -249,11 +317,11 @@ func Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []co
 				}
 				return templ_7745c5c3_Err
 			})
-			templ_7745c5c3_Err = components.Section("Most watched movies", 0).Render(templ.WithChildren(ctx, templ_7745c5c3_Var19), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.Section("Most watched movies", 0).Render(templ.WithChildren(ctx, templ_7745c5c3_Var25), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Var20 := templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_Var26 := templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 				if !templ_7745c5c3_IsBuffer {
 					templ_7745c5c3_Buffer = templ.GetBuffer()
@@ -268,7 +336,7 @@ func Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []co
 				}
 				return templ_7745c5c3_Err
 			})
-			templ_7745c5c3_Err = components.Section("Cast", 0).Render(templ.WithChildren(ctx, templ_7745c5c3_Var20), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.Section("Cast", 0).Render(templ.WithChildren(ctx, templ_7745c5c3_Var26), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

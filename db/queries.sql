@@ -247,3 +247,17 @@ GROUP BY
 ORDER BY
     months.month;
 
+-- name: stats-best-of-the-year
+SELECT
+    m.id,
+    m.title,
+    r.rating
+FROM
+    rating AS r
+    INNER JOIN movie AS m ON m.id = r.movie_id
+WHERE
+    EXTRACT(YEAR FROM r.created_at) = EXTRACT(YEAR FROM CURRENT_DATE)
+ORDER BY
+    rating DESC
+LIMIT 1;
+
