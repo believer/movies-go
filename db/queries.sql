@@ -197,13 +197,16 @@ SELECT
     COUNT(*) AS count,
     p.name,
     p.id
-FROM
-    seen AS s
+FROM ( SELECT DISTINCT ON (movie_id)
+        movie_id
+    FROM
+        seen
+    WHERE
+        user_id = 1) AS s
     INNER JOIN movie_person AS mp ON mp.movie_id = s.movie_id
     INNER JOIN person AS p ON p.id = mp.person_id
 WHERE
-    user_id = 1
-    AND mp.job = $1
+    mp.job = $1
 GROUP BY
     p.id
 ORDER BY
