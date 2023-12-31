@@ -149,6 +149,26 @@ func tmdbFetchMovie(route string) (map[string]interface{}, error) {
 	return result, nil
 }
 
+type NewPerson struct {
+	ID             int            `db:"id"`
+	Name           string         `db:"name"`
+	Job            sql.NullString `db:"job"`
+	Character      sql.NullString `db:"character"`
+	Popularity     float64        `db:"popularity"`
+	ProfilePicture sql.NullString `db:"profile_picture"`
+	MovieId        int            `db:"movie_id"`
+}
+
+func personExists(arr []NewPerson, id int) (int, bool) {
+	for i, person := range arr {
+		if person.ID == id {
+			return i, true
+		}
+	}
+
+	return 0, false
+}
+
 // Handle adding a movie
 func HandlePostMovieNew(c *fiber.Ctx) error {
 	isAuth := utils.IsAuthenticated(c)
@@ -209,6 +229,8 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 		return err
 	}
 
+	log.Println("Movie inserted")
+
 	// Insert a view
 	tx.MustExec(`INSERT INTO seen (user_id, movie_id, date) VALUES ($1, $2, $3)`, 1, movieId, watchedAt)
 
@@ -246,15 +268,7 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 		}
 	}
 
-	type NewPerson struct {
-		ID             int            `db:"id"`
-		Name           string         `db:"name"`
-		Job            sql.NullString `db:"job"`
-		Character      sql.NullString `db:"character"`
-		Popularity     float64        `db:"popularity"`
-		ProfilePicture sql.NullString `db:"profile_picture"`
-		MovieId        int            `db:"movie_id"`
-	}
+	log.Println("Genres inserted")
 
 	var castStructs []NewPerson
 	var crewStructs []NewPerson
@@ -283,6 +297,17 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 		}
 
 		idInt := int(id.(float64))
+
+		personIndex, exists := personExists(castStructs, idInt)
+
+		if exists {
+			castStructs[personIndex].Name = name.(string)
+			castStructs[personIndex].Character = char
+			castStructs[personIndex].Popularity = popularity.(float64)
+			castStructs[personIndex].ProfilePicture = pfp
+
+			continue
+		}
 
 		castStructs = append(castStructs, NewPerson{
 			ID:             idInt,
@@ -338,6 +363,16 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 
 		idInt := int(id.(float64))
 
+		personIndex, exists := personExists(crewStructs, idInt)
+
+		if exists {
+			crewStructs[personIndex].Name = name.(string)
+			crewStructs[personIndex].Popularity = popularity.(float64)
+			crewStructs[personIndex].ProfilePicture = pfp
+
+			continue
+		}
+
 		crewStructs = append(crewStructs, NewPerson{
 			ID:             idInt,
 			Name:           name.(string),
@@ -349,6 +384,8 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 	}
 
 	if len(castStructs) > 0 {
+		log.Println(castStructs)
+
 		_, err = tx.NamedExec(`
 	INSERT INTO person (name, original_id, popularity, profile_picture)
 	VALUES (:name, :id, :popularity, :profile_picture)
@@ -362,6 +399,8 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 			return err
 		}
 
+		log.Println("Persons inserted")
+
 		_, err = tx.NamedExec(`
 	INSERT INTO movie_person (movie_id, person_id, job, character)
 	    VALUES (:movie_id, (SELECT id FROM person WHERE original_id = :id), 'cast', :character)
@@ -372,7 +411,11 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 		if err != nil {
 			return err
 		}
+
+		log.Println("Movie persons inserted")
 	}
+
+	log.Println("Cast inserted")
 
 	if len(crewStructs) > 0 {
 		_, err = tx.NamedExec(`
@@ -395,6 +438,8 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 			return err
 		}
 	}
+
+	log.Println("Crew inserted")
 
 	tx.Commit()
 
