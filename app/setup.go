@@ -61,11 +61,7 @@ func SetupAndRunApp() error {
 		port = "8080"
 	}
 
-	err = app.Listen(":" + port)
-
-	if err != nil {
-		return err
-	}
+	app.Listen(":" + port)
 
 	return nil
 }
