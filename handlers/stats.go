@@ -7,6 +7,7 @@ import (
 	"believer/movies/utils"
 	"believer/movies/views"
 	"cmp"
+	"log"
 	"strconv"
 
 	"slices"
@@ -35,36 +36,42 @@ func HandleGetStats(c *fiber.Ctx) error {
 	err := db.Dot.Select(db.Client, &movies, "stats-most-watched-movies")
 
 	if err != nil {
+		log.Fatalf("Error getting most watched movies: %v", err)
 		return err
 	}
 
 	err = db.Dot.Get(db.Client, &stats, "stats-data")
 
 	if err != nil {
+		log.Fatalf("Error getting stats data: %v", err)
 		return err
 	}
 
 	cast, err := getPersonsByJob("cast")
 
 	if err != nil {
+		log.Fatalf("Error getting cast: %v", err)
 		return err
 	}
 
 	ratings, err := getGraphWithQuery("stats-ratings")
 
 	if err != nil {
+		log.Fatalf("Error getting ratings: %v", err)
 		return err
 	}
 
 	watchedByYear, err := getGraphWithQuery("stats-watched-by-year")
 
 	if err != nil {
+		log.Fatalf("Error getting watched by year: %v", err)
 		return err
 	}
 
 	seenThisYearByMonth, err := getGraphWithQuery("stats-watched-this-year-by-month")
 
 	if err != nil {
+		log.Fatalf("Error getting watched this year by month: %v", err)
 		return err
 	}
 
@@ -72,7 +79,7 @@ func HandleGetStats(c *fiber.Ctx) error {
 	err = db.Dot.Get(db.Client, &bestOfTheYear, "stats-best-of-the-year")
 
 	if err != nil {
-		return err
+		bestOfTheYear = types.Movie{ID: 0}
 	}
 
 	return utils.TemplRender(c, views.Stats(

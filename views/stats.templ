@@ -39,14 +39,16 @@ templ Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []c
 							({ strconv.FormatFloat(stats.TopImdbRating, 'f', 1, 64) })
 						</span>
 					}
-					@components.DescriptionListItem("Best of the Year", true) {
-						@components.Link(fmt.Sprintf("/movies/%d", bestOfTheYear.ID), "") {
-							{ bestOfTheYear.Title }
-						}
-						if bestOfTheYear.Rating.Valid {
-							<span class="text-xs">
-								({ strconv.FormatInt(bestOfTheYear.Rating.Int64, 16) })
-							</span>
+					if bestOfTheYear.ID != 0 {
+						@components.DescriptionListItem("Best of the Year", true) {
+							@components.Link(fmt.Sprintf("/movies/%d", bestOfTheYear.ID), "") {
+								{ bestOfTheYear.Title }
+							}
+							if bestOfTheYear.Rating.Valid {
+								<span class="text-xs">
+									({ strconv.FormatInt(bestOfTheYear.Rating.Int64, 16) })
+								</span>
+							}
 						}
 					}
 				}
