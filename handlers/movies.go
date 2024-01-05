@@ -115,7 +115,7 @@ func HandleGetMovieSeenByID(c *fiber.Ctx) error {
 func HandleGetMovieNew(c *fiber.Ctx) error {
 	isAuth := utils.IsAuthenticated(c)
 
-	if isAuth == false {
+	if !isAuth {
 		return c.Redirect("/")
 	}
 
@@ -144,7 +144,12 @@ func tmdbFetchMovie(route string) (map[string]interface{}, error) {
 	}
 
 	var result map[string]interface{}
-	json.Unmarshal([]byte(body), &result)
+
+	err = json.Unmarshal([]byte(body), &result)
+
+	if err != nil {
+		return nil, err
+	}
 
 	return result, nil
 }
@@ -173,7 +178,7 @@ func personExists(arr []NewPerson, id int) (int, bool) {
 func HandlePostMovieNew(c *fiber.Ctx) error {
 	isAuth := utils.IsAuthenticated(c)
 
-	if isAuth == false {
+	if !isAuth {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
@@ -217,7 +222,7 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 		}
 
 		// Add 12 hours to the date if it doesn't have a time
-		watchedAt.Add(time.Duration(now.Hour()))
+		watchedAt = watchedAt.Add(time.Duration(now.Hour()))
 	}
 
 	tx := db.Client.MustBegin()
@@ -441,7 +446,13 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 
 	log.Println("Crew inserted")
 
-	tx.Commit()
+	err = tx.Commit()
+
+	if err != nil {
+		err = tx.Rollback()
+
+		return err
+	}
 
 	c.Set("HX-Redirect", fmt.Sprintf("/movies/%d", movieId))
 
@@ -471,7 +482,7 @@ SELECT id, title FROM movie WHERE imdb_id = $1
 func HandlePostMovieSeenNew(c *fiber.Ctx) error {
 	isAuth := utils.IsAuthenticated(c)
 
-	if isAuth == false {
+	if !isAuth {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
@@ -482,7 +493,8 @@ func HandlePostMovieSeenNew(c *fiber.Ctx) error {
 	err := tx.Commit()
 
 	if err != nil {
-		tx.Rollback()
+		err = tx.Rollback()
+
 		return err
 	}
 
