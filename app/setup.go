@@ -13,14 +13,11 @@ import (
 
 func SetupAndRunApp() error {
 	// Load environment variables
-	err := godotenv.Load()
-
-	if err != nil {
-		return err
-	}
+	godotenv.Load()
 
 	// Initialize database connection
-	err = db.InitializeConnection()
+	err := db.InitializeConnection()
+
 	if err != nil {
 		return err
 	}
