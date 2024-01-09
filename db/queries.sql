@@ -237,7 +237,7 @@ WITH months (
     SELECT
         generate_series(DATE_TRUNC('year', CURRENT_DATE), DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '1 year' - INTERVAL '1 day', INTERVAL '1 month'))
 SELECT
-    EXTRACT(MONTH FROM months.month)::integer AS label,
+    TO_CHAR(months.month, 'Mon') AS label,
     COALESCE(count(seen.id), 0) AS value
 FROM
     months

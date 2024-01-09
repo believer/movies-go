@@ -38,7 +38,7 @@ templ Graph(data []types.Bar, title string) {
  						x={ strconv.FormatFloat(bar.LabelX, 'f', 2, 64) }
  						y={ strconv.FormatFloat(bar.LabelY, 'f', 2, 64) }
 					>
-						{ strconv.Itoa(bar.Label) }
+						{ bar.Label }
 					</text>
 					<text
  						class="fill-neutral-400 dark:fill-neutral-500 opacity-0 transition-opacity text-sm tabular-nums"

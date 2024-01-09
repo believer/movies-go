@@ -22,12 +22,12 @@ type PersonStats struct {
 }
 
 type GraphData struct {
-	Label int `db:"label"`
-	Value int `db:"value"`
+	Label string `db:"label"`
+	Value int    `db:"value"`
 }
 
 type Bar struct {
-	Label     int
+	Label     string
 	Value     int
 	BarHeight int
 	BarWidth  int

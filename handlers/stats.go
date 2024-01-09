@@ -144,7 +144,7 @@ func constructGraphFromData(data []types.GraphData) ([]types.Bar, error) {
 		// Position centered on the bar. Subtract 3.4 which is half the width of the text.
 		charWidth := 8.67 // Uses tabular nums so all characters are the same width
 		numberOfCharsInCount := len(strconv.Itoa(row.Value))
-		numberOfCharsInRating := len(strconv.Itoa(row.Label))
+		numberOfCharsInRating := len(row.Label)
 
 		halfWidthOfCount := charWidth * float64(numberOfCharsInCount) / 2
 		halfWidthOfRating := charWidth * float64(numberOfCharsInRating) / 2
