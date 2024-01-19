@@ -30,8 +30,8 @@ templ Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []c
 					}
 					@components.DescriptionListItem("Top IMDb rating", true) {
 						<a
- 							class="border-b border-dashed border-neutral-500 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600"
- 							href={ templ.URL(fmt.Sprintf("/movies/%s", stats.TopImdbID)) }
+							class="border-b border-dashed border-neutral-500 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600"
+							href={ templ.URL(fmt.Sprintf("/movies/%s", stats.TopImdbID)) }
 						>
 							{ stats.TopImdbTitle }
 						</a>
@@ -63,24 +63,24 @@ templ Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []c
 				@components.OrderedList(mostWatchedCast, "person")
 			}
 			<section
- 				hx-get="/stats/most-watched-person/director"
- 				hx-trigger="revealed"
- 				hx-swap="outerHTML"
+				hx-get="/stats/most-watched-person/director"
+				hx-trigger="load"
+				hx-swap="outerHTML"
 			></section>
 			<section
- 				hx-get="/stats/most-watched-person/writer"
- 				hx-trigger="revealed"
- 				hx-swap="outerHTML"
+				hx-get="/stats/most-watched-person/writer"
+				hx-trigger="load"
+				hx-swap="outerHTML"
 			></section>
 			<section
- 				hx-get="/stats/most-watched-person/composer"
- 				hx-trigger="revealed"
- 				hx-swap="outerHTML"
+				hx-get="/stats/most-watched-person/composer"
+				hx-trigger="load"
+				hx-swap="outerHTML"
 			></section>
 			<section
- 				hx-get="/stats/most-watched-person/producer"
- 				hx-trigger="revealed"
- 				hx-swap="outerHTML"
+				hx-get="/stats/most-watched-person/producer"
+				hx-trigger="load"
+				hx-swap="outerHTML"
 			></section>
 		</div>
 	}
