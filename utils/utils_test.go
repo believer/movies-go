@@ -32,3 +32,30 @@ func TestParseImdbId(t *testing.T) {
 		}
 	}
 }
+
+func TestFormatRuntime(t *testing.T) {
+	tests := []struct {
+		runtime int
+		want    string
+	}{
+		{runtime: 0, want: ""},
+		{runtime: 1, want: "1m"},
+		{runtime: 2, want: "2m"},
+		{runtime: 60, want: "1h"},
+		{runtime: 61, want: "1h 1m"},
+		{runtime: 120, want: "2h"},
+		{runtime: 121, want: "2h 1m"},
+		{runtime: 1440, want: "1d"},
+		{runtime: 1441, want: "1d 1m"},
+		{runtime: 1500, want: "1d 1h"},
+		{runtime: 1501, want: "1d 1h 1m"},
+	}
+
+	for _, tc := range tests {
+		got := FormatRuntime(tc.runtime)
+
+		if got != tc.want {
+			t.Errorf("FormatRuntime(%d) = %v; want %v", tc.runtime, got, tc.want)
+		}
+	}
+}

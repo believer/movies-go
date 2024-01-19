@@ -1,6 +1,7 @@
 package types
 
 import (
+	"believer/movies/utils"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -47,8 +48,5 @@ func (u *Movies) Scan(v interface{}) error {
 
 // Format runtime in hours and minutes from minutes
 func (m Movie) RuntimeFormatted() string {
-	hours := m.Runtime / 60
-	minutes := m.Runtime % 60
-
-	return fmt.Sprintf("%dh %dm", hours, minutes)
+	return utils.FormatRuntime(m.Runtime)
 }

@@ -50,11 +50,34 @@ func ParseImdbId(s string) (string, error) {
 }
 
 func FormatRuntime(runtime int) string {
-	days := runtime / 1440
-	hours := runtime / 60 % 24
-	minutes := runtime % 60
+	var dayStr, hourStr, minStr string
+	var (
+		days    = runtime / 1440
+		hours   = runtime / 60 % 24
+		minutes = runtime % 60
+	)
 
-	return fmt.Sprintf("%d days %d hours %d minutes", days, hours, minutes)
+	if days != 0 {
+		dayStr = fmt.Sprintf("%dd", days)
+
+		if hours != 0 || minutes != 0 {
+			dayStr += " "
+		}
+	}
+
+	if hours != 0 {
+		hourStr = fmt.Sprintf("%dh", hours)
+
+		if minutes != 0 {
+			hourStr += " "
+		}
+	}
+
+	if minutes != 0 {
+		minStr = fmt.Sprintf("%dm", minutes)
+	}
+
+	return dayStr + hourStr + minStr
 }
 
 func TemplRender(c *fiber.Ctx, component templ.Component) error {

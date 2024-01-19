@@ -342,7 +342,7 @@ func Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []co
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<section hx-get=\"/stats/most-watched-person/director\" hx-trigger=\"revealed\" hx-swap=\"outerHTML\"></section><section hx-get=\"/stats/most-watched-person/writer\" hx-trigger=\"revealed\" hx-swap=\"outerHTML\"></section><section hx-get=\"/stats/most-watched-person/composer\" hx-trigger=\"revealed\" hx-swap=\"outerHTML\"></section><section hx-get=\"/stats/most-watched-person/producer\" hx-trigger=\"revealed\" hx-swap=\"outerHTML\"></section></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<section hx-get=\"/stats/most-watched-person/director\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/stats/most-watched-person/writer\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/stats/most-watched-person/composer\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/stats/most-watched-person/producer\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
