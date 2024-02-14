@@ -7,11 +7,12 @@ templ Layout(title string, description string) {
 			<meta charset="UTF-8"/>
 			if title != "" {
 				<title>{ title }</title>
+				<meta property="og:title" content={ title }/>
 			} else {
 				<title>Movies</title>
+				<meta property="og:title" content="Movies"/>
 			}
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-			<meta property="og:title" content="Movies"/>
 			if description != "" {
 				<meta
 					name="description"
