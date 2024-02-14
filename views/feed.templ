@@ -8,7 +8,7 @@ import (
 )
 
 templ Feed(isAdmin bool, movies types.Movies, nextPage int) {
-	@Layout("") {
+	@Layout("", "") {
 		<div class="mx-auto flex max-w-xl flex-col gap-12 px-5 pt-8">
 			<nav class="flex items-center gap-5">
 				<div class="left-8 top-10 md:absolute">
@@ -17,33 +17,33 @@ templ Feed(isAdmin bool, movies types.Movies, nextPage int) {
 					}
 				</div>
 				<input
- 					class="w-full rounded-full border border-neutral-300 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:placeholder:text-neutral-600 dark:focus:ring-neutral-500"
- 					type="search"
- 					name="search"
- 					placeholder="Find a movie"
- 					hx-post="/search"
- 					hx-select="li[data-movie]"
- 					hx-trigger="keyup changed delay:500ms, search"
- 					hx-target="ol"
+					class="w-full rounded-full border border-neutral-300 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:placeholder:text-neutral-600 dark:focus:ring-neutral-500"
+					type="search"
+					name="search"
+					placeholder="Find a movie"
+					hx-post="/search"
+					hx-select="li[data-movie]"
+					hx-trigger="keyup changed delay:500ms, search"
+					hx-target="ol"
 				/>
 				if isAdmin {
 					<div class="md:absolute right-8 top-10 flex gap-4">
 						<a
- 							class="fixed bottom-8 right-8 z-10 bg-neutral-700 w-14 h-14 shadow-md flex justify-center items-center rounded-full sm:bg-transparent sm:bottom-0 sm:right-0 sm:w-auto sm:h-auto sm:relative focus:outline-none focus-visible:outline-dashed focus-visible:outline-offset-8 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
- 							href="/movies/new"
+							class="fixed bottom-8 right-8 z-10 bg-neutral-700 w-14 h-14 shadow-md flex justify-center items-center rounded-full sm:bg-transparent sm:bottom-0 sm:right-0 sm:w-auto sm:h-auto sm:relative focus:outline-none focus-visible:outline-dashed focus-visible:outline-offset-8 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
+							href="/movies/new"
 						>
 							<svg
- 								xmlns="http://www.w3.org/2000/svg"
- 								fill="none"
- 								viewBox="0 0 24 24"
- 								stroke-width="1.5"
- 								stroke="currentColor"
- 								class="h-6 w-6"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								class="h-6 w-6"
 							>
 								<path
- 									stroke-linecap="round"
- 									stroke-linejoin="round"
- 									d="M12 4.5v15m7.5-7.5h-15"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M12 4.5v15m7.5-7.5h-15"
 								></path>
 							</svg>
 						</a>
@@ -57,10 +57,10 @@ templ Feed(isAdmin bool, movies types.Movies, nextPage int) {
 				<ol class="relative flex flex-col gap-6 text-sm">
 					for _, movie := range movies {
 						<li
- 							class="relative before:relative before:mb-4 before:block before:text-4xl before:text-transparent before:opacity-10 before:content-none before:[-webkit-text-stroke-color:_#000] before:[-webkit-text-stroke-width:_2px] dark:before:[-webkit-text-stroke-color:_#fff] lg:before:absolute lg:before:-left-52 lg:before:-top-0 lg:before:mb-0 lg:before:mt-0 lg:before:text-7xl [&:not(:first-child)]:before:mt-8 [&:not(:first-child)]:before:lg:-top-8 before:font-mono"
- 							data-movie={ strconv.Itoa(movie.ID) }
- 							data-year={ movie.WatchedAt.Format("2006") }
- 							_="init if my @data-year is not equal to @data-year of previous <li/>
+							class="relative before:relative before:mb-4 before:block before:text-4xl before:text-transparent before:opacity-10 before:content-none before:[-webkit-text-stroke-color:_#000] before:[-webkit-text-stroke-width:_2px] dark:before:[-webkit-text-stroke-color:_#fff] lg:before:absolute lg:before:-left-52 lg:before:-top-0 lg:before:mb-0 lg:before:mt-0 lg:before:text-7xl [&:not(:first-child)]:before:mt-8 [&:not(:first-child)]:before:lg:-top-8 before:font-mono"
+							data-movie={ strconv.Itoa(movie.ID) }
+							data-year={ movie.WatchedAt.Format("2006") }
+							_="init if my @data-year is not equal to @data-year of previous <li/>
          then
           remove .before:content-none
           add .{'before:content-[attr(data-year)]'}
@@ -68,19 +68,19 @@ templ Feed(isAdmin bool, movies types.Movies, nextPage int) {
         "
 						>
 							<a
- 								href={ templ.URL(fmt.Sprintf("/movies/%d", movie.ID)) }
- 								class="flex flex-col gap-4 rounded focus:outline-none focus-visible:outline-dashed focus-visible:outline-offset-8 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
+								href={ templ.URL(fmt.Sprintf("/movies/%d", movie.ID)) }
+								class="flex flex-col gap-4 rounded focus:outline-none focus-visible:outline-dashed focus-visible:outline-offset-8 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
 							>
 								<header class="flex flex-col gap-1">
 									<h2
- 										class="truncate text-base font-medium text-neutral-700 dark:text-neutral-300"
+										class="truncate text-base font-medium text-neutral-700 dark:text-neutral-300"
 									>
 										{ movie.Title }
 									</h2>
 									<p class="text-xs text-neutral-500 dark:text-neutral-400">
 										<time
- 											title={ movie.WatchedAt.Format("2006-01-02 15:04") }
- 											datetime={ movie.WatchedAt.Format("2006-01-02T15:04:05Z") }
+											title={ movie.WatchedAt.Format("2006-01-02 15:04") }
+											datetime={ movie.WatchedAt.Format("2006-01-02T15:04:05Z") }
 										>
 											{ movie.WatchedAt.Format("January 02 2006") }
 										</time>
@@ -95,10 +95,10 @@ templ Feed(isAdmin bool, movies types.Movies, nextPage int) {
 						</li>
 					}
 					<li
- 						hx-get={ fmt.Sprintf("/?page=%d", nextPage) }
- 						hx-trigger="revealed"
- 						hx-swap="outerHTML"
- 						hx-select="li"
+						hx-get={ fmt.Sprintf("/?page=%d", nextPage) }
+						hx-trigger="revealed"
+						hx-swap="outerHTML"
+						hx-select="li"
 					></li>
 				</ol>
 			} else {

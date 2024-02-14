@@ -3,12 +3,12 @@ package views
 import "believer/movies/components"
 
 templ Login(loginError string) {
-	@Layout("Login") {
+	@Layout("Login", "") {
 		<form
- 			hx-post="/login"
- 			class="mx-auto flex max-w-xl flex-col gap-6 px-4 py-8"
- 			hx-swap="outerHTML"
- 			hx-replace-url="/"
+			hx-post="/login"
+			class="mx-auto flex max-w-xl flex-col gap-6 px-4 py-8"
+			hx-swap="outerHTML"
+			hx-replace-url="/"
 		>
 			@components.TextInput("username", "Username", "")
 			@components.PasswordInput("password", "Password", "")
@@ -18,8 +18,8 @@ templ Login(loginError string) {
 				}
 				<div>
 					<button
- 						class="rounded bg-neutral-200 px-6 py-2 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200"
- 						type="submit"
+						class="rounded bg-neutral-200 px-6 py-2 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200"
+						type="submit"
 					>
 						Login
 					</button>

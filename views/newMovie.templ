@@ -3,11 +3,11 @@ package views
 import "believer/movies/components"
 
 templ NewMovie() {
-	@Layout("Add movie") {
+	@Layout("Add movie", "") {
 		<form
- 			hx-post="/movies/new"
- 			hx-indicator="#sending"
- 			class="mx-auto flex max-w-xl flex-col gap-6 px-4 py-8"
+			hx-post="/movies/new"
+			hx-indicator="#sending"
+			class="mx-auto flex max-w-xl flex-col gap-6 px-4 py-8"
 		>
 			<div>
 				@components.Link("/", "") {
@@ -17,18 +17,18 @@ templ NewMovie() {
 			<div class="relative flex flex-col gap-2">
 				@components.Label("imdb_id", "IMDb ID")
 				<input
- 					required
- 					type="text"
- 					hx-get="/movies/imdb"
- 					hx-trigger="blur"
- 					hx-target="#movie-exists"
- 					name="imdb_id"
- 					id="imdb_id"
- 					class="w-full rounded border border-neutral-200 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500"
+					required
+					type="text"
+					hx-get="/movies/imdb"
+					hx-trigger="blur"
+					hx-target="#movie-exists"
+					name="imdb_id"
+					id="imdb_id"
+					class="w-full rounded border border-neutral-200 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500"
 				/>
 				<div
- 					id="movie-exists"
- 					class="text-xs empty:hidden lg:absolute lg:-right-52 lg:top-6 lg:w-48 lg:rounded lg:p-2 lg:outline-dashed lg:outline-offset-4 lg:outline-neutral-500"
+					id="movie-exists"
+					class="text-xs empty:hidden lg:absolute lg:-right-52 lg:top-6 lg:w-48 lg:rounded lg:p-2 lg:outline-dashed lg:outline-offset-4 lg:outline-neutral-500"
 				></div>
 				@components.Help("For example, https://www.imdb.com/title/tt0111161/, or just tt0111161.")
 			</div>
@@ -36,8 +36,8 @@ templ NewMovie() {
 			@components.DateTimeInput("watched_at", "Watched at", "Defaults to current time if left empty.")
 			<footer>
 				<button
- 					class="rounded bg-neutral-200 px-6 py-2 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200"
- 					type="submit"
+					class="rounded bg-neutral-200 px-6 py-2 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200"
+					type="submit"
 				>
 					Add
 				</button>

@@ -11,9 +11,8 @@ import (
 // TODO: View transition of elements doesn't work because we can't have a
 // parameterized "style" attribute in the template. At least yet...
 // https://github.com/a-h/templ/issues/88
-
 templ Movie(movie types.Movie) {
-	@Layout(movie.Title) {
+	@Layout(movie.Title, movie.Overview) {
 		<div class="mx-auto flex max-w-xl flex-col gap-8 px-5 py-8">
 			@components.H1(movie.Title)
 			if movie.Overview != "" {
@@ -34,28 +33,28 @@ templ Movie(movie types.Movie) {
 					}
 					@components.DescriptionListItem("IMDb", false) {
 						<a
- 							href={ templ.URL(fmt.Sprintf("https://www.imdb.com/title/%s", movie.ImdbId)) }
- 							class="inline-flex items-center gap-1 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
- 							target="_blank"
- 							rel="noopener noreferrer"
+							href={ templ.URL(fmt.Sprintf("https://www.imdb.com/title/%s", movie.ImdbId)) }
+							class="inline-flex items-center gap-1 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
+							target="_blank"
+							rel="noopener noreferrer"
 						>
 							<span
- 								class="border-b border-dashed border-neutral-500 dark:border-neutral-400"
+								class="border-b border-dashed border-neutral-500 dark:border-neutral-400"
 							>
 								{ movie.ImdbId }
 							</span>
 							<svg
- 								xmlns="http://www.w3.org/2000/svg"
- 								fill="none"
- 								viewBox="0 0 24 24"
- 								stroke-width="1.5"
- 								stroke="currentColor"
- 								class="h-4 w-4"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								class="h-4 w-4"
 							>
 								<path
- 									stroke-linecap="round"
- 									stroke-linejoin="round"
- 									d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
 								></path>
 							</svg>
 						</a>
@@ -74,9 +73,9 @@ templ Movie(movie types.Movie) {
 				}
 			}
 			<div
- 				hx-get={ fmt.Sprintf("/movies/%d/cast", movie.ID) }
- 				hx-trigger="load"
- 				hx-swap="outerHTML"
+				hx-get={ fmt.Sprintf("/movies/%d/cast", movie.ID) }
+				hx-trigger="load"
+				hx-swap="outerHTML"
 			></div>
 		</div>
 	}
