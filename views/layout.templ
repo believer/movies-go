@@ -1,6 +1,7 @@
 package views
 
 templ Layout(title string) {
+	<!DOCTYPE html>
 	<html lang="en">
 		<head>
 			<meta charset="UTF-8"/>
@@ -11,15 +12,15 @@ templ Layout(title string) {
 			}
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<meta
- 				name="description"
- 				content="The movies I've watched during my lifetime."
+				name="description"
+				content="The movies I've watched during my lifetime."
 			/>
 			<meta property="og:title" content="Movies"/>
 			<meta property="og:type" content="website"/>
 			<meta property="og:url" content="https://movies.willcodefor.beer/"/>
 			<meta
- 				property="og:description"
- 				content="The movies I've watched during my lifetime."
+				property="og:description"
+				content="The movies I've watched during my lifetime."
 			/>
 			<meta name="twitter:card" content="summary"/>
 			<meta name="twitter:site" content="@rnattochdag"/>
@@ -30,8 +31,8 @@ templ Layout(title string) {
 			<script src="/public/hyperscript.0.9.12.min.js"></script>
 		</head>
 		<body
- 			class="text-neutral-700 dark:bg-neutral-900 dark:text-neutral-300"
- 			hx-boost="true"
+			class="text-neutral-700 dark:bg-neutral-900 dark:text-neutral-300"
+			hx-boost="true"
 		>
 			<main>
 				{ children... }
