@@ -151,7 +151,7 @@ func constructGraphFromData(data []types.GraphData) ([]types.Bar, error) {
 		var (
 			elementsInGraph = graphWidth / len(data)
 			// Calcualte the bar Height
-			// Subtract 40 from the graph height to make room for the labels
+			// Subtract 46 from the graph height to make room for the labels
 			barHeight = clamp(int(float64(row.Value)/float64(maxCount.Value)*float64(graphHeight-46)), 2, graphHeight-40)
 			barWidth  = int(float64(graphWidth)/float64(len(data))) - 5
 
