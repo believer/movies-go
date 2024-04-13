@@ -139,26 +139,27 @@ func constructGraphFromData(data []types.GraphData) ([]types.Bar, error) {
 	// The data is used for a bar chart, so we need to convert the data
 	for i, row := range data {
 		var (
+			elementsInGraph = graphWidth / len(data)
 			// Calcualte the bar Height
-			// Subtract 20 from the maxBarHeight to make room for the text
-			barHeight = int(float64(row.Value) / float64(maxCount.Value) * float64(graphHeight-40))
+			// Subtract 40 from the graph height to make room for the labels
+			barHeight = int(float64(row.Value)/float64(maxCount.Value)*float64(graphHeight-40)) - 6
 			barWidth  = int(float64(graphWidth)/float64(len(data))) - 5
 
 			// Space the bars evenly across the graph
-			barX = (graphWidth / len(data)) * i
-			barY = graphHeight - barHeight - 20
+			barX = elementsInGraph*i + 1
+			barY = graphHeight - barHeight - 26
 		)
 
 		// Position centered on the bar. Subtract 3.4 which is half the width of the text.
 		charWidth := 8.67 // Uses tabular nums so all characters are the same width
 		numberOfCharsInCount := len(strconv.Itoa(row.Value))
-		numberOfCharsInRating := len(row.Label)
+		numberOfCharsInLabel := len(row.Label)
 
 		halfWidthOfCount := charWidth * float64(numberOfCharsInCount) / 2
-		halfWidthOfRating := charWidth * float64(numberOfCharsInRating) / 2
+		halfWidthOfLabel := charWidth * float64(numberOfCharsInLabel) / 2
 
 		valueX := float64(barX+(barWidth/2)) - halfWidthOfCount
-		labelX := float64(barX+(barWidth/2)) - halfWidthOfRating
+		labelX := float64(barX+(barWidth/2)) - halfWidthOfLabel
 
 		// Subtract 8 to put some space between the text and the bar
 		valueY := barY - 8
