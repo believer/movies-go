@@ -36,7 +36,7 @@ func Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []co
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"mx-auto flex max-w-xl flex-col gap-8 px-5 py-8\"><nav class=\"flex items-center gap-5\"><div class=\"left-8 top-10 md:absolute\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"mx-auto flex max-w-xl lg:max-w-5xl flex-col gap-y-8 px-5 pb-8 pt-8 lg:pt-24\"><nav class=\"flex items-center gap-5\"><div class=\"left-8 top-10 md:absolute\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -60,7 +60,7 @@ func Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []co
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></nav>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></nav><div class=\"grid grid-cols-1 lg:grid-cols-2 gap-10\"><div class=\"flex flex-col gap-y-8\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -308,6 +308,10 @@ func Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []co
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"flex flex-col gap-y-8\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 			templ_7745c5c3_Var25 := templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 				if !templ_7745c5c3_IsBuffer {
@@ -346,7 +350,7 @@ func Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []co
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<section hx-get=\"/stats/most-watched-person/director\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/stats/most-watched-person/writer\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/stats/most-watched-person/composer\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/stats/most-watched-person/producer\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<section hx-get=\"/stats/most-watched-person/director\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/stats/most-watched-person/writer\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/stats/most-watched-person/composer\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/stats/most-watched-person/producer\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section></div></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

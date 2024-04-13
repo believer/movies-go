@@ -9,7 +9,7 @@ import (
 
 templ Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []components.ListItem, watchedByYear []types.Bar, ratings []types.Bar, yearRatings []types.Bar, mostWatchedMovies []components.ListItem, seenThisYear []types.Bar, bestOfTheYear types.Movie) {
 	@Layout("Stats", "") {
-		<div class="mx-auto flex max-w-xl flex-col gap-8 px-5 py-8">
+		<div class="mx-auto flex max-w-xl lg:max-w-5xl flex-col gap-y-8 px-5 pb-8 pt-8 lg:pt-24">
 			<nav class="flex items-center gap-5">
 				<div class="left-8 top-10 md:absolute">
 					@components.Link("/", "") {
@@ -17,72 +17,78 @@ templ Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []c
 					}
 				</div>
 			</nav>
-			@components.Section("Stats", 0) {
-				@components.DescriptionList() {
-					@components.DescriptionListItem("Unique movies seen", true) {
-						{ strconv.Itoa(stats.UniqueMovies) }
-					}
-					@components.DescriptionListItem("Movies seen with rewatches", true) {
-						{ strconv.Itoa(stats.SeenWithRewatches) }
-					}
-					@components.DescriptionListItem("Time watched", true) {
-						{ formattedTotalRuntime }
-					}
-					@components.DescriptionListItem("Top IMDb rating", true) {
-						<a
-							class="border-b border-dashed border-neutral-500 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600"
-							href={ templ.URL(fmt.Sprintf("/movies/%s", stats.TopImdbID)) }
-						>
-							{ stats.TopImdbTitle }
-						</a>
-						<span class="text-xs">
-							({ strconv.FormatFloat(stats.TopImdbRating, 'f', 1, 64) })
-						</span>
-					}
-					if bestOfTheYear.ID != 0 {
-						@components.DescriptionListItem("Best of the Year", true) {
-							@components.Link(fmt.Sprintf("/movies/%d", bestOfTheYear.ID), "") {
-								{ bestOfTheYear.Title }
+			<div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+				<div class="flex flex-col gap-y-8">
+					@components.Section("Stats", 0) {
+						@components.DescriptionList() {
+							@components.DescriptionListItem("Unique movies seen", true) {
+								{ strconv.Itoa(stats.UniqueMovies) }
 							}
-							if bestOfTheYear.Rating.Valid {
+							@components.DescriptionListItem("Movies seen with rewatches", true) {
+								{ strconv.Itoa(stats.SeenWithRewatches) }
+							}
+							@components.DescriptionListItem("Time watched", true) {
+								{ formattedTotalRuntime }
+							}
+							@components.DescriptionListItem("Top IMDb rating", true) {
+								<a
+									class="border-b border-dashed border-neutral-500 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600"
+									href={ templ.URL(fmt.Sprintf("/movies/%s", stats.TopImdbID)) }
+								>
+									{ stats.TopImdbTitle }
+								</a>
 								<span class="text-xs">
-									({ strconv.FormatInt(bestOfTheYear.Rating.Int64, 16) })
+									({ strconv.FormatFloat(stats.TopImdbRating, 'f', 1, 64) })
 								</span>
+							}
+							if bestOfTheYear.ID != 0 {
+								@components.DescriptionListItem("Best of the Year", true) {
+									@components.Link(fmt.Sprintf("/movies/%d", bestOfTheYear.ID), "") {
+										{ bestOfTheYear.Title }
+									}
+									if bestOfTheYear.Rating.Valid {
+										<span class="text-xs">
+											({ strconv.FormatInt(bestOfTheYear.Rating.Int64, 16) })
+										</span>
+									}
+								}
 							}
 						}
 					}
-				}
-			}
-			@components.Graph(watchedByYear, "Watched by year")
-			@components.Graph(ratings, "Ratings")
-			@components.Graph(yearRatings, "Ratings this year")
-			@components.Graph(seenThisYear, "Seen this year by month")
-			@components.Section("Most watched movies", 0) {
-				@components.OrderedList(mostWatchedMovies, "movie")
-			}
-			@components.Section("Cast", 0) {
-				@components.OrderedList(mostWatchedCast, "person")
-			}
-			<section
-				hx-get="/stats/most-watched-person/director"
-				hx-trigger="load"
-				hx-swap="outerHTML"
-			></section>
-			<section
-				hx-get="/stats/most-watched-person/writer"
-				hx-trigger="load"
-				hx-swap="outerHTML"
-			></section>
-			<section
-				hx-get="/stats/most-watched-person/composer"
-				hx-trigger="load"
-				hx-swap="outerHTML"
-			></section>
-			<section
-				hx-get="/stats/most-watched-person/producer"
-				hx-trigger="load"
-				hx-swap="outerHTML"
-			></section>
+					@components.Graph(watchedByYear, "Watched by year")
+					@components.Graph(ratings, "Ratings")
+					@components.Graph(yearRatings, "Ratings this year")
+					@components.Graph(seenThisYear, "Seen this year by month")
+				</div>
+				<div class="flex flex-col gap-y-8">
+					@components.Section("Most watched movies", 0) {
+						@components.OrderedList(mostWatchedMovies, "movie")
+					}
+					@components.Section("Cast", 0) {
+						@components.OrderedList(mostWatchedCast, "person")
+					}
+					<section
+						hx-get="/stats/most-watched-person/director"
+						hx-trigger="load"
+						hx-swap="outerHTML"
+					></section>
+					<section
+						hx-get="/stats/most-watched-person/writer"
+						hx-trigger="load"
+						hx-swap="outerHTML"
+					></section>
+					<section
+						hx-get="/stats/most-watched-person/composer"
+						hx-trigger="load"
+						hx-swap="outerHTML"
+					></section>
+					<section
+						hx-get="/stats/most-watched-person/producer"
+						hx-trigger="load"
+						hx-swap="outerHTML"
+					></section>
+				</div>
+			</div>
 		</div>
 	}
 }
