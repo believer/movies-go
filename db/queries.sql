@@ -192,6 +192,23 @@ GROUP BY
 ORDER BY
     rating;
 
+-- name: stats-ratings-this-year
+WITH ratings AS (
+    SELECT
+        GENERATE_SERIES(1, 10) AS rating
+)
+SELECT
+    ratings.rating AS label,
+    COUNT(r.rating) AS value
+FROM
+    ratings
+    LEFT JOIN rating AS r ON r.rating = ratings.rating
+        AND r.user_id = 1
+        AND EXTRACT(YEAR FROM created_at) = EXTRACT(YEAR FROM CURRENT_DATE)
+GROUP BY
+    ratings.rating,
+    r.rating;
+
 -- name: stats-most-watched-by-job
 SELECT
     COUNT(*) AS count,

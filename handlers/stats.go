@@ -61,6 +61,13 @@ func HandleGetStats(c *fiber.Ctx) error {
 		return err
 	}
 
+	yearRatings, err := getGraphWithQuery("stats-ratings-this-year")
+
+	if err != nil {
+		log.Fatalf("Error getting ratings this year: %v", err)
+		return err
+	}
+
 	watchedByYear, err := getGraphWithQuery("stats-watched-by-year")
 
 	if err != nil {
@@ -88,6 +95,7 @@ func HandleGetStats(c *fiber.Ctx) error {
 		cast,
 		watchedByYear,
 		ratings,
+		yearRatings,
 		movies,
 		seenThisYearByMonth,
 		bestOfTheYear,
