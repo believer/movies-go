@@ -281,3 +281,14 @@ ORDER BY
     rating DESC
 LIMIT 1;
 
+-- name: stats-movies-by-year
+SELECT
+    EXTRACT(YEAR FROM release_date) AS label,
+    COUNT(*) AS value
+FROM
+    movie
+GROUP BY
+    label
+ORDER BY
+    label DESC;
+

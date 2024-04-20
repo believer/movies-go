@@ -82,11 +82,27 @@ func HandleGetStats(c *fiber.Ctx) error {
 		return err
 	}
 
+	moviesByYear, err := getGraphWithQuery("stats-movies-by-year")
+
+	if err != nil {
+		log.Fatalf("Error getting movies by year: %v", err)
+		return err
+	}
+
 	var bestOfTheYear types.Movie
 	err = db.Dot.Get(db.Client, &bestOfTheYear, "stats-best-of-the-year")
 
 	if err != nil {
 		bestOfTheYear = types.Movie{ID: 0}
+	}
+
+	bestYear := ""
+	bestYearValue := 0
+	for _, year := range moviesByYear {
+		if year.Value > bestYearValue {
+			bestYear = year.Label
+			bestYearValue = year.Value
+		}
 	}
 
 	return utils.TemplRender(c, views.Stats(
@@ -99,6 +115,8 @@ func HandleGetStats(c *fiber.Ctx) error {
 		movies,
 		seenThisYearByMonth,
 		bestOfTheYear,
+		moviesByYear,
+		bestYear,
 	))
 }
 
@@ -153,7 +171,7 @@ func constructGraphFromData(data []types.GraphData) ([]types.Bar, error) {
 			// Calcualte the bar Height
 			// Subtract 46 from the graph height to make room for the labels
 			barHeight = clamp(int(float64(row.Value)/float64(maxCount.Value)*float64(graphHeight-46)), 2, graphHeight-46)
-			barWidth  = int(float64(graphWidth)/float64(len(data))) - 5
+			barWidth  = clamp(int(float64(graphWidth)/float64(len(data)))-5, 2, 100)
 
 			// Space the bars evenly across the graph
 			barX = elementsInGraph*i + 1
