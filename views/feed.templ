@@ -11,11 +11,13 @@ templ Feed(isAdmin bool, movies types.Movies, nextPage int) {
 	@Layout("", "") {
 		<div class="mx-auto flex max-w-xl flex-col gap-12 px-5 pt-8">
 			<nav class="flex items-center gap-5">
-				<div class="left-8 top-10 md:absolute">
-					@components.Link("/stats", "") {
-						Stats
-					}
-				</div>
+				if isAdmin {
+					<div class="left-8 top-10 md:absolute">
+						@components.Link("/stats", "") {
+							Stats
+						}
+					</div>
+				}
 				<input
 					class="w-full rounded-full border border-neutral-300 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:placeholder:text-neutral-600 dark:focus:ring-neutral-500"
 					type="search"
@@ -103,7 +105,7 @@ templ Feed(isAdmin bool, movies types.Movies, nextPage int) {
 				</ol>
 			} else {
 				<div class="rounded border border-dashed border-neutral-300 px-5 py-8 text-center text-neutral-500 dark:border-neutral-700 dark:text-neutral-400">
-					No movies seen
+					No movies seen. Need to <a class="truncate border-b border-dashed border-neutral-500 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600" href="/login">login</a>?
 				</div>
 			}
 		</div>

@@ -77,7 +77,7 @@ FROM
     INNER JOIN movie_genre AS mg ON mg.movie_id = m.id
     INNER JOIN genre AS g ON g.id = mg.genre_id
     LEFT JOIN rating AS r ON r.movie_id = m.id
-        AND r.user_id = 1
+        AND r.user_id = $2
 WHERE
     m.id = $1
 GROUP BY
@@ -109,7 +109,7 @@ FROM
     seen
 WHERE
     movie_id = $1
-    AND user_id = 1
+    AND user_id = $2
 ORDER BY
     date DESC;
 
@@ -159,7 +159,7 @@ FROM
     seen AS s
     INNER JOIN movie AS m ON m.id = s.movie_id
 WHERE
-    user_id = 1;
+    user_id = $1;
 
 -- name: stats-most-watched-movies
 SELECT
@@ -170,7 +170,7 @@ FROM
     seen AS s
     INNER JOIN movie AS m ON m.id = s.movie_id
 WHERE
-    user_id = 1
+    user_id = $1
 GROUP BY
     m.id
 HAVING
@@ -186,7 +186,7 @@ SELECT
 FROM
     rating
 WHERE
-    user_id = 1
+    user_id = $1
 GROUP BY
     rating
 ORDER BY
@@ -203,7 +203,7 @@ SELECT
 FROM
     ratings
     LEFT JOIN rating AS r ON r.rating = ratings.rating
-        AND r.user_id = 1
+        AND r.user_id = $1
         AND EXTRACT(YEAR FROM created_at) = EXTRACT(YEAR FROM CURRENT_DATE)
 GROUP BY
     ratings.rating,
@@ -219,7 +219,7 @@ FROM ( SELECT DISTINCT ON (movie_id)
     FROM
         seen
     WHERE
-        user_id = 1) AS s
+        user_id = $2) AS s
     INNER JOIN movie_person AS mp ON mp.movie_id = s.movie_id
     INNER JOIN person AS p ON p.id = mp.person_id
 WHERE
@@ -237,7 +237,7 @@ SELECT
 FROM
     seen
 WHERE
-    user_id = 1
+    user_id = $1
     -- 2011 is where all the data that I hadn't tracked
     -- before I started ended up. So, there's a bunch of
     -- movies that year.
@@ -259,6 +259,7 @@ SELECT
 FROM
     months
     LEFT JOIN seen ON DATE_TRUNC('month', seen.date) = months.month
+        AND user_id = $1
 WHERE
     EXTRACT(YEAR FROM seen.date) = EXTRACT(YEAR FROM CURRENT_DATE)
     OR seen.date IS NULL
@@ -277,6 +278,7 @@ FROM
     INNER JOIN movie AS m ON m.id = r.movie_id
 WHERE
     EXTRACT(YEAR FROM r.created_at) = EXTRACT(YEAR FROM CURRENT_DATE)
+    AND user_id = $1
 ORDER BY
     rating DESC
 LIMIT 1;
@@ -286,7 +288,10 @@ SELECT
     EXTRACT(YEAR FROM release_date) AS label,
     COUNT(*) AS value
 FROM
-    movie
+    rating AS r
+    INNER JOIN movie AS m ON m.id = r.movie_id
+WHERE
+    r.user_id = $1
 GROUP BY
     label
 ORDER BY

@@ -17,10 +17,10 @@ import (
 	"golang.org/x/text/language"
 )
 
-func getPersonsByJob(job string) ([]components.ListItem, error) {
+func getPersonsByJob(job string, userId string) ([]components.ListItem, error) {
 	var persons []components.ListItem
 
-	err := db.Dot.Select(db.Client, &persons, "stats-most-watched-by-job", job)
+	err := db.Dot.Select(db.Client, &persons, "stats-most-watched-by-job", job, userId)
 
 	if err != nil {
 		return nil, err
@@ -33,56 +33,58 @@ func HandleGetStats(c *fiber.Ctx) error {
 	var stats types.Stats
 	var movies []components.ListItem
 
-	err := db.Dot.Select(db.Client, &movies, "stats-most-watched-movies")
+	userId := c.Locals("UserId").(string)
+
+	err := db.Dot.Select(db.Client, &movies, "stats-most-watched-movies", userId)
 
 	if err != nil {
 		log.Fatalf("Error getting most watched movies: %v", err)
 		return err
 	}
 
-	err = db.Dot.Get(db.Client, &stats, "stats-data")
+	err = db.Dot.Get(db.Client, &stats, "stats-data", userId)
 
 	if err != nil {
 		log.Fatalf("Error getting stats data: %v", err)
 		return err
 	}
 
-	cast, err := getPersonsByJob("cast")
+	cast, err := getPersonsByJob("cast", userId)
 
 	if err != nil {
 		log.Fatalf("Error getting cast: %v", err)
 		return err
 	}
 
-	ratings, err := getGraphWithQuery("stats-ratings")
+	ratings, err := getGraphWithQuery("stats-ratings", userId)
 
 	if err != nil {
 		log.Fatalf("Error getting ratings: %v", err)
 		return err
 	}
 
-	yearRatings, err := getGraphWithQuery("stats-ratings-this-year")
+	yearRatings, err := getGraphWithQuery("stats-ratings-this-year", userId)
 
 	if err != nil {
 		log.Fatalf("Error getting ratings this year: %v", err)
 		return err
 	}
 
-	watchedByYear, err := getGraphWithQuery("stats-watched-by-year")
+	watchedByYear, err := getGraphWithQuery("stats-watched-by-year", userId)
 
 	if err != nil {
 		log.Fatalf("Error getting watched by year: %v", err)
 		return err
 	}
 
-	seenThisYearByMonth, err := getGraphWithQuery("stats-watched-this-year-by-month")
+	seenThisYearByMonth, err := getGraphWithQuery("stats-watched-this-year-by-month", userId)
 
 	if err != nil {
 		log.Fatalf("Error getting watched this year by month: %v", err)
 		return err
 	}
 
-	moviesByYear, err := getGraphWithQuery("stats-movies-by-year")
+	moviesByYear, err := getGraphWithQuery("stats-movies-by-year", userId)
 
 	if err != nil {
 		log.Fatalf("Error getting movies by year: %v", err)
@@ -90,7 +92,7 @@ func HandleGetStats(c *fiber.Ctx) error {
 	}
 
 	var bestOfTheYear types.Movie
-	err = db.Dot.Get(db.Client, &bestOfTheYear, "stats-best-of-the-year")
+	err = db.Dot.Get(db.Client, &bestOfTheYear, "stats-best-of-the-year", userId)
 
 	if err != nil {
 		bestOfTheYear = types.Movie{ID: 0}
@@ -122,7 +124,7 @@ func HandleGetStats(c *fiber.Ctx) error {
 
 func HandleGetMostWatchedByJob(c *fiber.Ctx) error {
 	job := c.Params("job")
-	persons, err := getPersonsByJob(job)
+	persons, err := getPersonsByJob(job, c.Locals("UserId").(string))
 
 	if err != nil {
 		return err
@@ -133,7 +135,19 @@ func HandleGetMostWatchedByJob(c *fiber.Ctx) error {
 	))
 }
 
-func getGraphWithQuery(query string) ([]types.Bar, error) {
+func getGraphWithQuery(query string, userId string) ([]types.Bar, error) {
+	var data []types.GraphData
+
+	err := db.Dot.Select(db.Client, &data, query, userId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return constructGraphFromData(data)
+}
+
+func getGraphWithQueryWithoutId(query string) ([]types.Bar, error) {
 	var data []types.GraphData
 
 	err := db.Dot.Select(db.Client, &data, query)

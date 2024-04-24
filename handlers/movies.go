@@ -22,7 +22,7 @@ import (
 func HandleGetMovieByID(c *fiber.Ctx) error {
 	var movie types.Movie
 
-	err := db.Dot.Get(db.Client, &movie, "movie-by-id", c.Params("id"))
+	err := db.Dot.Get(db.Client, &movie, "movie-by-id", c.Params("id"), c.Locals("UserId"))
 
 	if err != nil {
 		err := db.Dot.Get(db.Client, &movie, "movie-by-name", c.Params("id"))
@@ -102,7 +102,7 @@ func HandleGetMovieSeenByID(c *fiber.Ctx) error {
 	isAuth := utils.IsAuthenticated(c)
 	id := c.Params("id")
 
-	err := db.Dot.Select(db.Client, &watchedAt, "seen-by-user-id", id)
+	err := db.Dot.Select(db.Client, &watchedAt, "seen-by-user-id", id, c.Locals("UserId"))
 
 	if err != nil {
 		return err
@@ -236,11 +236,13 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 
 	log.Println("Movie inserted")
 
+	userId := c.Locals("UserId").(string)
+
 	// Insert a view
-	tx.MustExec(`INSERT INTO seen (user_id, movie_id, date) VALUES ($1, $2, $3)`, 1, movieId, watchedAt)
+	tx.MustExec(`INSERT INTO seen (user_id, movie_id, date) VALUES ($1, $2, $3)`, userId, movieId, watchedAt)
 
 	// Insert rating
-	tx.MustExec(`INSERT INTO rating (user_id, movie_id, rating) VALUES ($1, $2, $3)`, 1, movieId, data.Rating)
+	tx.MustExec(`INSERT INTO rating (user_id, movie_id, rating) VALUES ($1, $2, $3)`, userId, movieId, data.Rating)
 
 	type Genre struct {
 		Name    string `db:"name"`
@@ -486,7 +488,7 @@ func HandlePostMovieSeenNew(c *fiber.Ctx) error {
 
 	tx := db.Client.MustBegin()
 
-	tx.MustExec(`INSERT INTO seen (user_id, movie_id) VALUES ($1, $2)`, 1, c.Params("id"))
+	tx.MustExec(`INSERT INTO seen (user_id, movie_id) VALUES ($1, $2)`, c.Locals("UserId"), c.Params("id"))
 
 	err := tx.Commit()
 
