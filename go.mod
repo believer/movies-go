@@ -12,7 +12,9 @@ require (
 require (
 	github.com/PuerkitoBio/goquery v1.8.1
 	github.com/a-h/templ v0.2.598
+	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/qustavo/dotsql v1.2.0
+	golang.org/x/crypto v0.22.0
 	golang.org/x/text v0.14.0
 )
 
@@ -35,5 +37,5 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.52.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
-	golang.org/x/sys v0.17.0 // indirect
+	golang.org/x/sys v0.19.0 // indirect
 )
