@@ -66,6 +66,9 @@ func SetupAndRunApp() error {
 			} else {
 				fmt.Println(err)
 			}
+		} else {
+			// Set me as default
+			c.Locals("UserId", "1")
 		}
 
 		return c.Next()
