@@ -3,7 +3,6 @@ package utils
 import (
 	"fmt"
 	"net/url"
-	"os"
 	"path"
 	"regexp"
 	"strings"
@@ -14,10 +13,13 @@ import (
 )
 
 func IsAuthenticated(c *fiber.Ctx) bool {
-	adminSecret := os.Getenv("ADMIN_SECRET")
-	cookieAdminSecret := c.Cookies("admin_secret")
+	cookieAdminSecret := c.Cookies("token")
 
-	return cookieAdminSecret == adminSecret
+	if cookieAdminSecret == "" {
+		return false
+	}
+
+	return true
 }
 
 func ParseImdbId(s string) (string, error) {

@@ -3,11 +3,14 @@ package app
 import (
 	"believer/movies/db"
 	"believer/movies/router"
+	"fmt"
+	"log"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/joho/godotenv"
 )
 
@@ -39,8 +42,31 @@ func SetupAndRunApp() error {
 	// Pass app environment to all views
 	app.Use(func(c *fiber.Ctx) error {
 		appEnv := os.Getenv("APP_ENV")
+		tokenString := c.Cookies("token")
 
 		c.Locals("AppEnv", appEnv)
+
+		if tokenString != "" {
+			token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+				// Don't forget to validate the alg is what you expect:
+				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+					return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+				}
+
+				// hmacSampleSecret is a []byte containing your secret, e.g. []byte("my_secret_key")
+				return []byte(os.Getenv("ADMIN_SECRET")), nil
+			})
+
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			if claims, ok := token.Claims.(jwt.MapClaims); ok {
+				c.Locals("UserId", claims["id"])
+			} else {
+				fmt.Println(err)
+			}
+		}
 
 		return c.Next()
 	})

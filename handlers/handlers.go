@@ -5,12 +5,13 @@ import (
 	"believer/movies/types"
 	"believer/movies/utils"
 	"believer/movies/views"
-	"encoding/base64"
 	"os"
 	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func HandleFeed(c *fiber.Ctx) error {
@@ -23,7 +24,7 @@ func HandleFeed(c *fiber.Ctx) error {
 		page = 1
 	}
 
-	err = db.Dot.Select(db.Client, &movies, "feed", (page-1)*20)
+	err = db.Dot.Select(db.Client, &movies, "feed", (page-1)*20, c.Locals("UserId"))
 
 	if err != nil {
 		panic(err)
@@ -43,38 +44,67 @@ func HandleFeed(c *fiber.Ctx) error {
 }
 
 func HandleGetLogin(c *fiber.Ctx) error {
-	return utils.TemplRender(c, views.Login(""))
+	return utils.TemplRender(c, views.Login())
+}
+
+type LoginData struct {
+	PasswordHash string `db:"password_hash"`
+	ID           string `db:"id"`
 }
 
 func HandlePostLogin(c *fiber.Ctx) error {
+	var user LoginData
+
 	data := new(struct {
 		Password string `form:"password"`
 		Username string `form:"username"`
 	})
 
+	// Parse the form data
 	if err := c.BodyParser(data); err != nil {
 		return err
 	}
 
-	encoded := base64.StdEncoding.EncodeToString([]byte(data.Username + ":" + data.Password))
+	// Get the password hash of the user from the database
+	err := db.Client.Get(&user, "SELECT id, password_hash FROM public.user WHERE username = $1", data.Username)
 
-	if encoded == os.Getenv("ADMIN_SECRET") {
-		c.Cookie(&fiber.Cookie{
-			Name:     "admin_secret",
-			Value:    encoded,
-			Expires:  time.Now().AddDate(0, 0, 30),
-			HTTPOnly: true,
-		})
-
-		return c.Redirect("/", 303)
+	// TODO: Display these errors to the user
+	if err != nil {
+		c.SendStatus(401)
+		return c.SendString("Invalid username or password")
 	}
 
-	return utils.TemplRender(c, views.Login("Invalid username or password"))
+	// Check if the password is correct
+	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(data.Password))
+
+	if err != nil {
+		c.SendStatus(401)
+		return c.SendString("Invalid username or password")
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"id": user.ID,
+	})
+	tokenString, err := token.SignedString([]byte(os.Getenv("ADMIN_SECRET")))
+
+	if err != nil {
+		c.SendStatus(500)
+		return c.SendString("Server error")
+	}
+
+	c.Cookie(&fiber.Cookie{
+		Name:     "token",
+		Value:    tokenString,
+		Expires:  time.Now().AddDate(0, 0, 30),
+		HTTPOnly: true,
+	})
+
+	return c.Redirect("/", 303)
 }
 
 func HandlePostLogout(c *fiber.Ctx) error {
 	c.Cookie(&fiber.Cookie{
-		Name:     "admin_secret",
+		Name:     "token",
 		Value:    "",
 		Expires:  time.Now().AddDate(0, 0, -1),
 		HTTPOnly: true,

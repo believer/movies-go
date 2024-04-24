@@ -56,7 +56,7 @@ FROM
     seen AS s
     INNER JOIN movie AS m ON m.id = s.movie_id
 WHERE
-    user_id = 1
+    user_id = $2
 ORDER BY
     s.date DESC OFFSET $1
 LIMIT 20;

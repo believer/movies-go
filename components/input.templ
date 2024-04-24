@@ -6,8 +6,8 @@ var inputClass = "w-full rounded border border-neutral-200 bg-transparent px-4 p
 
 templ Label(name string, label string) {
 	<label
- 		for={ name }
- 		class="text-sm font-semibold text-neutral-500 dark:text-neutral-400"
+		for={ name }
+		class="text-sm font-semibold text-neutral-500 dark:text-neutral-400"
 	>
 		{ label }
 	</label>
@@ -23,11 +23,11 @@ templ TextInput(name string, labelText string, helpText string) {
 	<div class="relative flex flex-col gap-2">
 		@Label(name, labelText)
 		<input
- 			required
- 			type="text"
- 			name={ name }
- 			id={ name }
- 			class={ inputClass }
+			required
+			type="text"
+			name={ name }
+			id={ name }
+			class={ inputClass }
 		/>
 		if helpText != "" {
 			@Help(helpText)
@@ -39,13 +39,13 @@ templ NumberInput(name string, labelText string, helpText string, min int, max i
 	<div class="relative flex flex-col gap-2">
 		@Label(name, labelText)
 		<input
- 			required
- 			type="number"
- 			name={ name }
- 			id={ name }
- 			class={ inputClass }
- 			min={ strconv.Itoa(min) }
- 			max={ strconv.Itoa(max) }
+			required
+			type="number"
+			name={ name }
+			id={ name }
+			class={ inputClass }
+			min={ strconv.Itoa(min) }
+			max={ strconv.Itoa(max) }
 		/>
 		if helpText != "" {
 			@Help(helpText)
@@ -57,10 +57,10 @@ templ DateTimeInput(name string, labelText string, helpText string) {
 	<div class="relative flex flex-col gap-2">
 		@Label(name, labelText)
 		<input
- 			type="datetime-local"
- 			name={ name }
- 			id={ name }
- 			class={ inputClass, "h-11" }
+			type="datetime-local"
+			name={ name }
+			id={ name }
+			class={ inputClass, "h-11" }
 		/>
 		if helpText != "" {
 			@Help(helpText)
@@ -72,11 +72,11 @@ templ PasswordInput(name string, labelText string, helpText string) {
 	<div class="relative flex flex-col gap-2">
 		@Label(name, labelText)
 		<input
- 			required
- 			type="password"
- 			name={ name }
- 			id={ name }
- 			class={ inputClass }
+			required
+			type="password"
+			name={ name }
+			id={ name }
+			class={ inputClass }
 		/>
 		if helpText != "" {
 			@Help(helpText)

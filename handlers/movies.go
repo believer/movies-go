@@ -468,9 +468,7 @@ func HandleGetByImdbId(c *fiber.Ctx) error {
 		return c.SendString("")
 	}
 
-	err = db.Client.Get(&movie, `
-SELECT id, title FROM movie WHERE imdb_id = $1
-`, imdbId)
+	err = db.Client.Get(&movie, `SELECT id, title FROM movie WHERE imdb_id = $1`, imdbId)
 
 	if err != nil || movie.ID == 0 {
 		return c.SendString("")
