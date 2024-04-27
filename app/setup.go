@@ -34,27 +34,32 @@ func SetupAndRunApp() error {
 	})
 
 	// Setup middleware
-	// Recover middleware recovers from panics anywhere in the chain and handles the control to the centralized ErrorHandler.
+
+	// Recover middleware recovers from panics anywhere in
+	// the chain and handles the control to the centralized ErrorHandler.
 	app.Use(recover.New())
+
 	// Logger middleware will log the HTTP requests.
 	app.Use(logger.New())
 
 	// Pass app environment to all views
 	app.Use(func(c *fiber.Ctx) error {
+		secret := os.Getenv("ADMIN_SECRET")
 		appEnv := os.Getenv("APP_ENV")
 		tokenString := c.Cookies("token")
 
-		c.Locals("AppEnv", appEnv)
+		userId := "1"
 
+		// Parse the JWT token if it exists
+		// and set the user ID in the locals
 		if tokenString != "" {
 			token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-				// Don't forget to validate the alg is what you expect:
+				// Validate the signing method
 				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 					return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 				}
 
-				// hmacSampleSecret is a []byte containing your secret, e.g. []byte("my_secret_key")
-				return []byte(os.Getenv("ADMIN_SECRET")), nil
+				return []byte(secret), nil
 			})
 
 			if err != nil {
@@ -62,14 +67,12 @@ func SetupAndRunApp() error {
 			}
 
 			if claims, ok := token.Claims.(jwt.MapClaims); ok {
-				c.Locals("UserId", claims["id"])
-			} else {
-				fmt.Println(err)
+				userId = claims["id"].(string)
 			}
-		} else {
-			// Set me as default
-			c.Locals("UserId", "1")
 		}
+
+		c.Locals("AppEnv", appEnv)
+		c.Locals("UserId", userId)
 
 		return c.Next()
 	})
