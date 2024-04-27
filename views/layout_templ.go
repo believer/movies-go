@@ -95,7 +95,7 @@ func Layout(title string, description string) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<meta property=\"og:type\" content=\"website\"><meta property=\"og:url\" content=\"https://movies.willcodefor.beer/\"><meta name=\"twitter:card\" content=\"summary\"><meta name=\"twitter:site\" content=\"@rnattochdag\"><meta name=\"twitter:creator\" content=\"@rnattochdag\"><link rel=\"icon\" type=\"image/png\" href=\"/public/favicon.png\"><link href=\"/public/styles.css\" rel=\"stylesheet\"><link rel=\"manifest\" href=\"/public/manifest.webmanifest\"><script src=\"/public/htmx.1.9.9.min.js\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<meta property=\"og:type\" content=\"website\"><meta property=\"og:url\" content=\"https://movies.willcodefor.beer/\"><meta name=\"twitter:card\" content=\"summary\"><meta name=\"twitter:site\" content=\"@rnattochdag\"><meta name=\"twitter:creator\" content=\"@rnattochdag\"><link rel=\"icon\" type=\"image/png\" href=\"/public/favicon.png\"><link href=\"/public/styles.css\" rel=\"stylesheet\"><link rel=\"manifest\" href=\"/public/manifest.webmanifest\"><script src=\"/public/htmx.1.9.12.min.js\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
