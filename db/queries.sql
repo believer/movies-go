@@ -71,7 +71,7 @@ SELECT
     m.overview,
     m.tagline,
     r.rating,
-    ARRAY_AGG(g.name) AS genres
+    ARRAY_AGG(DISTINCT (g.name)) AS genres
 FROM
     movie AS m
     INNER JOIN movie_genre AS mg ON mg.movie_id = m.id
@@ -88,7 +88,7 @@ GROUP BY
 SELECT
     m.*,
     r.rating,
-    ARRAY_AGG(g.name) AS genres
+    ARRAY_AGG(DISTINCT (g.name)) AS genres
 FROM
     movie AS m
     INNER JOIN movie_genre AS mg ON mg.movie_id = m.id
