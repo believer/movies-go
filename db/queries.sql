@@ -119,11 +119,11 @@ SELECT
     p.name,
     -- Function get_person_role_json returns a JSON array of movies
     -- The function is defined in the database
-    get_person_role_json (p.id, 'director'::job) AS director,
-    get_person_role_json (p.id, 'cast') AS cast,
-    get_person_role_json (p.id, 'writer') AS writer,
-    get_person_role_json (p.id, 'composer') AS composer,
-    get_person_role_json (p.id, 'producer') AS producer
+    get_person_role_with_seen_json (p.id, 'director'::job, $2) AS director,
+    get_person_role_with_seen_json (p.id, 'cast', $2) AS cast,
+    get_person_role_with_seen_json (p.id, 'writer', $2) AS writer,
+    get_person_role_with_seen_json (p.id, 'composer', $2) AS composer,
+    get_person_role_with_seen_json (p.id, 'producer', $2) AS producer
 FROM
     person AS p
 WHERE
@@ -296,15 +296,4 @@ GROUP BY
     label
 ORDER BY
     label DESC;
-
--- name: person-seen-movie-by-id
-SELECT
-    EXISTS (
-        SELECT
-            id
-        FROM
-            seen
-        WHERE
-            user_id = $1
-            AND movie_id = $2);
 

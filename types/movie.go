@@ -31,6 +31,7 @@ type Movie struct {
 	Title       string          `db:"title" json:"title"`
 	UpdatedAt   time.Time       `db:"updated_at"`
 	WatchedAt   time.Time       `db:"watched_at" json:"watchedAt"`
+	Seen        bool            `db:"seen"`
 }
 
 type Movies []Movie

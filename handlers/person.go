@@ -15,7 +15,7 @@ func HandleGetPersonByID(c *fiber.Ctx) error {
 
 	id := c.Params("id")
 
-	err := db.Dot.Get(db.Client, &person, "person-by-id", id)
+	err := db.Dot.Get(db.Client, &person, "person-by-id", id, c.Locals("UserId"))
 
 	if err != nil {
 		// TODO: Display 404 page
@@ -40,16 +40,4 @@ func HandleGetPersonByID(c *fiber.Ctx) error {
 	}
 
 	return utils.TemplRender(c, views.Person(person, totalCredits, id))
-}
-
-func HandleSeenMovieByID(c *fiber.Ctx) error {
-	var seen bool
-
-	err := db.Dot.Get(db.Client, &seen, "person-seen-movie-by-id", c.Locals("UserId"), c.Params("movieId"))
-
-	if err != nil {
-		return err
-	}
-
-	return utils.TemplRender(c, views.Seen(seen))
 }

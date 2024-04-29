@@ -3,16 +3,37 @@ package types
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 )
 
+type PersonMovie struct {
+	ID          int       `json:"id" db:"id"`
+	Title       string    `json:"title" db:"title"`
+	ReleaseDate time.Time `json:"release_date" db:"release_date"`
+	Seen        bool      `json:"seen" db:"seen"`
+}
+
+type PersonMovies []PersonMovie
+
+func (u *PersonMovies) Scan(v interface{}) error {
+	switch vv := v.(type) {
+	case []byte:
+		return json.Unmarshal(vv, u)
+	case string:
+		return json.Unmarshal([]byte(vv), u)
+	default:
+		return fmt.Errorf("unsupported type: %T", v)
+	}
+}
+
 type Person struct {
-	ID       int    `json:"id" db:"id"`
-	Name     string `json:"name" db:"name"`
-	Cast     Movies `json:"cast" db:"cast"`
-	Director Movies `json:"director" db:"director"`
-	Writer   Movies `json:"writer" db:"writer"`
-	Composer Movies `json:"composer" db:"composer"`
-	Producer Movies `json:"producer" db:"producer"`
+	ID       int          `json:"id" db:"id"`
+	Name     string       `json:"name" db:"name"`
+	Cast     PersonMovies `json:"cast" db:"cast"`
+	Director PersonMovies `json:"director" db:"director"`
+	Writer   PersonMovies `json:"writer" db:"writer"`
+	Composer PersonMovies `json:"composer" db:"composer"`
+	Producer PersonMovies `json:"producer" db:"producer"`
 }
 
 type Persons []Person

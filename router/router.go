@@ -37,7 +37,6 @@ func SetupRoutes(app *fiber.App) {
 
 	personGroup.Get("/", redirectToHome)
 	personGroup.Get("/:id", handlers.HandleGetPersonByID)
-	personGroup.Get("/:id/:movieId", handlers.HandleSeenMovieByID)
 
 	// Search
 	// --------------------------
