@@ -13,7 +13,9 @@ import (
 func HandleGetPersonByID(c *fiber.Ctx) error {
 	var person types.Person
 
-	err := db.Dot.Get(db.Client, &person, "person-by-id", c.Params("id"))
+	id := c.Params("id")
+
+	err := db.Dot.Get(db.Client, &person, "person-by-id", id)
 
 	if err != nil {
 		// TODO: Display 404 page
@@ -37,5 +39,17 @@ func HandleGetPersonByID(c *fiber.Ctx) error {
 		totalCredits += field
 	}
 
-	return utils.TemplRender(c, views.Person(person, totalCredits))
+	return utils.TemplRender(c, views.Person(person, totalCredits, id))
+}
+
+func HandleSeenMovieByID(c *fiber.Ctx) error {
+	var seen bool
+
+	err := db.Dot.Get(db.Client, &seen, "person-seen-movie-by-id", c.Locals("UserId"), c.Params("movieId"))
+
+	if err != nil {
+		return err
+	}
+
+	return utils.TemplRender(c, views.Seen(seen))
 }

@@ -297,3 +297,14 @@ GROUP BY
 ORDER BY
     label DESC;
 
+-- name: person-seen-movie-by-id
+SELECT
+    EXISTS (
+        SELECT
+            id
+        FROM
+            seen
+        WHERE
+            user_id = $1
+            AND movie_id = $2);
+
