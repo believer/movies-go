@@ -114,3 +114,7 @@ func HandlePostLogout(c *fiber.Ctx) error {
 
 	return c.SendStatus(200)
 }
+
+func HandleGetFriends(c *fiber.Ctx) error {
+	return utils.TemplRender(c, views.Friends(utils.IsAuthenticated(c)))
+}

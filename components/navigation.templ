@@ -1,0 +1,67 @@
+package components
+
+templ Navigation(isAdmin bool) {
+	<div class="mx-auto flex max-w-xl flex-col gap-12 px-5 pt-8">
+		<nav class="flex flex-col lg:flex-row items-center gap-5">
+			<div class="flex justify-between w-full lg:w-auto">
+				<div class="left-8 top-10 lg:absolute flex gap-4">
+					@Link("/", "") {
+						Home
+					}
+					@Link("/stats", "") {
+						Stats
+					}
+					if isAdmin {
+						@Link("/friends", "") {
+							Friends
+						}
+					}
+				</div>
+				if isAdmin {
+					<div class="lg:absolute right-8 top-10 flex gap-4 items-center">
+						<a
+							class="fixed bottom-8 right-8 z-10 bg-neutral-700 w-14 h-14 shadow-md flex justify-center items-center rounded-full lg:bg-transparent lg:bottom-0 lg:right-0 lg:w-auto lg:h-auto lg:relative focus:outline-none focus-visible:outline-dashed focus-visible:outline-offset-8 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
+							href="/movies/new"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								class="h-6 w-6"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M12 4.5v15m7.5-7.5h-15"
+								></path>
+							</svg>
+						</a>
+						<a
+							class="truncate border-b border-dashed border-neutral-500 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600"
+							href="/logout"
+							hx-post="/logout"
+						>Logout</a>
+					</div>
+				} else {
+					<div class="lg:absolute right-8 top-10 flex gap-4">
+						@Link("/login", "") {
+							Login
+						}
+					</div>
+				}
+			</div>
+			<input
+				class="w-full rounded-full border border-neutral-300 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:placeholder:text-neutral-600 dark:focus:ring-neutral-500"
+				type="search"
+				name="search"
+				placeholder="Find a movie"
+				hx-post="/search"
+				hx-select="li[data-movie]"
+				hx-trigger="keyup changed delay:500ms, search"
+				hx-target="ol"
+			/>
+		</nav>
+	</div>
+}

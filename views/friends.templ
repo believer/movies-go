@@ -1,0 +1,12 @@
+package views
+
+import (
+	"believer/movies/components"
+)
+
+templ Friends(isAdmin bool) {
+	@Layout("", "") {
+		@components.Navigation(isAdmin)
+		<div></div>
+	}
+}
