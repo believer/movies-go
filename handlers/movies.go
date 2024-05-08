@@ -164,9 +164,9 @@ type NewPerson struct {
 	MovieId        int            `db:"movie_id"`
 }
 
-func personExists(arr []NewPerson, id int) (int, bool) {
+func personExists(arr []NewPerson, id int, job interface{}) (int, bool) {
 	for i, person := range arr {
-		if person.ID == id {
+		if person.ID == id && person.Job == job {
 			return i, true
 		}
 	}
@@ -221,7 +221,7 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 			watchedAt = now
 		}
 
-		// Add 12 hours to the date if it doesn't have a time
+		// Set the current time
 		watchedAt = watchedAt.Add(time.Duration(now.Hour()))
 	}
 
@@ -305,7 +305,7 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 
 		idInt := int(id.(float64))
 
-		personIndex, exists := personExists(castStructs, idInt)
+		personIndex, exists := personExists(castStructs, idInt, "cast")
 
 		if exists {
 			castStructs[personIndex].Name = name.(string)
@@ -370,7 +370,7 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 
 		idInt := int(id.(float64))
 
-		personIndex, exists := personExists(crewStructs, idInt)
+		personIndex, exists := personExists(crewStructs, idInt, job)
 
 		if exists {
 			crewStructs[personIndex].Name = name.(string)
@@ -391,8 +391,6 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 	}
 
 	if len(castStructs) > 0 {
-		log.Println(castStructs)
-
 		_, err = tx.NamedExec(`
 	INSERT INTO person (name, original_id, popularity, profile_picture)
 	VALUES (:name, :id, :popularity, :profile_picture)
@@ -406,8 +404,6 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 			return err
 		}
 
-		log.Println("Persons inserted")
-
 		_, err = tx.NamedExec(`
 	INSERT INTO movie_person (movie_id, person_id, job, character)
 	    VALUES (:movie_id, (SELECT id FROM person WHERE original_id = :id), 'cast', :character)
@@ -418,8 +414,6 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 		if err != nil {
 			return err
 		}
-
-		log.Println("Movie persons inserted")
 	}
 
 	log.Println("Cast inserted")
