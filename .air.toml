@@ -9,4 +9,8 @@
 [screen]
   clear_on_rebuild = true
   keep_scroll = true
-
+ 
+[proxy]
+  enabled = true
+  proxy_port = 8081
+  app_port = 8080
