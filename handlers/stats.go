@@ -147,18 +147,6 @@ func getGraphWithQuery(query string, userId string) ([]types.Bar, error) {
 	return constructGraphFromData(data)
 }
 
-func getGraphWithQueryWithoutId(query string) ([]types.Bar, error) {
-	var data []types.GraphData
-
-	err := db.Dot.Select(db.Client, &data, query)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return constructGraphFromData(data)
-}
-
 func clamp(val, min, max int) int {
 	if val < min {
 		return min

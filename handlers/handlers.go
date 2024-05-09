@@ -70,7 +70,12 @@ func HandlePostLogin(c *fiber.Ctx) error {
 
 	// TODO: Display these errors to the user
 	if err != nil {
-		c.SendStatus(401)
+		err := c.SendStatus(401)
+
+		if err != nil {
+			return err
+		}
+
 		return c.SendString("Invalid username or password")
 	}
 
@@ -78,7 +83,12 @@ func HandlePostLogin(c *fiber.Ctx) error {
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(data.Password))
 
 	if err != nil {
-		c.SendStatus(401)
+		err := c.SendStatus(401)
+
+		if err != nil {
+			return err
+		}
+
 		return c.SendString("Invalid username or password")
 	}
 
@@ -88,7 +98,12 @@ func HandlePostLogin(c *fiber.Ctx) error {
 	tokenString, err := token.SignedString([]byte(os.Getenv("ADMIN_SECRET")))
 
 	if err != nil {
-		c.SendStatus(500)
+		err := c.SendStatus(401)
+
+		if err != nil {
+			return err
+		}
+
 		return c.SendString("Server error")
 	}
 

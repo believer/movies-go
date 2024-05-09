@@ -15,11 +15,7 @@ import (
 func IsAuthenticated(c *fiber.Ctx) bool {
 	cookieAdminSecret := c.Cookies("token")
 
-	if cookieAdminSecret == "" {
-		return false
-	}
-
-	return true
+	return cookieAdminSecret != ""
 }
 
 func ParseImdbId(s string) (string, error) {

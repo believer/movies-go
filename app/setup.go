@@ -16,10 +16,14 @@ import (
 
 func SetupAndRunApp() error {
 	// Load environment variables
-	godotenv.Load()
+	err := godotenv.Load()
+
+	if err != nil {
+		return err
+	}
 
 	// Initialize database connection
-	err := db.InitializeConnection()
+	err = db.InitializeConnection()
 
 	if err != nil {
 		return err
@@ -93,7 +97,7 @@ func SetupAndRunApp() error {
 		port = "8080"
 	}
 
-	app.Listen(":" + port)
+	log.Fatal(app.Listen(":" + port))
 
 	return nil
 }
