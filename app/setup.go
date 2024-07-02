@@ -18,7 +18,7 @@ func SetupAndRunApp() error {
 	// Load environment variables
 	err := godotenv.Load()
 
-	if err != nil {
+	if err != nil && os.Getenv("APP_ENV") == "development" {
 		return err
 	}
 
