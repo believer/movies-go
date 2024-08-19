@@ -12,6 +12,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"time"
 
@@ -150,6 +151,30 @@ func tmdbFetchMovie(route string) (map[string]interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	return result, nil
+}
+
+func tmdbSearchMovie(query string) (types.Response, error) {
+	tmdbBaseUrl := "https://api.themoviedb.org/3/search/movie"
+	tmdbKey := os.Getenv("TMDB_API_KEY")
+
+	resp, err := http.Get(tmdbBaseUrl + "?query=" + url.QueryEscape(query) + "&api_key=" + tmdbKey)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var result types.Response
+
+	err = json.Unmarshal([]byte(body), &result)
 
 	return result, nil
 }
@@ -495,4 +520,16 @@ func HandlePostMovieSeenNew(c *fiber.Ctx) error {
 	c.Set("HX-Redirect", fmt.Sprintf("/movies/%s", c.Params("id")))
 
 	return c.SendStatus(fiber.StatusOK)
+}
+
+func HandleSearchNew(c *fiber.Ctx) error {
+	query := c.Query("search")
+
+	movies, err := tmdbSearchMovie(query)
+
+	if err != nil {
+		return err
+	}
+
+	return utils.TemplRender(c, views.MovieSearch(movies.Results))
 }

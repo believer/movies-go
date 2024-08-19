@@ -23,6 +23,7 @@ func SetupRoutes(app *fiber.App) {
 
 	movieGroup.Get("/", redirectToHome)
 	movieGroup.Get("/imdb", handlers.HandleGetByImdbId)
+	movieGroup.Get("/search", handlers.HandleSearchNew)
 	movieGroup.Get("/new", handlers.HandleGetMovieNew)
 	movieGroup.Post("/new", handlers.HandlePostMovieNew)
 

@@ -51,3 +51,12 @@ func (u *Movies) Scan(v interface{}) error {
 func (m Movie) RuntimeFormatted() string {
 	return utils.FormatRuntime(m.Runtime)
 }
+
+type SearchResult struct {
+	Title string `json:"title"`
+	Id    int    `json:"id"`
+}
+
+type Response struct {
+	Results []SearchResult `json:"results"`
+}
