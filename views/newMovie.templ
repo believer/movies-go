@@ -15,7 +15,24 @@ templ NewMovie() {
 				}
 			</div>
 			<div class="relative flex flex-col gap-2">
-				@components.Label("imdb_id", "IMDb ID")
+				@components.Label("search", "Search")
+				<input
+					required
+					type="text"
+					hx-get="/movies/search"
+					hx-trigger="keyup changed delay:500ms"
+					hx-target="#search-results"
+					name="search"
+					id="search"
+					class="w-full rounded border border-neutral-200 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500"
+				/>
+				<div
+					id="search-results"
+					class="text-xs empty:hidden lg:absolute lg:-right-52 lg:top-6 lg:w-48 lg:rounded lg:p-2 lg:outline-dashed lg:outline-offset-4 lg:outline-neutral-500"
+				></div>
+			</div>
+			<div class="relative flex flex-col gap-2">
+				@components.Label("imdb_id", "IMDb ID or TMDB ID")
 				<input
 					required
 					type="text"
