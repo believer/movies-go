@@ -74,7 +74,7 @@ func NewMovie() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<input type=\"text\" hx-get=\"/movies/search\" hx-trigger=\"keyup changed delay:500ms\" hx-target=\"#search-results\" name=\"search\" id=\"search\" class=\"w-full rounded border border-neutral-200 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500\"><div id=\"search-results\" class=\"text-xs empty:hidden lg:absolute lg:-right-52 lg:top-6 lg:w-48 lg:rounded lg:p-2 lg:outline-dashed lg:outline-offset-4 lg:outline-neutral-500\"></div></div><div class=\"relative flex flex-col gap-2\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<input type=\"text\" hx-get=\"/movies/search\" hx-trigger=\"keyup changed delay:500ms\" hx-target=\"#search-results\" hx-validate=\"true\" minlength=\"3\" name=\"search\" id=\"search\" class=\"w-full rounded border border-neutral-200 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500\"><div id=\"search-results\" class=\"text-xs empty:hidden lg:absolute lg:-right-52 lg:top-6 lg:w-48 lg:rounded lg:p-2 lg:outline-dashed lg:outline-offset-4 lg:outline-neutral-500\"></div></div><div class=\"relative flex flex-col gap-2\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -82,7 +82,7 @@ func NewMovie() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<input required type=\"text\" hx-get=\"/movies/imdb\" hx-trigger=\"blur\" hx-target=\"#movie-exists\" name=\"imdb_id\" id=\"imdb_id\" class=\"w-full rounded border border-neutral-200 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500\"><div id=\"movie-exists\" class=\"text-xs empty:hidden lg:absolute lg:-right-52 lg:top-6 lg:w-48 lg:rounded lg:p-2 lg:outline-dashed lg:outline-offset-4 lg:outline-neutral-500\"></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<input required type=\"text\" hx-get=\"/movies/imdb\" hx-trigger=\"blur changed\" hx-target=\"#movie-exists\" hx-validate=\"true\" name=\"imdb_id\" id=\"imdb_id\" class=\"w-full rounded border border-neutral-200 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500\"><div id=\"movie-exists\" class=\"text-xs empty:hidden lg:absolute lg:-right-52 lg:top-6 lg:w-48 lg:rounded lg:p-2 lg:outline-dashed lg:outline-offset-4 lg:outline-neutral-500\"></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
