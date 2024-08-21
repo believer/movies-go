@@ -525,6 +525,10 @@ func HandlePostMovieSeenNew(c *fiber.Ctx) error {
 func HandleSearchNew(c *fiber.Ctx) error {
 	query := c.Query("search")
 
+	if query == "" {
+		return utils.TemplRender(c, views.MovieSearch([]types.SearchResult{}))
+	}
+
 	movies, err := tmdbSearchMovie(query)
 
 	if err != nil {

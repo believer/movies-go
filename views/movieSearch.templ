@@ -6,20 +6,22 @@ import (
 )
 
 templ MovieSearch(movies []types.SearchResult) {
-	<ul class="space-y-1 list-disc ml-5">
-		for i, movie := range movies {
-			if i <= 4 {
-				<li>
-					<a
-						_="on click set the (value of #imdb_id) to @data-id then remove closest <ul/> then set the (value of #search) to ''"
-						data-id={ strconv.Itoa(movie.Id) }
-						href="#"
-						class="focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 border-b border-dashed border-neutral-500 dark:border-neutral-400"
-					>
-						{ movie.Title }
-					</a>
-				</li>
+	if len(movies) > 0 {
+		<ul class="space-y-1 list-disc ml-5">
+			for i, movie := range movies {
+				if i <= 4 {
+					<li>
+						<a
+							_="on click set the (value of #imdb_id) to @data-id then remove closest <ul/> then set the (value of #search) to ''"
+							data-id={ strconv.Itoa(movie.Id) }
+							href="#"
+							class="focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 border-b border-dashed border-neutral-500 dark:border-neutral-400"
+						>
+							{ movie.Title }
+						</a>
+					</li>
+				}
 			}
-		}
-	</ul>
+		</ul>
+	}
 }
