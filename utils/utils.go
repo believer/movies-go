@@ -29,22 +29,27 @@ func ParseImdbId(s string) (string, error) {
 		return "", err
 	}
 
-	imdbId := path.Base(parsedUrl.Path)
-	imdbId = strings.TrimRight(imdbId, "/")
-	imdbId = strings.ToLower(imdbId)
+	id := path.Base(parsedUrl.Path)
+	id = strings.TrimRight(id, "/")
+	id = strings.ToLower(id)
 
-	if imdbId == "" {
+	if id == "" {
 		return "", fmt.Errorf("Empty IMDb ID")
 	}
 
 	// IMDb IDs start with "tt" followed by 7 or more digits
-	match, _ := regexp.MatchString(`^tt\d{7,}$`, imdbId)
+	match, _ := regexp.MatchString(`^tt\d{7,}$`, id)
 
 	if !match {
-		return "", fmt.Errorf("Invalid IMDb ID format: %s", imdbId)
+		// Test if it is a TMDB ID
+		match, _ := regexp.MatchString(`^\d+$`, id)
+
+		if !match {
+			return "", fmt.Errorf("Invalid ID format: %s", id)
+		}
 	}
 
-	return imdbId, nil
+	return id, nil
 }
 
 func FormatRuntime(runtime int) string {

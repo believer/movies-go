@@ -17,7 +17,6 @@ templ NewMovie() {
 			<div class="relative flex flex-col gap-2">
 				@components.Label("search", "Search")
 				<input
-					required
 					type="text"
 					hx-get="/movies/search"
 					hx-trigger="keyup changed delay:500ms"
