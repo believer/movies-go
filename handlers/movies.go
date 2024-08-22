@@ -23,6 +23,8 @@ import (
 func HandleGetMovieByID(c *fiber.Ctx) error {
 	var movie types.Movie
 
+	backParam := c.QueryBool("back", false)
+
 	err := db.Dot.Get(db.Client, &movie, "movie-by-id", c.Params("id"), c.Locals("UserId"))
 
 	if err != nil {
@@ -38,7 +40,7 @@ func HandleGetMovieByID(c *fiber.Ctx) error {
 		}
 	}
 
-	return utils.TemplRender(c, views.Movie(movie))
+	return utils.TemplRender(c, views.Movie(movie, backParam))
 }
 
 type CastDB struct {
@@ -517,7 +519,7 @@ func HandlePostMovieSeenNew(c *fiber.Ctx) error {
 		return err
 	}
 
-	c.Set("HX-Redirect", fmt.Sprintf("/movies/%s", c.Params("id")))
+	c.Set("HX-Redirect", fmt.Sprintf("/movies/%s?back=true", c.Params("id")))
 
 	return c.SendStatus(fiber.StatusOK)
 }

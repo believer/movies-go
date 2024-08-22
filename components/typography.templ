@@ -1,8 +1,8 @@
 package components
 
-templ H1(text string) {
+templ H1(text string, back bool) {
 	<h1 class="flex items-baseline gap-2 text-xl font-semibold">
-		@Link("#", "on click go back") {
+		@Link("#", "on click go back", back) {
 			..
 		}
 		<span class="font-regular text-neutral-400">/</span>

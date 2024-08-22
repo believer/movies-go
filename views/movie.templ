@@ -1,20 +1,20 @@
 package views
 
 import (
-	"believer/movies/types"
-	"strings"
-	"fmt"
 	"believer/movies/components"
+	"believer/movies/types"
+	"fmt"
 	"strconv"
+	"strings"
 )
 
 // TODO: View transition of elements doesn't work because we can't have a
 // parameterized "style" attribute in the template. At least yet...
 // https://github.com/a-h/templ/issues/88
-templ Movie(movie types.Movie) {
+templ Movie(movie types.Movie, back bool) {
 	@Layout(movie.Title, movie.Overview) {
 		<div class="mx-auto flex max-w-xl flex-col gap-8 px-5 py-8">
-			@components.H1(movie.Title)
+			@components.H1(movie.Title, back)
 			if movie.Overview != "" {
 				<p class="text-neutral-500 dark:text-neutral-400">{ movie.Overview }</p>
 			}
