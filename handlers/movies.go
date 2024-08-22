@@ -125,7 +125,7 @@ func HandleGetMovieNew(c *fiber.Ctx) error {
 	return utils.TemplRender(c, views.NewMovie())
 }
 
-func tmdbFetchMovie(route string) (map[string]interface{}, error) {
+func tmdbFetchMovie(route string) types.MovieDetailsResponse {
 	tmdbBaseUrl := "https://api.themoviedb.org/3/movie"
 	tmdbKey := os.Getenv("TMDB_API_KEY")
 
@@ -138,26 +138,59 @@ func tmdbFetchMovie(route string) (map[string]interface{}, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode == 404 {
-		return nil, fmt.Errorf("movie not found")
+		log.Fatal("movie not found")
 	}
 
 	body, err := io.ReadAll(resp.Body)
+
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	var result map[string]interface{}
+	var result types.MovieDetailsResponse
 
 	err = json.Unmarshal([]byte(body), &result)
 
 	if err != nil {
-		return nil, err
+		log.Fatal(err)
 	}
 
-	return result, nil
+	return result
 }
 
-func tmdbSearchMovie(query string) (types.Response, error) {
+func tmdbFetchMovieCredits(id string) types.MovieCreditsResponse {
+	tmdbKey := os.Getenv("TMDB_API_KEY")
+
+	resp, err := http.Get(fmt.Sprintf("https://api.themoviedb.org/3/movie/%s/credits?api_key=%s", id, tmdbKey))
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode == 404 {
+		log.Fatal("movie not found")
+	}
+
+	body, err := io.ReadAll(resp.Body)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var result types.MovieCreditsResponse
+
+	err = json.Unmarshal([]byte(body), &result)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return result
+}
+
+func tmdbSearchMovie(query string) types.SearchMovieResponse {
 	tmdbBaseUrl := "https://api.themoviedb.org/3/search/movie"
 	tmdbKey := os.Getenv("TMDB_API_KEY")
 
@@ -174,11 +207,11 @@ func tmdbSearchMovie(query string) (types.Response, error) {
 		log.Fatal(err)
 	}
 
-	var result types.Response
+	var result types.SearchMovieResponse
 
 	err = json.Unmarshal([]byte(body), &result)
 
-	return result, nil
+	return result
 }
 
 type NewPerson struct {
@@ -226,13 +259,13 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 	}
 
 	movieId := 0
-	movieInformation, err := tmdbFetchMovie("/" + imdbId)
+	movie := tmdbFetchMovie(imdbId)
 
 	if err != nil {
 		log.Println("Error fetching movie information")
 	}
 
-	movieCast, err := tmdbFetchMovie("/" + imdbId + "/credits")
+	movieCast := tmdbFetchMovieCredits(imdbId)
 
 	if err != nil {
 		log.Println("Error fetching movie cast")
@@ -255,7 +288,7 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 	tx := db.Client.MustBegin()
 
 	// Insert movie information
-	err = tx.Get(&movieId, `INSERT INTO movie (title, runtime, release_date, imdb_id, overview, poster, tagline) VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (imdb_id) DO UPDATE SET title = $1 RETURNING id`, movieInformation["title"], movieInformation["runtime"], movieInformation["release_date"], movieInformation["imdb_id"], movieInformation["overview"], movieInformation["poster_path"], movieInformation["tagline"])
+	err = tx.Get(&movieId, `INSERT INTO movie (title, runtime, release_date, imdb_id, overview, poster, tagline) VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (imdb_id) DO UPDATE SET title = $1 RETURNING id`, movie.Title, movie.Runtime, movie.ReleaseDate, movie.ImdbId, movie.Overview, movie.Poster, movie.Tagline)
 
 	if err != nil {
 		return err
@@ -279,11 +312,9 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 	var genres []Genre
 
 	// Insert genres
-	for _, genre := range movieInformation["genres"].([]interface{}) {
-		name := genre.(map[string]interface{})["name"]
-
+	for _, genre := range movie.Genres {
 		genres = append(genres, Genre{
-			Name:    name.(string),
+			Name:    genre.Name,
 			MovieId: movieId,
 		})
 	}
@@ -308,60 +339,64 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 	var crewStructs []NewPerson
 
 	// Insert cast
-	for _, cast := range movieCast["cast"].([]interface{}) {
-		id := cast.(map[string]interface{})["id"]
-		name := cast.(map[string]interface{})["name"]
-		character := cast.(map[string]interface{})["character"]
-		popularity := cast.(map[string]interface{})["popularity"]
-		profilePicture := cast.(map[string]interface{})["profile_path"]
-
+	for _, cast := range movieCast.Cast {
 		var pfp sql.NullString
 		var char sql.NullString
 
-		if profilePicture == nil {
+		if cast.ProfilePath == nil {
 			pfp = sql.NullString{String: "", Valid: false}
 		} else {
-			pfp = sql.NullString{String: profilePicture.(string), Valid: true}
+			pfp = sql.NullString{String: *cast.ProfilePath, Valid: true}
 		}
 
-		if character == nil {
+		if cast.Character == nil {
 			char = sql.NullString{String: "", Valid: false}
 		} else {
-			char = sql.NullString{String: character.(string), Valid: true}
+			char = sql.NullString{String: *cast.Character, Valid: true}
 		}
 
-		idInt := int(id.(float64))
-
-		personIndex, exists := personExists(castStructs, idInt, "cast")
+		personIndex, exists := personExists(castStructs, cast.Id, "cast")
 
 		if exists {
-			castStructs[personIndex].Name = name.(string)
+			castStructs[personIndex].Name = cast.Name
+			castStructs[personIndex].Popularity = cast.Popularity
 			castStructs[personIndex].Character = char
-			castStructs[personIndex].Popularity = popularity.(float64)
 			castStructs[personIndex].ProfilePicture = pfp
 
 			continue
 		}
 
 		castStructs = append(castStructs, NewPerson{
-			ID:             idInt,
-			Name:           name.(string),
+			ID:             cast.Id,
+			Name:           cast.Name,
+			Popularity:     cast.Popularity,
 			Character:      char,
-			Popularity:     popularity.(float64),
 			ProfilePicture: pfp,
 			MovieId:        movieId,
 		})
 	}
 
 	// Crew
-	for _, crew := range movieCast["crew"].([]interface{}) {
-		department := crew.(map[string]interface{})["department"]
+	for _, crew := range movieCast.Crew {
+		department := crew.Department
 
 		if department != "Directing" && department != "Writing" && department != "Production" && department != "Sound" {
 			continue
 		}
 
-		job := crew.(map[string]interface{})["job"]
+		var pfp sql.NullString
+
+		if crew.ProfilePath == nil {
+			pfp = sql.NullString{String: "", Valid: false}
+		} else {
+			pfp = sql.NullString{String: *crew.ProfilePath, Valid: true}
+		}
+
+		if crew.Job == nil {
+			continue
+		}
+
+		job := *crew.Job
 
 		if job == "Screenplay" || job == "Writer" || job == "Novel" {
 			job = "writer"
@@ -375,43 +410,22 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 			continue
 		}
 
-		id := crew.(map[string]interface{})["id"]
-		name := crew.(map[string]interface{})["name"]
-		popularity := crew.(map[string]interface{})["popularity"]
-		profilePicture := crew.(map[string]interface{})["profile_path"]
-
-		var pfp sql.NullString
-		var jobStr sql.NullString
-
-		if profilePicture == nil {
-			pfp = sql.NullString{String: "", Valid: false}
-		} else {
-			pfp = sql.NullString{String: profilePicture.(string), Valid: true}
-		}
-
-		if job == nil {
-			jobStr = sql.NullString{String: "", Valid: false}
-		} else {
-			jobStr = sql.NullString{String: job.(string), Valid: true}
-		}
-
-		idInt := int(id.(float64))
-
-		personIndex, exists := personExists(crewStructs, idInt, job)
+		jobStr := sql.NullString{String: job, Valid: true}
+		personIndex, exists := personExists(crewStructs, crew.Id, job)
 
 		if exists {
-			crewStructs[personIndex].Name = name.(string)
-			crewStructs[personIndex].Popularity = popularity.(float64)
+			crewStructs[personIndex].Name = crew.Name
+			crewStructs[personIndex].Popularity = crew.Popularity
 			crewStructs[personIndex].ProfilePicture = pfp
 
 			continue
 		}
 
 		crewStructs = append(crewStructs, NewPerson{
-			ID:             idInt,
-			Name:           name.(string),
+			ID:             crew.Id,
+			Name:           crew.Name,
+			Popularity:     crew.Popularity,
 			Job:            jobStr,
-			Popularity:     popularity.(float64),
 			ProfilePicture: pfp,
 			MovieId:        movieId,
 		})
@@ -531,11 +545,7 @@ func HandleSearchNew(c *fiber.Ctx) error {
 		return utils.TemplRender(c, views.MovieSearch([]types.SearchResult{}))
 	}
 
-	movies, err := tmdbSearchMovie(query)
-
-	if err != nil {
-		return err
-	}
+	movies := tmdbSearchMovie(query)
 
 	return utils.TemplRender(c, views.MovieSearch(movies.Results))
 }
