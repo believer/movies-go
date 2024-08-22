@@ -67,7 +67,7 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int, query string) templ.C
 				}
 				return templ_7745c5c3_Err
 			})
-			templ_7745c5c3_Err = components.Link("/stats", "").Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.Link("/stats", "", false).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -116,7 +116,7 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int, query string) templ.C
 					}
 					return templ_7745c5c3_Err
 				})
-				templ_7745c5c3_Err = components.Link("/login", "").Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = components.Link("/login", "", false).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

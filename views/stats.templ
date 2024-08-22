@@ -1,10 +1,10 @@
 package views
 
 import (
-	"believer/movies/types"
 	"believer/movies/components"
-	"strconv"
+	"believer/movies/types"
 	"fmt"
+	"strconv"
 )
 
 templ Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []components.ListItem, watchedByYear []types.Bar, ratings []types.Bar, yearRatings []types.Bar, mostWatchedMovies []components.ListItem, seenThisYear []types.Bar, bestOfTheYear types.Movie, moviesByYear []types.Bar, bestYear string) {
@@ -12,7 +12,7 @@ templ Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []c
 		<div class="mx-auto flex max-w-xl lg:max-w-5xl flex-col gap-y-8 px-5 pb-8 pt-8 lg:pt-24">
 			<nav class="flex items-center gap-5">
 				<div class="left-8 top-10 md:absolute">
-					@components.Link("/", "") {
+					@components.Link("/", "", false) {
 						Home
 					}
 				</div>
@@ -43,7 +43,7 @@ templ Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []c
 							}
 							if bestOfTheYear.ID != 0 {
 								@components.DescriptionListItem("Best of the Year", true) {
-									@components.Link(fmt.Sprintf("/movies/%d", bestOfTheYear.ID), "") {
+									@components.Link(fmt.Sprintf("/movies/%d", bestOfTheYear.ID), "", false) {
 										{ bestOfTheYear.Title }
 									}
 									if bestOfTheYear.Rating.Valid {

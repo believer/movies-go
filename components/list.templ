@@ -15,20 +15,20 @@ templ OrderedList(data []ListItem, listType string) {
 	<ol class="flex flex-col gap-2">
 		for i, item := range data {
 			<li
- 				class="flex items-baseline justify-between gap-4 before:content-[attr(data-position)] before:text-right before:tabular-nums before:w-[2ch] before:text-neutral-400 dark:before:text-neutral-600"
- 				data-position={ strconv.Itoa(i + 1) }
+				class="flex items-baseline justify-between gap-4 before:content-[attr(data-position)] before:text-right before:tabular-nums before:w-[2ch] before:text-neutral-400 dark:before:text-neutral-600"
+				data-position={ strconv.Itoa(i + 1) }
 			>
 				if listType == "movie" {
-					@Link(fmt.Sprintf("/movies/%s", item.ID), "") {
+					@Link(fmt.Sprintf("/movies/%s", item.ID), "", false) {
 						{ item.Name }
 					}
 				} else if listType == "person" {
-					@Link(fmt.Sprintf("/person/%s", item.ID), "") {
+					@Link(fmt.Sprintf("/person/%s", item.ID), "", false) {
 						{ item.Name }
 					}
 				}
 				<hr
- 					class="m-0 flex-1 border-dashed border-neutral-300 dark:border-neutral-700"
+					class="m-0 flex-1 border-dashed border-neutral-300 dark:border-neutral-700"
 				/>
 				<span class="tabular-nums text-sm text-neutral-500 dark:text-neutral-400">
 					{ strconv.Itoa(item.Count) }

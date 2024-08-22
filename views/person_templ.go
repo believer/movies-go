@@ -78,7 +78,7 @@ func Credit(title string, data types.PersonMovies, id string) templ.Component {
 						}
 						return templ_7745c5c3_Err
 					})
-					templ_7745c5c3_Err = components.Link(fmt.Sprintf("/movies/%d", movie.ID), "").Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = components.Link(fmt.Sprintf("/movies/%d", movie.ID), "", false).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -157,7 +157,7 @@ func Person(person types.Person, totalCredits int, id string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.H1(person.Name).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.H1(person.Name, false).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

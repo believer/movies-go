@@ -1,8 +1,8 @@
 package views
 
 import (
-	"believer/movies/types"
 	"believer/movies/components"
+	"believer/movies/types"
 	"fmt"
 	"strconv"
 )
@@ -13,7 +13,7 @@ templ Credit(title string, data types.PersonMovies, id string) {
 			<ol class="flex flex-col gap-2">
 				for _, movie := range data {
 					<li class="flex items-baseline justify-between gap-4">
-						@components.Link(fmt.Sprintf("/movies/%d", movie.ID), "") {
+						@components.Link(fmt.Sprintf("/movies/%d", movie.ID), "", false) {
 							{ movie.Title }
 						}
 						<hr
@@ -37,7 +37,7 @@ templ Person(person types.Person, totalCredits int, id string) {
 		<div
 			class="mx-auto flex max-w-xl flex-col gap-8 px-5 py-8"
 		>
-			@components.H1(person.Name)
+			@components.H1(person.Name, false)
 			<div>
 				{ strconv.Itoa(totalCredits) } credits
 			</div>

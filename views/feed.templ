@@ -12,7 +12,7 @@ templ Feed(isAdmin bool, movies types.Movies, nextPage int, query string) {
 		<div class="mx-auto flex max-w-xl flex-col gap-12 px-5 pt-8">
 			<nav class="flex items-center gap-5">
 				<div class="left-8 top-10 md:absolute">
-					@components.Link("/stats", "") {
+					@components.Link("/stats", "", false) {
 						Stats
 					}
 				</div>
@@ -59,7 +59,7 @@ templ Feed(isAdmin bool, movies types.Movies, nextPage int, query string) {
 					</div>
 				} else {
 					<div class="md:absolute right-8 top-10 flex gap-4">
-						@components.Link("/login", "") {
+						@components.Link("/login", "", false) {
 							Login
 						}
 					</div>
