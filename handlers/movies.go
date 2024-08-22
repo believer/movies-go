@@ -125,11 +125,10 @@ func HandleGetMovieNew(c *fiber.Ctx) error {
 	return utils.TemplRender(c, views.NewMovie())
 }
 
-func tmdbFetchMovie(route string) types.MovieDetailsResponse {
-	tmdbBaseUrl := "https://api.themoviedb.org/3/movie"
+func tmdbFetchMovie(id string) types.MovieDetailsResponse {
 	tmdbKey := os.Getenv("TMDB_API_KEY")
 
-	resp, err := http.Get(tmdbBaseUrl + route + "?api_key=" + tmdbKey)
+	resp, err := http.Get(fmt.Sprintf("https://api.themoviedb.org/3/movie/%s?api_key=%s", id, tmdbKey))
 
 	if err != nil {
 		log.Fatal(err)
@@ -138,13 +137,13 @@ func tmdbFetchMovie(route string) types.MovieDetailsResponse {
 	defer resp.Body.Close()
 
 	if resp.StatusCode == 404 {
-		log.Fatal("movie not found")
+		log.Printf("Movie information not found")
 	}
 
 	body, err := io.ReadAll(resp.Body)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 	}
 
 	var result types.MovieDetailsResponse
@@ -152,7 +151,7 @@ func tmdbFetchMovie(route string) types.MovieDetailsResponse {
 	err = json.Unmarshal([]byte(body), &result)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 	}
 
 	return result
@@ -170,7 +169,7 @@ func tmdbFetchMovieCredits(id string) types.MovieCreditsResponse {
 	defer resp.Body.Close()
 
 	if resp.StatusCode == 404 {
-		log.Fatal("movie not found")
+		log.Fatal("Movie credits not found")
 	}
 
 	body, err := io.ReadAll(resp.Body)
