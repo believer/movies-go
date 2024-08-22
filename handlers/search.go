@@ -46,5 +46,6 @@ ORDER BY m.release_date DESC
 		utils.IsAuthenticated(c),
 		movies,
 		page+1,
+		search,
 	))
 }

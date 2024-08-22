@@ -19,25 +19,36 @@ func HandleFeed(c *fiber.Ctx) error {
 
 	pageQuery := c.Query("page", "1")
 	page, err := strconv.Atoi(pageQuery)
+	searchQuery := c.Query("search")
 
-	if err != nil {
-		page = 1
-	}
+	if searchQuery != "" {
+		err := db.Client.Select(&movies, `
+SELECT m.id, m.title, m.overview, m.release_date AS watched_at
+FROM movie AS m
+WHERE m.title ILIKE '%' || $1 || '%'
+ORDER BY m.release_date DESC
+`, searchQuery)
 
-	err = db.Dot.Select(db.Client, &movies, "feed", (page-1)*20, c.Locals("UserId"))
+		if err != nil {
+			return err
+		}
+	} else {
+		if err != nil {
+			page = 1
+		}
 
-	if err != nil {
-		panic(err)
-	}
+		err = db.Dot.Select(db.Client, &movies, "feed", (page-1)*20, c.Locals("UserId"))
 
-	if c.Get("Accept") == "application/json" {
-		return c.JSON(movies)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	feed := views.Feed(
 		utils.IsAuthenticated(c),
 		movies,
 		page+1,
+		searchQuery,
 	)
 
 	return utils.TemplRender(c, feed)

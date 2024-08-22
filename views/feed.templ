@@ -1,13 +1,13 @@
 package views
 
 import (
-	"believer/movies/types"
 	"believer/movies/components"
+	"believer/movies/types"
 	"fmt"
 	"strconv"
 )
 
-templ Feed(isAdmin bool, movies types.Movies, nextPage int) {
+templ Feed(isAdmin bool, movies types.Movies, nextPage int, query string) {
 	@Layout("", "") {
 		<div class="mx-auto flex max-w-xl flex-col gap-12 px-5 pt-8">
 			<nav class="flex items-center gap-5">
@@ -21,10 +21,14 @@ templ Feed(isAdmin bool, movies types.Movies, nextPage int) {
 					type="search"
 					name="search"
 					placeholder="Find a movie"
-					hx-post="/search"
+					hx-get="/"
 					hx-select="li[data-movie]"
 					hx-trigger="keyup changed delay:500ms, search"
+					hx-push-url="true"
 					hx-target="ol"
+					minlength="3"
+					hx-validate="true"
+					value={ query }
 				/>
 				if isAdmin {
 					<div class="md:absolute right-8 top-10 flex gap-4 items-center">
