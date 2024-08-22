@@ -7,9 +7,9 @@ templ Link(href string, hyperscript string, back bool) {
 			href="/"
 		} else {
 			href={ templ.URL(href) }
-		}
-		if hyperscript != "" {
-			_={ hyperscript }
+			if hyperscript != "" {
+				_={ hyperscript }
+			}
 		}
 	>
 		{ children... }

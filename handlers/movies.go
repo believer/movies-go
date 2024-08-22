@@ -490,7 +490,7 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 		return err
 	}
 
-	c.Set("HX-Redirect", fmt.Sprintf("/movies/%d", movieId))
+	c.Set("HX-Redirect", fmt.Sprintf("/movies/%d?back=true", movieId))
 
 	return c.SendStatus(fiber.StatusOK)
 }
