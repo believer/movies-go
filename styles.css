@@ -12,3 +12,13 @@
 .htmx-request.htmx-indicator {
   opacity: 1;
 }
+
+.year-indicator {
+  @apply sticky top-0;
+}
+
+.year {
+  @apply text-3xl lg:text-7xl font-mono text-transparent lg:absolute lg:top-3 -left-52 [-webkit-text-stroke-color:_rgba(0,0,0,0.1)] dark:[-webkit-text-stroke-color:_rgba(255,255,255,0.1)] bg-white dark:bg-neutral-900 z-10 py-2 lg:py-4;
+
+  -webkit-text-stroke-width: 2px;
+}
