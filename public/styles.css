@@ -1009,11 +1009,24 @@ video {
 .year-indicator {
   position: sticky;
   top: 0px;
+  z-index: 20;
+}
+
+.month-indicator {
+  position: sticky;
+  top: 3rem;
+  z-index: 10;
+}
+
+@media (min-width: 1024px) {
+  .month-indicator {
+    top: 7rem;
+  }
 }
 
 .year {
   left: -13rem;
-  z-index: 10;
+  z-index: 20;
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
   padding-top: 0.5rem;
@@ -1046,6 +1059,53 @@ video {
 
 .year {
   -webkit-text-stroke-width: 2px;
+}
+
+.month {
+  left: -13rem;
+  z-index: 10;
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  --tw-text-opacity: 1;
+  color: rgb(229 229 229 / var(--tw-text-opacity));
+}
+
+@media (min-width: 1024px) {
+  .month {
+    position: absolute;
+    top: -0.5rem;
+    width: 10rem;
+    text-align: right;
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .month {
+    --tw-bg-opacity: 1;
+    background-color: rgb(23 23 23 / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(64 64 64 / var(--tw-text-opacity));
+  }
+}
+
+.month-indicator + li {
+  margin-top: -1.5rem;
+}
+
+.year-indicator + .month-indicator {
+  margin-top: -1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .year-indicator + .month-indicator {
+    margin-top: 0px;
+  }
 }
 
 .placeholder\:text-neutral-400::-moz-placeholder {

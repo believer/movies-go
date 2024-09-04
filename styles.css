@@ -14,11 +14,27 @@
 }
 
 .year-indicator {
-  @apply sticky top-0;
+  @apply sticky top-0 z-20;
+}
+
+.month-indicator {
+  @apply sticky top-12 lg:top-28 z-10;
 }
 
 .year {
-  @apply text-3xl lg:text-7xl font-mono text-transparent lg:absolute lg:top-3 -left-52 [-webkit-text-stroke-color:_rgba(0,0,0,0.1)] dark:[-webkit-text-stroke-color:_rgba(255,255,255,0.1)] bg-white dark:bg-neutral-900 z-10 py-2 lg:py-4;
+  @apply text-3xl lg:text-7xl font-mono text-transparent lg:absolute lg:top-3 -left-52 [-webkit-text-stroke-color:_rgba(0,0,0,0.1)] dark:[-webkit-text-stroke-color:_rgba(255,255,255,0.1)] z-20 bg-white dark:bg-neutral-900 py-2 lg:py-4;
 
   -webkit-text-stroke-width: 2px;
+}
+
+.month {
+  @apply text-lg lg:text-xl lg:absolute lg:-top-2 -left-52 z-10 bg-white dark:bg-neutral-900 py-2 lg:w-40 lg:text-right text-neutral-200 dark:text-neutral-700;
+}
+
+.month-indicator + li {
+  @apply -mt-6;
+}
+
+.year-indicator + .month-indicator {
+  @apply -mt-6 lg:mt-0;
 }

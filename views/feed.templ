@@ -73,6 +73,7 @@ templ Feed(isAdmin bool, movies types.Movies, nextPage int, query string) {
 						<li
 							data-movie={ strconv.Itoa(movie.ID) }
 							data-year={ movie.WatchedAt.Format("2006") }
+							data-month={ movie.WatchedAt.Format("January") }
 							_="init if my @data-year is not equal to @data-year of previous <li/>
          then
           make an <li.year-indicator/>
@@ -82,6 +83,16 @@ templ Feed(isAdmin bool, movies types.Movies, nextPage int, query string) {
           put the @data-year into its textContent
           put it into the previous <li/>
          end
+
+         init if my @data-month is not equal to @data-month of previous <li/>
+         then
+          make an <li.month-indicator/>
+          put it before me
+         then
+            make an <div.month/>
+            put the @data-month into its textContent
+            put it at the end of the previous <li/>
+          end
         "
 						>
 							<a
