@@ -1108,6 +1108,30 @@ video {
   }
 }
 
+/* Scroll driven animation to fade in date indicators
+* Note that the order of the properties seems to be important here,
+* animation needed to be before animation-timeline.
+* */
+
+@media (prefers-reduced-motion: no-preference) and (min-width: 1024px) {
+  .year-indicator .year,
+  .month-indicator .month {
+    opacity: 0;
+    transform: translateY(50px);
+    animation: fade-in linear forwards;
+    animation-timeline: view();
+    /* Start at 0px (when it comes into view), end at half the screen height */
+    animation-range: 0 50vh;
+  }
+
+  @keyframes fade-in {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
 .placeholder\:text-neutral-400::-moz-placeholder {
   --tw-text-opacity: 1;
   color: rgb(163 163 163 / var(--tw-text-opacity));
