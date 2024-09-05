@@ -174,7 +174,7 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int, query string) templ.C
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" _=\"init if my @data-year is not equal to @data-year of previous &lt;li/&gt;\n         then\n          make an &lt;li.year-indicator/&gt;\n          put it before me\n        then\n          make an &lt;div.year/&gt;\n          put the @data-year into its textContent\n          put it into the previous &lt;li/&gt;\n         end\n\n         init if my @data-month is not equal to @data-month of previous &lt;li/&gt;\n         then\n          make an &lt;li.month-indicator/&gt;\n          put it before me\n         then\n            make an &lt;div.month/&gt;\n            put the @data-month into its textContent\n            put it at the end of the previous &lt;li/&gt;\n          end\n        \"><a href=\"")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" _=\"\ninit if my @data-year is not really equal to @data-year of previous &lt;li/&gt; then\n  set dataYear to my @data-year\n\n  if #{dataYear} does not exist then\n    make an &lt;li.year-indicator/&gt;\n    put my @data-year into its @id\n    put it before me\n  then\n    make an &lt;div.year/&gt;\n    put the @data-year into its textContent\n    put it into the previous &lt;li/&gt;\n   end\n end\n\ninit if my @data-month is not really equal to @data-month of previous &lt;li/&gt; then\n  set y to my @data-year\n  set m to my @data-month\n  set ym to `${y}-${m}`\n\n  if #{ym} does not exist then\n    make an &lt;li.month-indicator/&gt;\n    put `${ym}` into its @id\n    put it before me\n   then\n    make an &lt;div.month/&gt;\n    put the @data-month into its textContent\n    put it at the end of the previous &lt;li/&gt;\n  end\nend\n\"><a href=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -190,7 +190,7 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int, query string) templ.C
 					var templ_7745c5c3_Var10 string
 					templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(movie.Title)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 106, Col: 23}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 117, Col: 23}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 					if templ_7745c5c3_Err != nil {
@@ -203,7 +203,7 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int, query string) templ.C
 					var templ_7745c5c3_Var11 string
 					templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(movie.WatchedAt.Format("2006-01-02 15:04"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 110, Col: 61}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 121, Col: 61}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 					if templ_7745c5c3_Err != nil {
@@ -216,7 +216,7 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int, query string) templ.C
 					var templ_7745c5c3_Var12 string
 					templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(movie.WatchedAt.Format("2006-01-02T15:04:05Z"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 111, Col: 68}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 122, Col: 68}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 					if templ_7745c5c3_Err != nil {
@@ -229,7 +229,7 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int, query string) templ.C
 					var templ_7745c5c3_Var13 string
 					templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(movie.WatchedAt.Format("January 02 2006"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 113, Col: 54}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 124, Col: 54}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 					if templ_7745c5c3_Err != nil {
@@ -247,7 +247,7 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int, query string) templ.C
 						var templ_7745c5c3_Var14 string
 						templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(movie.Overview)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 119, Col: 26}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 130, Col: 26}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 						if templ_7745c5c3_Err != nil {
@@ -270,7 +270,7 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int, query string) templ.C
 				var templ_7745c5c3_Var15 string
 				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/?page=%d", nextPage))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 126, Col: 49}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 137, Col: 49}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
