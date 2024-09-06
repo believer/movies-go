@@ -14,8 +14,8 @@ require (
 	github.com/a-h/templ v0.2.771
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/qustavo/dotsql v1.2.0
-	golang.org/x/crypto v0.26.0
-	golang.org/x/text v0.17.0
+	golang.org/x/crypto v0.27.0
+	golang.org/x/text v0.18.0
 )
 
 require (
@@ -37,5 +37,5 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.55.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
-	golang.org/x/sys v0.24.0 // indirect
+	golang.org/x/sys v0.25.0 // indirect
 )
