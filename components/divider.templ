@@ -1,0 +1,15 @@
+package components
+
+templ Divider() {
+	<hr
+		class="m-0 flex-1 border-dashed border-neutral-300 dark:border-neutral-700"
+	/>
+}
+
+templ DividerHighlight(active bool) {
+	<hr
+		class={ "m-0 flex-1 border-dashed",
+      templ.KV("border-neutral-300 dark:border-neutral-700", active == false),
+      templ.KV("border-yellow-800 dark:border-yellow-100", active == true) }
+	/>
+}

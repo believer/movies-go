@@ -548,3 +548,18 @@ func HandleSearchNew(c *fiber.Ctx) error {
 
 	return utils.TemplRender(c, views.MovieSearch(movies.Results))
 }
+
+func HandleGetMoviesByYear(c *fiber.Ctx) error {
+	var movies []types.Movie
+
+	year := c.Params("year")
+	userId := c.Locals("UserId").(string)
+
+	err := db.Dot.Select(db.Client, &movies, "movies-by-year", userId, year)
+
+	if err != nil {
+		return err
+	}
+
+	return utils.TemplRender(c, views.MoviesByYear(year, movies))
+}

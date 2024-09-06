@@ -297,3 +297,26 @@ GROUP BY
 ORDER BY
     label DESC;
 
+-- name: movies-by-year
+SELECT
+    m.id,
+    m.title,
+    m.release_date,
+    (s.id IS NOT NULL) AS "seen"
+FROM
+    movie AS m
+    LEFT JOIN ( SELECT DISTINCT ON (movie_id)
+            movie_id,
+            id
+        FROM
+            public.seen
+        WHERE
+            user_id = $1
+        ORDER BY
+            movie_id,
+            id) AS s ON m.id = s.movie_id
+WHERE
+    date_part('year', release_date) = $2
+ORDER BY
+    release_date;
+
