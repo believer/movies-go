@@ -83,8 +83,9 @@ init if my @data-year is not really equal to @data-year of previous <li/> then
     put my @data-year into its @id
     put it before me
   then
-    make an <div.year/>
+    make an <a.year/>
     put the @data-year into its textContent
+    put `/movies/year/${dataYear}` into its href
     put it into the previous <li/>
    end
  end
