@@ -63,17 +63,18 @@ templ Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []c
 						<ol class="flex flex-col gap-2">
 							for _, year := range moviesByYear {
 								<li
-									class={ "flex items-baseline justify-between gap-4",
+									class={ "flex items-end justify-between gap-4",
                   templ.KV("text-yellow-800 dark:text-yellow-200", bestYear == year.Label ) }
 								>
-									{ year.Label }
-									<hr
-										class={ "m-0 flex-1 border-dashed",
-                      templ.KV(" border-neutral-300 dark:border-neutral-700", bestYear != year.Label),
-                      templ.KV("border-yellow-800 dark:border-yellow-100", bestYear == year.Label) }
-									/>
+									<a
+										class="text-sm tabular-nums inline-flex items-center gap-1 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 border-b border-dashed border-neutral-500 dark:border-neutral-400"
+										href={ templ.URL(fmt.Sprintf("/movies/year/%s", year.Label)) }
+									>
+										{ year.Label }
+									</a>
+									@components.DividerHighlight(bestYear == year.Label)
 									<span
-										class={ "tabular-nums text-sm",
+										class={ "tabular-nums text-sm relative top-1",
                     templ.KV("text-neutral-500 dark:text-neutral-400", bestYear != year.Label) }
 									>
 										{ strconv.Itoa(year.Value) }

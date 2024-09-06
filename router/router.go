@@ -26,6 +26,7 @@ func SetupRoutes(app *fiber.App) {
 	movieGroup.Get("/search", handlers.HandleSearchNew)
 	movieGroup.Get("/new", handlers.HandleGetMovieNew)
 	movieGroup.Post("/new", handlers.HandlePostMovieNew)
+	movieGroup.Get("/year/:year", handlers.HandleGetMoviesByYear)
 
 	movieGroup.Get("/:id", handlers.HandleGetMovieByID)
 	movieGroup.Get("/:id/cast", handlers.HandleGetMovieCastByID)
