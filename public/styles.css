@@ -1040,6 +1040,7 @@ video {
 .year {
   left: -13rem;
   z-index: 20;
+  display: block;
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
   padding-top: 0.5rem;
