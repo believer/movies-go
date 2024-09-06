@@ -8,6 +8,7 @@
   },
   "main": "tailwind.config.js",
   "devDependencies": {
+    "caniuse-lite": "1.0.30001658",
     "tailwindcss": "3.4.1"
   },
   "bugs": {
