@@ -1117,8 +1117,8 @@ video {
 * */
 
 @media (prefers-reduced-motion: no-preference) and (min-width: 1024px) {
-  .year-indicator .year,
-  .month-indicator .month {
+  .year,
+  .month {
     opacity: 0;
     transform: translateY(50px);
     animation: fade-in linear forwards;
