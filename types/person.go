@@ -11,6 +11,7 @@ type PersonMovie struct {
 	Title       string    `json:"title" db:"title"`
 	ReleaseDate time.Time `json:"release_date" db:"release_date"`
 	Seen        bool      `json:"seen" db:"seen"`
+	Character   string    `json:"character" db:"character"`
 }
 
 type PersonMovies []PersonMovie
