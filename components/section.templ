@@ -1,12 +1,10 @@
 package components
 
-import (
-	"strconv"
-)
+import "strconv"
 
 templ SectionTitle(title string, numberOfItems int) {
 	<h2
- 		class="flex items-center gap-4 font-medium text-neutral-700 after:h-[0.5px] after:flex-grow after:bg-neutral-300 dark:text-neutral-300 dark:after:bg-neutral-700"
+		class="flex items-center gap-4 font-medium text-neutral-700 after:h-[0.5px] after:flex-grow after:bg-neutral-300 dark:text-neutral-300 dark:after:bg-neutral-700"
 	>
 		if numberOfItems == 0 {
 			{ title }
@@ -21,9 +19,19 @@ templ SectionTitle(title string, numberOfItems int) {
 	</h2>
 }
 
+templ SectionTitleWithDropdown(title string) {
+	<div class="flex items-center gap-4">
+		<h2 class="font-medium text-neutral-700 dark:text-neutral-300">
+			{ title }
+		</h2>
+		<hr class="m-0 flex-1 border-neutral-300 dark:border-neutral-700"/>
+		{ children... }
+	</div>
+}
+
 templ Section(title string, numberOfItems int) {
 	<section
- 		class="flex flex-col gap-4 md:text-sm text-neutral-500 dark:text-neutral-400"
+		class="flex flex-col gap-4 md:text-sm text-neutral-500 dark:text-neutral-400"
 	>
 		if title != "" {
 			@SectionTitle(title, numberOfItems)

@@ -9,6 +9,7 @@ import (
 	"cmp"
 	"log"
 	"strconv"
+	"time"
 
 	"slices"
 
@@ -34,6 +35,8 @@ func HandleGetStats(c *fiber.Ctx) error {
 	var movies []components.ListItem
 
 	userId := c.Locals("UserId").(string)
+	now := time.Now()
+	currentYear := now.Format("2006-01-02 15:04:05")
 
 	err := db.Dot.Select(db.Client, &movies, "stats-most-watched-movies", userId)
 
@@ -63,7 +66,7 @@ func HandleGetStats(c *fiber.Ctx) error {
 		return err
 	}
 
-	yearRatings, err := getGraphWithQuery("stats-ratings-this-year", userId)
+	yearRatings, err := getGraphByYearWithQuery("stats-ratings-this-year", userId, currentYear)
 
 	if err != nil {
 		log.Fatalf("Error getting ratings this year: %v", err)
@@ -77,7 +80,7 @@ func HandleGetStats(c *fiber.Ctx) error {
 		return err
 	}
 
-	seenThisYearByMonth, err := getGraphWithQuery("stats-watched-this-year-by-month", userId)
+	seenThisYearByMonth, err := getGraphByYearWithQuery("stats-watched-this-year-by-month", userId, currentYear)
 
 	if err != nil {
 		log.Fatalf("Error getting watched this year by month: %v", err)
@@ -107,6 +110,8 @@ func HandleGetStats(c *fiber.Ctx) error {
 		}
 	}
 
+	year := now.Format("2006")
+
 	return utils.TemplRender(c, views.Stats(
 		stats,
 		utils.FormatRuntime(stats.TotalRuntime),
@@ -119,6 +124,8 @@ func HandleGetStats(c *fiber.Ctx) error {
 		bestOfTheYear,
 		moviesByYear,
 		bestYear,
+		year,
+		availableYears(),
 	))
 }
 
@@ -139,6 +146,18 @@ func getGraphWithQuery(query string, userId string) ([]types.Bar, error) {
 	var data []types.GraphData
 
 	err := db.Dot.Select(db.Client, &data, query, userId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return constructGraphFromData(data)
+}
+
+func getGraphByYearWithQuery(query string, userId string, year string) ([]types.Bar, error) {
+	var data []types.GraphData
+
+	err := db.Dot.Select(db.Client, &data, query, userId, year)
 
 	if err != nil {
 		return nil, err
@@ -212,4 +231,83 @@ func constructGraphFromData(data []types.GraphData) ([]types.Bar, error) {
 	}
 
 	return graphData, nil
+}
+
+func HandleGetRatingsByYear(c *fiber.Ctx) error {
+	userId := c.Locals("UserId").(string)
+	year := c.Query("year")
+	parsedYear, err := strconv.Atoi(year)
+	currentYear := time.Now().Year()
+
+	if err != nil {
+		return err
+	}
+
+	yearTime := time.Date(parsedYear, time.September, 10, 0, 0, 0, 0, time.UTC).Format("2006-01-02 15:04:05")
+	yearRatings, err := getGraphByYearWithQuery("stats-ratings-this-year", userId, yearTime)
+
+	if err != nil {
+		return err
+	}
+
+	title := "Ratings " + year
+
+	if currentYear == parsedYear {
+		title = "Ratings this year"
+	}
+
+	return utils.TemplRender(c, components.GraphWithYear(
+		yearRatings,
+		title,
+		year,
+		availableYears(),
+		"/stats/ratings",
+	))
+}
+
+func HandleGetThisYearByMonth(c *fiber.Ctx) error {
+	userId := c.Locals("UserId").(string)
+	year := c.Query("year")
+	parsedYear, err := strconv.Atoi(year)
+	currentYear := time.Now().Year()
+
+	if err != nil {
+		return err
+	}
+
+	yearTime := time.Date(parsedYear, time.September, 10, 0, 0, 0, 0, time.UTC).Format("2006-01-02 15:04:05")
+	yearRatings, err := getGraphByYearWithQuery("stats-watched-this-year-by-month", userId, yearTime)
+
+	if err != nil {
+		return err
+	}
+
+	title := "Seen " + year + " by month"
+
+	if currentYear == parsedYear {
+		title = "Seen this year by month"
+	}
+
+	return utils.TemplRender(c, components.GraphWithYear(
+		yearRatings,
+		title,
+		year,
+		availableYears(),
+		"/stats/by-month",
+	))
+}
+
+func availableYears() []int {
+	// First year with "real" data
+	// 2011 is used as a catch all for anything before I had the database
+	startYear := 2012
+	currentYear := time.Now().Year()
+
+	years := make([]int, 0)
+
+	for year := startYear; year <= currentYear; year++ {
+		years = append(years, year)
+	}
+
+	return years
 }

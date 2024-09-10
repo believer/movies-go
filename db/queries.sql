@@ -204,7 +204,7 @@ FROM
     ratings
     LEFT JOIN rating AS r ON r.rating = ratings.rating
         AND r.user_id = $1
-        AND EXTRACT(YEAR FROM created_at) = EXTRACT(YEAR FROM CURRENT_DATE)
+        AND EXTRACT(YEAR FROM created_at) = EXTRACT(YEAR FROM $2::date)
 GROUP BY
     ratings.rating,
     r.rating;
@@ -252,7 +252,7 @@ WITH months (
     month
 ) AS (
     SELECT
-        generate_series(DATE_TRUNC('year', CURRENT_DATE), DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '1 year' - INTERVAL '1 day', INTERVAL '1 month'))
+        generate_series(DATE_TRUNC('year', $2::date), DATE_TRUNC('year', $2::date) + INTERVAL '1 year' - INTERVAL '1 day', INTERVAL '1 month'))
 SELECT
     TO_CHAR(months.month, 'Mon') AS label,
     COALESCE(count(seen.id), 0) AS value
@@ -261,7 +261,7 @@ FROM
     LEFT JOIN seen ON DATE_TRUNC('month', seen.date) = months.month
         AND user_id = $1
 WHERE
-    EXTRACT(YEAR FROM seen.date) = EXTRACT(YEAR FROM CURRENT_DATE)
+    EXTRACT(YEAR FROM seen.date) = EXTRACT(YEAR FROM $2::date)
     OR seen.date IS NULL
 GROUP BY
     months.month

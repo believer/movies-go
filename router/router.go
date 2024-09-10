@@ -49,5 +49,7 @@ func SetupRoutes(app *fiber.App) {
 	statsGroup := app.Group("/stats")
 
 	statsGroup.Get("/", handlers.HandleGetStats)
+	statsGroup.Get("/ratings", handlers.HandleGetRatingsByYear)
+	statsGroup.Get("/by-month", handlers.HandleGetThisYearByMonth)
 	statsGroup.Get("/most-watched-person/:job", handlers.HandleGetMostWatchedByJob)
 }
