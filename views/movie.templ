@@ -69,7 +69,7 @@ templ Movie(movie types.Movie, back bool) {
 					}
 					if movie.Rating.Valid {
 						@components.DescriptionListItem("Rating", false) {
-							{ strconv.FormatInt(movie.Rating.Int64, 16) }
+							{ strconv.FormatInt(movie.Rating.Int64, 10) }
 						}
 					}
 					@components.DescriptionListItem("Watched", false) {
