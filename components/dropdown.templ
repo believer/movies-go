@@ -1,0 +1,22 @@
+package components
+
+import "strconv"
+
+type DropdownProps struct {
+	Route   string
+	Options []int
+	Value   string
+}
+
+templ Dropdown(props DropdownProps) {
+	<select class="appearance-none border border-neutral-300 dark:border-neutral-700 rounded text-xs px-2 py-1 bg-transparent focus:outline-dashed focus:outline-offset-2 focus:outline-neutral-300 dark:focus:outline-neutral-700" hx-target="closest section" hx-get={ props.Route } name="year" value={ props.Value } hx-swap="outerHTML">
+		for _, option := range props.Options {
+			<option
+				value={ strconv.Itoa(option) }
+				if props.Value == strconv.Itoa(option) {
+					selected
+				}
+			>{ strconv.Itoa(option) }</option>
+		}
+	</select>
+}

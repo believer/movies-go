@@ -113,20 +113,21 @@ func HandleGetStats(c *fiber.Ctx) error {
 	year := now.Format("2006")
 
 	return utils.TemplRender(c, views.Stats(
-		stats,
-		utils.FormatRuntime(stats.TotalRuntime),
-		cast,
-		watchedByYear,
-		ratings,
-		yearRatings,
-		movies,
-		seenThisYearByMonth,
-		bestOfTheYear,
-		moviesByYear,
-		bestYear,
-		year,
-		availableYears(),
-	))
+		views.StatsProps{
+			Stats:                 stats,
+			FormattedTotalRuntime: utils.FormatRuntime(stats.TotalRuntime),
+			MostWatchedCast:       cast,
+			WatchedByYear:         watchedByYear,
+			Ratings:               ratings,
+			YearRatings:           yearRatings,
+			MostWatchedMovies:     movies,
+			SeenThisYear:          seenThisYearByMonth,
+			BestOfTheYear:         bestOfTheYear,
+			MoviesByYear:          moviesByYear,
+			BestYear:              bestYear,
+			Year:                  year,
+			Years:                 availableYears(),
+		}))
 }
 
 func HandleGetMostWatchedByJob(c *fiber.Ctx) error {
@@ -257,12 +258,13 @@ func HandleGetRatingsByYear(c *fiber.Ctx) error {
 	}
 
 	return utils.TemplRender(c, components.GraphWithYear(
-		yearRatings,
-		title,
-		year,
-		availableYears(),
-		"/stats/ratings",
-	))
+		components.GraphWithYearProps{
+			Bars:         yearRatings,
+			Title:        title,
+			SelectedYear: year,
+			Years:        availableYears(),
+			Route:        "/stats/ratings",
+		}))
 }
 
 func HandleGetThisYearByMonth(c *fiber.Ctx) error {
@@ -289,12 +291,13 @@ func HandleGetThisYearByMonth(c *fiber.Ctx) error {
 	}
 
 	return utils.TemplRender(c, components.GraphWithYear(
-		yearRatings,
-		title,
-		year,
-		availableYears(),
-		"/stats/by-month",
-	))
+		components.GraphWithYearProps{
+			Bars:         yearRatings,
+			Title:        title,
+			SelectedYear: year,
+			Years:        availableYears(),
+			Route:        "/stats/by-month",
+		}))
 }
 
 func availableYears() []int {

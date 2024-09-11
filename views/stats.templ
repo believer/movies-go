@@ -7,7 +7,31 @@ import (
 	"strconv"
 )
 
-templ Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []components.ListItem, watchedByYear []types.Bar, ratings []types.Bar, yearRatings []types.Bar, mostWatchedMovies []components.ListItem, seenThisYear []types.Bar, bestOfTheYear types.Movie, moviesByYear []types.Bar, bestYear string, year string, years []int) {
+templ statsSection(job string) {
+	<section
+		hx-get={ fmt.Sprintf("/stats/most-watched-person/%s", job) }
+		hx-trigger="load"
+		hx-swap="outerHTML"
+	></section>
+}
+
+type StatsProps struct {
+	BestOfTheYear         types.Movie
+	BestYear              string
+	FormattedTotalRuntime string
+	MostWatchedCast       []components.ListItem
+	MostWatchedMovies     []components.ListItem
+	MoviesByYear          []types.Bar
+	Ratings               []types.Bar
+	SeenThisYear          []types.Bar
+	Stats                 types.Stats
+	WatchedByYear         []types.Bar
+	Year                  string
+	YearRatings           []types.Bar
+	Years                 []int
+}
+
+templ Stats(props StatsProps) {
 	@Layout("Stats", "") {
 		<div class="mx-auto flex max-w-xl lg:max-w-5xl flex-col gap-y-8 px-5 pb-8 pt-8 lg:pt-24">
 			<nav class="flex items-center gap-5">
@@ -21,50 +45,77 @@ templ Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []c
 				<div class="flex flex-col gap-y-8">
 					@components.Section("Stats", 0) {
 						@components.DescriptionList() {
-							@components.DescriptionListItem("Unique movies seen", true) {
-								{ strconv.Itoa(stats.UniqueMovies) }
+							@components.DescriptionListItem(components.DescriptionListItemProps{
+								Detail:    "Unique movies seen",
+								IsTabular: true,
+							}) {
+								{ strconv.Itoa(props.Stats.UniqueMovies) }
 							}
-							@components.DescriptionListItem("Movies seen with rewatches", true) {
-								{ strconv.Itoa(stats.SeenWithRewatches) }
+							@components.DescriptionListItem(components.DescriptionListItemProps{
+								Detail:    "Movies seen with rewatches",
+								IsTabular: true,
+							}) {
+								{ strconv.Itoa(props.Stats.SeenWithRewatches) }
 							}
-							@components.DescriptionListItem("Time watched", true) {
-								{ formattedTotalRuntime }
+							@components.DescriptionListItem(components.DescriptionListItemProps{
+								Detail:    "Time watched",
+								IsTabular: true,
+							}) {
+								{ props.FormattedTotalRuntime }
 							}
-							@components.DescriptionListItem("Top IMDb rating", true) {
+							@components.DescriptionListItem(components.DescriptionListItemProps{
+								Detail:    "Top IMDb rating",
+								IsTabular: true,
+							}) {
 								<a
 									class="border-b border-dashed border-neutral-500 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600"
-									href={ templ.URL(fmt.Sprintf("/movies/%s", stats.TopImdbID)) }
+									href={ templ.URL(fmt.Sprintf("/movies/%s", props.Stats.TopImdbID)) }
 								>
-									{ stats.TopImdbTitle }
+									{ props.Stats.TopImdbTitle }
 								</a>
 								<span class="text-xs">
-									({ strconv.FormatFloat(stats.TopImdbRating, 'f', 1, 64) })
+									({ strconv.FormatFloat(props.Stats.TopImdbRating, 'f', 1, 64) })
 								</span>
 							}
-							if bestOfTheYear.ID != 0 {
-								@components.DescriptionListItem("Best of the Year", true) {
-									@components.Link(fmt.Sprintf("/movies/%d", bestOfTheYear.ID), "", false) {
-										{ bestOfTheYear.Title }
+							if props.BestOfTheYear.ID != 0 {
+								@components.DescriptionListItem(components.DescriptionListItemProps{
+									Detail:    "Best of the Year",
+									IsTabular: true,
+								}) {
+									@components.Link(fmt.Sprintf("/movies/%d", props.BestOfTheYear.ID), "", false) {
+										{ props.BestOfTheYear.Title }
 									}
-									if bestOfTheYear.Rating.Valid {
+									if props.BestOfTheYear.Rating.Valid {
 										<span class="text-xs">
-											({ strconv.FormatInt(bestOfTheYear.Rating.Int64, 10) })
+											({ strconv.FormatInt(props.BestOfTheYear.Rating.Int64, 10) })
 										</span>
 									}
 								}
 							}
 						}
 					}
-					@components.Graph(watchedByYear, "Watched by year")
-					@components.Graph(ratings, "Ratings")
-					@components.GraphWithYear(yearRatings, "Ratings this year", year, years, "/stats/ratings")
-					@components.GraphWithYear(seenThisYear, "Seen this year by month", year, years, "/stats/by-month")
+					@components.Graph(props.WatchedByYear, "Watched by year")
+					@components.Graph(props.Ratings, "Ratings")
+					@components.GraphWithYear(components.GraphWithYearProps{
+						Route:        "/stats/ratings",
+						Title:        "Ratings this year",
+						Bars:         props.YearRatings,
+						SelectedYear: props.Year,
+						Years:        props.Years,
+					})
+					@components.GraphWithYear(components.GraphWithYearProps{
+						Route:        "/stats/by-month",
+						Title:        "Seen this year by month",
+						Bars:         props.SeenThisYear,
+						SelectedYear: props.Year,
+						Years:        props.Years,
+					})
 					@components.Section("Movies by year", 0) {
 						<ol class="flex flex-col gap-2">
-							for _, year := range moviesByYear {
+							for _, year := range props.MoviesByYear {
 								<li
 									class={ "flex items-end justify-between gap-4",
-                  templ.KV("text-yellow-800 dark:text-yellow-200", bestYear == year.Label ) }
+                  templ.KV("text-yellow-800 dark:text-yellow-200", props.BestYear == year.Label ) }
 								>
 									<a
 										class="text-sm tabular-nums inline-flex items-center gap-1 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 border-b border-dashed border-neutral-500 dark:border-neutral-400"
@@ -72,10 +123,10 @@ templ Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []c
 									>
 										{ year.Label }
 									</a>
-									@components.DividerHighlight(bestYear == year.Label)
+									@components.DividerHighlight(props.BestYear == year.Label)
 									<span
 										class={ "tabular-nums text-sm relative top-1",
-                    templ.KV("text-neutral-500 dark:text-neutral-400", bestYear != year.Label) }
+                    templ.KV("text-neutral-500 dark:text-neutral-400", props.BestYear != year.Label) }
 									>
 										{ strconv.Itoa(year.Value) }
 									</span>
@@ -86,31 +137,15 @@ templ Stats(stats types.Stats, formattedTotalRuntime string, mostWatchedCast []c
 				</div>
 				<div class="flex flex-col gap-y-8">
 					@components.Section("Most watched movies", 0) {
-						@components.OrderedList(mostWatchedMovies, "movie")
+						@components.OrderedList(props.MostWatchedMovies, "movie")
 					}
 					@components.Section("Cast", 0) {
-						@components.OrderedList(mostWatchedCast, "person")
+						@components.OrderedList(props.MostWatchedCast, "person")
 					}
-					<section
-						hx-get="/stats/most-watched-person/director"
-						hx-trigger="load"
-						hx-swap="outerHTML"
-					></section>
-					<section
-						hx-get="/stats/most-watched-person/writer"
-						hx-trigger="load"
-						hx-swap="outerHTML"
-					></section>
-					<section
-						hx-get="/stats/most-watched-person/composer"
-						hx-trigger="load"
-						hx-swap="outerHTML"
-					></section>
-					<section
-						hx-get="/stats/most-watched-person/producer"
-						hx-trigger="load"
-						hx-swap="outerHTML"
-					></section>
+					@statsSection("director")
+					@statsSection("writer")
+					@statsSection("composer")
+					@statsSection("producer")
 				</div>
 			</div>
 		</div>

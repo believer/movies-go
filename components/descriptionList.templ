@@ -18,9 +18,14 @@ templ DescriptionList() {
 	</dl>
 }
 
-templ DescriptionListItem(detail string, isTabular bool) {
-	@descriptionDetail(detail)
-	@descriptionTerm(isTabular) {
+type DescriptionListItemProps struct {
+	Detail    string
+	IsTabular bool
+}
+
+templ DescriptionListItem(props DescriptionListItemProps) {
+	@descriptionDetail(props.Detail)
+	@descriptionTerm(props.IsTabular) {
 		{ children... }
 	}
 }

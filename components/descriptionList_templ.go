@@ -133,7 +133,12 @@ func DescriptionList() templ.Component {
 	})
 }
 
-func DescriptionListItem(detail string, isTabular bool) templ.Component {
+type DescriptionListItemProps struct {
+	Detail    string
+	IsTabular bool
+}
+
+func DescriptionListItem(props DescriptionListItemProps) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
@@ -151,7 +156,7 @@ func DescriptionListItem(detail string, isTabular bool) templ.Component {
 			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = descriptionDetail(detail).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = descriptionDetail(props.Detail).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -173,7 +178,7 @@ func DescriptionListItem(detail string, isTabular bool) templ.Component {
 			}
 			return templ_7745c5c3_Err
 		})
-		templ_7745c5c3_Err = descriptionTerm(isTabular).Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = descriptionTerm(props.IsTabular).Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

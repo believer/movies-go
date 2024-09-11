@@ -2,9 +2,36 @@ package components
 
 import "believer/movies/types"
 
-templ Graph(bars []types.Bar, title string) {
+templ section() {
 	<section class="flex flex-col gap-4">
-		@SectionTitle(title, 0)
-		@Bars(bars)
+		{ children... }
 	</section>
+}
+
+templ Graph(bars []types.Bar, title string) {
+	@section() {
+		@SectionTitle(title)
+		@Bars(bars)
+	}
+}
+
+type GraphWithYearProps struct {
+	Bars         []types.Bar
+	Route        string
+	SelectedYear string
+	Title        string
+	Years        []int
+}
+
+templ GraphWithYear(props GraphWithYearProps) {
+	@section() {
+		@SectionTitleWithDropdown(props.Title) {
+			@Dropdown(DropdownProps{
+				Route:   props.Route,
+				Options: props.Years,
+				Value:   props.SelectedYear,
+			})
+		}
+		@Bars(props.Bars)
+	}
 }

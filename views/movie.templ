@@ -21,11 +21,11 @@ templ Movie(movie types.Movie, back bool) {
 			@components.Section("Metadata", 0) {
 				@components.DescriptionList() {
 					if movie.Tagline != "" {
-						@components.DescriptionListItem("Tagline", false) {
+						@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Tagline", IsTabular: false}) {
 							{ movie.Tagline }
 						}
 					}
-					@components.DescriptionListItem("Release date", true) {
+					@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Release date", IsTabular: true}) {
 						<a
 							class="inline-flex items-center gap-1 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 border-b border-dashed border-neutral-500 dark:border-neutral-400"
 							href={ templ.URL(fmt.Sprintf("/movies/year/%s", movie.ReleaseDate.Format("2006"))) }
@@ -33,10 +33,10 @@ templ Movie(movie types.Movie, back bool) {
 							{ movie.ReleaseDate.Format("2006-01-02") }
 						</a>
 					}
-					@components.DescriptionListItem("Runtime", false) {
+					@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Runtime", IsTabular: false}) {
 						{ movie.RuntimeFormatted() }
 					}
-					@components.DescriptionListItem("IMDb", false) {
+					@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "IMDb", IsTabular: false}) {
 						<a
 							href={ templ.URL(fmt.Sprintf("https://www.imdb.com/title/%s", movie.ImdbId)) }
 							class="inline-flex items-center gap-1 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
@@ -64,15 +64,15 @@ templ Movie(movie types.Movie, back bool) {
 							</svg>
 						</a>
 					}
-					@components.DescriptionListItem("Genres", false) {
+					@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Genres", IsTabular: false}) {
 						{ strings.Join(movie.Genres,", ") }
 					}
 					if movie.Rating.Valid {
-						@components.DescriptionListItem("Rating", false) {
+						@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Rating", IsTabular: false}) {
 							{ strconv.FormatInt(movie.Rating.Int64, 10) }
 						}
 					}
-					@components.DescriptionListItem("Watched", false) {
+					@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Watched", IsTabular: false}) {
 						<span hx-get={ fmt.Sprintf("/movies/%d/seen", movie.ID) } hx-trigger="load"></span>
 					}
 				}
