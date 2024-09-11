@@ -12,6 +12,11 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
 )
 
+var (
+	imdbPattern = regexp.MustCompile(`^tt\d{7,}$`)
+	tmdbPattern = regexp.MustCompile(`^\d+$`)
+)
+
 func IsAuthenticated(c *fiber.Ctx) bool {
 	cookieAdminSecret := c.Cookies("token")
 
@@ -20,7 +25,7 @@ func IsAuthenticated(c *fiber.Ctx) bool {
 
 func ParseImdbId(s string) (string, error) {
 	if s == "" {
-		return "", fmt.Errorf("Empty IMDb ID")
+		return "", fmt.Errorf("Empty ID")
 	}
 
 	parsedUrl, err := url.Parse(s)
@@ -29,58 +34,39 @@ func ParseImdbId(s string) (string, error) {
 		return "", err
 	}
 
-	id := path.Base(parsedUrl.Path)
-	id = strings.TrimRight(id, "/")
-	id = strings.ToLower(id)
+	id := strings.ToLower(strings.TrimRight(path.Base(parsedUrl.Path), "/"))
 
 	if id == "" {
-		return "", fmt.Errorf("Empty IMDb ID")
+		return "", fmt.Errorf("Empty ID")
 	}
 
-	// IMDb IDs start with "tt" followed by 7 or more digits
-	match, _ := regexp.MatchString(`^tt\d{7,}$`, id)
-
-	if !match {
-		// Test if it is a TMDB ID
-		match, _ := regexp.MatchString(`^\d+$`, id)
-
-		if !match {
-			return "", fmt.Errorf("Invalid ID format: %s", id)
-		}
+	if imdbPattern.MatchString(id) || tmdbPattern.MatchString(id) {
+		return id, nil
 	}
 
-	return id, nil
+	return "", fmt.Errorf("Invalid ID format: %s", id)
 }
 
 func FormatRuntime(runtime int) string {
-	var dayStr, hourStr, minStr string
-	var (
-		days    = runtime / 1440
-		hours   = runtime / 60 % 24
-		minutes = runtime % 60
-	)
+	days := runtime / 1440
+	hours := runtime / 60 % 24
+	minutes := runtime % 60
 
-	if days != 0 {
-		dayStr = fmt.Sprintf("%dd", days)
+	parts := []string{}
 
-		if hours != 0 || minutes != 0 {
-			dayStr += " "
-		}
+	if days > 0 {
+		parts = append(parts, fmt.Sprintf("%dd", days))
 	}
 
-	if hours != 0 {
-		hourStr = fmt.Sprintf("%dh", hours)
-
-		if minutes != 0 {
-			hourStr += " "
-		}
+	if hours > 0 {
+		parts = append(parts, fmt.Sprintf("%dh", hours))
 	}
 
-	if minutes != 0 {
-		minStr = fmt.Sprintf("%dm", minutes)
+	if minutes > 0 {
+		parts = append(parts, fmt.Sprintf("%dm", minutes))
 	}
 
-	return dayStr + hourStr + minStr
+	return strings.Join(parts, " ")
 }
 
 func TemplRender(c *fiber.Ctx, component templ.Component) error {
