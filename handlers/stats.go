@@ -30,6 +30,8 @@ func getPersonsByJob(job string, userId string) ([]components.ListItem, error) {
 	return persons, nil
 }
 
+// Handler for /stats.
+// Gets most of the necessary data (some is is loaded onload)
 func HandleGetStats(c *fiber.Ctx) error {
 	var stats types.Stats
 	var movies []components.ListItem
@@ -237,14 +239,13 @@ func constructGraphFromData(data []types.GraphData) ([]types.Bar, error) {
 func HandleGetRatingsByYear(c *fiber.Ctx) error {
 	userId := c.Locals("UserId").(string)
 	year := c.Query("year")
-	parsedYear, err := strconv.Atoi(year)
-	currentYear := time.Now().Year()
+	currentYear := time.Now().Format("2006")
+	yearTime, err := pgSelectedYear(year)
 
 	if err != nil {
 		return err
 	}
 
-	yearTime := time.Date(parsedYear, time.September, 10, 0, 0, 0, 0, time.UTC).Format("2006-01-02 15:04:05")
 	yearRatings, err := getGraphByYearWithQuery("stats-ratings-this-year", userId, yearTime)
 
 	if err != nil {
@@ -253,7 +254,7 @@ func HandleGetRatingsByYear(c *fiber.Ctx) error {
 
 	title := "Ratings " + year
 
-	if currentYear == parsedYear {
+	if currentYear == year {
 		title = "Ratings this year"
 	}
 
@@ -270,14 +271,13 @@ func HandleGetRatingsByYear(c *fiber.Ctx) error {
 func HandleGetThisYearByMonth(c *fiber.Ctx) error {
 	userId := c.Locals("UserId").(string)
 	year := c.Query("year")
-	parsedYear, err := strconv.Atoi(year)
-	currentYear := time.Now().Year()
+	currentYear := time.Now().Format("2006")
+	yearTime, err := pgSelectedYear(year)
 
 	if err != nil {
 		return err
 	}
 
-	yearTime := time.Date(parsedYear, time.September, 10, 0, 0, 0, 0, time.UTC).Format("2006-01-02 15:04:05")
 	yearRatings, err := getGraphByYearWithQuery("stats-watched-this-year-by-month", userId, yearTime)
 
 	if err != nil {
@@ -286,7 +286,7 @@ func HandleGetThisYearByMonth(c *fiber.Ctx) error {
 
 	title := "Seen " + year + " by month"
 
-	if currentYear == parsedYear {
+	if currentYear == year {
 		title = "Seen this year by month"
 	}
 
@@ -298,6 +298,16 @@ func HandleGetThisYearByMonth(c *fiber.Ctx) error {
 			Years:        availableYears(),
 			Route:        "/stats/by-month",
 		}))
+}
+
+func pgSelectedYear(year string) (string, error) {
+	parsedYear, err := strconv.Atoi(year)
+
+	if err != nil {
+		return "", err
+	}
+
+	return time.Date(parsedYear, time.September, 10, 0, 0, 0, 0, time.UTC).Format("2006-01-02 15:04:05"), nil
 }
 
 func availableYears() []int {
