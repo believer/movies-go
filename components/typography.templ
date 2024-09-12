@@ -1,8 +1,12 @@
 package components
 
-templ H1(text string, back bool) {
+templ H1(text string, toRoot bool) {
 	<h1 class="flex items-baseline gap-2 text-xl font-semibold">
-		@Link("#", "on click go back", back) {
+		@Link(LinkProps{
+			Href:        "#",
+			Hyperscript: "on click go back",
+			ToRoot:      toRoot,
+		}) {
 			..
 		}
 		<span class="font-regular text-neutral-400">/</span>

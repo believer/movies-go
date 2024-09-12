@@ -20,7 +20,7 @@ templ MoviesByYear(year string, movies []types.Movie) {
 				<ol class="flex flex-col gap-2 md:text-sm text-neutral-500 dark:text-neutral-400">
 					for _, movie := range movies {
 						<li class="flex items-end justify-between gap-4">
-							@components.Link(fmt.Sprintf("/movies/%d", movie.ID), "", false) {
+							@components.Link(components.LinkProps{Href: fmt.Sprintf("/movies/%d", movie.ID)}) {
 								{ movie.Title }
 							}
 							@components.Divider()

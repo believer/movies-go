@@ -1,14 +1,20 @@
 package components
 
-templ Link(href string, hyperscript string, back bool) {
+type LinkProps struct {
+	Href        string
+	Hyperscript string
+	ToRoot      bool
+}
+
+templ Link(props LinkProps) {
 	<a
 		class="truncate border-b border-dashed border-neutral-500 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600"
-		if back {
+		if props.ToRoot {
 			href="/"
 		} else {
-			href={ templ.URL(href) }
-			if hyperscript != "" {
-				_={ hyperscript }
+			href={ templ.URL(props.Href) }
+			if props.Hyperscript != "" {
+				_={ props.Hyperscript }
 			}
 		}
 	>

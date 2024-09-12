@@ -19,11 +19,15 @@ templ OrderedList(data []ListItem, listType string) {
 				data-position={ strconv.Itoa(i + 1) }
 			>
 				if listType == "movie" {
-					@Link(fmt.Sprintf("/movies/%s", item.ID), "", false) {
+					@Link(LinkProps{
+						Href: fmt.Sprintf("/movies/%s", item.ID),
+					}) {
 						{ item.Name }
 					}
 				} else if listType == "person" {
-					@Link(fmt.Sprintf("/person/%s", item.ID), "", false) {
+					@Link(LinkProps{
+						Href: fmt.Sprintf("/person/%s", item.ID),
+					}) {
 						{ item.Name }
 					}
 				}

@@ -38,7 +38,7 @@ templ Stats(props StatsProps) {
 		<div class="mx-auto flex max-w-xl lg:max-w-5xl flex-col gap-y-8 px-5 pb-8 pt-8 lg:pt-24">
 			<nav class="flex items-center gap-5">
 				<div class="left-8 top-10 md:absolute">
-					@components.Link("/", "", false) {
+					@components.Link(components.LinkProps{Href: "/"}) {
 						Home
 					}
 				</div>
@@ -66,8 +66,7 @@ templ Stats(props StatsProps) {
 								{ props.FormattedTotalRuntime }
 							}
 							@components.DescriptionListItem(components.DescriptionListItemProps{
-								Detail:    "Top IMDb rating",
-								IsTabular: false,
+								Detail: "Top IMDb rating",
 							}) {
 								<a
 									class="border-b border-dashed border-neutral-500 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600"
@@ -81,10 +80,9 @@ templ Stats(props StatsProps) {
 							}
 							if props.BestOfTheYear.ID != 0 {
 								@components.DescriptionListItem(components.DescriptionListItemProps{
-									Detail:    "Best of the Year",
-									IsTabular: false,
+									Detail: "Best of the Year",
 								}) {
-									@components.Link(fmt.Sprintf("/movies/%d", props.BestOfTheYear.ID), "", false) {
+									@components.Link(components.LinkProps{Href: fmt.Sprintf("/movies/%d", props.BestOfTheYear.ID)}) {
 										{ props.BestOfTheYear.Title }
 									}
 									if props.BestOfTheYear.Rating.Valid {
@@ -96,10 +94,9 @@ templ Stats(props StatsProps) {
 							}
 							if len(props.ShortestAndLongestMovie) == 2 {
 								@components.DescriptionListItem(components.DescriptionListItemProps{
-									Detail:    "Shortest movie",
-									IsTabular: false,
+									Detail: "Shortest movie",
 								}) {
-									@components.Link(fmt.Sprintf("/movies/%d", props.ShortestAndLongestMovie[0].ID), "", false) {
+									@components.Link(components.LinkProps{Href: fmt.Sprintf("/movies/%d", props.ShortestAndLongestMovie[0].ID)}) {
 										{ props.ShortestAndLongestMovie[0].Title }
 									}
 									<span class="text-xs">
@@ -107,10 +104,9 @@ templ Stats(props StatsProps) {
 									</span>
 								}
 								@components.DescriptionListItem(components.DescriptionListItemProps{
-									Detail:    "Longest movie",
-									IsTabular: false,
+									Detail: "Longest movie",
 								}) {
-									@components.Link(fmt.Sprintf("/movies/%d", props.ShortestAndLongestMovie[1].ID), "", false) {
+									@components.Link(components.LinkProps{Href: fmt.Sprintf("/movies/%d", props.ShortestAndLongestMovie[1].ID)}) {
 										{ props.ShortestAndLongestMovie[1].Title }
 									}
 									<span class="text-xs">

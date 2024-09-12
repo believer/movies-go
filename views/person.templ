@@ -13,7 +13,7 @@ templ Credit(title string, data types.PersonMovies, id string) {
 			<ol class="flex flex-col gap-2">
 				for _, movie := range data {
 					<li class="flex items-end justify-between gap-4">
-						@components.Link(fmt.Sprintf("/movies/%d", movie.ID), "", false) {
+						@components.Link(components.LinkProps{Href: fmt.Sprintf("/movies/%d", movie.ID)}) {
 							{ movie.Title }
 						}
 						@components.Divider()
