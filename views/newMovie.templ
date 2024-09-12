@@ -3,7 +3,7 @@ package views
 import "believer/movies/components"
 
 templ NewMovie() {
-	@Layout("Add movie", "") {
+	@Layout(LayoutProps{Title: "Add movie"}) {
 		<form
 			hx-post="/movie/new"
 			hx-indicator="#sending"

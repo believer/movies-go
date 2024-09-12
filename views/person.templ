@@ -37,7 +37,7 @@ templ Credit(title string, data types.PersonMovies, id string) {
 }
 
 templ Person(person types.Person, totalCredits int, id string) {
-	@Layout(person.Name, "") {
+	@Layout(LayoutProps{Title: person.Name}) {
 		<div
 			class="mx-auto flex max-w-xl flex-col gap-8 px-5 py-8"
 		>

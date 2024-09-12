@@ -34,7 +34,7 @@ type StatsProps struct {
 }
 
 templ Stats(props StatsProps) {
-	@Layout("Stats", "") {
+	@Layout(LayoutProps{Title: "Stats"}) {
 		<div class="mx-auto flex max-w-xl lg:max-w-5xl flex-col gap-y-8 px-5 pb-8 pt-8 lg:pt-24">
 			<nav class="flex items-center gap-5">
 				<div class="left-8 top-10 md:absolute">

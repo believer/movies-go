@@ -11,7 +11,7 @@ import (
 // parameterized "style" attribute in the template. At least yet...
 // https://github.com/a-h/templ/issues/88
 templ Movie(movie types.Movie, back bool) {
-	@Layout(movie.Title, movie.Overview) {
+	@Layout(LayoutProps{Title: movie.Title, Description: movie.Overview}) {
 		<div class="mx-auto flex max-w-xl flex-col gap-8 px-5 py-8">
 			@components.H1(movie.Title, back)
 			if movie.Overview != "" {

@@ -8,7 +8,7 @@ import (
 )
 
 templ MoviesByYear(year string, movies []types.Movie) {
-	@Layout("", "") {
+	@Layout(LayoutProps{Title: year}) {
 		<div
 			class="mx-auto flex max-w-xl flex-col gap-8 px-5 py-8"
 		>

@@ -8,7 +8,7 @@ import (
 )
 
 templ Feed(isAdmin bool, movies types.Movies, nextPage int, query string) {
-	@Layout("", "") {
+	@Layout(LayoutProps{}) {
 		<div class="mx-auto flex max-w-xl flex-col gap-12 px-5 pt-8">
 			<nav class="flex items-center gap-5">
 				<div class="left-8 top-10 md:absolute">

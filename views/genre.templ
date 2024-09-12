@@ -14,7 +14,7 @@ type GenreProps struct {
 }
 
 templ Genre(props GenreProps) {
-	@Layout(props.Name, "") {
+	@Layout(LayoutProps{Title: props.Name}) {
 		<div
 			class="mx-auto flex max-w-xl flex-col gap-8 px-5 py-8"
 		>
