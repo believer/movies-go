@@ -5,7 +5,7 @@ import "believer/movies/components"
 templ NewMovie() {
 	@Layout("Add movie", "") {
 		<form
-			hx-post="/movies/new"
+			hx-post="/movie/new"
 			hx-indicator="#sending"
 			class="mx-auto flex max-w-xl flex-col gap-6 px-4 py-8"
 		>
@@ -18,7 +18,7 @@ templ NewMovie() {
 				@components.Label("search", "Search")
 				<input
 					type="text"
-					hx-get="/movies/search"
+					hx-get="/movie/search"
 					hx-trigger="keyup changed delay:500ms"
 					hx-target="#search-results"
 					hx-validate="true"
@@ -37,7 +37,7 @@ templ NewMovie() {
 				<input
 					required
 					type="text"
-					hx-get="/movies/imdb"
+					hx-get="/movie/imdb"
 					hx-trigger="blur changed"
 					hx-target="#movie-exists"
 					hx-validate="true"

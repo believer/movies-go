@@ -19,19 +19,25 @@ func SetupRoutes(app *fiber.App) {
 
 	// Movies
 	// --------------------------
-	movieGroup := app.Group("/movies")
+	movieGroup := app.Group("/movie")
 
 	movieGroup.Get("/", redirectToHome)
 	movieGroup.Get("/imdb", handlers.HandleGetByImdbId)
 	movieGroup.Get("/search", handlers.HandleSearchNew)
 	movieGroup.Get("/new", handlers.HandleGetMovieNew)
 	movieGroup.Post("/new", handlers.HandlePostMovieNew)
-	movieGroup.Get("/year/:year", handlers.HandleGetMoviesByYear)
 
 	movieGroup.Get("/:id", handlers.HandleGetMovieByID)
 	movieGroup.Get("/:id/cast", handlers.HandleGetMovieCastByID)
 	movieGroup.Get("/:id/seen", handlers.HandleGetMovieSeenByID)
 	movieGroup.Post("/:id/seen", handlers.HandlePostMovieSeenNew)
+
+	// Year
+	// --------------------------
+	yearGroup := app.Group("/year")
+
+	yearGroup.Get("/", redirectToHome)
+	yearGroup.Get("/:year", handlers.HandleGetMoviesByYear)
 
 	// Person
 	// --------------------------

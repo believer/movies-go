@@ -70,7 +70,7 @@ templ Stats(props StatsProps) {
 							}) {
 								<a
 									class="border-b border-dashed border-neutral-500 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600"
-									href={ templ.URL(fmt.Sprintf("/movies/%s", props.Stats.TopImdbID)) }
+									href={ templ.URL(fmt.Sprintf("/movie/%s", props.Stats.TopImdbID)) }
 								>
 									{ props.Stats.TopImdbTitle }
 								</a>
@@ -82,7 +82,7 @@ templ Stats(props StatsProps) {
 								@components.DescriptionListItem(components.DescriptionListItemProps{
 									Detail: "Best of the Year",
 								}) {
-									@components.Link(components.LinkProps{Href: fmt.Sprintf("/movies/%d", props.BestOfTheYear.ID)}) {
+									@components.Link(components.LinkProps{Href: fmt.Sprintf("/movie/%d", props.BestOfTheYear.ID)}) {
 										{ props.BestOfTheYear.Title }
 									}
 									if props.BestOfTheYear.Rating.Valid {
@@ -96,7 +96,7 @@ templ Stats(props StatsProps) {
 								@components.DescriptionListItem(components.DescriptionListItemProps{
 									Detail: "Shortest movie",
 								}) {
-									@components.Link(components.LinkProps{Href: fmt.Sprintf("/movies/%d", props.ShortestAndLongestMovie[0].ID)}) {
+									@components.Link(components.LinkProps{Href: fmt.Sprintf("/movie/%d", props.ShortestAndLongestMovie[0].ID)}) {
 										{ props.ShortestAndLongestMovie[0].Title }
 									}
 									<span class="text-xs">
@@ -106,7 +106,7 @@ templ Stats(props StatsProps) {
 								@components.DescriptionListItem(components.DescriptionListItemProps{
 									Detail: "Longest movie",
 								}) {
-									@components.Link(components.LinkProps{Href: fmt.Sprintf("/movies/%d", props.ShortestAndLongestMovie[1].ID)}) {
+									@components.Link(components.LinkProps{Href: fmt.Sprintf("/movie/%d", props.ShortestAndLongestMovie[1].ID)}) {
 										{ props.ShortestAndLongestMovie[1].Title }
 									}
 									<span class="text-xs">
@@ -141,7 +141,7 @@ templ Stats(props StatsProps) {
 								>
 									<a
 										class="text-sm tabular-nums inline-flex items-center gap-1 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 border-b border-dashed border-neutral-500 dark:border-neutral-400"
-										href={ templ.URL(fmt.Sprintf("/movies/year/%s", year.Label)) }
+										href={ templ.URL(fmt.Sprintf("/year/%s", year.Label)) }
 									>
 										{ year.Label }
 									</a>

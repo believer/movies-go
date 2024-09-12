@@ -1,8 +1,8 @@
 package components
 
 import (
-	"time"
 	"fmt"
+	"time"
 )
 
 templ Watched(watchedAt []time.Time, isAdmin bool, id string) {
@@ -15,9 +15,9 @@ templ Watched(watchedAt []time.Time, isAdmin bool, id string) {
 				if isAdmin {
 					<li>
 						<a
- 							href="#"
- 							hx-post={ fmt.Sprintf("/movies/%s/seen", id) }
- 							class="truncate border-b border-dashed border-neutral-500 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600"
+							href="#"
+							hx-post={ fmt.Sprintf("/movie/%s/seen", id) }
+							class="truncate border-b border-dashed border-neutral-500 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600"
 						>
 							Add new watch
 						</a>

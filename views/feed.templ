@@ -34,7 +34,7 @@ templ Feed(isAdmin bool, movies types.Movies, nextPage int, query string) {
 					<div class="md:absolute right-8 top-10 flex gap-4 items-center">
 						<a
 							class="fixed bottom-8 right-8 z-10 bg-neutral-700 w-14 h-14 shadow-md flex justify-center items-center rounded-full sm:bg-transparent sm:bottom-0 sm:right-0 sm:w-auto sm:h-auto sm:relative focus:outline-none focus-visible:outline-dashed focus-visible:outline-offset-8 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
-							href="/movies/new"
+							href="/movie/new"
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -85,7 +85,7 @@ init if my @data-year is not really equal to @data-year of previous <li/> then
   then
     make an <a.year/>
     put the @data-year into its textContent
-    put `/movies/year/${dataYear}` into its href
+    put `/year/${dataYear}` into its href
     put it into the previous <li/>
    end
  end
@@ -108,7 +108,7 @@ end
 "
 						>
 							<a
-								href={ templ.URL(fmt.Sprintf("/movies/%d", movie.ID)) }
+								href={ templ.URL(fmt.Sprintf("/movie/%d", movie.ID)) }
 								class="flex flex-col gap-4 rounded focus:outline-none focus-visible:outline-dashed focus-visible:outline-offset-8 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
 							>
 								<header class="flex flex-col gap-1">

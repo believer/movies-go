@@ -13,7 +13,7 @@ templ Credit(title string, data types.PersonMovies, id string) {
 			<ol class="flex flex-col gap-2">
 				for _, movie := range data {
 					<li class="flex items-end justify-between gap-4">
-						@components.Link(components.LinkProps{Href: fmt.Sprintf("/movies/%d", movie.ID)}) {
+						@components.Link(components.LinkProps{Href: fmt.Sprintf("/movie/%d", movie.ID)}) {
 							{ movie.Title }
 						}
 						@components.Divider()
@@ -23,7 +23,7 @@ templ Credit(title string, data types.PersonMovies, id string) {
 						<span class="flex items-center gap-x-2">
 							<a
 								class="text-sm tabular-nums inline-flex items-center gap-1 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 border-b border-dashed border-neutral-500 dark:border-neutral-400"
-								href={ templ.URL(fmt.Sprintf("/movies/year/%s", movie.ReleaseDate.Format("2006"))) }
+								href={ templ.URL(fmt.Sprintf("/year/%s", movie.ReleaseDate.Format("2006"))) }
 							>
 								{ movie.ReleaseDate.Format("2006") }
 							</a>

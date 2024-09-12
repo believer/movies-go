@@ -1,14 +1,16 @@
 package components
 
-import "believer/movies/types"
-import "fmt"
+import (
+	"believer/movies/types"
+	"fmt"
+)
 
 templ MovieExists(movie types.Movie) {
 	<strong>{ movie.Title }</strong> exists in your library. Would you like to
 	<a
- 		href="#"
- 		hx-post={ fmt.Sprintf("/movies/%d/seen", movie.ID) }
- 		class="border-b border-dashed border-neutral-500 dark:border-neutral-400"
+		href="#"
+		hx-post={ fmt.Sprintf("/movie/%d/seen", movie.ID) }
+		class="border-b border-dashed border-neutral-500 dark:border-neutral-400"
 	>add a new watch</a>
 	?
 }
