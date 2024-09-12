@@ -46,11 +46,13 @@ templ Layout(props LayoutProps) {
 			<link href="/public/styles.8aa4fb.css" rel="stylesheet"/>
 			<link rel="manifest" href="/public/manifest.webmanifest"/>
 			<script src="/public/htmx.2.0.2.min.js"></script>
+			<script src="/public/htmx.head-support.20240912.js"></script>
 			<script src="/public/hyperscript.0.9.12.min.js"></script>
 		</head>
 		<body
 			class="text-neutral-700 dark:bg-neutral-900 dark:text-neutral-300"
 			hx-boost="true"
+			hx-ext="head-support"
 		>
 			<main>
 				{ children... }
