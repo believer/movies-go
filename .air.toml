@@ -5,7 +5,7 @@
   delay = 1000
   include_dir = []
   exclude_dir = ["public", "tmp", "vendor", "node_modules"]
-  include_ext = ["go", "tpl", "tmpl", "html", "templ", "css"]
+  include_ext = ["go", "tpl", "tmpl", "html", "templ", "css", "sql"]
   exclude_regex = ["_test.go", ".*_templ.go"]
   exclude_unchanged = false
   follow_symlink = false

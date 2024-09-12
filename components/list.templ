@@ -6,9 +6,9 @@ import (
 )
 
 type ListItem struct {
-	ID    string
-	Name  string
-	Count int
+	Name  string `db:"name"`
+	ID    string `db:"id"`
+	Count int    `db:"count"`
 }
 
 templ OrderedList(data []ListItem, listType string) {
@@ -19,15 +19,15 @@ templ OrderedList(data []ListItem, listType string) {
 				data-position={ strconv.Itoa(i + 1) }
 			>
 				if listType == "movie" {
-					@Link(LinkProps{
-						Href: fmt.Sprintf("/movies/%s", item.ID),
-					}) {
+					@Link(LinkProps{Href: fmt.Sprintf("/movies/%s", item.ID)}) {
 						{ item.Name }
 					}
 				} else if listType == "person" {
-					@Link(LinkProps{
-						Href: fmt.Sprintf("/person/%s", item.ID),
-					}) {
+					@Link(LinkProps{Href: fmt.Sprintf("/person/%s", item.ID)}) {
+						{ item.Name }
+					}
+				} else if listType == "genre" {
+					@Link(LinkProps{Href: fmt.Sprintf("/genre/%s", item.ID)}) {
 						{ item.Name }
 					}
 				}

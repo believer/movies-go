@@ -5,3 +5,9 @@ templ MostWatchedPerson(data []ListItem, title string) {
 		@OrderedList(data, "person")
 	}
 }
+
+templ MostWatchedGenres(data []ListItem) {
+	@Section("Most watched genre", 0) {
+		@OrderedList(data, "genre")
+	}
+}

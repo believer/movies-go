@@ -1,0 +1,50 @@
+package views
+
+import (
+	"believer/movies/components"
+	"believer/movies/types"
+	"fmt"
+	"strconv"
+)
+
+type GenreProps struct {
+	Name   string
+	Movies types.Movies
+	Seen   int
+}
+
+templ Genre(props GenreProps) {
+	@Layout(props.Name, "") {
+		<div
+			class="mx-auto flex max-w-xl flex-col gap-8 px-5 py-8"
+		>
+			@components.H1(props.Name, false)
+			<div>
+				Seen { strconv.Itoa(props.Seen) } / 
+				{ strconv.Itoa(len(props.Movies)) } movies
+			</div>
+			if len(props.Movies) > 0 {
+				<ol class="flex flex-col gap-2 md:text-sm text-neutral-500 dark:text-neutral-400">
+					for _, movie := range props.Movies {
+						<li class="flex items-end justify-between gap-4">
+							@components.Link(components.LinkProps{Href: fmt.Sprintf("/movies/%d", movie.ID)}) {
+								{ movie.Title }
+							}
+							@components.Divider()
+							<span class="flex items-center gap-x-2 relative top-1">
+								<span class="tabular-nums whitespace-nowrap">
+									{ movie.ReleaseDate.Format("2006-01-02") }
+								</span>
+								@Seen(movie.Seen)
+							</span>
+						</li>
+					}
+				</ol>
+			} else {
+				<div>
+					No movies this year
+				</div>
+			}
+		</div>
+	}
+}

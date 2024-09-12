@@ -333,3 +333,17 @@ func availableYears() []int {
 
 	return years
 }
+
+func HandleGetGenreStats(c *fiber.Ctx) error {
+	var genres []components.ListItem
+
+	userId := c.Locals("UserId").(string)
+
+	err := db.Dot.Select(db.Client, &genres, "stats-genres", userId)
+
+	if err != nil {
+		return err
+	}
+
+	return utils.TemplRender(c, components.MostWatchedGenres(genres))
+}

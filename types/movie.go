@@ -6,8 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
-
-	"github.com/lib/pq"
 )
 
 type CastAndCrew struct {
@@ -15,10 +13,28 @@ type CastAndCrew struct {
 	Job  string `db:"job"`
 }
 
+type MovieGenre struct {
+	Name string `db:"name" json:"name"`
+	ID   int    `db:"id" json:"id"`
+}
+
+type MovieGenres []MovieGenre
+
+func (u *MovieGenres) Scan(v interface{}) error {
+	switch vv := v.(type) {
+	case []byte:
+		return json.Unmarshal(vv, u)
+	case string:
+		return json.Unmarshal([]byte(vv), u)
+	default:
+		return fmt.Errorf("unsupported type: %T", v)
+	}
+}
+
 type Movie struct {
 	Cast        []CastAndCrew   `db:"cast"`
 	CreatedAt   time.Time       `db:"created_at"`
-	Genres      pq.StringArray  `db:"genres"`
+	Genres      MovieGenres     `db:"genres"`
 	ID          int             `db:"id" json:"id"`
 	ImdbId      string          `db:"imdb_id"`
 	ImdbRating  sql.NullFloat64 `db:"imdb_rating"`

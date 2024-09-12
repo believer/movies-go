@@ -71,7 +71,7 @@ SELECT
     m.overview,
     m.tagline,
     r.rating,
-    ARRAY_AGG(DISTINCT (g.name)) AS genres
+    ARRAY_TO_JSON(ARRAY_AGG(json_build_object('name', g.name, 'id', g.id))) AS genres
 FROM
     movie AS m
     INNER JOIN movie_genre AS mg ON mg.movie_id = m.id
@@ -88,7 +88,7 @@ GROUP BY
 SELECT
     m.*,
     r.rating,
-    ARRAY_AGG(DISTINCT (g.name)) AS genres
+    ARRAY_TO_JSON(ARRAY_AGG(json_build_object('name', g.name, 'id', g.id))) AS genres
 FROM
     movie AS m
     INNER JOIN movie_genre AS mg ON mg.movie_id = m.id
@@ -347,4 +347,53 @@ UNION ALL (
     ORDER BY
         m.runtime DESC
     LIMIT 1);
+
+-- name: stats-genres
+SELECT
+    g.id,
+    g.name,
+    COUNT(DISTINCT s.movie_id) AS count
+FROM
+    seen s
+    INNER JOIN movie_genre mg ON mg.movie_id = s.movie_id
+    INNER JOIN genre g ON mg.genre_id = g.id
+WHERE
+    s.user_id = $1
+GROUP BY
+    g.id
+ORDER BY
+    count DESC
+LIMIT 10;
+
+-- name: genres-by-id
+SELECT DISTINCT
+    (m.id),
+    m.title,
+    m.release_date,
+    (s.id IS NOT NULL) AS "seen"
+FROM
+    movie_genre mg
+    INNER JOIN movie m ON m.id = mg.movie_id
+    LEFT JOIN ( SELECT DISTINCT ON (movie_id)
+            movie_id,
+            id
+        FROM
+            public.seen
+        WHERE
+            user_id = $2
+        ORDER BY
+            movie_id,
+            id) AS s ON m.id = s.movie_id
+WHERE
+    mg.genre_id = $1
+ORDER BY
+    m.release_date DESC;
+
+-- name: genre-by-id
+SELECT
+    name
+FROM
+    genre
+WHERE
+    id = $1;
 

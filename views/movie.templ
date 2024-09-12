@@ -5,7 +5,6 @@ import (
 	"believer/movies/types"
 	"fmt"
 	"strconv"
-	"strings"
 )
 
 // TODO: View transition of elements doesn't work because we can't have a
@@ -65,7 +64,16 @@ templ Movie(movie types.Movie, back bool) {
 						</a>
 					}
 					@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Genres", IsTabular: false}) {
-						{ strings.Join(movie.Genres,", ") }
+						<div class="flex gap-x-2">
+							for _, genre := range movie.Genres {
+								<a
+									class="inline-flex items-center gap-1 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 border-b border-dashed border-neutral-500 dark:border-neutral-400"
+									href={ templ.URL(fmt.Sprintf("/genre/%d", genre.ID)) }
+								>
+									{ genre.Name }
+								</a>
+							}
+						</div>
 					}
 					if movie.Rating.Valid {
 						@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Rating", IsTabular: false}) {

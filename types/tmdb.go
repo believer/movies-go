@@ -10,20 +10,20 @@ type SearchMovieResponse struct {
 	Results []SearchResult `json:"results"`
 }
 
-type Genre struct {
+type TmdbGenre struct {
 	Name string `json:"name"`
 }
 
 // https://api.themoviedb.org/3/movie/{id}
 type MovieDetailsResponse struct {
-	Title       string  `json:"title"`
-	Runtime     int     `json:"runtime"`
-	ReleaseDate string  `json:"release_date"`
-	ImdbId      string  `json:"imdb_id"`
-	Overview    string  `json:"overview"`
-	Poster      string  `json:"poster_path"`
-	Tagline     string  `json:"tagline"`
-	Genres      []Genre `json:"genres"`
+	Title       string      `json:"title"`
+	Runtime     int         `json:"runtime"`
+	ReleaseDate string      `json:"release_date"`
+	ImdbId      string      `json:"imdb_id"`
+	Overview    string      `json:"overview"`
+	Poster      string      `json:"poster_path"`
+	Tagline     string      `json:"tagline"`
+	Genres      []TmdbGenre `json:"genres"`
 }
 
 type CastResult struct {

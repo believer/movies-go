@@ -40,6 +40,13 @@ func SetupRoutes(app *fiber.App) {
 	personGroup.Get("/", redirectToHome)
 	personGroup.Get("/:id", handlers.HandleGetPersonByID)
 
+	// Genre
+	// --------------------------
+	genreGroup := app.Group("/genre")
+
+	genreGroup.Get("/", redirectToHome)
+	genreGroup.Get("/:id", handlers.HandleGetGenre)
+
 	// Search
 	// --------------------------
 	app.Post("/search", handlers.HandleMovieSearch)
@@ -49,6 +56,7 @@ func SetupRoutes(app *fiber.App) {
 	statsGroup := app.Group("/stats")
 
 	statsGroup.Get("/", handlers.HandleGetStats)
+	statsGroup.Get("/genres", handlers.HandleGetGenreStats)
 	statsGroup.Get("/ratings", handlers.HandleGetRatingsByYear)
 	statsGroup.Get("/by-month", handlers.HandleGetThisYearByMonth)
 	statsGroup.Get("/most-watched-person/:job", handlers.HandleGetMostWatchedByJob)

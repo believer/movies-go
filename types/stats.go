@@ -38,3 +38,9 @@ type Bar struct {
 	ValueX    float64
 	ValueY    int
 }
+
+type Genre struct {
+	Name  string `db:"name"`
+	ID    string `db:"id"`
+	Count int    `db:"count"`
+}
