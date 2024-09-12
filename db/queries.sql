@@ -320,3 +320,31 @@ WHERE
 ORDER BY
     release_date;
 
+-- name: shortest-and-longest-movie
+(
+    SELECT
+        m.id,
+        m.title,
+        m.runtime
+    FROM
+        movie m
+        JOIN seen s ON m.id = s.movie_id
+    WHERE
+        s.user_id = $1
+    ORDER BY
+        m.runtime ASC
+    LIMIT 1)
+UNION ALL (
+    SELECT
+        m.id,
+        m.title,
+        m.runtime
+    FROM
+        movie m
+        JOIN seen s ON m.id = s.movie_id
+    WHERE
+        s.user_id = $1
+    ORDER BY
+        m.runtime DESC
+    LIMIT 1);
+

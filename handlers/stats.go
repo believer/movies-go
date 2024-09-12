@@ -35,6 +35,7 @@ func getPersonsByJob(job string, userId string) ([]components.ListItem, error) {
 func HandleGetStats(c *fiber.Ctx) error {
 	var stats types.Stats
 	var movies []components.ListItem
+	var shortestAndLongest types.Movies
 
 	userId := c.Locals("UserId").(string)
 	now := time.Now()
@@ -44,6 +45,13 @@ func HandleGetStats(c *fiber.Ctx) error {
 
 	if err != nil {
 		log.Fatalf("Error getting most watched movies: %v", err)
+		return err
+	}
+
+	err = db.Dot.Select(db.Client, &shortestAndLongest, "shortest-and-longest-movie", userId)
+
+	if err != nil {
+		log.Fatalf("Error getting longest and shortest movie: %v", err)
 		return err
 	}
 
@@ -116,19 +124,20 @@ func HandleGetStats(c *fiber.Ctx) error {
 
 	return utils.TemplRender(c, views.Stats(
 		views.StatsProps{
-			Stats:                 stats,
-			FormattedTotalRuntime: utils.FormatRuntime(stats.TotalRuntime),
-			MostWatchedCast:       cast,
-			WatchedByYear:         watchedByYear,
-			Ratings:               ratings,
-			YearRatings:           yearRatings,
-			MostWatchedMovies:     movies,
-			SeenThisYear:          seenThisYearByMonth,
-			BestOfTheYear:         bestOfTheYear,
-			MoviesByYear:          moviesByYear,
-			BestYear:              bestYear,
-			Year:                  year,
-			Years:                 availableYears(),
+			BestOfTheYear:           bestOfTheYear,
+			BestYear:                bestYear,
+			FormattedTotalRuntime:   utils.FormatRuntime(stats.TotalRuntime),
+			MostWatchedCast:         cast,
+			MostWatchedMovies:       movies,
+			MoviesByYear:            moviesByYear,
+			Ratings:                 ratings,
+			SeenThisYear:            seenThisYearByMonth,
+			Stats:                   stats,
+			WatchedByYear:           watchedByYear,
+			Year:                    year,
+			YearRatings:             yearRatings,
+			Years:                   availableYears(),
+			ShortestAndLongestMovie: shortestAndLongest,
 		}))
 }
 

@@ -3,6 +3,7 @@ package views
 import (
 	"believer/movies/components"
 	"believer/movies/types"
+	"believer/movies/utils"
 	"fmt"
 	"strconv"
 )
@@ -16,19 +17,20 @@ templ statsSection(job string) {
 }
 
 type StatsProps struct {
-	BestOfTheYear         types.Movie
-	BestYear              string
-	FormattedTotalRuntime string
-	MostWatchedCast       []components.ListItem
-	MostWatchedMovies     []components.ListItem
-	MoviesByYear          []types.Bar
-	Ratings               []types.Bar
-	SeenThisYear          []types.Bar
-	Stats                 types.Stats
-	WatchedByYear         []types.Bar
-	Year                  string
-	YearRatings           []types.Bar
-	Years                 []int
+	BestOfTheYear           types.Movie
+	BestYear                string
+	FormattedTotalRuntime   string
+	MostWatchedCast         []components.ListItem
+	MostWatchedMovies       []components.ListItem
+	MoviesByYear            []types.Bar
+	Ratings                 []types.Bar
+	SeenThisYear            []types.Bar
+	ShortestAndLongestMovie types.Movies
+	Stats                   types.Stats
+	WatchedByYear           []types.Bar
+	Year                    string
+	YearRatings             []types.Bar
+	Years                   []int
 }
 
 templ Stats(props StatsProps) {
@@ -65,7 +67,7 @@ templ Stats(props StatsProps) {
 							}
 							@components.DescriptionListItem(components.DescriptionListItemProps{
 								Detail:    "Top IMDb rating",
-								IsTabular: true,
+								IsTabular: false,
 							}) {
 								<a
 									class="border-b border-dashed border-neutral-500 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600"
@@ -80,7 +82,7 @@ templ Stats(props StatsProps) {
 							if props.BestOfTheYear.ID != 0 {
 								@components.DescriptionListItem(components.DescriptionListItemProps{
 									Detail:    "Best of the Year",
-									IsTabular: true,
+									IsTabular: false,
 								}) {
 									@components.Link(fmt.Sprintf("/movies/%d", props.BestOfTheYear.ID), "", false) {
 										{ props.BestOfTheYear.Title }
@@ -90,6 +92,30 @@ templ Stats(props StatsProps) {
 											({ strconv.FormatInt(props.BestOfTheYear.Rating.Int64, 10) })
 										</span>
 									}
+								}
+							}
+							if len(props.ShortestAndLongestMovie) == 2 {
+								@components.DescriptionListItem(components.DescriptionListItemProps{
+									Detail:    "Shortest movie",
+									IsTabular: false,
+								}) {
+									@components.Link(fmt.Sprintf("/movies/%d", props.ShortestAndLongestMovie[0].ID), "", false) {
+										{ props.ShortestAndLongestMovie[0].Title }
+									}
+									<span class="text-xs">
+										({ utils.FormatRuntime(props.ShortestAndLongestMovie[0].Runtime) })
+									</span>
+								}
+								@components.DescriptionListItem(components.DescriptionListItemProps{
+									Detail:    "Longest movie",
+									IsTabular: false,
+								}) {
+									@components.Link(fmt.Sprintf("/movies/%d", props.ShortestAndLongestMovie[1].ID), "", false) {
+										{ props.ShortestAndLongestMovie[1].Title }
+									}
+									<span class="text-xs">
+										({ utils.FormatRuntime(props.ShortestAndLongestMovie[1].Runtime) })
+									</span>
 								}
 							}
 						}
