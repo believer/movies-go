@@ -5,18 +5,25 @@ import (
 	"time"
 )
 
-templ Watched(watchedAt []time.Time, isAdmin bool, id string) {
+type WatchedProps struct {
+	WatchedAt   []time.Time
+	IsAdmin     bool
+	InWatchlist bool
+	ID          string
+}
+
+templ Watched(props WatchedProps) {
 	@Section("", 0) {
-		if len(watchedAt) > 0 {
+		if len(props.WatchedAt) > 0 {
 			<ol class="flex flex-col gap-2">
-				for _, w := range watchedAt {
+				for _, w := range props.WatchedAt {
 					<li class="tabular-nums">{ w.Format("2006-01-02 15:04") }</li>
 				}
-				if isAdmin {
+				if props.IsAdmin {
 					<li>
 						<a
 							href="#"
-							hx-post={ fmt.Sprintf("/movie/%s/seen", id) }
+							hx-post={ fmt.Sprintf("/movie/%s/seen", props.ID) }
 							class="truncate border-b border-dashed border-neutral-500 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600"
 						>
 							Add new watch
@@ -24,6 +31,13 @@ templ Watched(watchedAt []time.Time, isAdmin bool, id string) {
 					</li>
 				}
 			</ol>
+		} else if props.InWatchlist {
+			<div>
+				<a
+					class="border-b border-dashed border-neutral-500 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600"
+					href="/watchlist"
+				>In watchlist</a>
+			</div>
 		} else {
 			<span>No watches found</span>
 		}

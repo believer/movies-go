@@ -6,20 +6,23 @@ import (
 	"fmt"
 )
 
-type GenreProps struct {
-	Name   string
+type WatchlistProps struct {
 	Movies types.Movies
-	Seen   int
 }
 
-templ Genre(props GenreProps) {
-	@Layout(LayoutProps{Title: props.Name}) {
-		<div
-			class="mx-auto flex max-w-xl flex-col gap-8 px-5 py-8"
-		>
-			@components.H1(props.Name, false)
+templ Watchlist(props WatchlistProps) {
+	@Layout(LayoutProps{Title: "Watchlist"}) {
+		<div class="mx-auto flex max-w-xl flex-col gap-8 px-5 py-8">
+			<nav>
+				<div class="left-5 top-5 md:absolute">
+					@components.Link(components.LinkProps{Href: "/"}) {
+						Home
+					}
+				</div>
+			</nav>
+			@components.H1("Watchlist", false)
 			<div>
-				{ props.Movies.NumberOfSeenMovies(props.Seen) }
+				{ props.Movies.NumberOfMovies() }
 			</div>
 			if len(props.Movies) > 0 {
 				<ol class="flex flex-col gap-2 md:text-sm text-neutral-500 dark:text-neutral-400">
@@ -31,16 +34,15 @@ templ Genre(props GenreProps) {
 							@components.Divider()
 							<span class="flex items-center gap-x-2 relative top-1">
 								<span class="tabular-nums whitespace-nowrap">
-									{ movie.ReleaseDate.Format("2006-01-02") }
+									{ movie.CreatedAt.Format("2006-01-02") }
 								</span>
-								@Seen(movie.Seen)
 							</span>
 						</li>
 					}
 				</ol>
 			} else {
 				<div>
-					No movies this year
+					Watchlist empty
 				</div>
 			}
 		</div>

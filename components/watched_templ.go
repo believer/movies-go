@@ -13,7 +13,14 @@ import (
 	"time"
 )
 
-func Watched(watchedAt []time.Time, isAdmin bool, id string) templ.Component {
+type WatchedProps struct {
+	WatchedAt   []time.Time
+	IsAdmin     bool
+	InWatchlist bool
+	ID          string
+}
+
+func Watched(props WatchedProps) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
@@ -43,12 +50,12 @@ func Watched(watchedAt []time.Time, isAdmin bool, id string) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			if len(watchedAt) > 0 {
+			if len(props.WatchedAt) > 0 {
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<ol class=\"flex flex-col gap-2\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				for _, w := range watchedAt {
+				for _, w := range props.WatchedAt {
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li class=\"tabular-nums\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
@@ -56,7 +63,7 @@ func Watched(watchedAt []time.Time, isAdmin bool, id string) templ.Component {
 					var templ_7745c5c3_Var3 string
 					templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(w.Format("2006-01-02 15:04"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/watched.templ`, Line: 13, Col: 60}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/watched.templ`, Line: 20, Col: 60}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 					if templ_7745c5c3_Err != nil {
@@ -67,15 +74,15 @@ func Watched(watchedAt []time.Time, isAdmin bool, id string) templ.Component {
 						return templ_7745c5c3_Err
 					}
 				}
-				if isAdmin {
+				if props.IsAdmin {
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li><a href=\"#\" hx-post=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var4 string
-					templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/movie/%s/seen", id))
+					templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/movie/%s/seen", props.ID))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/watched.templ`, Line: 19, Col: 50}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/watched.templ`, Line: 26, Col: 56}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 					if templ_7745c5c3_Err != nil {
@@ -87,6 +94,11 @@ func Watched(watchedAt []time.Time, isAdmin bool, id string) templ.Component {
 					}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ol>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else if props.InWatchlist {
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div><a class=\"border-b border-dashed border-neutral-500 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600\" href=\"/watchlist\">In watchlist</a></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

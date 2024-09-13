@@ -53,6 +53,10 @@ templ NewMovie() {
 			</div>
 			@components.NumberInput("rating", "Rating", "A value between 0 and 10", 0, 10)
 			@components.DateTimeInput("watched_at", "Watched at", "Defaults to current time if left empty.")
+			<div>
+				<label for="watchlist">Add to watchlist</label>
+				<input type="checkbox" name="watchlist" id="watchlist"/>
+			</div>
 			<footer>
 				<button
 					class="rounded bg-neutral-200 px-6 py-2 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200"

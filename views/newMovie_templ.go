@@ -102,7 +102,7 @@ func NewMovie() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<footer><button class=\"rounded bg-neutral-200 px-6 py-2 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200\" type=\"submit\">Add</button><div id=\"sending\" class=\"htmx-indicator\">Sending...</div></footer></form>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div><label for=\"watchlist\">Add to watchlist</label> <input type=\"checkbox\" name=\"watchlist\" id=\"watchlist\"></div><footer><button class=\"rounded bg-neutral-200 px-6 py-2 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200\" type=\"submit\">Add</button><div id=\"sending\" class=\"htmx-indicator\">Sending...</div></footer></form>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

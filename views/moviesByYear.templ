@@ -4,17 +4,16 @@ import (
 	"believer/movies/components"
 	"believer/movies/types"
 	"fmt"
-	"strconv"
 )
 
-templ MoviesByYear(year string, movies []types.Movie) {
+templ MoviesByYear(year string, movies types.Movies) {
 	@Layout(LayoutProps{Title: year}) {
 		<div
 			class="mx-auto flex max-w-xl flex-col gap-8 px-5 py-8"
 		>
 			@components.H1(year, false)
 			<div>
-				{ strconv.Itoa(len(movies)) } movies
+				{ movies.NumberOfMovies() }
 			</div>
 			if len(movies) > 0 {
 				<ol class="flex flex-col gap-2 md:text-sm text-neutral-500 dark:text-neutral-400">

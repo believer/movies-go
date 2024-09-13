@@ -51,6 +51,8 @@ SELECT
     m.title,
     m.overview,
     m.release_date,
+    m.series,
+    m.number_in_series,
     s.date at time zone 'UTC' at time zone 'Europe/Stockholm' AS watched_at
 FROM
     seen AS s
@@ -61,6 +63,22 @@ ORDER BY
     s.date DESC OFFSET $1
 LIMIT 20;
 
+-- name: feed-search
+SELECT
+    m.id,
+    m.title,
+    m.overview,
+    m.series,
+    m.number_in_series,
+    m.release_date AS watched_at
+FROM
+    movie AS m
+WHERE
+    m.title ILIKE '%' || $1 || '%'
+    OR m.series ILIKE '%' || $1 || '%'
+ORDER BY
+    m.release_date DESC;
+
 -- name: movie-by-id
 SELECT
     m.id,
@@ -70,6 +88,8 @@ SELECT
     m.imdb_id,
     m.overview,
     m.tagline,
+    m.series,
+    m.number_in_series,
     r.rating,
     ARRAY_TO_JSON(ARRAY_AGG(json_build_object('name', g.name, 'id', g.id))) AS genres
 FROM
@@ -86,7 +106,15 @@ GROUP BY
 
 -- name: movie-by-name
 SELECT
-    m.*,
+    m.id,
+    m.title,
+    m.release_date,
+    m.runtime,
+    m.imdb_id,
+    m.overview,
+    m.tagline,
+    m.series,
+    m.number_in_series,
     r.rating,
     ARRAY_TO_JSON(ARRAY_AGG(json_build_object('name', g.name, 'id', g.id))) AS genres
 FROM
@@ -396,4 +424,24 @@ FROM
     genre
 WHERE
     id = $1;
+
+-- name: watchlist
+SELECT
+    m.id,
+    m.title,
+    w.created_at
+FROM
+    watchlist w
+    INNER JOIN movie m ON m.id = w.movie_id
+WHERE
+    user_id = $1;
+
+-- name: is-in-watchlist
+SELECT
+    id
+FROM
+    watchlist
+WHERE
+    user_id = $1
+    AND movie_id = $2;
 

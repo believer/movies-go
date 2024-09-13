@@ -22,12 +22,7 @@ func HandleFeed(c *fiber.Ctx) error {
 	searchQuery := c.Query("search")
 
 	if searchQuery != "" {
-		err := db.Client.Select(&movies, `
-SELECT m.id, m.title, m.overview, m.release_date AS watched_at
-FROM movie AS m
-WHERE m.title ILIKE '%' || $1 || '%'
-ORDER BY m.release_date DESC
-`, searchQuery)
+		err := db.Dot.Select(db.Client, &movies, "feed-search", searchQuery)
 
 		if err != nil {
 			return err
@@ -139,4 +134,19 @@ func HandlePostLogout(c *fiber.Ctx) error {
 	c.Set("HX-Redirect", "/")
 
 	return c.SendStatus(200)
+}
+
+func HandleGetWatchlist(c *fiber.Ctx) error {
+	var movies types.Movies
+	userId := c.Locals("UserId")
+
+	err := db.Dot.Select(db.Client, &movies, "watchlist", userId)
+
+	if err != nil {
+		return err
+	}
+
+	return utils.TemplRender(c, views.Watchlist(views.WatchlistProps{
+		Movies: movies,
+	}))
 }

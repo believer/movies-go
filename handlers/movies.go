@@ -104,6 +104,7 @@ func HandleGetMovieCastByID(c *fiber.Ctx) error {
 
 func HandleGetMovieSeenByID(c *fiber.Ctx) error {
 	var watchedAt []time.Time
+	var watchlist types.Movies
 
 	isAuth := utils.IsAuthenticated(c)
 	id := c.Params("id")
@@ -114,7 +115,18 @@ func HandleGetMovieSeenByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.TemplRender(c, components.Watched(watchedAt, isAuth, id))
+	err = db.Dot.Select(db.Client, &watchlist, "is-in-watchlist", c.Locals("UserId"), id)
+
+	if err != nil {
+		return err
+	}
+
+	return utils.TemplRender(c, components.Watched(components.WatchedProps{
+		WatchedAt:   watchedAt,
+		IsAdmin:     isAuth,
+		InWatchlist: len(watchlist) > 0,
+		ID:          id,
+	}))
 }
 
 // Render the add movie page
@@ -245,9 +257,10 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 	}
 
 	data := new(struct {
-		ImdbID    string `form:"imdb_id"`
-		Rating    int    `form:"rating"`
-		WatchedAt string `form:"watched_at"`
+		ImdbID      string `form:"imdb_id"`
+		Rating      int    `form:"rating"`
+		IsWatchlist bool   `form:"watchlist"`
+		WatchedAt   string `form:"watched_at"`
 	})
 
 	if err := c.BodyParser(data); err != nil {
@@ -262,16 +275,7 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 
 	movieId := 0
 	movie := tmdbFetchMovie(imdbId)
-
-	if err != nil {
-		log.Println("Error fetching movie information")
-	}
-
 	movieCast := tmdbFetchMovieCredits(imdbId)
-
-	if err != nil {
-		log.Println("Error fetching movie cast")
-	}
 
 	watchedAt, err := time.Parse("2006-01-02T15:04", data.WatchedAt)
 
@@ -301,10 +305,16 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 	userId := c.Locals("UserId").(string)
 
 	// Insert a view
-	tx.MustExec(`INSERT INTO seen (user_id, movie_id, date) VALUES ($1, $2, $3)`, userId, movieId, watchedAt)
+	if data.IsWatchlist {
+		tx.MustExec(`INSERT INTO watchlist (user_id, movie_id) VALUES ($1, $2)`, userId, movieId)
+	} else {
+		tx.MustExec(`INSERT INTO seen (user_id, movie_id, date) VALUES ($1, $2, $3)`, userId, movieId, watchedAt)
+	}
 
-	// Insert rating
-	tx.MustExec(`INSERT INTO rating (user_id, movie_id, rating) VALUES ($1, $2, $3)`, userId, movieId, data.Rating)
+	if data.Rating != 0 {
+		// Insert rating
+		tx.MustExec(`INSERT INTO rating (user_id, movie_id, rating) VALUES ($1, $2, $3)`, userId, movieId, data.Rating)
+	}
 
 	type Genre struct {
 		Name    string `db:"name"`
@@ -474,7 +484,7 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 
 		_, err = tx.NamedExec(`
 	INSERT INTO movie_person (movie_id, person_id, job)
-    VALUES (:movie_id, (SELECT id FROM person WHERE original_id = :id), :job)
+	   VALUES (:movie_id, (SELECT id FROM person WHERE original_id = :id), :job)
 	ON CONFLICT DO NOTHING
 	`, crewStructs)
 
