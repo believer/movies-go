@@ -53,10 +53,6 @@ func SetupRoutes(app *fiber.App) {
 	genreGroup.Get("/", redirectToHome)
 	genreGroup.Get("/:id", handlers.HandleGetGenre)
 
-	// Search
-	// --------------------------
-	app.Post("/search", handlers.HandleMovieSearch)
-
 	// Stats
 	// --------------------------
 	statsGroup := app.Group("/stats")
