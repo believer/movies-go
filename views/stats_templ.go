@@ -387,7 +387,7 @@ func Stats(props StatsProps) templ.Component {
 							return templ_7745c5c3_Err
 						})
 						templ_7745c5c3_Err = components.DescriptionListItem(components.DescriptionListItemProps{
-							Detail: "Best of the Year",
+							Detail: "Best of the year",
 						}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var18), templ_7745c5c3_Buffer)
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err

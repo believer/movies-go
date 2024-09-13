@@ -80,7 +80,7 @@ templ Stats(props StatsProps) {
 							}
 							if props.BestOfTheYear.ID != 0 {
 								@components.DescriptionListItem(components.DescriptionListItemProps{
-									Detail: "Best of the Year",
+									Detail: "Best of the year",
 								}) {
 									@components.Link(components.LinkProps{Href: fmt.Sprintf("/movie/%d", props.BestOfTheYear.ID)}) {
 										{ props.BestOfTheYear.Title }
