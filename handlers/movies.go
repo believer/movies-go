@@ -131,13 +131,37 @@ func HandleGetMovieSeenByID(c *fiber.Ctx) error {
 
 // Render the add movie page
 func HandleGetMovieNew(c *fiber.Ctx) error {
+	var watchlist types.Movies
+	var movie types.Movie
+
 	isAuth := utils.IsAuthenticated(c)
+	id := c.QueryInt("id")
+	imdbId := c.Query("imdbId")
+	userId := c.Locals("UserId")
 
 	if !isAuth {
 		return c.Redirect("/")
 	}
 
-	return utils.TemplRender(c, views.NewMovie())
+	if id != 0 {
+		err := db.Dot.Select(db.Client, &watchlist, "is-in-watchlist", userId, id)
+
+		if err != nil {
+			return err
+		}
+
+		err = db.Client.Get(&movie, `SELECT id, title FROM movie WHERE id = $1`, id)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return utils.TemplRender(c, views.NewMovie(views.NewMovieProps{
+		ImdbID:      imdbId,
+		InWatchlist: len(watchlist) > 0,
+		Movie:       movie,
+	}))
 }
 
 func tmdbFetchMovie(id string) types.MovieDetailsResponse {
@@ -304,15 +328,17 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 
 	userId := c.Locals("UserId").(string)
 
-	// Insert a view
 	if data.IsWatchlist {
+		// Add to watchlist
 		tx.MustExec(`INSERT INTO watchlist (user_id, movie_id) VALUES ($1, $2)`, userId, movieId)
 	} else {
+		// Insert a view and delete from watchlist if exists
 		tx.MustExec(`INSERT INTO seen (user_id, movie_id, date) VALUES ($1, $2, $3)`, userId, movieId, watchedAt)
+		tx.MustExec(`DELETE FROM watchlist WHERE user_id = $1 AND movie_id = $2`, userId, movieId)
 	}
 
+	// Insert rating
 	if data.Rating != 0 {
-		// Insert rating
 		tx.MustExec(`INSERT INTO rating (user_id, movie_id, rating) VALUES ($1, $2, $3)`, userId, movieId, data.Rating)
 	}
 

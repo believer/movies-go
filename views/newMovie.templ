@@ -1,8 +1,17 @@
 package views
 
-import "believer/movies/components"
+import (
+	"believer/movies/components"
+	"believer/movies/types"
+)
 
-templ NewMovie() {
+type NewMovieProps struct {
+	ImdbID      string
+	InWatchlist bool
+	Movie       types.Movie
+}
+
+templ NewMovie(props NewMovieProps) {
 	@Layout(LayoutProps{Title: "Add movie"}) {
 		<form
 			hx-post="/movie/new"
@@ -14,26 +23,37 @@ templ NewMovie() {
 					Back
 				}
 			</div>
+			if props.Movie.ID != 0 {
+				<div>
+					Adding <strong>{ props.Movie.Title }</strong> from watchlist
+				</div>
+			}
+			if props.ImdbID == "" {
+				<div class="relative flex flex-col gap-2">
+					@components.Label("search", "Search")
+					<input
+						type="text"
+						hx-get="/movie/search"
+						hx-trigger="keyup changed delay:500ms"
+						hx-target="#search-results"
+						hx-validate="true"
+						minlength="3"
+						name="search"
+						id="search"
+						class="w-full rounded border border-neutral-200 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500"
+					/>
+					<div
+						id="search-results"
+						class="text-xs empty:hidden lg:absolute lg:-right-52 lg:top-6 lg:w-48 lg:rounded lg:p-2 lg:outline-dashed lg:outline-offset-4 lg:outline-neutral-500"
+					></div>
+				</div>
+			}
 			<div class="relative flex flex-col gap-2">
-				@components.Label("search", "Search")
-				<input
-					type="text"
-					hx-get="/movie/search"
-					hx-trigger="keyup changed delay:500ms"
-					hx-target="#search-results"
-					hx-validate="true"
-					minlength="3"
-					name="search"
-					id="search"
-					class="w-full rounded border border-neutral-200 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500"
-				/>
-				<div
-					id="search-results"
-					class="text-xs empty:hidden lg:absolute lg:-right-52 lg:top-6 lg:w-48 lg:rounded lg:p-2 lg:outline-dashed lg:outline-offset-4 lg:outline-neutral-500"
-				></div>
-			</div>
-			<div class="relative flex flex-col gap-2">
-				@components.Label("imdb_id", "IMDb ID or TMDB ID")
+				if props.ImdbID != "" {
+					@components.Label("imdb_id", "IMDb ID")
+				} else {
+					@components.Label("imdb_id", "IMDb ID or TMDB ID")
+				}
 				<input
 					required
 					type="text"
@@ -44,6 +64,10 @@ templ NewMovie() {
 					name="imdb_id"
 					id="imdb_id"
 					class="w-full rounded border border-neutral-200 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500"
+					if props.ImdbID != "" {
+						value={ props.ImdbID }
+						readonly
+					}
 				/>
 				<div
 					id="movie-exists"
@@ -51,12 +75,14 @@ templ NewMovie() {
 				></div>
 				@components.Help("For example, https://www.imdb.com/title/tt0111161/, or just tt0111161.")
 			</div>
-			@components.NumberInput("rating", "Rating", "A value between 0 and 10", 0, 10)
+			@components.NumberInput("rating", "Rating", "A value between 0 and 10", 0, 10, props.InWatchlist)
 			@components.DateTimeInput("watched_at", "Watched at", "Defaults to current time if left empty.")
-			<div>
-				<label for="watchlist">Add to watchlist</label>
-				<input type="checkbox" name="watchlist" id="watchlist"/>
-			</div>
+			if !props.InWatchlist {
+				<div>
+					<label for="watchlist">Add to watchlist</label>
+					<input type="checkbox" name="watchlist" id="watchlist"/>
+				</div>
+			}
 			<footer>
 				<button
 					class="rounded bg-neutral-200 px-6 py-2 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200"

@@ -2,7 +2,7 @@ package components
 
 import "strconv"
 
-var inputClass = "w-full rounded border border-neutral-200 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500"
+var inputClass = "w-full rounded border border-neutral-200 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500 appearance-none [&::-webkit-inner-spin-button]:appearance-none"
 
 templ Label(name string, label string) {
 	<label
@@ -35,10 +35,13 @@ templ TextInput(name string, labelText string, helpText string) {
 	</div>
 }
 
-templ NumberInput(name string, labelText string, helpText string, min int, max int) {
+templ NumberInput(name string, labelText string, helpText string, min int, max int, required bool) {
 	<div class="relative flex flex-col gap-2">
 		@Label(name, labelText)
 		<input
+			if required {
+				required
+			}
 			type="number"
 			name={ name }
 			id={ name }

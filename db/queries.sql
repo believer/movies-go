@@ -429,6 +429,7 @@ WHERE
 SELECT
     m.id,
     m.title,
+    m.imdb_id,
     w.created_at
 FROM
     watchlist w
