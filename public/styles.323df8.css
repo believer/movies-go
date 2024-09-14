@@ -1456,6 +1456,10 @@ video {
     --tw-ring-offset-color: #171717;
   }
 
+  .dark\:\[color-scheme\:dark\] {
+    color-scheme: dark;
+  }
+
   .dark\:placeholder\:text-neutral-600::-moz-placeholder {
     --tw-text-opacity: 1;
     color: rgb(82 82 82 / var(--tw-text-opacity));
