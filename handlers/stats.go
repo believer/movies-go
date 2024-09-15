@@ -36,6 +36,7 @@ func HandleGetStats(c *fiber.Ctx) error {
 	var stats types.Stats
 	var movies []components.ListItem
 	var shortestAndLongest types.Movies
+	var wilhelms []int
 
 	userId := c.Locals("UserId").(string)
 	now := time.Now()
@@ -104,6 +105,13 @@ func HandleGetStats(c *fiber.Ctx) error {
 		return err
 	}
 
+	err = db.Dot.Select(db.Client, &wilhelms, "wilhelm-screams", userId)
+
+	if err != nil {
+		log.Fatalf("Error getting wilhelm scream: %v", err)
+		return err
+	}
+
 	var bestOfTheYear types.Movie
 	err = db.Dot.Get(db.Client, &bestOfTheYear, "stats-best-of-the-year", userId)
 
@@ -138,6 +146,7 @@ func HandleGetStats(c *fiber.Ctx) error {
 			YearRatings:             yearRatings,
 			Years:                   availableYears(),
 			ShortestAndLongestMovie: shortestAndLongest,
+			WilhelmScreams:          wilhelms[0],
 		}))
 }
 

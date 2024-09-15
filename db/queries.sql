@@ -446,3 +446,13 @@ WHERE
     user_id = $1
     AND movie_id = $2;
 
+-- name: wilhelm-screams
+SELECT
+    count(*)
+FROM
+    seen s
+    INNER JOIN movie m ON m.id = s.movie_id
+WHERE
+    user_id = $1
+    AND m.wilhelm = TRUE;
+

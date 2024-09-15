@@ -28,6 +28,7 @@ type StatsProps struct {
 	ShortestAndLongestMovie types.Movies
 	Stats                   types.Stats
 	WatchedByYear           []types.Bar
+	WilhelmScreams          int
 	Year                    string
 	YearRatings             []types.Bar
 	Years                   []int
@@ -64,6 +65,14 @@ templ Stats(props StatsProps) {
 								IsTabular: true,
 							}) {
 								{ props.FormattedTotalRuntime }
+							}
+							if props.WilhelmScreams > 0 {
+								@components.DescriptionListItem(components.DescriptionListItemProps{
+									Detail:    "Wilhelm screams",
+									IsTabular: true,
+								}) {
+									{ strconv.Itoa(props.WilhelmScreams) }
+								}
 							}
 							@components.DescriptionListItem(components.DescriptionListItemProps{
 								Detail: "Top IMDb rating",
