@@ -21,7 +21,7 @@ import (
 func getPersonsByJob(job string, userId string) ([]components.ListItem, error) {
 	var persons []components.ListItem
 
-	err := db.Dot.Select(db.Client, &persons, "stats-most-watched-by-job", job, userId)
+	err := db.Dot.Select(db.Client, &persons, "stats-most-watched-by-job", job, userId, "All")
 
 	if err != nil {
 		return nil, err
@@ -151,15 +151,27 @@ func HandleGetStats(c *fiber.Ctx) error {
 }
 
 func HandleGetMostWatchedByJob(c *fiber.Ctx) error {
+	var persons []components.ListItem
+
 	job := c.Params("job")
-	persons, err := getPersonsByJob(job, c.Locals("UserId").(string))
+	year := c.Query("year", "All")
+	userId := c.Locals("UserId")
+	years := availableYears()
+	years = append([]string{"All"}, years...)
+
+	err := db.Dot.Select(db.Client, &persons, "stats-most-watched-by-job", job, userId, year)
 
 	if err != nil {
 		return err
 	}
 
-	return utils.TemplRender(c, components.MostWatchedPerson(persons,
-		cases.Title(language.English).String(job),
+	return utils.TemplRender(c, components.MostWatchedPerson(components.MostWatchedPersonProps{
+		Data:  persons,
+		Job:   job,
+		Title: cases.Title(language.English).String(job),
+		Year:  year,
+		Years: years,
+	},
 	))
 }
 
@@ -328,16 +340,17 @@ func pgSelectedYear(year string) (string, error) {
 	return time.Date(parsedYear, time.September, 10, 0, 0, 0, 0, time.UTC).Format("2006-01-02 15:04:05"), nil
 }
 
-func availableYears() []int {
+func availableYears() []string {
 	// First year with "real" data
 	// 2011 is used as a catch all for anything before I had the database
-	startYear := 2012
+	endYear := 2012
 	currentYear := time.Now().Year()
 
-	years := make([]int, 0)
+	years := make([]string, 0)
 
-	for year := startYear; year <= currentYear; year++ {
-		years = append(years, year)
+	for year := currentYear; year >= endYear; year-- {
+		y := strconv.Itoa(year)
+		years = append(years, y)
 	}
 
 	return years

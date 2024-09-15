@@ -31,7 +31,7 @@ type StatsProps struct {
 	WilhelmScreams          int
 	Year                    string
 	YearRatings             []types.Bar
-	Years                   []int
+	Years                   []string
 }
 
 templ Stats(props StatsProps) {
@@ -170,9 +170,13 @@ templ Stats(props StatsProps) {
 					@components.Section("Most watched movies", 0) {
 						@components.OrderedList(props.MostWatchedMovies, "movie")
 					}
-					@components.Section("Cast", 0) {
-						@components.OrderedList(props.MostWatchedCast, "person")
-					}
+					@components.MostWatchedPerson(components.MostWatchedPersonProps{
+						Job:   "cast",
+						Title: "Cast",
+						Data:  props.MostWatchedCast,
+						Year:  "All",
+						Years: append([]string{"All"}, props.Years...),
+					})
 					@statsSection("director")
 					@statsSection("writer")
 					@statsSection("composer")

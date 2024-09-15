@@ -101,7 +101,7 @@ type GraphWithYearProps struct {
 	Route        string
 	SelectedYear string
 	Title        string
-	Years        []int
+	Years        []string
 }
 
 func GraphWithYear(props GraphWithYearProps) templ.Component {

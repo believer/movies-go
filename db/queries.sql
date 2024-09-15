@@ -247,7 +247,9 @@ FROM ( SELECT DISTINCT ON (movie_id)
     FROM
         seen
     WHERE
-        user_id = $2) AS s
+        user_id = $2
+        AND ($3 = 'All'
+            OR EXTRACT(YEAR FROM date) = $3::int)) AS s
     INNER JOIN movie_person AS mp ON mp.movie_id = s.movie_id
     INNER JOIN person AS p ON p.id = mp.person_id
 WHERE

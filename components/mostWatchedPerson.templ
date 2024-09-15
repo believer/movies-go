@@ -1,8 +1,21 @@
 package components
 
-templ MostWatchedPerson(data []ListItem, title string) {
-	@Section(title, 0) {
-		@OrderedList(data, "person")
+import "fmt"
+
+type MostWatchedPersonProps struct {
+	Data  []ListItem
+	Job   string
+	Title string
+	Year  string
+	Years []string
+}
+
+templ MostWatchedPerson(props MostWatchedPersonProps) {
+	@Section("", 0) {
+		@SectionTitleWithDropdown(props.Title) {
+			@Dropdown(DropdownProps{Route: fmt.Sprintf("/stats/most-watched-person/%s", props.Job), Options: props.Years, Value: props.Year})
+		}
+		@OrderedList(props.Data, "person")
 	}
 }
 
