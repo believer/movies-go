@@ -260,6 +260,18 @@ ORDER BY
     count DESC
 LIMIT 10;
 
+-- name: total-watched-by-job-and-year
+SELECT
+    COUNT(*) AS count
+FROM
+    seen s
+    INNER JOIN movie_person mp ON mp.movie_id = s.movie_id
+WHERE
+    user_id = $1
+    AND mp.job = $2
+    AND ($3 = 'All'
+        OR EXTRACT(YEAR FROM date) = $3::int);
+
 -- name: stats-watched-by-year
 SELECT
     EXTRACT(YEAR FROM date) AS label,

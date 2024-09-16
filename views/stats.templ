@@ -27,6 +27,7 @@ type StatsProps struct {
 	SeenThisYear            []types.Bar
 	ShortestAndLongestMovie types.Movies
 	Stats                   types.Stats
+	TotalCast               int
 	WatchedByYear           []types.Bar
 	WilhelmScreams          int
 	Year                    string
@@ -174,6 +175,7 @@ templ Stats(props StatsProps) {
 						Job:   "cast",
 						Title: "Cast",
 						Data:  props.MostWatchedCast,
+						Total: props.TotalCast,
 						Year:  "All",
 						Years: append([]string{"All"}, props.Years...),
 					})

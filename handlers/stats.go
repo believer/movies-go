@@ -37,9 +37,11 @@ func HandleGetStats(c *fiber.Ctx) error {
 	var movies []components.ListItem
 	var shortestAndLongest types.Movies
 	var wilhelms []int
+	var totals []components.ListItem
 
 	userId := c.Locals("UserId").(string)
 	now := time.Now()
+	year := now.Format("2006")
 	currentYear := now.Format("2006-01-02 15:04:05")
 
 	err := db.Dot.Select(db.Client, &movies, "stats-most-watched-movies", userId)
@@ -53,6 +55,12 @@ func HandleGetStats(c *fiber.Ctx) error {
 
 	if err != nil {
 		log.Fatalf("Error getting longest and shortest movie: %v", err)
+		return err
+	}
+
+	err = db.Dot.Select(db.Client, &totals, "total-watched-by-job-and-year", userId, "cast", year)
+
+	if err != nil {
 		return err
 	}
 
@@ -128,7 +136,11 @@ func HandleGetStats(c *fiber.Ctx) error {
 		}
 	}
 
-	year := now.Format("2006")
+	totalCast := 0
+
+	if len(totals) > 0 {
+		totalCast = totals[0].Count
+	}
 
 	return utils.TemplRender(c, views.Stats(
 		views.StatsProps{
@@ -141,6 +153,7 @@ func HandleGetStats(c *fiber.Ctx) error {
 			Ratings:                 ratings,
 			SeenThisYear:            seenThisYearByMonth,
 			Stats:                   stats,
+			TotalCast:               totalCast,
 			WatchedByYear:           watchedByYear,
 			Year:                    year,
 			YearRatings:             yearRatings,
@@ -152,6 +165,7 @@ func HandleGetStats(c *fiber.Ctx) error {
 
 func HandleGetMostWatchedByJob(c *fiber.Ctx) error {
 	var persons []components.ListItem
+	var totals []components.ListItem
 
 	job := c.Params("job")
 	year := c.Query("year", "All")
@@ -165,14 +179,27 @@ func HandleGetMostWatchedByJob(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.TemplRender(c, components.MostWatchedPerson(components.MostWatchedPersonProps{
-		Data:  persons,
-		Job:   job,
-		Title: cases.Title(language.English).String(job),
-		Year:  year,
-		Years: years,
-	},
-	))
+	err = db.Dot.Select(db.Client, &totals, "total-watched-by-job-and-year", userId, job, year)
+
+	if err != nil {
+		return err
+	}
+
+	totalJob := 0
+
+	if len(totals) > 0 {
+		totalJob = totals[0].Count
+	}
+
+	return utils.TemplRender(c, components.MostWatchedPerson(
+		components.MostWatchedPersonProps{
+			Data:  persons,
+			Job:   job,
+			Title: cases.Title(language.English).String(job),
+			Total: totalJob,
+			Year:  year,
+			Years: years,
+		}))
 }
 
 func getGraphWithQuery(query string, userId string) ([]types.Bar, error) {

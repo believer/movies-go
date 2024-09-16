@@ -1,11 +1,15 @@
 package components
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 type MostWatchedPersonProps struct {
 	Data  []ListItem
 	Job   string
 	Title string
+	Total int
 	Year  string
 	Years []string
 }
@@ -16,6 +20,9 @@ templ MostWatchedPerson(props MostWatchedPersonProps) {
 			@Dropdown(DropdownProps{Route: fmt.Sprintf("/stats/most-watched-person/%s", props.Job), Options: props.Years, Value: props.Year})
 		}
 		@OrderedList(props.Data, "person")
+		<div class="text-xs text-right text-neutral-500 dark:text-neutral-400">
+			{ strconv.Itoa( props.Total ) } people total
+		</div>
 	}
 }
 
