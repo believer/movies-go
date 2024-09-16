@@ -15,7 +15,11 @@ templ Dropdown(props DropdownProps) {
 					selected
 				}
 			>
-				{ option }
+				if option == "All" {
+					All time
+				} else {
+					{ option }
+				}
 			</option>
 		}
 	</select>
