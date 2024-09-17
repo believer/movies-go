@@ -150,3 +150,35 @@ func HandleGetWatchlist(c *fiber.Ctx) error {
 		Movies: movies,
 	}))
 }
+
+func HandlePostSignup(c *fiber.Ctx) error {
+	data := new(struct {
+		Password string `form:"password"`
+		Username string `form:"username"`
+	})
+
+	// Parse the form data
+	if err := c.BodyParser(data); err != nil {
+		return err
+	}
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
+
+	if err != nil {
+		return err
+	}
+
+	tx := db.Client.MustBegin()
+
+	tx.MustExec(`INSERT INTO "user" (username, password_hash) VALUES ($1, $2)`, data.Username, string(hash))
+
+	err = tx.Commit()
+
+	if err != nil {
+		err = tx.Rollback()
+
+		return err
+	}
+
+	return c.SendStatus(fiber.StatusOK)
+}
