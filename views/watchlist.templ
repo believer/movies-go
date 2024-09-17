@@ -21,10 +21,10 @@ templ Watchlist(props WatchlistProps) {
 				</div>
 			</nav>
 			@components.H1("Watchlist", false)
-			<div>
-				{ props.Movies.NumberOfMovies() }
-			</div>
 			if len(props.Movies) > 0 {
+				<div>
+					{ props.Movies.NumberOfMovies() }
+				</div>
 				<ol class="flex flex-col gap-2 md:text-sm text-neutral-500 dark:text-neutral-400">
 					for _, movie := range props.Movies {
 						<li class="flex items-end justify-between gap-4">
@@ -47,7 +47,7 @@ templ Watchlist(props WatchlistProps) {
 					}
 				</ol>
 			} else {
-				<div>
+				<div class="rounded border border-dashed border-neutral-300 px-5 py-8 text-center text-neutral-500 dark:border-neutral-700 dark:text-neutral-400">
 					Watchlist empty
 				</div>
 			}
