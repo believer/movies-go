@@ -58,7 +58,7 @@ func HandleGetStats(c *fiber.Ctx) error {
 		return err
 	}
 
-	err = db.Dot.Select(db.Client, &totals, "total-watched-by-job-and-year", userId, "cast", year)
+	err = db.Dot.Select(db.Client, &totals, "total-watched-by-job-and-year", userId, "cast", "All")
 
 	if err != nil {
 		return err
