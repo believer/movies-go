@@ -39,9 +39,7 @@ templ Genre(props GenreProps) {
 					}
 				</ol>
 			} else {
-				<div>
-					No movies this year
-				</div>
+				@components.EmptyState("No movies this year")
 			}
 		</div>
 	}

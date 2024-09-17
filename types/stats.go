@@ -1,12 +1,9 @@
 package types
 
 type Stats struct {
-	UniqueMovies      int     `db:"unique_movies"`
-	SeenWithRewatches int     `db:"seen_with_rewatches"`
-	TotalRuntime      int     `db:"total_runtime"`
-	TopImdbRating     float64 `db:"top_imdb_rating"`
-	TopImdbTitle      string  `db:"top_imdb_title"`
-	TopImdbID         string  `db:"top_imdb_id"`
+	UniqueMovies      int `db:"unique_movies"`
+	SeenWithRewatches int `db:"seen_with_rewatches"`
+	TotalRuntime      int `db:"total_runtime"`
 }
 
 type MovieStats struct {

@@ -150,7 +150,7 @@ func Genre(props GenreProps) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div>No movies this year</div>")
+				templ_7745c5c3_Err = components.EmptyState("No movies this year").Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

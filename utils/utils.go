@@ -66,6 +66,10 @@ func FormatRuntime(runtime int) string {
 		parts = append(parts, fmt.Sprintf("%dm", minutes))
 	}
 
+	if len(parts) == 0 {
+		return "0"
+	}
+
 	return strings.Join(parts, " ")
 }
 

@@ -161,28 +161,7 @@ WHERE
 SELECT
     COUNT(DISTINCT movie_id) AS unique_movies,
     COUNT(movie_id) seen_with_rewatches,
-    SUM(m.runtime) AS total_runtime,
-    MAX(m.imdb_rating) AS top_imdb_rating,
-    (
-        SELECT
-            title
-        FROM
-            movie
-        WHERE
-            imdb_rating IS NOT NULL
-        ORDER BY
-            imdb_rating DESC
-        LIMIT 1) AS top_imdb_title,
-(
-    SELECT
-        id
-    FROM
-        movie
-    WHERE
-        imdb_rating IS NOT NULL
-    ORDER BY
-        imdb_rating DESC
-    LIMIT 1) AS top_imdb_id
+    COALESCE(SUM(m.runtime), 0) AS total_runtime
 FROM
     seen AS s
     INNER JOIN movie AS m ON m.id = s.movie_id

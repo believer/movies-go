@@ -241,9 +241,13 @@ func constructGraphFromData(data []types.GraphData) ([]types.Bar, error) {
 
 	graphHeight := 200
 	graphWidth := 536
-	maxCount := slices.MaxFunc(data, func(a, b types.GraphData) int {
-		return cmp.Compare(a.Value, b.Value)
-	})
+	maxCount := 0
+
+	if len(data) > 0 {
+		maxCount = slices.MaxFunc(data, func(a, b types.GraphData) int {
+			return cmp.Compare(a.Value, b.Value)
+		}).Value
+	}
 
 	// The data is used for a bar chart, so we need to convert the data
 	for i, row := range data {
@@ -251,7 +255,7 @@ func constructGraphFromData(data []types.GraphData) ([]types.Bar, error) {
 			elementsInGraph = graphWidth / len(data)
 			// Calcualte the bar Height
 			// Subtract 46 from the graph height to make room for the labels
-			barHeight = clamp(int(float64(row.Value)/float64(maxCount.Value)*float64(graphHeight-46)), 2, graphHeight-46)
+			barHeight = clamp(int(float64(row.Value)/float64(maxCount)*float64(graphHeight-46)), 2, graphHeight-46)
 			barWidth  = clamp(int(float64(graphWidth)/float64(len(data)))-5, 2, 100)
 
 			// Space the bars evenly across the graph

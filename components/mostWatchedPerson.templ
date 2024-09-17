@@ -19,7 +19,11 @@ templ MostWatchedPerson(props MostWatchedPersonProps) {
 		@SectionTitleWithDropdown(props.Title) {
 			@Dropdown(DropdownProps{Route: fmt.Sprintf("/stats/most-watched-person/%s", props.Job), Options: props.Years, Value: props.Year})
 		}
-		@OrderedList(props.Data, "person")
+		if len(props.Data) > 0 {
+			@OrderedList(props.Data, "person")
+		} else {
+			@EmptyState("No movies seen")
+		}
 		<div class="text-xs text-right text-neutral-500 dark:text-neutral-400">
 			{ strconv.Itoa( props.Total ) } people total
 		</div>
@@ -28,6 +32,10 @@ templ MostWatchedPerson(props MostWatchedPersonProps) {
 
 templ MostWatchedGenres(data []ListItem) {
 	@Section("Most watched genre", 0) {
-		@OrderedList(data, "genre")
+		if len(data) > 0 {
+			@OrderedList(data, "genre")
+		} else {
+			@EmptyState("No movies seen")
+		}
 	}
 }

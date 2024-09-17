@@ -11,7 +11,11 @@ templ section() {
 templ Graph(bars []types.Bar, title string) {
 	@section() {
 		@SectionTitle(title)
-		@Bars(bars)
+		if len(bars) > 0 {
+			@Bars(bars)
+		} else {
+			@EmptyState("No movies seen")
+		}
 	}
 }
 
@@ -32,6 +36,10 @@ templ GraphWithYear(props GraphWithYearProps) {
 				Value:   props.SelectedYear,
 			})
 		}
-		@Bars(props.Bars)
+		if len(props.Bars) > 0 {
+			@Bars(props.Bars)
+		} else {
+			@EmptyState("No movies seen")
+		}
 	}
 }

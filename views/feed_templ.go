@@ -342,7 +342,7 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int, query string) templ.C
 					return templ_7745c5c3_Err
 				}
 			} else {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"rounded border border-dashed border-neutral-300 px-5 py-8 text-center text-neutral-500 dark:border-neutral-700 dark:text-neutral-400\">No movies seen.</div>")
+				templ_7745c5c3_Err = components.EmptyState("No movies seen").Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

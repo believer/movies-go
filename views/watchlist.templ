@@ -47,9 +47,7 @@ templ Watchlist(props WatchlistProps) {
 					}
 				</ol>
 			} else {
-				<div class="rounded border border-dashed border-neutral-300 px-5 py-8 text-center text-neutral-500 dark:border-neutral-700 dark:text-neutral-400">
-					Watchlist empty
-				</div>
+				@components.EmptyState("Watchlist empty")
 			}
 		</div>
 	}
