@@ -19,11 +19,6 @@
   send_interrupt = false
   stop_on_error = false
 
-[proxy]
-  enabled = true
-  proxy_port = 8081
-  app_port = 8080
-
 [log]
   main_only = false
   time = false

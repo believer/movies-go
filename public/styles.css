@@ -872,6 +872,10 @@ video {
   stroke: #a3a3a3;
 }
 
+.p-2 {
+  padding: 0.5rem;
+}
+
 .px-2 {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
@@ -1186,6 +1190,30 @@ video {
   }
 }
 
+@supports (anchor-name: --myanchor) {
+  [popover] {
+    margin: 0.25rem;
+    display: none;
+    border-style: none;
+    opacity: 0;
+    transition:
+      opacity 500ms,
+      display 500ms allow-discrete,
+      overlay 500ms allow-discrete;
+    &:popover-open {
+      display: block;
+    }
+    &:popover-open {
+      opacity: 1;
+    }
+    &:popover-open {
+      @starting-style {
+        opacity: 0;
+      }
+    }
+  }
+}
+
 .placeholder\:text-neutral-400::-moz-placeholder {
   --tw-text-opacity: 1;
   color: rgb(163 163 163 / var(--tw-text-opacity));
@@ -1414,6 +1442,11 @@ video {
   .dark\:bg-neutral-700 {
     --tw-bg-opacity: 1;
     background-color: rgb(64 64 64 / var(--tw-bg-opacity));
+  }
+
+  .dark\:bg-neutral-800 {
+    --tw-bg-opacity: 1;
+    background-color: rgb(38 38 38 / var(--tw-bg-opacity));
   }
 
   .dark\:bg-neutral-900 {

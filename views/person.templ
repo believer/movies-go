@@ -27,7 +27,11 @@ templ Credit(title string, data types.PersonMovies, id string) {
 							>
 								{ movie.ReleaseDate.Format("2006") }
 							</a>
-							@Seen(movie.Seen)
+							@Seen(SeenProps{
+								Title: title,
+								Seen:  movie.Seen,
+								ID:    movie.ID,
+							})
 						</span>
 					</li>
 				}

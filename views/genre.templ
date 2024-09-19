@@ -33,7 +33,10 @@ templ Genre(props GenreProps) {
 								<span class="tabular-nums whitespace-nowrap">
 									{ movie.ReleaseDate.Format("2006-01-02") }
 								</span>
-								@Seen(movie.Seen)
+								@Seen(SeenProps{
+									Seen: movie.Seen,
+									ID:   movie.ID,
+								})
 							</span>
 						</li>
 					}

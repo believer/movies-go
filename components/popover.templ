@@ -1,0 +1,20 @@
+package components
+
+css anchor(name string) {
+	anchor-name: { name };
+}
+
+css anchorPosition(name string) {
+	position-anchor: { name };
+	inset-area: top;
+	position-try-fallbacks: flip-block;
+}
+
+templ Popover(anchorName string, content string) {
+	<button popovertarget={ anchorName } class={ anchor(anchorName),"focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 rounded-full" }>
+		{ children... }
+	</button>
+	<div id={ anchorName } popover class={ "text-xs shadow-md text-neutral-700 bg-neutral-200 dark:text-neutral-300 dark:bg-neutral-800 p-2 rounded", anchorPosition(anchorName) }>
+		{ content }
+	</div>
+}

@@ -63,3 +63,22 @@
     }
   }
 }
+
+@supports (anchor-name: --myanchor) {
+  [popover] {
+    @apply m-1 border-none hidden opacity-0;
+
+    transition:
+      opacity 500ms,
+      display 500ms allow-discrete,
+      overlay 500ms allow-discrete;
+
+    &:popover-open {
+      @apply block opacity-100;
+
+      @starting-style {
+        opacity: 0;
+      }
+    }
+  }
+}
