@@ -82,3 +82,10 @@
     }
   }
 }
+
+/* TODO: Remove once Safari and Firefox supports it */
+@supports not (anchor-name: --myanchor) {
+  [popovertarget] {
+    pointer-events: none;
+  }
+}

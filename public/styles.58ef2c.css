@@ -1204,6 +1204,14 @@ video {
   }
 }
 
+/* TODO: Remove once Safari and Firefox supports it */
+
+@supports not (anchor-name: --myanchor) {
+  [popovertarget] {
+    pointer-events: none;
+  }
+}
+
 .placeholder\:text-neutral-400::-moz-placeholder {
   --tw-text-opacity: 1;
   color: rgb(163 163 163 / var(--tw-text-opacity));
