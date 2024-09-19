@@ -137,8 +137,9 @@ func Genre(props GenreProps) templ.Component {
 						return templ_7745c5c3_Err
 					}
 					templ_7745c5c3_Err = Seen(SeenProps{
-						Seen: movie.Seen,
-						ID:   movie.ID,
+						Title: "genre",
+						Seen:  movie.Seen,
+						ID:    movie.ID,
 					}).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err

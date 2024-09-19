@@ -34,8 +34,9 @@ templ Genre(props GenreProps) {
 									{ movie.ReleaseDate.Format("2006-01-02") }
 								</span>
 								@Seen(SeenProps{
-									Seen: movie.Seen,
-									ID:   movie.ID,
+									Title: "genre",
+									Seen:  movie.Seen,
+									ID:    movie.ID,
 								})
 							</span>
 						</li>
