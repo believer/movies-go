@@ -46,20 +46,22 @@
 * animation needed to be before animation-timeline.
 * */
 @media (prefers-reduced-motion: no-preference) and (min-width: 1024px) {
-  .year,
-  .month {
-    opacity: 0;
-    transform: translateY(50px);
-    animation: fade-in linear forwards;
-    animation-timeline: view();
-    /* Start at 0px (when it comes into view), end at half the screen height */
-    animation-range: 0 50vh;
-  }
+  @supports (animation-range: 0 50vh) {
+    .year,
+    .month {
+      opacity: 0;
+      transform: translateY(50px);
+      animation: fade-in linear forwards;
+      animation-timeline: view();
+      /* Start at 0px (when it comes into view), end at half the screen height */
+      animation-range: 0 50vh;
+    }
 
-  @keyframes fade-in {
-    to {
-      opacity: 1;
-      transform: translateY(0);
+    @keyframes fade-in {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   }
 }
