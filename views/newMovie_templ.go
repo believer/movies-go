@@ -165,7 +165,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.NumberInput("rating", "Rating", "A value between 0 and 10", 0, 10, props.InWatchlist).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.NumberInput("rating", "Rating", "A value between 0 and 10", 0, 10).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -174,7 +174,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			if !props.InWatchlist {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex gap-x-2 items-center\"><input type=\"checkbox\" name=\"watchlist\" id=\"watchlist\" class=\"rounded accent-neutral-700 border border-neutral-700 bg-neutral-800 focus:outline-dashed focus:outline-offset-2 focus:outline-neutral-500\">")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex gap-x-2 items-center\"><input type=\"checkbox\" name=\"watchlist\" id=\"watchlist\" class=\"rounded accent-neutral-700 border border-neutral-700 bg-neutral-800 focus:outline-dashed focus:outline-offset-2 focus:outline-neutral-500\" _=\"on click if me.checked remove @required from #rating otherwise add @required=&#39;&#39; to #rating\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

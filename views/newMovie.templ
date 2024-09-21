@@ -77,11 +77,11 @@ templ NewMovie(props NewMovieProps) {
 				></div>
 				@components.Help("For example, https://www.imdb.com/title/tt0111161/, or just tt0111161.")
 			</div>
-			@components.NumberInput("rating", "Rating", "A value between 0 and 10", 0, 10, props.InWatchlist)
+			@components.NumberInput("rating", "Rating", "A value between 0 and 10", 0, 10)
 			@components.DateTimeInput("watched_at", "Watched at", "Defaults to current time if left empty.")
 			if !props.InWatchlist {
 				<div class="flex gap-x-2 items-center">
-					<input type="checkbox" name="watchlist" id="watchlist" class="rounded accent-neutral-700 border border-neutral-700 bg-neutral-800 focus:outline-dashed focus:outline-offset-2 focus:outline-neutral-500"/>
+					<input type="checkbox" name="watchlist" id="watchlist" class="rounded accent-neutral-700 border border-neutral-700 bg-neutral-800 focus:outline-dashed focus:outline-offset-2 focus:outline-neutral-500" _="on click if me.checked remove @required from #rating otherwise add @required='' to #rating"/>
 					@components.Label("watchlist", "Add to watchlist")
 				</div>
 			}

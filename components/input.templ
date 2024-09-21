@@ -35,13 +35,11 @@ templ TextInput(name string, labelText string, helpText string) {
 	</div>
 }
 
-templ NumberInput(name string, labelText string, helpText string, min int, max int, required bool) {
+templ NumberInput(name string, labelText string, helpText string, min int, max int) {
 	<div class="relative flex flex-col gap-2">
 		@Label(name, labelText)
 		<input
-			if required {
-				required
-			}
+			required
 			type="number"
 			name={ name }
 			id={ name }
