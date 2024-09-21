@@ -36,11 +36,12 @@ templ NewMovie(props NewMovieProps) {
 						hx-get="/movie/search"
 						hx-trigger="keyup changed delay:500ms"
 						hx-target="#search-results"
+						hx-indicator="none"
 						hx-validate="true"
 						minlength="3"
 						name="search"
 						id="search"
-						class="w-full rounded border border-neutral-200 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500"
+						class="w-full rounded border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500"
 					/>
 					<div
 						id="search-results"
@@ -60,10 +61,11 @@ templ NewMovie(props NewMovieProps) {
 					hx-get="/movie/imdb"
 					hx-trigger="blur changed"
 					hx-target="#movie-exists"
+					hx-indicator="none"
 					hx-validate="true"
 					name="imdb_id"
 					id="imdb_id"
-					class="w-full rounded border border-neutral-200 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500"
+					class="w-full rounded border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500"
 					if props.ImdbID != "" {
 						value={ props.ImdbID }
 						readonly
@@ -78,9 +80,9 @@ templ NewMovie(props NewMovieProps) {
 			@components.NumberInput("rating", "Rating", "A value between 0 and 10", 0, 10, props.InWatchlist)
 			@components.DateTimeInput("watched_at", "Watched at", "Defaults to current time if left empty.")
 			if !props.InWatchlist {
-				<div>
-					<label for="watchlist">Add to watchlist</label>
-					<input type="checkbox" name="watchlist" id="watchlist"/>
+				<div class="flex gap-x-2 items-center">
+					<input type="checkbox" name="watchlist" id="watchlist" class="rounded accent-neutral-700 border border-neutral-700 bg-neutral-800 focus:outline-dashed focus:outline-offset-2 focus:outline-neutral-500"/>
+					@components.Label("watchlist", "Add to watchlist")
 				</div>
 			}
 			<footer>
