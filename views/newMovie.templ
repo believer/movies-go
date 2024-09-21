@@ -85,7 +85,8 @@ templ NewMovie(props NewMovieProps) {
 					@components.Label("watchlist", "Add to watchlist")
 				</div>
 			}
-			<footer>
+			<footer class="flex flex-col gap-y-4">
+				<div id="error" class="empty:hidden text-rose-700 dark:text-rose-400 border border-dashed border-rose-700 dark:border-rose-400 p-4 rounded"></div>
 				<button
 					class="rounded bg-neutral-200 px-6 py-2 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200"
 					type="submit"

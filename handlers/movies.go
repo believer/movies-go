@@ -330,7 +330,12 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 
 	if data.IsWatchlist {
 		// Add to watchlist
-		tx.MustExec(`INSERT INTO watchlist (user_id, movie_id) VALUES ($1, $2)`, userId, movieId)
+		_, err = tx.Exec(`INSERT INTO watchlist (user_id, movie_id) VALUES ($1, $2)`, userId, movieId)
+
+		if err != nil {
+			c.Set("HX-Retarget", "#error")
+			return c.SendString("Movie already added to watchlist")
+		}
 	} else {
 		// Insert a view and delete from watchlist if exists
 		tx.MustExec(`INSERT INTO seen (user_id, movie_id, date) VALUES ($1, $2, $3)`, userId, movieId, watchedAt)
