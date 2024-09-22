@@ -27,7 +27,7 @@ type MovieDetailsResponse struct {
 }
 
 type CastResult struct {
-	Id          int     `json:"id"`
+	ID          int     `json:"id"`
 	Name        string  `json:"name"`
 	Character   *string `json:"character"`
 	Popularity  float64 `json:"popularity"`

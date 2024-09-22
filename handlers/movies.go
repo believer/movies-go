@@ -264,7 +264,7 @@ type NewPerson struct {
 
 func personExists(arr []NewPerson, id int, job interface{}) (int, bool) {
 	for i, person := range arr {
-		if person.ID == id && person.Job == job {
+		if person.ID == id && person.Job.String == job {
 			return i, true
 		}
 	}
@@ -398,7 +398,7 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 			char = sql.NullString{String: *cast.Character, Valid: true}
 		}
 
-		personIndex, exists := personExists(castStructs, cast.Id, "cast")
+		personIndex, exists := personExists(castStructs, cast.ID, "cast")
 
 		if exists {
 			castStructs[personIndex].Name = cast.Name
@@ -410,9 +410,10 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 		}
 
 		castStructs = append(castStructs, NewPerson{
-			ID:             cast.Id,
+			ID:             cast.ID,
 			Name:           cast.Name,
 			Popularity:     cast.Popularity,
+			Job:            sql.NullString{String: "cast", Valid: true},
 			Character:      char,
 			ProfilePicture: pfp,
 			MovieId:        movieId,
@@ -485,6 +486,7 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 	`, castStructs)
 
 		if err != nil {
+			log.Println("Could not insert person")
 			return err
 		}
 
@@ -496,6 +498,7 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 	`, castStructs)
 
 		if err != nil {
+			log.Println("Could not insert movie_person")
 			return err
 		}
 	}
@@ -510,6 +513,7 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 	`, crewStructs)
 
 		if err != nil {
+			log.Println("Could not insert crew")
 			return err
 		}
 
@@ -520,6 +524,7 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 	`, crewStructs)
 
 		if err != nil {
+			log.Println("Could not insert movie_person crew")
 			return err
 		}
 	}
