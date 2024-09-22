@@ -293,11 +293,12 @@ SELECT
     m.title,
     r.rating
 FROM
-    rating AS r
-    INNER JOIN movie AS m ON m.id = r.movie_id
+    seen AS s
+    INNER JOIN movie AS m ON m.id = s.movie_id
+    INNER JOIN rating AS r ON m.id = r.movie_id
 WHERE
-    EXTRACT(YEAR FROM r.created_at) = EXTRACT(YEAR FROM CURRENT_DATE)
-    AND user_id = $1
+    EXTRACT(YEAR FROM s.date) = EXTRACT(YEAR FROM CURRENT_DATE)
+    AND s.user_id = $1
 ORDER BY
     rating DESC
 LIMIT 1;
