@@ -180,8 +180,6 @@ WHERE
     user_id = $1
 GROUP BY
     m.id
-HAVING
-    COUNT(*) > 1
 ORDER BY
     count DESC
 LIMIT 20;
