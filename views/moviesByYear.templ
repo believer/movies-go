@@ -28,9 +28,10 @@ templ MoviesByYear(year string, movies types.Movies) {
 									{ movie.ReleaseDate.Format("2006-01-02") }
 								</span>
 								@Seen(SeenProps{
-									Title: "movie-by-year",
-									Seen:  movie.Seen,
-									ID:    movie.ID,
+									Title:  "movie-by-year",
+									Seen:   movie.Seen,
+									ImdbId: movie.ImdbId,
+									ID:     movie.ID,
 								})
 							</span>
 						</li>

@@ -131,9 +131,10 @@ func MoviesByYear(year string, movies types.Movies) templ.Component {
 						return templ_7745c5c3_Err
 					}
 					templ_7745c5c3_Err = Seen(SeenProps{
-						Title: "movie-by-year",
-						Seen:  movie.Seen,
-						ID:    movie.ID,
+						Title:  "movie-by-year",
+						Seen:   movie.Seen,
+						ImdbId: movie.ImdbId,
+						ID:     movie.ID,
 					}).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err

@@ -108,14 +108,16 @@ func HandleGetMovieSeenByID(c *fiber.Ctx) error {
 
 	isAuth := utils.IsAuthenticated(c)
 	id := c.Params("id")
+	imdbId := c.Query("imdbId")
+	userId := c.Locals("UserId")
 
-	err := db.Dot.Select(db.Client, &watchedAt, "seen-by-user-id", id, c.Locals("UserId"))
+	err := db.Dot.Select(db.Client, &watchedAt, "seen-by-user-id", id, userId)
 
 	if err != nil {
 		return err
 	}
 
-	err = db.Dot.Select(db.Client, &watchlist, "is-in-watchlist", c.Locals("UserId"), id)
+	err = db.Dot.Select(db.Client, &watchlist, "is-in-watchlist", userId, id)
 
 	if err != nil {
 		return err
@@ -125,6 +127,7 @@ func HandleGetMovieSeenByID(c *fiber.Ctx) error {
 		WatchedAt:   watchedAt,
 		IsAdmin:     isAuth,
 		InWatchlist: len(watchlist) > 0,
+		ImdbId:      imdbId,
 		ID:          id,
 	}))
 }

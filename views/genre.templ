@@ -31,12 +31,18 @@ templ Genre(props GenreProps) {
 							@components.Divider()
 							<span class="flex items-center gap-x-2 relative top-1">
 								<span class="tabular-nums whitespace-nowrap text-sm">
-									{ movie.ReleaseDate.Format("2006-01-02") }
+									<a
+										class="text-sm tabular-nums inline-flex items-center gap-1 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 border-b border-dashed border-neutral-500 dark:border-neutral-400"
+										href={ templ.URL(fmt.Sprintf("/year/%s", movie.ReleaseDate.Format("2006"))) }
+									>
+										{ movie.ReleaseDate.Format("2006-01-02") }
+									</a>
 								</span>
 								@Seen(SeenProps{
-									Title: "genre",
-									Seen:  movie.Seen,
-									ID:    movie.ID,
+									Title:  "genre",
+									Seen:   movie.Seen,
+									ImdbId: movie.ImdbId,
+									ID:     movie.ID,
 								})
 							</span>
 						</li>

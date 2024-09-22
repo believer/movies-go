@@ -322,6 +322,7 @@ SELECT
     m.id,
     m.title,
     m.release_date,
+    m.imdb_id,
     (s.id IS NOT NULL) AS "seen"
 FROM
     movie AS m
@@ -390,6 +391,7 @@ SELECT DISTINCT
     (m.id),
     m.title,
     m.release_date,
+    m.imdb_id,
     (s.id IS NOT NULL) AS "seen"
 FROM
     movie_genre mg

@@ -14,9 +14,10 @@ import (
 )
 
 type SeenProps struct {
-	ID    int
-	Seen  bool
-	Title string
+	ImdbId string
+	ID     int
+	Seen   bool
+	Title  string
 }
 
 func Seen(props SeenProps) templ.Component {

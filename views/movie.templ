@@ -88,7 +88,7 @@ templ Movie(movie types.Movie, back bool) {
 						}
 					}
 					@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Watched", IsTabular: false}) {
-						<span hx-get={ fmt.Sprintf("/movie/%d/seen", movie.ID) } hx-trigger="load"></span>
+						<span hx-get={ fmt.Sprintf("/movie/%d/seen?imdbId=%s", movie.ID, movie.ImdbId) } hx-trigger="load"></span>
 					}
 				}
 			}
