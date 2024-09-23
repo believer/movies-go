@@ -27,7 +27,6 @@ func HandleGetMovieByID(c *fiber.Ctx) error {
 
 	movieId := c.Params("id")
 	userId := c.Locals("UserId")
-	log.Println("id", movieId, "user", userId)
 	err := db.Dot.Get(db.Client, &movie, "movie-by-id", movieId, userId)
 
 	if err != nil {

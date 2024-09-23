@@ -19,13 +19,15 @@ templ SeenToggle() {
 }
 
 templ AddWatch(id int, imdbId string) {
-	<a
-		href={ templ.URL(fmt.Sprintf("/movie/new?imdbId=%s&id=%d", imdbId, id)) }
-		title="Add watch"
-		class="inline-flex items-center gap-1 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 border-b border-dashed border-neutral-500 dark:border-neutral-400"
-	>
-		Add watch
-	</a>
+	if ctx.Value("IsAuthenticated").(bool) {
+		<a
+			href={ templ.URL(fmt.Sprintf("/movie/new?imdbId=%s&id=%d", imdbId, id)) }
+			title="Add watch"
+			class="inline-flex items-center gap-1 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 border-b border-dashed border-neutral-500 dark:border-neutral-400"
+		>
+			Add watch
+		</a>
+	}
 }
 
 templ UnseenToggle() {

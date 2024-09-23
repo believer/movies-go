@@ -3,6 +3,7 @@ package app
 import (
 	"believer/movies/db"
 	"believer/movies/router"
+	"believer/movies/utils"
 	"fmt"
 	"log"
 	"os"
@@ -77,6 +78,7 @@ func SetupAndRunApp() error {
 
 		c.Locals("AppEnv", appEnv)
 		c.Locals("UserId", userId)
+		c.Locals("IsAuthenticated", utils.IsAuthenticated(c))
 
 		return c.Next()
 	})
