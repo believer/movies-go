@@ -83,7 +83,7 @@ func Genre(props GenreProps) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				for _, movie := range props.Movies {
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li class=\"flex items-end justify-between gap-4\">")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li class=\"flex items-end justify-between gap-x-4\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -118,7 +118,7 @@ func Genre(props GenreProps) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<span class=\"flex items-center gap-x-2 relative top-1\"><span class=\"tabular-nums whitespace-nowrap text-sm\">")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<span class=\"flex items-center gap-x-2 whitespace-nowrap text-sm\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -137,7 +137,7 @@ func Genre(props GenreProps) templ.Component {
 						var templ_7745c5c3_Var7 string
 						templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(movie.ISOReleaseDate())
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/genre.templ`, Line: 34, Col: 34}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/genre.templ`, Line: 33, Col: 33}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 						if templ_7745c5c3_Err != nil {
@@ -146,10 +146,6 @@ func Genre(props GenreProps) templ.Component {
 						return templ_7745c5c3_Err
 					})
 					templ_7745c5c3_Err = components.SimpleLink(components.SimpleLinkProps{Href: movie.LinkToYear()}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

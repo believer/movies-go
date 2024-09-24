@@ -77,7 +77,7 @@ func MoviesByYear(year string, movies types.Movies) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				for _, movie := range movies {
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li class=\"flex items-end justify-between gap-4\">")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li class=\"flex items-end justify-between gap-x-4\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -112,20 +112,16 @@ func MoviesByYear(year string, movies types.Movies) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<span class=\"flex items-center gap-x-2 relative top-1\"><span class=\"tabular-nums whitespace-nowrap text-sm\">")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<span class=\"flex items-center gap-x-2 whitespace-nowrap text-sm tabular-nums relative top-1\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var6 string
 					templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(movie.ISOReleaseDate())
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/moviesByYear.templ`, Line: 27, Col: 33}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/moviesByYear.templ`, Line: 26, Col: 32}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

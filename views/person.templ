@@ -11,7 +11,7 @@ templ Credit(title string, data types.PersonMovies, id string) {
 		@components.Section(title, len(data)) {
 			<ol class="flex flex-col gap-2">
 				for _, movie := range data {
-					<li class="flex items-end justify-between gap-4">
+					<li class="flex items-end justify-between gap-x-4">
 						@components.Link(components.LinkProps{Href: movie.LinkTo()}) {
 							{ movie.Title }
 						}
@@ -19,7 +19,7 @@ templ Credit(title string, data types.PersonMovies, id string) {
 						if movie.Character != "" {
 							<div class="text-sm truncate relative top-1">{ movie.Character }</div>
 						}
-						<span class="flex items-center gap-x-2">
+						<span class="flex items-center gap-x-2 whitespace-nowrap">
 							@components.SimpleLink(components.SimpleLinkProps{Href: movie.LinkToYear()}) {
 								{ movie.ISOReleaseDate() }
 							}

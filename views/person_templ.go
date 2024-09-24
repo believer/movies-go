@@ -53,7 +53,7 @@ func Credit(title string, data types.PersonMovies, id string) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				for _, movie := range data {
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li class=\"flex items-end justify-between gap-4\">")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li class=\"flex items-end justify-between gap-x-4\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -107,7 +107,7 @@ func Credit(title string, data types.PersonMovies, id string) templ.Component {
 							return templ_7745c5c3_Err
 						}
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<span class=\"flex items-center gap-x-2\">")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<span class=\"flex items-center gap-x-2 whitespace-nowrap\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
