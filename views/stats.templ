@@ -79,7 +79,7 @@ templ Stats(props StatsProps) {
 								@components.DescriptionListItem(components.DescriptionListItemProps{
 									Detail: "Best of the year",
 								}) {
-									@components.Link(components.LinkProps{Href: fmt.Sprintf("/movie/%d", props.BestOfTheYear.ID)}) {
+									@components.Link(components.LinkProps{Href: templ.URL(fmt.Sprintf("/movie/%d", props.BestOfTheYear.ID))}) {
 										{ props.BestOfTheYear.Title }
 									}
 									if props.BestOfTheYear.Rating.Valid {
@@ -93,7 +93,7 @@ templ Stats(props StatsProps) {
 								@components.DescriptionListItem(components.DescriptionListItemProps{
 									Detail: "Shortest movie",
 								}) {
-									@components.Link(components.LinkProps{Href: fmt.Sprintf("/movie/%d", props.ShortestAndLongestMovie[0].ID)}) {
+									@components.Link(components.LinkProps{Href: templ.URL(fmt.Sprintf("/movie/%d", props.ShortestAndLongestMovie[0].ID))}) {
 										{ props.ShortestAndLongestMovie[0].Title }
 									}
 									<span class="text-xs">
@@ -103,7 +103,7 @@ templ Stats(props StatsProps) {
 								@components.DescriptionListItem(components.DescriptionListItemProps{
 									Detail: "Longest movie",
 								}) {
-									@components.Link(components.LinkProps{Href: fmt.Sprintf("/movie/%d", props.ShortestAndLongestMovie[1].ID)}) {
+									@components.Link(components.LinkProps{Href: templ.URL(fmt.Sprintf("/movie/%d", props.ShortestAndLongestMovie[1].ID))}) {
 										{ props.ShortestAndLongestMovie[1].Title }
 									}
 									<span class="text-xs">

@@ -151,7 +151,7 @@ func Movie(movie types.Movie, back bool) templ.Component {
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
-						var templ_7745c5c3_Var9 templ.SafeURL = templ.URL(fmt.Sprintf("/year/%s", movie.ReleaseDate.Format("2006")))
+						var templ_7745c5c3_Var9 templ.SafeURL = movie.LinkToYear()
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var9)))
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
@@ -331,7 +331,7 @@ func Movie(movie types.Movie, back bool) templ.Component {
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
 							}
-							var templ_7745c5c3_Var20 templ.SafeURL = templ.URL(fmt.Sprintf("/genre/%d", genre.ID))
+							var templ_7745c5c3_Var20 templ.SafeURL = templ.URL(genre.LinkTo())
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var20)))
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err

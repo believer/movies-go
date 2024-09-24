@@ -86,7 +86,7 @@ func OrderedList(data []ListItem, listType string) templ.Component {
 					}
 					return templ_7745c5c3_Err
 				})
-				templ_7745c5c3_Err = Link(LinkProps{Href: fmt.Sprintf("/movie/%s", item.ID)}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = Link(LinkProps{Href: templ.URL(fmt.Sprintf("/movie/%s", item.ID))}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -114,7 +114,7 @@ func OrderedList(data []ListItem, listType string) templ.Component {
 					}
 					return templ_7745c5c3_Err
 				})
-				templ_7745c5c3_Err = Link(LinkProps{Href: fmt.Sprintf("/person/%s", item.ID)}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = Link(LinkProps{Href: templ.URL(fmt.Sprintf("/person/%s", item.ID))}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -142,7 +142,7 @@ func OrderedList(data []ListItem, listType string) templ.Component {
 					}
 					return templ_7745c5c3_Err
 				})
-				templ_7745c5c3_Err = Link(LinkProps{Href: fmt.Sprintf("/genre/%s", item.ID)}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = Link(LinkProps{Href: templ.URL(fmt.Sprintf("/genre/%s", item.ID))}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

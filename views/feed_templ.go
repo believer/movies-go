@@ -101,7 +101,15 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int, query string) templ.C
 				return templ_7745c5c3_Err
 			}
 			if isAdmin {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex gap-4 items-center\"><a class=\"fixed bottom-8 right-8 z-10 bg-neutral-700 w-14 h-14 shadow-md flex justify-center items-center rounded-full sm:bg-transparent sm:bottom-0 sm:right-0 sm:w-auto sm:h-auto sm:relative focus:outline-none focus-visible:outline-dashed focus-visible:outline-offset-8 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600\" href=\"/movie/new\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" class=\"h-6 w-6\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M12 4.5v15m7.5-7.5h-15\"></path></svg></a> <a class=\"truncate border-b border-dashed border-neutral-500 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600\" href=\"/logout\" hx-post=\"/logout\">Logout</a></div>")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex gap-4 items-center\"><a class=\"fixed bottom-8 right-8 z-10 bg-neutral-700 w-14 h-14 shadow-md flex justify-center items-center rounded-full sm:bg-transparent sm:bottom-0 sm:right-0 sm:w-auto sm:h-auto sm:relative focus:outline-none focus-visible:outline-dashed focus-visible:outline-offset-8 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600\" href=\"/movie/new\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = components.IconPlus().Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a> <a class=\"truncate border-b border-dashed border-neutral-500 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600\" href=\"/logout\" hx-post=\"/logout\">Logout</a></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -144,7 +152,7 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int, query string) templ.C
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(query)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 69, Col: 17}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 56, Col: 17}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -167,7 +175,7 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int, query string) templ.C
 					var templ_7745c5c3_Var7 string
 					templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(movie.ID))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 77, Col: 42}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 64, Col: 42}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 					if templ_7745c5c3_Err != nil {
@@ -180,7 +188,7 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int, query string) templ.C
 					var templ_7745c5c3_Var8 string
 					templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(movie.WatchedAt.Format("2006"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 78, Col: 49}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 65, Col: 49}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 					if templ_7745c5c3_Err != nil {
@@ -193,7 +201,7 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int, query string) templ.C
 					var templ_7745c5c3_Var9 string
 					templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(movie.WatchedAt.Format("January"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 79, Col: 53}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 66, Col: 53}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 					if templ_7745c5c3_Err != nil {
@@ -203,7 +211,7 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int, query string) templ.C
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var10 templ.SafeURL = templ.URL(fmt.Sprintf("/movie/%d", movie.ID))
+					var templ_7745c5c3_Var10 templ.SafeURL = movie.LinkTo()
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var10)))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
@@ -215,20 +223,20 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int, query string) templ.C
 					var templ_7745c5c3_Var11 string
 					templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(movie.Title)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 121, Col: 23}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 108, Col: 23}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h2><p class=\"text-xs text-neutral-500 dark:text-neutral-400\"><time title=\"")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h2><div class=\"text-xs text-neutral-500 dark:text-neutral-400\"><time title=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var12 string
 					templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(movie.WatchedAt.Format("2006-01-02 15:04"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 125, Col: 61}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 112, Col: 61}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 					if templ_7745c5c3_Err != nil {
@@ -241,7 +249,7 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int, query string) templ.C
 					var templ_7745c5c3_Var13 string
 					templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(movie.WatchedAt.Format("2006-01-02T15:04:05Z"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 126, Col: 68}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 113, Col: 68}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 					if templ_7745c5c3_Err != nil {
@@ -254,7 +262,7 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int, query string) templ.C
 					var templ_7745c5c3_Var14 string
 					templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(movie.WatchedAt.Format("January 02 2006"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 128, Col: 54}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 115, Col: 54}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 					if templ_7745c5c3_Err != nil {
@@ -272,7 +280,7 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int, query string) templ.C
 						var templ_7745c5c3_Var15 string
 						templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(movie.Series.String)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 132, Col: 35}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 119, Col: 35}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 						if templ_7745c5c3_Err != nil {
@@ -285,7 +293,7 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int, query string) templ.C
 						var templ_7745c5c3_Var16 string
 						templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatInt(movie.NumberInSeries.Int64, 10))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 132, Col: 92}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 119, Col: 92}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 						if templ_7745c5c3_Err != nil {
@@ -296,7 +304,7 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int, query string) templ.C
 							return templ_7745c5c3_Err
 						}
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p></header>")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></header>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -308,7 +316,7 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int, query string) templ.C
 						var templ_7745c5c3_Var17 string
 						templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(movie.Overview)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 139, Col: 26}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 126, Col: 26}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 						if templ_7745c5c3_Err != nil {
@@ -331,7 +339,7 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int, query string) templ.C
 				var templ_7745c5c3_Var18 string
 				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/?page=%d", nextPage))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 146, Col: 49}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 133, Col: 49}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 				if templ_7745c5c3_Err != nil {

@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
+
+	"github.com/a-h/templ"
 )
 
 type PersonMovie struct {
@@ -12,6 +14,21 @@ type PersonMovie struct {
 	ReleaseDate time.Time `json:"release_date" db:"release_date"`
 	Seen        bool      `json:"seen" db:"seen"`
 	Character   string    `json:"character" db:"character"`
+}
+
+// Link to the movie
+func (m PersonMovie) LinkTo() templ.SafeURL {
+	return templ.URL(fmt.Sprintf("/movie/%d", m.ID))
+}
+
+// The movie's release date formatted as ISO 8601 - YYYY-MM-DD
+func (m PersonMovie) ISOReleaseDate() string {
+	return m.ReleaseDate.Format("2006-01-02")
+}
+
+// Link to the movie's release year
+func (m PersonMovie) LinkToYear() templ.SafeURL {
+	return templ.URL(fmt.Sprintf("/year/%s", m.ReleaseDate.Format("2006")))
 }
 
 type PersonMovies []PersonMovie
@@ -35,6 +52,11 @@ type Person struct {
 	Writer   PersonMovies `json:"writer" db:"writer"`
 	Composer PersonMovies `json:"composer" db:"composer"`
 	Producer PersonMovies `json:"producer" db:"producer"`
+}
+
+// Link to the person
+func (p Person) LinkTo() templ.SafeURL {
+	return templ.URL(fmt.Sprintf("/person/%d", p.ID))
 }
 
 type Persons []Person

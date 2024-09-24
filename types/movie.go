@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
+
+	"github.com/a-h/templ"
 )
 
 type CastAndCrew struct {
@@ -16,6 +18,10 @@ type CastAndCrew struct {
 type MovieGenre struct {
 	Name string `db:"name" json:"name"`
 	ID   int    `db:"id" json:"id"`
+}
+
+func (g MovieGenre) LinkTo() string {
+	return fmt.Sprintf("/genre/%d", g.ID)
 }
 
 type MovieGenres []MovieGenre
@@ -52,6 +58,31 @@ type Movie struct {
 	Seen           bool            `db:"seen"`
 }
 
+// Format runtime in hours and minutes from minutes
+func (m Movie) RuntimeFormatted() string {
+	return utils.FormatRuntime(m.Runtime)
+}
+
+// The movie's release date formatted as ISO 8601 - YYYY-MM-DD
+func (m Movie) ISOReleaseDate() string {
+	return m.ReleaseDate.Format("2006-01-02")
+}
+
+// Link to the movie
+func (m Movie) LinkTo() templ.SafeURL {
+	return templ.URL(fmt.Sprintf("/movie/%d", m.ID))
+}
+
+// Link to the movie's release year
+func (m Movie) LinkToYear() templ.SafeURL {
+	return templ.URL(fmt.Sprintf("/year/%s", m.ReleaseDate.Format("2006")))
+}
+
+// Link to the movie's watchlist add
+func (m Movie) LinkToWatchlistAdd() templ.SafeURL {
+	return templ.URL(fmt.Sprintf("/movie/new?imdbId=%s&id=%d", m.ImdbId, m.ID))
+}
+
 type Movies []Movie
 
 func (u *Movies) Scan(v interface{}) error {
@@ -63,11 +94,6 @@ func (u *Movies) Scan(v interface{}) error {
 	default:
 		return fmt.Errorf("unsupported type: %T", v)
 	}
-}
-
-// Format runtime in hours and minutes from minutes
-func (m Movie) RuntimeFormatted() string {
-	return utils.FormatRuntime(m.Runtime)
 }
 
 func (m Movies) NumberOfMovies() string {

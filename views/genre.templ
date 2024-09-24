@@ -3,7 +3,6 @@ package views
 import (
 	"believer/movies/components"
 	"believer/movies/types"
-	"fmt"
 )
 
 type GenreProps struct {
@@ -25,18 +24,15 @@ templ Genre(props GenreProps) {
 				<ol class="flex flex-col gap-2 md:text-sm text-neutral-500 dark:text-neutral-400">
 					for _, movie := range props.Movies {
 						<li class="flex items-end justify-between gap-4">
-							@components.Link(components.LinkProps{Href: fmt.Sprintf("/movie/%d", movie.ID)}) {
+							@components.Link(components.LinkProps{Href: movie.LinkTo()}) {
 								{ movie.Title }
 							}
 							@components.Divider()
 							<span class="flex items-center gap-x-2 relative top-1">
 								<span class="tabular-nums whitespace-nowrap text-sm">
-									<a
-										class="text-sm tabular-nums inline-flex items-center gap-1 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 border-b border-dashed border-neutral-500 dark:border-neutral-400"
-										href={ templ.URL(fmt.Sprintf("/year/%s", movie.ReleaseDate.Format("2006"))) }
-									>
-										{ movie.ReleaseDate.Format("2006-01-02") }
-									</a>
+									@components.SimpleLink(components.SimpleLinkProps{Href: movie.LinkToYear()}) {
+										{ movie.ISOReleaseDate() }
+									}
 								</span>
 								@Seen(SeenProps{
 									Title:  "genre",
