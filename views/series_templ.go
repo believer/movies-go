@@ -260,6 +260,11 @@ func Series(props SeriesProps) templ.Component {
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
+					} else if series.Name != props.Series.Name {
+						templ_7745c5c3_Err = components.LinkedSectionTitle(series.Name, series.LinkTo()).Render(ctx, templ_7745c5c3_Buffer)
+						if templ_7745c5c3_Err != nil {
+							return templ_7745c5c3_Err
+						}
 					}
 				}
 			} else {

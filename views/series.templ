@@ -62,6 +62,8 @@ templ Series(props SeriesProps) {
 						@components.LinkedSection(series.Name, series.LinkTo()) {
 							@list(series.Movies)
 						}
+					} else if series.Name != props.Series.Name {
+						@components.LinkedSectionTitle(series.Name, series.LinkTo())
 					}
 				}
 			} else {

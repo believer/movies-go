@@ -133,7 +133,7 @@ func SimpleLink(props SimpleLinkProps) templ.Component {
 			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a class=\"text-sm tabular-nums inline-flex items-center gap-1 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 border-b border-dashed border-neutral-500 dark:border-neutral-400\" href=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a class=\"inline-flex items-center gap-1 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 border-b border-dashed border-neutral-500 dark:border-neutral-400\" href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
