@@ -1,8 +1,9 @@
 package components
 
 templ H1(text string, toRoot bool) {
-	<h1 class="flex items-baseline gap-2 text-xl font-semibold">
+	<header class="flex gap-x-2 items-baseline text-xl font-semibold">
 		@Link(LinkProps{
+			AriaLabel:   "Back",
 			Href:        "#",
 			Hyperscript: "on click go back",
 			ToRoot:      toRoot,
@@ -10,6 +11,6 @@ templ H1(text string, toRoot bool) {
 			..
 		}
 		<span class="font-regular text-neutral-400">/</span>
-		{ text }
-	</h1>
+		<h1>{ text }</h1>
+	</header>
 }
