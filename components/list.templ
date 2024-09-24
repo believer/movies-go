@@ -39,3 +39,15 @@ templ OrderedList(data []ListItem, listType string) {
 		}
 	</ol>
 }
+
+type DataListItem struct {
+	Value string `db:"series"`
+}
+
+templ DataList(options []DataListItem, id string) {
+	<datalist id={ id }>
+		for _, option := range options {
+			<option value={ option.Value }></option>
+		}
+	</datalist>
+}

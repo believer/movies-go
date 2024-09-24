@@ -166,6 +166,18 @@ func HandleGetMovieNew(c *fiber.Ctx) error {
 	}))
 }
 
+func HandleGetMovieNewSeries(c *fiber.Ctx) error {
+	var options []components.DataListItem
+
+	err := db.Client.Select(&options, `SELECT DISTINCT series FROM movie WHERE series IS NOT NULL ORDER BY series ASC`)
+
+	if err != nil {
+		return err
+	}
+
+	return utils.TemplRender(c, components.DataList(options, "series_list"))
+}
+
 func tmdbFetchMovie(id string) types.MovieDetailsResponse {
 	tmdbKey := os.Getenv("TMDB_API_KEY")
 
@@ -283,14 +295,28 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 	}
 
 	data := new(struct {
-		ImdbID      string `form:"imdb_id"`
-		Rating      int    `form:"rating"`
-		IsWatchlist bool   `form:"watchlist"`
-		WatchedAt   string `form:"watched_at"`
+		ImdbID           string `form:"imdb_id"`
+		Rating           int    `form:"rating"`
+		IsWatchlist      bool   `form:"watchlist"`
+		HasWilhelmScream bool   `form:"wilhelm_scream"`
+		Series           string `form:"series"`
+		NumberInSeries   int    `form:"number_in_series"`
+		WatchedAt        string `form:"watched_at"`
 	})
 
 	if err := c.BodyParser(data); err != nil {
 		return err
+	}
+
+	series := sql.NullString{String: "", Valid: false}
+	number_in_series := sql.NullInt64{Int64: 0, Valid: false}
+
+	if data.Series != "" {
+		series = sql.NullString{String: data.Series, Valid: true}
+	}
+
+	if data.NumberInSeries != 0 {
+		number_in_series = sql.NullInt64{Int64: int64(data.NumberInSeries), Valid: false}
 	}
 
 	imdbId, err := utils.ParseImdbId(data.ImdbID)
@@ -320,7 +346,7 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 	tx := db.Client.MustBegin()
 
 	// Insert movie information
-	err = tx.Get(&movieId, `INSERT INTO movie (title, runtime, release_date, imdb_id, overview, poster, tagline) VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (imdb_id) DO UPDATE SET title = $1 RETURNING id`, movie.Title, movie.Runtime, movie.ReleaseDate, movie.ImdbId, movie.Overview, movie.Poster, movie.Tagline)
+	err = tx.Get(&movieId, `INSERT INTO movie (title, runtime, release_date, imdb_id, overview, poster, tagline, series, number_in_series, wilhelm) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) ON CONFLICT (imdb_id) DO UPDATE SET title = $1 RETURNING id`, movie.Title, movie.Runtime, movie.ReleaseDate, movie.ImdbId, movie.Overview, movie.Poster, movie.Tagline, series, number_in_series, data.HasWilhelmScream)
 
 	if err != nil {
 		return err
