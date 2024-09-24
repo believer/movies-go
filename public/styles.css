@@ -683,6 +683,10 @@ video {
   flex: 1 1 0%;
 }
 
+.basis-3\/5 {
+  flex-basis: 60%;
+}
+
 .origin-\[center_180px\] {
   transform-origin: center 180px;
 }

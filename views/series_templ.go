@@ -46,7 +46,7 @@ func list(movies types.Movies) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		for _, movie := range movies {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li class=\"flex items-end justify-between gap-4 before:content-[attr(data-position)] before:text-right before:tabular-nums before:w-[2ch] before:text-neutral-400 dark:before:text-neutral-600\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li class=\"flex items-end justify-between gap-x-4 before:content-[attr(data-position)] before:text-right before:tabular-nums before:w-[2ch] before:text-neutral-400 dark:before:text-neutral-600\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -96,7 +96,7 @@ func list(movies types.Movies) templ.Component {
 				}
 				return templ_7745c5c3_Err
 			})
-			templ_7745c5c3_Err = components.Link(components.LinkProps{Href: movie.LinkTo()}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.Link(components.LinkProps{Href: movie.LinkTo(), Long: len(movie.Title) > 60}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -104,7 +104,7 @@ func list(movies types.Movies) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<span class=\"flex items-center gap-x-2 relative top-1\"><span class=\"tabular-nums whitespace-nowrap text-sm\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<span class=\"flex items-center gap-x-2 tabular-nums whitespace-nowrap text-sm\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -123,7 +123,7 @@ func list(movies types.Movies) templ.Component {
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(movie.ISOReleaseDate())
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/series.templ`, Line: 31, Col: 31}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/series.templ`, Line: 30, Col: 30}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
@@ -132,10 +132,6 @@ func list(movies types.Movies) templ.Component {
 				return templ_7745c5c3_Err
 			})
 			templ_7745c5c3_Err = components.SimpleLink(components.SimpleLinkProps{Href: movie.LinkToYear()}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

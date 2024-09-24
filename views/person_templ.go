@@ -80,7 +80,7 @@ func Credit(title string, data types.PersonMovies, id string) templ.Component {
 						}
 						return templ_7745c5c3_Err
 					})
-					templ_7745c5c3_Err = components.Link(components.LinkProps{Href: movie.LinkTo()}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = components.Link(components.LinkProps{Href: movie.LinkTo(), Long: len(movie.Title) > 60}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

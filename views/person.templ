@@ -12,7 +12,7 @@ templ Credit(title string, data types.PersonMovies, id string) {
 			<ol class="flex flex-col gap-2">
 				for _, movie := range data {
 					<li class="flex items-end justify-between gap-x-4">
-						@components.Link(components.LinkProps{Href: movie.LinkTo()}) {
+						@components.Link(components.LinkProps{Href: movie.LinkTo(), Long: len(movie.Title) > 60}) {
 							{ movie.Title }
 						}
 						@components.Divider()

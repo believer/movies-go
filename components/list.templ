@@ -41,13 +41,14 @@ templ OrderedList(data []ListItem, listType string) {
 }
 
 type DataListItem struct {
-	Value string `db:"series"`
+	Label string `db:"name"`
+	Value string `db:"value"`
 }
 
 templ DataList(options []DataListItem, id string) {
 	<datalist id={ id }>
 		for _, option := range options {
-			<option value={ option.Value }></option>
+			<option value={ option.Value } label={ option.Label }></option>
 		}
 	</datalist>
 }
