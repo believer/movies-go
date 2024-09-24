@@ -1299,6 +1299,12 @@ video {
   background-color: rgb(212 212 212 / var(--tw-bg-opacity));
 }
 
+.after\:text-neutral-400::after {
+  content: var(--tw-content);
+  --tw-text-opacity: 1;
+  color: rgb(163 163 163 / var(--tw-text-opacity));
+}
+
 .empty\:hidden:empty {
   display: none;
 }
@@ -1358,6 +1364,11 @@ video {
 
 .focus-visible\:outline-neutral-400:focus-visible {
   outline-color: #a3a3a3;
+}
+
+.group:has(:required) .group-has-\[\:required\]\:after\:content-\[\'\*\'\]::after {
+  --tw-content: '*';
+  content: var(--tw-content);
 }
 
 @media (min-width: 640px) {
@@ -1573,6 +1584,12 @@ video {
     content: var(--tw-content);
     --tw-bg-opacity: 1;
     background-color: rgb(64 64 64 / var(--tw-bg-opacity));
+  }
+
+  .dark\:after\:text-neutral-500::after {
+    content: var(--tw-content);
+    --tw-text-opacity: 1;
+    color: rgb(115 115 115 / var(--tw-text-opacity));
   }
 
   .dark\:hover\:text-neutral-200:hover {

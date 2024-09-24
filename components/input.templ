@@ -7,7 +7,7 @@ var inputClass = "w-full rounded border border-neutral-400 bg-transparent px-4 p
 templ Label(name string, label string) {
 	<label
 		for={ name }
-		class="text-sm font-semibold text-neutral-500 dark:text-neutral-400"
+		class="text-sm font-semibold text-neutral-500 dark:text-neutral-400 group-has-[:required]:after:content-['*'] after:text-neutral-400 dark:after:text-neutral-500"
 	>
 		{ label }
 	</label>
@@ -36,7 +36,7 @@ templ TextInput(name string, labelText string, helpText string) {
 }
 
 templ NumberInput(name string, labelText string, helpText string, min int, max int) {
-	<div class="relative flex flex-col gap-2">
+	<div class="relative flex flex-col gap-2 group">
 		@Label(name, labelText)
 		<input
 			required

@@ -41,7 +41,7 @@ templ NewMovie(props NewMovieProps) {
 						minlength="3"
 						name="search"
 						id="search"
-						class="w-full rounded border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500"
+						class="w-full rounded border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500 peer"
 					/>
 					<div
 						id="search-results"
@@ -49,7 +49,7 @@ templ NewMovie(props NewMovieProps) {
 					></div>
 				</div>
 			}
-			<div class="relative flex flex-col gap-2">
+			<div class="relative flex flex-col gap-2 group">
 				if props.ImdbID != "" {
 					@components.Label("imdb_id", "IMDb ID")
 				} else {
@@ -65,7 +65,7 @@ templ NewMovie(props NewMovieProps) {
 					hx-validate="true"
 					name="imdb_id"
 					id="imdb_id"
-					class="w-full rounded border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500"
+					class="w-full rounded border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500 peer"
 					if props.ImdbID != "" {
 						value={ props.ImdbID }
 						readonly
