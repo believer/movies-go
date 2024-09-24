@@ -51,12 +51,14 @@ SELECT
     m.title,
     m.overview,
     m.release_date,
-    m.series,
-    m.number_in_series,
+    se.name AS "series",
+    ms.number_in_series,
     s.date at time zone 'UTC' at time zone 'Europe/Stockholm' AS watched_at
 FROM
     seen AS s
     INNER JOIN movie AS m ON m.id = s.movie_id
+    LEFT JOIN movie_series AS ms ON ms.movie_id = m.id
+    LEFT JOIN series AS se ON se.id = ms.series_id
 WHERE
     user_id = $2
 ORDER BY
@@ -68,11 +70,13 @@ SELECT
     m.id,
     m.title,
     m.overview,
-    m.series,
-    m.number_in_series,
+    se.name AS "series",
+    ms.number_in_series,
     m.release_date AS watched_at
 FROM
     movie AS m
+    LEFT JOIN movie_series AS ms ON ms.movie_id = m.id
+    LEFT JOIN series AS se ON se.id = ms.series_id
 WHERE
     m.title ILIKE '%' || $1 || '%'
     OR m.series ILIKE '%' || $1 || '%'
@@ -88,8 +92,8 @@ SELECT
     m.imdb_id,
     m.overview,
     m.tagline,
-    m.series,
-    m.number_in_series,
+    se.name AS "series",
+    ms.number_in_series,
     r.rating,
     ARRAY_TO_JSON(ARRAY_AGG(json_build_object('name', g.name, 'id', g.id))) AS genres
 FROM
@@ -98,11 +102,15 @@ FROM
     INNER JOIN genre AS g ON g.id = mg.genre_id
     LEFT JOIN rating AS r ON r.movie_id = m.id
         AND r.user_id = $2
+    LEFT JOIN movie_series AS ms ON ms.movie_id = m.id
+    LEFT JOIN series AS se ON se.id = ms.series_id
 WHERE
     m.id = $1
 GROUP BY
     1,
-    r.rating;
+    r.rating,
+    se.name,
+    ms.number_in_series;
 
 -- name: movie-by-name
 SELECT
@@ -113,22 +121,26 @@ SELECT
     m.imdb_id,
     m.overview,
     m.tagline,
-    m.series,
-    m.number_in_series,
+    se.name AS "series",
+    ms.number_in_series,
     r.rating,
     ARRAY_TO_JSON(ARRAY_AGG(json_build_object('name', g.name, 'id', g.id))) AS genres
 FROM
     movie AS m
     INNER JOIN movie_genre AS mg ON mg.movie_id = m.id
     INNER JOIN genre AS g ON g.id = mg.genre_id
-    INNER JOIN rating AS r ON r.movie_id = m.id
+    LEFT JOIN rating AS r ON r.movie_id = m.id
+    LEFT JOIN movie_series AS ms ON ms.movie_id = m.id
+    LEFT JOIN series AS se ON se.id = ms.series_id
 WHERE
     -- Slugify function is defined in the database
     slugify (m.title)
     ILIKE '%' || slugify ($1) || '%'
 GROUP BY
     1,
-    r.rating;
+    r.rating,
+    se.name,
+    ms.number_in_series;
 
 -- name: seen-by-user-id
 SELECT
