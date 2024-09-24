@@ -615,7 +615,7 @@ func HandlePostMovieSeenNew(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusOK)
 }
 
-func HandleSearchNew(c *fiber.Ctx) error {
+func HandleSearch(c *fiber.Ctx) error {
 	query := c.Query("search")
 
 	if query == "" {

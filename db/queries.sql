@@ -79,7 +79,7 @@ FROM
     LEFT JOIN series AS se ON se.id = ms.series_id
 WHERE
     m.title ILIKE '%' || $1 || '%'
-    OR m.series ILIKE '%' || $1 || '%'
+    OR se.name ILIKE '%' || $1 || '%'
 ORDER BY
     m.release_date DESC;
 
