@@ -14,6 +14,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -169,7 +170,7 @@ func HandleGetMovieNew(c *fiber.Ctx) error {
 func HandleGetMovieNewSeries(c *fiber.Ctx) error {
 	var options []components.DataListItem
 
-	err := db.Client.Select(&options, `SELECT name as "series" FROM series ORDER BY name ASC`)
+	err := db.Client.Select(&options, `SELECT id as "value", name FROM series ORDER BY name ASC`)
 
 	if err != nil {
 		return err
@@ -308,18 +309,6 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 		return err
 	}
 
-	// TODO: Add series
-	// series := sql.NullString{String: "", Valid: false}
-	// number_in_series := sql.NullInt64{Int64: 0, Valid: false}
-
-	// if data.Series != "" {
-	// 	series = sql.NullString{String: data.Series, Valid: true}
-	// }
-	//
-	// if data.NumberInSeries != 0 {
-	// 	number_in_series = sql.NullInt64{Int64: int64(data.NumberInSeries), Valid: false}
-	// }
-
 	imdbId, err := utils.ParseImdbId(data.ImdbID)
 
 	if err != nil {
@@ -356,6 +345,24 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 	log.Println("Movie inserted")
 
 	userId := c.Locals("UserId").(string)
+
+	// Insert series
+	if data.Series != "" && data.NumberInSeries != 0 {
+		seriesId, err := strconv.Atoi(data.Series)
+
+		// Series can't be turned into an int, so it's a new series
+		if err != nil {
+			err = tx.Get(&seriesId, `INSERT INTO series (name) VALUES ($1) ON CONFLICT DO NOTHING RETURNING id`, data.Series)
+
+			if err != nil {
+				return err
+			}
+		}
+
+		tx.MustExec(`INSERT INTO movie_series (movie_id, series_id, number_in_series) VALUES ($1, $2, $3)`, movieId, seriesId, data.NumberInSeries)
+
+		log.Println("Series inserted")
+	}
 
 	if data.IsWatchlist {
 		// Add to watchlist
