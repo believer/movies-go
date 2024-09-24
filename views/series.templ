@@ -58,7 +58,7 @@ templ Series(props SeriesProps) {
 				for _, series := range props.Movies {
 					if len(props.Movies) == 1 {
 						@list(series.Movies)
-					} else if len(series.Movies) > 1 {
+					} else if len(series.Movies) > 0 {
 						@components.LinkedSection(series.Name, series.LinkTo()) {
 							@list(series.Movies)
 						}
