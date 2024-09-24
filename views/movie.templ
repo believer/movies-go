@@ -39,7 +39,9 @@ templ Movie(movie types.Movie, back bool) {
 					}
 					if movie.Series.Valid && movie.NumberInSeries.Valid {
 						@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Series"}) {
-							{ movie.Series.String } #{ strconv.FormatInt( movie.NumberInSeries.Int64, 10 ) }
+							@components.SimpleLink(components.SimpleLinkProps{Href: movie.LinkToSeries()}) {
+								{ movie.Series.String } #{ strconv.FormatInt( movie.NumberInSeries.Int64, 10 ) }
+							}
 						}
 					}
 					@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "IMDb"}) {

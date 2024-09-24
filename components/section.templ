@@ -27,6 +27,14 @@ templ SectionTitle(title string) {
 	}
 }
 
+templ LinkedSectionTitle(title string, href templ.SafeURL) {
+	@h2() {
+		@SimpleLink(SimpleLinkProps{Href: href}) {
+			{ title }
+		}
+	}
+}
+
 templ SectionTitleWithDropdown(title string) {
 	<div class="flex items-center gap-4">
 		<h2 class="font-medium text-neutral-700 dark:text-neutral-300">
@@ -46,6 +54,15 @@ templ Section(title string, numberOfItems int) {
 		} else if title != "" {
 			@SectionTitle(title)
 		}
+		{ children... }
+	</section>
+}
+
+templ LinkedSection(title string, href templ.SafeURL) {
+	<section
+		class="flex flex-col gap-4 md:text-sm text-neutral-500 dark:text-neutral-400"
+	>
+		@LinkedSectionTitle(title, href)
 		{ children... }
 	</section>
 }

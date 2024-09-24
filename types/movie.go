@@ -44,18 +44,20 @@ type Movie struct {
 	ID             int             `db:"id" json:"id"`
 	ImdbId         string          `db:"imdb_id"`
 	ImdbRating     sql.NullFloat64 `db:"imdb_rating"`
+	NumberInSeries JSONNullInt64   `db:"number_in_series" json:"number_in_series"`
 	Overview       string          `db:"overview" json:"overview"`
 	Poster         string          `db:"poster"`
 	Rating         sql.NullInt64   `db:"rating"`
 	ReleaseDate    time.Time       `db:"release_date" json:"release_date"`
 	Runtime        int             `db:"runtime"`
-	Series         sql.NullString  `db:"series"`
-	NumberInSeries sql.NullInt64   `db:"number_in_series"`
+	Seen           bool            `db:"seen"`
+	Series         sql.NullString  `db:"series" json:"series"`
+	SeriesID       sql.NullInt64   `db:"series_id"`
 	Tagline        string          `db:"tagline"`
 	Title          string          `db:"title" json:"title"`
 	UpdatedAt      time.Time       `db:"updated_at"`
 	WatchedAt      time.Time       `db:"watched_at" json:"watchedAt"`
-	Seen           bool            `db:"seen"`
+	WilhelmScream  sql.NullBool    `db:"wilhelm"`
 }
 
 // Format runtime in hours and minutes from minutes
@@ -81,6 +83,15 @@ func (m Movie) LinkToYear() templ.SafeURL {
 // Link to the movie's watchlist add
 func (m Movie) LinkToWatchlistAdd() templ.SafeURL {
 	return templ.URL(fmt.Sprintf("/movie/new?imdbId=%s&id=%d", m.ImdbId, m.ID))
+}
+
+// Link to the movie's series
+func (m Movie) LinkToSeries() templ.SafeURL {
+	if m.SeriesID.Valid {
+		return templ.URL(fmt.Sprintf("/series/%d", m.SeriesID.Int64))
+	}
+
+	return ""
 }
 
 type Movies []Movie
@@ -111,4 +122,36 @@ func (m Movies) NumberOfSeenMovies(seen int) string {
 	numberOfMovies := m.NumberOfMovies()
 
 	return fmt.Sprintf("Seen %d / %s", seen, numberOfMovies)
+}
+
+type JSONNullInt64 struct {
+	sql.NullInt64
+}
+
+func (n *JSONNullInt64) UnmarshalJSON(data []byte) error {
+	// Handle null JSON values
+	if string(data) == "null" {
+		n.Valid = false
+		return nil
+	}
+
+	// Try to unmarshal an integer
+	var intValue int64
+	if err := json.Unmarshal(data, &intValue); err != nil {
+		return err
+	}
+
+	// If successfully unmarshaled, assign the value
+	n.Int64 = intValue
+	n.Valid = true
+	return nil
+}
+
+func (n JSONNullInt64) MarshalJSON() ([]byte, error) {
+	// Return "null" if the value is not valid
+	if !n.Valid {
+		return json.Marshal(nil)
+	}
+	// Otherwise, return the int64 value
+	return json.Marshal(n.Int64)
 }

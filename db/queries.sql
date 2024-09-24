@@ -93,6 +93,7 @@ SELECT
     m.overview,
     m.tagline,
     se.name AS "series",
+    se.id AS "series_id",
     ms.number_in_series,
     r.rating,
     ARRAY_TO_JSON(ARRAY_AGG(json_build_object('name', g.name, 'id', g.id))) AS genres
@@ -109,7 +110,7 @@ WHERE
 GROUP BY
     1,
     r.rating,
-    se.name,
+    se.id,
     ms.number_in_series;
 
 -- name: movie-by-name
@@ -122,6 +123,7 @@ SELECT
     m.overview,
     m.tagline,
     se.name AS "series",
+    se.id AS "series_id",
     ms.number_in_series,
     r.rating,
     ARRAY_TO_JSON(ARRAY_AGG(json_build_object('name', g.name, 'id', g.id))) AS genres
@@ -139,7 +141,7 @@ WHERE
 GROUP BY
     1,
     r.rating,
-    se.name,
+    se.id,
     ms.number_in_series;
 
 -- name: seen-by-user-id

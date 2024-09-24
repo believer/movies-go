@@ -27,11 +27,22 @@ func InitializeConnection() error {
 		log.Println("Connected to database")
 	}
 
-	dot, err := dotsql.LoadFromFile("./db/queries.sql")
+	generalQueries, err := dotsql.LoadFromFile("./db/queries.sql")
 
 	if err != nil {
 		return err
 	}
+
+	seriesQueries, err := dotsql.LoadFromFile("./db/seriesQueries.sql")
+
+	if err != nil {
+		return err
+	}
+
+	dot := dotsql.Merge(
+		generalQueries,
+		seriesQueries,
+	)
 
 	dotx := dotsqlx.Wrap(dot)
 

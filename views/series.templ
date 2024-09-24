@@ -1,0 +1,72 @@
+package views
+
+import (
+	"believer/movies/components"
+	"believer/movies/types"
+	"strconv"
+)
+
+type SeriesProps struct {
+	TotalMovies int
+	Series      types.Series
+	Movies      []types.SeriesMovies
+}
+
+templ list(movies types.Movies) {
+	<ol class="flex flex-col gap-2 md:text-sm text-neutral-500 dark:text-neutral-400">
+		for _, movie := range movies {
+			<li
+				class="flex items-end justify-between gap-4 before:content-[attr(data-position)] before:text-right before:tabular-nums before:w-[2ch] before:text-neutral-400 dark:before:text-neutral-600"
+				if movie.NumberInSeries.Valid {
+					data-position={ strconv.FormatInt(movie.NumberInSeries.Int64, 10) }
+				}
+			>
+				@components.Link(components.LinkProps{Href: movie.LinkTo()}) {
+					{ movie.Title }
+				}
+				@components.Divider()
+				<span class="flex items-center gap-x-2 relative top-1">
+					<span class="tabular-nums whitespace-nowrap text-sm">
+						@components.SimpleLink(components.SimpleLinkProps{Href: movie.LinkToYear()}) {
+							{ movie.ISOReleaseDate() }
+						}
+					</span>
+					@Seen(SeenProps{
+						Title:  "genre",
+						Seen:   movie.Seen,
+						ImdbId: movie.ImdbId,
+						ID:     movie.ID,
+					})
+				</span>
+			</li>
+		}
+	</ol>
+}
+
+templ Series(props SeriesProps) {
+	@Layout(LayoutProps{Title: props.Series.Name}) {
+		<section class="mx-auto flex max-w-xl flex-col gap-y-8 px-5 py-8">
+			<header class="space-y-8">
+				@components.H1(props.Series.Name, false)
+				if props.Series.ParentSeries.Valid {
+					@components.SimpleLink(components.SimpleLinkProps{Href: props.Series.LinkToParent()}) {
+						Go to parent series
+					}
+				}
+			</header>
+			if props.TotalMovies > 0 {
+				for _, series := range props.Movies {
+					if len(props.Movies) == 1 {
+						@list(series.Movies)
+					} else if len(series.Movies) > 1 {
+						@components.LinkedSection(series.Name, series.LinkTo()) {
+							@list(series.Movies)
+						}
+					}
+				}
+			} else {
+				@components.EmptyState("No movies in series")
+			}
+		</section>
+	}
+}
