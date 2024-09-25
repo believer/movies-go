@@ -433,27 +433,6 @@ FROM
 WHERE
     id = $1;
 
--- name: watchlist
-SELECT
-    m.id,
-    m.title,
-    m.imdb_id,
-    w.created_at
-FROM
-    watchlist w
-    INNER JOIN movie m ON m.id = w.movie_id
-WHERE
-    user_id = $1;
-
--- name: is-in-watchlist
-SELECT
-    id
-FROM
-    watchlist
-WHERE
-    user_id = $1
-    AND movie_id = $2;
-
 -- name: wilhelm-screams
 SELECT
     count(*)

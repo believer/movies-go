@@ -136,21 +136,6 @@ func HandlePostLogout(c *fiber.Ctx) error {
 	return c.SendStatus(200)
 }
 
-func HandleGetWatchlist(c *fiber.Ctx) error {
-	var movies types.Movies
-	userId := c.Locals("UserId")
-
-	err := db.Dot.Select(db.Client, &movies, "watchlist", userId)
-
-	if err != nil {
-		return err
-	}
-
-	return utils.TemplRender(c, views.Watchlist(views.WatchlistProps{
-		Movies: movies,
-	}))
-}
-
 func HandlePostSignup(c *fiber.Ctx) error {
 	data := new(struct {
 		Password string `form:"password"`

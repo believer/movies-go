@@ -39,9 +39,16 @@ func InitializeConnection() error {
 		return err
 	}
 
+	watchlistQueries, err := dotsql.LoadFromFile("./db/watchlistQueries.sql")
+
+	if err != nil {
+		return err
+	}
+
 	dot := dotsql.Merge(
 		generalQueries,
 		seriesQueries,
+		watchlistQueries,
 	)
 
 	dotx := dotsqlx.Wrap(dot)

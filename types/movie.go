@@ -77,7 +77,13 @@ func (m Movie) LinkTo() templ.SafeURL {
 
 // Link to the movie's release year
 func (m Movie) LinkToYear() templ.SafeURL {
-	return templ.URL(fmt.Sprintf("/year/%s", m.ReleaseDate.Format("2006")))
+	year := m.ReleaseDate
+
+	if year.Year() == 1 {
+		year = m.CreatedAt
+	}
+
+	return templ.URL(fmt.Sprintf("/year/%s", year.Format("2006")))
 }
 
 // Link to the movie's watchlist add
