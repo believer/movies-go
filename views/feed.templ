@@ -42,6 +42,7 @@ templ Feed(isAdmin bool, movies types.Movies, nextPage int, query string) {
 		</nav>
 		<div class="mx-auto flex max-w-xl flex-col gap-12 px-5 pt-5 md:pt-0">
 			<input
+				aria-label="Find a movie"
 				class="w-full rounded-full border border-neutral-300 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:placeholder:text-neutral-600 dark:focus:ring-neutral-500"
 				type="search"
 				name="search"
