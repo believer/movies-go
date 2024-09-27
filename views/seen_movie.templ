@@ -19,7 +19,7 @@ templ SeenToggle() {
 }
 
 templ AddWatch(id int, imdbId string) {
-	if ctx.Value("IsAuthenticated").(bool) {
+	@components.IsAuthenticated() {
 		<a
 			href={ templ.URL(fmt.Sprintf("/movie/new?imdbId=%s&id=%d", imdbId, id)) }
 			title="Add watch"

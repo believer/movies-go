@@ -38,9 +38,11 @@ templ Watched(props WatchedProps) {
 					class="border-b border-dashed border-neutral-500 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600"
 					href="/watchlist"
 				>In watchlist</a>
-				<a href={ templ.URL(fmt.Sprintf("/movie/new?imdbId=%s&id=%s", props.ImdbId, props.ID)) } class="text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors" title="Add watch">
-					@IconEye()
-				</a>
+				@IsAuthenticated() {
+					<a href={ templ.URL(fmt.Sprintf("/movie/new?imdbId=%s&id=%s", props.ImdbId, props.ID)) } class="text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors" title="Add watch">
+						@IconEye()
+					</a>
+				}
 			</div>
 		} else {
 			<span>No watches found</span>

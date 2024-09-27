@@ -29,9 +29,11 @@ templ watchlistList(movies types.Movies, title string) {
 								}
 							}
 						</span>
-						<a href={ movie.LinkToWatchlistAdd() } class="text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors" title="Add watch">
-							@components.IconEye()
-						</a>
+						@components.IsAuthenticated() {
+							<a href={ movie.LinkToWatchlistAdd() } class="text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors" title="Add watch">
+								@components.IconEye()
+							</a>
+						}
 					</span>
 				</li>
 			}
