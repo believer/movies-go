@@ -312,7 +312,8 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 	imdbId, err := utils.ParseImdbId(data.ImdbID)
 
 	if err != nil {
-		return err
+		c.Set("HX-Retarget", "#error")
+		return c.SendString(err.Error())
 	}
 
 	movieId := 0
