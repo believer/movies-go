@@ -212,21 +212,30 @@ ORDER BY
     rating;
 
 -- name: stats-ratings-this-year
-WITH ratings AS (
+WITH rating_series AS (
     SELECT
-        GENERATE_SERIES(1, 10) AS rating
+        generate_series(1, 10) AS rating_value
 )
 SELECT
-    ratings.rating AS label,
-    COUNT(r.rating) AS value
+    rs.rating_value AS label,
+    COUNT(
+        CASE WHEN s.movie_id IS NOT NULL THEN
+            r.movie_id
+        ELSE
+            NULL
+        END) AS value
 FROM
-    ratings
-    LEFT JOIN rating AS r ON r.rating = ratings.rating
+    rating_series rs
+    LEFT JOIN rating r ON r.rating = rs.rating_value
         AND r.user_id = $1
-        AND EXTRACT(YEAR FROM created_at) = EXTRACT(YEAR FROM $2::date)
+        AND r.created_at >= date_trunc('year', CURRENT_DATE)
+    LEFT JOIN seen s ON s.movie_id = r.movie_id
+        AND s.user_id = $1
+        AND s.date >= date_trunc('year', CURRENT_DATE)
 GROUP BY
-    ratings.rating,
-    r.rating;
+    rs.rating_value
+ORDER BY
+    rs.rating_value;
 
 -- name: stats-most-watched-by-job
 SELECT
