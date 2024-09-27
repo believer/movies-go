@@ -228,10 +228,9 @@ FROM
     rating_series rs
     LEFT JOIN rating r ON r.rating = rs.rating_value
         AND r.user_id = $1
-        AND r.created_at >= date_trunc('year', CURRENT_DATE)
     LEFT JOIN seen s ON s.movie_id = r.movie_id
         AND s.user_id = $1
-        AND s.date >= date_trunc('year', CURRENT_DATE)
+        AND EXTRACT(YEAR FROM s.date) = EXTRACT(YEAR FROM $2::date)
 GROUP BY
     rs.rating_value
 ORDER BY

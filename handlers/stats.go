@@ -85,7 +85,7 @@ func HandleGetStats(c *fiber.Ctx) error {
 		return err
 	}
 
-	yearRatings, err := getGraphWithQuery("stats-ratings-this-year", userId)
+	yearRatings, err := getGraphByYearWithQuery("stats-ratings-this-year", userId, currentYear)
 
 	if err != nil {
 		log.Fatalf("Error getting ratings this year: %v", err)
