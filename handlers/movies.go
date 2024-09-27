@@ -359,7 +359,12 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 			}
 		}
 
-		tx.MustExec(`INSERT INTO movie_series (movie_id, series_id, number_in_series) VALUES ($1, $2, $3)`, movieId, seriesId, data.NumberInSeries)
+		_, err = tx.Exec(`INSERT INTO movie_series (movie_id, series_id, number_in_series) VALUES ($1, $2, $3)`, movieId, seriesId, data.NumberInSeries)
+
+		if err != nil {
+			c.Set("HX-Retarget", "#error")
+			return c.SendString(fmt.Sprintf("Movie #%d already exists in series", data.NumberInSeries))
+		}
 
 		log.Println("Series inserted")
 	}
