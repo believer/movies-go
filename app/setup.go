@@ -53,6 +53,7 @@ func SetupAndRunApp() error {
 		appEnv := os.Getenv("APP_ENV")
 		tokenString := c.Cookies("token")
 
+		// Set me as default user
 		userId := "1"
 
 		// Parse the JWT token if it exists

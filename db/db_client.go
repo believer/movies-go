@@ -45,9 +45,16 @@ func InitializeConnection() error {
 		return err
 	}
 
+	statsQueries, err := dotsql.LoadFromFile("./db/statsQueries.sql")
+
+	if err != nil {
+		return err
+	}
+
 	dot := dotsql.Merge(
 		generalQueries,
 		seriesQueries,
+		statsQueries,
 		watchlistQueries,
 	)
 

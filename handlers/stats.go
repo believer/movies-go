@@ -7,8 +7,10 @@ import (
 	"believer/movies/utils"
 	"believer/movies/views"
 	"cmp"
+	"fmt"
 	"log"
 	"strconv"
+	"sync"
 	"time"
 
 	"slices"
@@ -30,105 +32,82 @@ func getPersonsByJob(job string, userId string) ([]components.ListItem, error) {
 	return persons, nil
 }
 
+func executeQuery(queryType string, target interface{}, query string, args ...interface{}) func() error {
+	return func() error {
+		switch queryType {
+		case "select":
+			return db.Dot.Select(db.Client, target, query, args...)
+		case "get":
+			return db.Dot.Get(db.Client, target, query, args...)
+		default:
+			return fmt.Errorf("unknown query type: %s", queryType)
+		}
+	}
+}
+
 // Handler for /stats.
 // Gets most of the necessary data (some is is loaded onload)
 func HandleGetStats(c *fiber.Ctx) error {
 	var stats types.Stats
-	var movies []components.ListItem
 	var shortestAndLongest types.Movies
 	var wilhelms []int
-	var totals []components.ListItem
+	var movies, totals, cast []components.ListItem
+	var ratings, yearRatings, watchedByYear, seenThisYearByMonth, moviesByYear []types.GraphData
+
+	bestOfTheYear := types.Movie{ID: 0}
 
 	userId := c.Locals("UserId").(string)
 	now := time.Now()
 	year := now.Format("2006")
 	currentYear := now.Format("2006-01-02 15:04:05")
 
-	err := db.Dot.Select(db.Client, &movies, "stats-most-watched-movies", userId)
+	var wg sync.WaitGroup
 
-	if err != nil {
-		log.Fatalf("Error getting most watched movies: %v", err)
-		return err
+	queries := []struct {
+		queryFunc func() error
+		desc      string
+	}{
+		{executeQuery("select", &movies, "stats-most-watched-movies", userId), "stats-most-watched-movies"},
+		{executeQuery("select", &shortestAndLongest, "shortest-and-longest-movie", userId), "shortest-and-longest-movie"},
+		{executeQuery("select", &totals, "total-watched-by-job-and-year", userId, "cast", "All"), "total-watched-by-job-and-year"},
+		{executeQuery("get", &stats, "stats-data", userId), "stats-data"},
+		{executeQuery("select", &wilhelms, "wilhelm-screams", userId), "wilhelm-screams"},
+		{executeQuery("get", &bestOfTheYear, "stats-best-of-the-year", userId), "stats-best-of-the-year"},
+		{executeQuery("select", &cast, "stats-most-watched-by-job", "cast", userId, "All"), "stats-most-watched-by-job"},
+		{executeQuery("select", &ratings, "stats-ratings", userId), "stats-ratings"},
+		{executeQuery("select", &yearRatings, "stats-ratings-this-year", userId, currentYear), "stats-ratings-this-year"},
+		{executeQuery("select", &watchedByYear, "stats-watched-by-year", userId), "stats-watched-by-year"},
+		{executeQuery("select", &seenThisYearByMonth, "stats-watched-this-year-by-month", userId, currentYear), "stats-watched-this-year-by-month"},
+		{executeQuery("select", &moviesByYear, "stats-movies-by-year", userId), "stats-movies-by-year"},
 	}
 
-	err = db.Dot.Select(db.Client, &shortestAndLongest, "shortest-and-longest-movie", userId)
+	errChan := make(chan error, len(queries))
 
-	if err != nil {
-		log.Fatalf("Error getting longest and shortest movie: %v", err)
-		return err
+	for _, q := range queries {
+		wg.Add(1)
+		go func(queryFunc func() error, desc string) {
+			defer wg.Done()
+			if err := queryFunc(); err != nil {
+				log.Printf("Error getting %s: %v", desc, err)
+				errChan <- err
+			}
+		}(q.queryFunc, q.desc)
 	}
 
-	err = db.Dot.Select(db.Client, &totals, "total-watched-by-job-and-year", userId, "cast", "All")
+	go func() {
+		wg.Wait()
+		close(errChan)
+	}()
 
-	if err != nil {
-		return err
-	}
-
-	err = db.Dot.Get(db.Client, &stats, "stats-data", userId)
-
-	if err != nil {
-		log.Fatalf("Error getting stats data: %v", err)
-		return err
-	}
-
-	cast, err := getPersonsByJob("cast", userId)
-
-	if err != nil {
-		log.Fatalf("Error getting cast: %v", err)
-		return err
-	}
-
-	ratings, err := getGraphWithQuery("stats-ratings", userId)
-
-	if err != nil {
-		log.Fatalf("Error getting ratings: %v", err)
-		return err
-	}
-
-	yearRatings, err := getGraphByYearWithQuery("stats-ratings-this-year", userId, currentYear)
-
-	if err != nil {
-		log.Fatalf("Error getting ratings this year: %v", err)
-		return err
-	}
-
-	watchedByYear, err := getGraphWithQuery("stats-watched-by-year", userId)
-
-	if err != nil {
-		log.Fatalf("Error getting watched by year: %v", err)
-		return err
-	}
-
-	seenThisYearByMonth, err := getGraphByYearWithQuery("stats-watched-this-year-by-month", userId, currentYear)
-
-	if err != nil {
-		log.Fatalf("Error getting watched this year by month: %v", err)
-		return err
-	}
-
-	moviesByYear, err := getGraphWithQuery("stats-movies-by-year", userId)
-
-	if err != nil {
-		log.Fatalf("Error getting movies by year: %v", err)
-		return err
-	}
-
-	err = db.Dot.Select(db.Client, &wilhelms, "wilhelm-screams", userId)
-
-	if err != nil {
-		log.Fatalf("Error getting wilhelm scream: %v", err)
-		return err
-	}
-
-	var bestOfTheYear types.Movie
-	err = db.Dot.Get(db.Client, &bestOfTheYear, "stats-best-of-the-year", userId)
-
-	if err != nil {
-		bestOfTheYear = types.Movie{ID: 0}
+	for err := range errChan {
+		if err != nil {
+			return err
+		}
 	}
 
 	bestYear := ""
 	bestYearValue := 0
+
 	for _, year := range moviesByYear {
 		if year.Value > bestYearValue {
 			bestYear = year.Label
@@ -142,6 +121,70 @@ func HandleGetStats(c *fiber.Ctx) error {
 		totalCast = totals[0].Count
 	}
 
+	// Process all graph data in parallel
+	errChan = make(chan error, 5)
+	var ratingsBars, yearBars, watchedByYearBar, seenThisYearByMonthBars, moviesByYearBars []types.Bar
+
+	wg.Add(5)
+
+	go func() {
+		defer wg.Done()
+		var err error
+		ratingsBars, err = constructGraphFromData(ratings)
+		if err != nil {
+			errChan <- err
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+		var err error
+		yearBars, err = constructGraphFromData(yearRatings)
+		if err != nil {
+			errChan <- err
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+		var err error
+		watchedByYearBar, err = constructGraphFromData(watchedByYear)
+		if err != nil {
+			errChan <- err
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+		var err error
+		seenThisYearByMonthBars, err = constructGraphFromData(seenThisYearByMonth)
+		if err != nil {
+			errChan <- err
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+		var err error
+		moviesByYearBars, err = constructGraphFromData(moviesByYear)
+		if err != nil {
+			errChan <- err
+		}
+	}()
+
+	// Close the error channel once all goroutines are done
+	go func() {
+		wg.Wait()
+		close(errChan)
+	}()
+
+	// Check for errors
+	for err := range errChan {
+		if err != nil {
+			return err
+		}
+	}
+
 	return utils.TemplRender(c, views.Stats(
 		views.StatsProps{
 			BestOfTheYear:           bestOfTheYear,
@@ -149,14 +192,14 @@ func HandleGetStats(c *fiber.Ctx) error {
 			FormattedTotalRuntime:   utils.FormatRuntime(stats.TotalRuntime),
 			MostWatchedCast:         cast,
 			MostWatchedMovies:       movies,
-			MoviesByYear:            moviesByYear,
-			Ratings:                 ratings,
-			SeenThisYear:            seenThisYearByMonth,
+			MoviesByYear:            moviesByYearBars,
+			Ratings:                 ratingsBars,
+			SeenThisYear:            seenThisYearByMonthBars,
 			Stats:                   stats,
 			TotalCast:               totalCast,
-			WatchedByYear:           watchedByYear,
+			WatchedByYear:           watchedByYearBar,
 			Year:                    year,
-			YearRatings:             yearRatings,
+			YearRatings:             yearBars,
 			Years:                   availableYears(),
 			ShortestAndLongestMovie: shortestAndLongest,
 			WilhelmScreams:          wilhelms[0],
