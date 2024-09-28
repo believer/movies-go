@@ -13,6 +13,7 @@ func HandleGetGenre(c *fiber.Ctx) error {
 	var movies types.Movies
 	var genre types.MovieGenre
 
+	page := c.QueryInt("page", 1)
 	userId := c.Locals("UserId").(string)
 	genreId := c.Params("id")
 
@@ -22,23 +23,16 @@ func HandleGetGenre(c *fiber.Ctx) error {
 		return err
 	}
 
-	err = db.Dot.Select(db.Client, &movies, "genres-by-id", genreId, userId)
+	err = db.Dot.Select(db.Client, &movies, "genres-by-id", genreId, userId, (page-1)*50)
 
 	if err != nil {
 		return err
 	}
 
-	seen := 0
-
-	for _, movie := range movies {
-		if movie.Seen {
-			seen += 1
-		}
-	}
-
 	return utils.TemplRender(c, views.Genre(views.GenreProps{
-		Name:   genre.Name,
-		Movies: movies,
-		Seen:   seen,
+		ID:       genreId,
+		Name:     genre.Name,
+		NextPage: page + 1,
+		Movies:   movies,
 	}))
 }
