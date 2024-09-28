@@ -6,7 +6,6 @@ import (
 	"believer/movies/utils"
 	"believer/movies/views"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -17,8 +16,7 @@ import (
 func HandleFeed(c *fiber.Ctx) error {
 	var movies types.Movies
 
-	pageQuery := c.Query("page", "1")
-	page, err := strconv.Atoi(pageQuery)
+	page := c.QueryInt("page", 1)
 	searchQuery := c.Query("search")
 
 	if searchQuery != "" {
@@ -28,14 +26,10 @@ func HandleFeed(c *fiber.Ctx) error {
 			return err
 		}
 	} else {
-		if err != nil {
-			page = 1
-		}
-
-		err = db.Dot.Select(db.Client, &movies, "feed", (page-1)*20, c.Locals("UserId"))
+		err := db.Dot.Select(db.Client, &movies, "feed", (page-1)*20, c.Locals("UserId"))
 
 		if err != nil {
-			panic(err)
+			return err
 		}
 	}
 
