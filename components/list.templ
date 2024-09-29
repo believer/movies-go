@@ -52,3 +52,15 @@ templ DataList(options []DataListItem, id string) {
 		}
 	</datalist>
 }
+
+templ Ol() {
+	<ol class="flex flex-col gap-2 md:text-sm text-neutral-500 dark:text-neutral-400">
+		{ children... }
+	</ol>
+}
+
+templ Li() {
+	<li class="flex items-end justify-between gap-x-4">
+		{ children... }
+	</li>
+}

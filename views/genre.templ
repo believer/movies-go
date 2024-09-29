@@ -15,14 +15,11 @@ type GenreProps struct {
 
 templ Genre(props GenreProps) {
 	@Layout(LayoutProps{Title: props.Name}) {
-		<div
-			class="mx-auto flex max-w-xl flex-col gap-8 px-5 py-8"
-		>
-			@components.H1(props.Name, false)
+		@StandardBody(props.Name) {
 			if len(props.Movies) > 0 {
-				<ol class="flex flex-col gap-2 md:text-sm text-neutral-500 dark:text-neutral-400">
+				@components.Ol() {
 					for _, movie := range props.Movies {
-						<li class="flex items-end justify-between gap-x-4">
+						@components.Li() {
 							@components.Link(components.LinkProps{Href: movie.LinkTo()}) {
 								{ movie.Title }
 							}
@@ -38,7 +35,7 @@ templ Genre(props GenreProps) {
 									ID:     movie.ID,
 								})
 							</span>
-						</li>
+						}
 					}
 					<li
 						hx-get={ fmt.Sprintf("/genre/%s?page=%d", props.ID, props.NextPage) }
@@ -46,10 +43,10 @@ templ Genre(props GenreProps) {
 						hx-swap="outerHTML"
 						hx-select="li"
 					></li>
-				</ol>
+				}
 			} else {
 				@components.EmptyState("No movies this year")
 			}
-		</div>
+		}
 	}
 }

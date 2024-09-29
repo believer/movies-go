@@ -35,6 +35,19 @@ templ LinkedSectionTitle(title string, href templ.SafeURL) {
 	}
 }
 
+templ LinkedSectionTitleNumbered(title string, href templ.SafeURL, items int) {
+	@h2() {
+		<span class="flex gap-x-1 items-center">
+			@SimpleLink(SimpleLinkProps{Href: href}) {
+				{ title }
+			}
+			<span class="font-regular text-xs dark:text-neutral-400">
+				({ strconv.Itoa(items) })
+			</span>
+		</span>
+	}
+}
+
 templ SectionTitleWithDropdown(title string) {
 	<div class="flex items-center gap-4">
 		<h2 class="font-medium text-neutral-700 dark:text-neutral-300">
@@ -58,11 +71,11 @@ templ Section(title string, numberOfItems int) {
 	</section>
 }
 
-templ LinkedSection(title string, href templ.SafeURL) {
+templ LinkedSection(title string, href templ.SafeURL, items int) {
 	<section
 		class="flex flex-col gap-4 md:text-sm text-neutral-500 dark:text-neutral-400"
 	>
-		@LinkedSectionTitle(title, href)
+		@LinkedSectionTitleNumbered(title, href, items)
 		{ children... }
 	</section>
 }

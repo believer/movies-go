@@ -13,7 +13,7 @@ type SeriesProps struct {
 }
 
 templ list(movies types.Movies) {
-	<ol class="flex flex-col gap-2 md:text-sm text-neutral-500 dark:text-neutral-400">
+	@components.Ol() {
 		for _, movie := range movies {
 			<li
 				class="flex items-end justify-between gap-x-4 before:content-[attr(data-position)] before:text-right before:tabular-nums before:w-[2ch] before:text-neutral-400 dark:before:text-neutral-600"
@@ -38,26 +38,25 @@ templ list(movies types.Movies) {
 				</span>
 			</li>
 		}
-	</ol>
+	}
 }
 
 templ Series(props SeriesProps) {
 	@Layout(LayoutProps{Title: props.Series.Name}) {
-		<section class="mx-auto flex max-w-xl flex-col gap-y-8 px-5 py-8">
-			<header class="space-y-8">
-				@components.H1(props.Series.Name, false)
+		@StandardBody(props.Series.Name) {
+			<section>
 				if props.Series.ParentSeries.Valid {
 					@components.SimpleLink(components.SimpleLinkProps{Href: props.Series.LinkToParent()}) {
 						Go to parent series
 					}
 				}
-			</header>
+			</section>
 			if props.TotalMovies > 0 {
 				for _, series := range props.Movies {
 					if len(props.Movies) == 1 {
 						@list(series.Movies)
 					} else if len(series.Movies) > 0 {
-						@components.LinkedSection(series.Name, series.LinkTo()) {
+						@components.LinkedSection(series.Name, series.LinkTo(), len(series.Movies)) {
 							@list(series.Movies)
 						}
 					} else if series.Name != props.Series.Name {
@@ -67,6 +66,6 @@ templ Series(props SeriesProps) {
 			} else {
 				@components.EmptyState("No movies in series")
 			}
-		</section>
+		}
 	}
 }

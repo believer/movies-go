@@ -7,17 +7,14 @@ import (
 
 templ MoviesByYear(year string, movies types.Movies) {
 	@Layout(LayoutProps{Title: year}) {
-		<div
-			class="mx-auto flex max-w-xl flex-col gap-8 px-5 py-8"
-		>
-			@components.H1(year, false)
+		@StandardBody(year) {
 			<div>
 				{ movies.NumberOfMovies() }
 			</div>
 			if len(movies) > 0 {
-				<ol class="flex flex-col gap-2 md:text-sm text-neutral-500 dark:text-neutral-400">
+				@components.Ol() {
 					for _, movie := range movies {
-						<li class="flex items-end justify-between gap-x-4">
+						@components.Li() {
 							@components.Link(components.LinkProps{Href: movie.LinkTo()}) {
 								{ movie.Title }
 							}
@@ -31,14 +28,14 @@ templ MoviesByYear(year string, movies types.Movies) {
 									ID:     movie.ID,
 								})
 							</span>
-						</li>
+						}
 					}
-				</ol>
+				}
 			} else {
 				<div>
 					No movies this year
 				</div>
 			}
-		</div>
+		}
 	}
 }
