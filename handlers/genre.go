@@ -15,22 +15,22 @@ func HandleGetGenre(c *fiber.Ctx) error {
 
 	page := c.QueryInt("page", 1)
 	userId := c.Locals("UserId").(string)
-	genreId := c.Params("id")
+	id := utils.SelfHealingUrl(c.Params("id"))
 
-	err := db.Dot.Get(db.Client, &genre, "genre-by-id", genreId)
+	err := db.Dot.Get(db.Client, &genre, "genre-by-id", id)
 
 	if err != nil {
 		return err
 	}
 
-	err = db.Dot.Select(db.Client, &movies, "genres-by-id", genreId, userId, (page-1)*50)
+	err = db.Dot.Select(db.Client, &movies, "genres-by-id", id, userId, (page-1)*50)
 
 	if err != nil {
 		return err
 	}
 
 	return utils.TemplRender(c, views.Genre(views.GenreProps{
-		ID:       genreId,
+		ID:       id,
 		Name:     genre.Name,
 		NextPage: page + 1,
 		Movies:   movies,

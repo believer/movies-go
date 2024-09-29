@@ -1,11 +1,18 @@
 package components
 
-import "fmt"
+import (
+	"believer/movies/utils"
+	"fmt"
+)
 
 type CastAndCrewDTO struct {
 	Name      string
 	ID        int32
 	Character string
+}
+
+func (p CastAndCrewDTO) LinkTo() templ.SafeURL {
+	return templ.URL(fmt.Sprintf("/person/%s-%d", utils.Slugify(p.Name), p.ID))
 }
 
 type CastDTO struct {
@@ -25,7 +32,7 @@ templ CastList(castOrCrew []CastDTO, hasCharacters bool) {
 							<li class="col-span-2 flex items-end justify-between gap-4">
 								<a
 									class="border-b border-dashed border-neutral-500 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600 whitespace-nowrap"
-									href={ templ.URL(fmt.Sprintf("/person/%d", person.ID)) }
+									href={ person.LinkTo() }
 								>
 									{ person.Name }
 								</a>
@@ -38,7 +45,7 @@ templ CastList(castOrCrew []CastDTO, hasCharacters bool) {
 							<li>
 								<a
 									class="border-b border-dashed border-neutral-500 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600"
-									href={ templ.URL(fmt.Sprintf("/person/%d", person.ID)) }
+									href={ person.LinkTo() }
 								>
 									{ person.Name }
 								</a>

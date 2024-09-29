@@ -21,7 +21,7 @@ type MovieGenre struct {
 }
 
 func (g MovieGenre) LinkTo() string {
-	return fmt.Sprintf("/genre/%d", g.ID)
+	return fmt.Sprintf("/genre/%s-%d", utils.Slugify(g.Name), g.ID)
 }
 
 type MovieGenres []MovieGenre
@@ -72,7 +72,7 @@ func (m Movie) ISOReleaseDate() string {
 
 // Link to the movie
 func (m Movie) LinkTo() templ.SafeURL {
-	return templ.URL(fmt.Sprintf("/movie/%d", m.ID))
+	return templ.URL(fmt.Sprintf("/movie/%s-%d", utils.Slugify(m.Title), m.ID))
 }
 
 // Link to the movie's release year
@@ -93,8 +93,8 @@ func (m Movie) LinkToWatchlistAdd() templ.SafeURL {
 
 // Link to the movie's series
 func (m Movie) LinkToSeries() templ.SafeURL {
-	if m.SeriesID.Valid {
-		return templ.URL(fmt.Sprintf("/series/%d", m.SeriesID.Int64))
+	if m.SeriesID.Valid && m.Series.Valid {
+		return templ.URL(fmt.Sprintf("/series/%s-%d", utils.Slugify(m.Series.String), m.SeriesID.Int64))
 	}
 
 	return ""

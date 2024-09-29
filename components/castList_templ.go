@@ -8,12 +8,19 @@ package components
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "fmt"
+import (
+	"believer/movies/utils"
+	"fmt"
+)
 
 type CastAndCrewDTO struct {
 	Name      string
 	ID        int32
 	Character string
+}
+
+func (p CastAndCrewDTO) LinkTo() templ.SafeURL {
+	return templ.URL(fmt.Sprintf("/person/%s-%d", utils.Slugify(p.Name), p.ID))
 }
 
 type CastDTO struct {
@@ -69,7 +76,7 @@ func CastList(castOrCrew []CastDTO, hasCharacters bool) templ.Component {
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
-						var templ_7745c5c3_Var3 templ.SafeURL = templ.URL(fmt.Sprintf("/person/%d", person.ID))
+						var templ_7745c5c3_Var3 templ.SafeURL = person.LinkTo()
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var3)))
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
@@ -81,7 +88,7 @@ func CastList(castOrCrew []CastDTO, hasCharacters bool) templ.Component {
 						var templ_7745c5c3_Var4 string
 						templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(person.Name)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/castList.templ`, Line: 30, Col: 22}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/castList.templ`, Line: 37, Col: 22}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 						if templ_7745c5c3_Err != nil {
@@ -104,7 +111,7 @@ func CastList(castOrCrew []CastDTO, hasCharacters bool) templ.Component {
 						var templ_7745c5c3_Var5 string
 						templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(person.Character)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/castList.templ`, Line: 35, Col: 71}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/castList.templ`, Line: 42, Col: 71}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 						if templ_7745c5c3_Err != nil {
@@ -119,7 +126,7 @@ func CastList(castOrCrew []CastDTO, hasCharacters bool) templ.Component {
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
-						var templ_7745c5c3_Var6 templ.SafeURL = templ.URL(fmt.Sprintf("/person/%d", person.ID))
+						var templ_7745c5c3_Var6 templ.SafeURL = person.LinkTo()
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var6)))
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
@@ -131,7 +138,7 @@ func CastList(castOrCrew []CastDTO, hasCharacters bool) templ.Component {
 						var templ_7745c5c3_Var7 string
 						templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(person.Name)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/castList.templ`, Line: 43, Col: 22}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/castList.templ`, Line: 50, Col: 22}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 						if templ_7745c5c3_Err != nil {

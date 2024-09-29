@@ -74,3 +74,31 @@ func FormatRuntime(runtime int) string {
 func TemplRender(c *fiber.Ctx, component templ.Component) error {
 	return adaptor.HTTPHandler(templ.Handler(component))(c)
 }
+
+func Slugify(text string) string {
+	// Convert to lowercase
+	text = strings.ToLower(text)
+
+	// Replace spaces with hyphens
+	text = strings.ReplaceAll(text, " ", "-")
+
+	// Remove special characters
+	re := regexp.MustCompile(`[^a-z0-9\-]`)
+	text = re.ReplaceAllString(text, "")
+
+	// Replace multiple hyphens with a single one
+	re = regexp.MustCompile(`-+`)
+	text = re.ReplaceAllString(text, "-")
+
+	// Trim hyphens from the start and end
+	text = strings.Trim(text, "-")
+
+	return text
+}
+
+func SelfHealingUrl(text string) string {
+	parts := strings.Split(path.Base(text), "-")
+	lastPart := parts[len(parts)-1]
+
+	return lastPart
+}

@@ -13,7 +13,7 @@ import (
 func HandleGetPersonByID(c *fiber.Ctx) error {
 	var person types.Person
 
-	id := c.Params("id")
+	id := utils.SelfHealingUrl(c.Params("id"))
 
 	err := db.Dot.Get(db.Client, &person, "person-by-id", id, c.Locals("UserId"))
 

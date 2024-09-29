@@ -1,6 +1,7 @@
 package types
 
 import (
+	"believer/movies/utils"
 	"database/sql"
 	"fmt"
 
@@ -30,5 +31,5 @@ type SeriesMovies struct {
 
 // Link to series
 func (s SeriesMovies) LinkTo() templ.SafeURL {
-	return templ.URL(fmt.Sprintf("/series/%d", s.ID))
+	return templ.URL(fmt.Sprintf("/series/%s-%d", utils.Slugify(s.Name), s.ID))
 }
