@@ -101,7 +101,7 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int, query string) templ.C
 				return templ_7745c5c3_Err
 			}
 			if isAdmin {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex gap-4 items-center\"><a class=\"fixed bottom-8 right-8 z-10 bg-neutral-700 w-14 h-14 shadow-md flex justify-center items-center rounded-full sm:bg-transparent sm:bottom-0 sm:right-0 sm:w-auto sm:h-auto sm:relative focus:outline-none focus-visible:outline-dashed focus-visible:outline-offset-8 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600\" href=\"/movie/new\">")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex gap-4 items-center\"><a class=\"fixed bottom-8 right-8 z-20 bg-neutral-700 w-14 h-14 shadow-lg flex justify-center items-center rounded-full sm:bg-transparent sm:bottom-0 sm:right-0 sm:w-auto sm:h-auto sm:relative focus:outline-none focus-visible:outline-dashed focus-visible:outline-offset-8 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600\" href=\"/movie/new\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
