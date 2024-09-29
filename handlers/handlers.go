@@ -68,28 +68,19 @@ func HandlePostLogin(c *fiber.Ctx) error {
 	// Get the password hash of the user from the database
 	err := db.Client.Get(&user, "SELECT id, password_hash FROM public.user WHERE username = $1", data.Username)
 
-	// TODO: Display these errors to the user
 	if err != nil {
-		err := c.SendStatus(401)
-
-		if err != nil {
-			return err
-		}
-
-		return c.SendString("Invalid username or password")
+		c.Set("HX-Retarget", "#error")
+		c.Set("HX-Reswap", "innerHTML")
+		return c.Status(fiber.StatusUnauthorized).SendString("Invalid username or password")
 	}
 
 	// Check if the password is correct
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(data.Password))
 
 	if err != nil {
-		err := c.SendStatus(401)
-
-		if err != nil {
-			return err
-		}
-
-		return c.SendString("Invalid username or password")
+		c.Set("HX-Retarget", "#error")
+		c.Set("HX-Reswap", "innerHTML")
+		return c.Status(fiber.StatusUnauthorized).SendString("Invalid username or password")
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
@@ -139,6 +130,14 @@ func HandlePostSignup(c *fiber.Ctx) error {
 	// Parse the form data
 	if err := c.BodyParser(data); err != nil {
 		return err
+	}
+
+	if data.Username == "" {
+		return c.SendString("Missing username")
+	}
+
+	if data.Password == "" {
+		return c.SendString("Missing password")
 	}
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
