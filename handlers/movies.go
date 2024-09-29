@@ -309,7 +309,7 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 		return err
 	}
 
-	imdbId, err := utils.ParseImdbId(data.ImdbID)
+	imdbId, err := utils.ParseId(data.ImdbID)
 
 	if err != nil {
 		c.Set("HX-Retarget", "#error")
@@ -589,7 +589,7 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 func HandleGetByImdbId(c *fiber.Ctx) error {
 	var movie types.Movie
 
-	imdbId, err := utils.ParseImdbId(c.Query("imdb_id"))
+	imdbId, err := utils.ParseId(c.Query("imdb_id"))
 
 	if err != nil {
 		return c.SendString("")

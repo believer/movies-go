@@ -22,7 +22,7 @@ func TestParseImdbId(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		got, err := ParseImdbId(tc.url)
+		got, err := ParseId(tc.url)
 
 		if got != tc.want {
 			t.Errorf("ParseImdbId(%q) = %v; want %v", tc.url, got, tc.want)

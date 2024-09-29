@@ -21,7 +21,7 @@ func IsAuthenticated(c *fiber.Ctx) bool {
 	return c.Cookies("token") != ""
 }
 
-func ParseImdbId(s string) (string, error) {
+func ParseId(s string) (string, error) {
 	if s == "" {
 		return "", fmt.Errorf("Empty ID")
 	}
