@@ -23,6 +23,7 @@ import (
 
 func HandleGetMovieByID(c *fiber.Ctx) error {
 	var movie types.Movie
+	var review types.Review
 
 	backParam := c.QueryBool("back", false)
 
@@ -44,7 +45,20 @@ func HandleGetMovieByID(c *fiber.Ctx) error {
 		}
 	}
 
-	return utils.TemplRender(c, views.Movie(movie, backParam))
+	err = db.Dot.Get(db.Client, &review, "review-by-movie-id", id, userId)
+
+	if err != nil {
+		if err != sql.ErrNoRows {
+			return err
+		}
+	}
+
+	return utils.TemplRender(c, views.Movie(
+		views.MovieProps{
+			Movie:  movie,
+			Review: review,
+			Back:   backParam,
+		}))
 }
 
 type CastDB struct {

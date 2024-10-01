@@ -1,0 +1,11 @@
+package components
+
+import "believer/movies/types"
+
+templ Review(props types.Review) {
+	if props.Content != "" {
+		@Section("Review", 0) {
+			{ props.Content }
+		}
+	}
+}

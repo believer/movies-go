@@ -10,40 +10,47 @@ import (
 // TODO: View transition of elements doesn't work because we can't have a
 // parameterized "style" attribute in the template. At least yet...
 // https://github.com/a-h/templ/issues/88
-templ Movie(movie types.Movie, back bool) {
-	@Layout(LayoutProps{Title: movie.Title, Description: movie.Overview}) {
-		<div class="mx-auto flex max-w-xl flex-col gap-8 px-5 py-8">
-			@components.H1(movie.Title, back)
-			if movie.Overview != "" {
-				<p class="text-neutral-500 dark:text-neutral-400">{ movie.Overview }</p>
+
+type MovieProps struct {
+	Back   bool
+	Movie  types.Movie
+	Review types.Review
+}
+
+templ Movie(props MovieProps) {
+	@Layout(LayoutProps{Title: props.Movie.Title, Description: props.Movie.Overview}) {
+		@StandardBody(props.Movie.Title) {
+			if props.Movie.Overview != "" {
+				<p class="text-neutral-500 dark:text-neutral-400">{ props.Movie.Overview }</p>
 			}
+			@components.Review(props.Review)
 			@components.Section("Metadata", 0) {
 				@components.DescriptionList() {
-					if movie.Tagline != "" {
+					if props.Movie.Tagline != "" {
 						@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Tagline"}) {
-							{ movie.Tagline }
+							{ props.Movie.Tagline }
 						}
 					}
 					@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Release date"}) {
-						@components.SimpleLink(components.SimpleLinkProps{Href: movie.LinkToYear()}) {
-							{ movie.ISOReleaseDate() }
+						@components.SimpleLink(components.SimpleLinkProps{Href: props.Movie.LinkToYear()}) {
+							{ props.Movie.ISOReleaseDate() }
 						}
 					}
-					if movie.Runtime != 0 {
+					if props.Movie.Runtime != 0 {
 						@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Runtime"}) {
-							{ movie.RuntimeFormatted() }
+							{ props.Movie.RuntimeFormatted() }
 						}
 					}
-					if movie.Series.Valid && movie.NumberInSeries.Valid {
+					if props.Movie.Series.Valid && props.Movie.NumberInSeries.Valid {
 						@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Series"}) {
-							@components.SimpleLink(components.SimpleLinkProps{Href: movie.LinkToSeries()}) {
-								{ movie.Series.String } #{ strconv.FormatInt( movie.NumberInSeries.Int64, 10 ) }
+							@components.SimpleLink(components.SimpleLinkProps{Href: props.Movie.LinkToSeries()}) {
+								{ props.Movie.Series.String } #{ strconv.FormatInt( props.Movie.NumberInSeries.Int64, 10 ) }
 							}
 						}
 					}
 					@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "IMDb"}) {
 						<a
-							href={ templ.URL(fmt.Sprintf("https://www.imdb.com/title/%s", movie.ImdbId)) }
+							href={ templ.URL(fmt.Sprintf("https://www.imdb.com/title/%s", props.Movie.ImdbId)) }
 							class="inline-flex items-center gap-1 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
 							target="_blank"
 							rel="noopener noreferrer"
@@ -51,14 +58,14 @@ templ Movie(movie types.Movie, back bool) {
 							<span
 								class="border-b border-dashed border-neutral-500 dark:border-neutral-400"
 							>
-								{ movie.ImdbId }
+								{ props.Movie.ImdbId }
 							</span>
 							@components.IconExternalLink()
 						</a>
 					}
 					@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Genres", IsTabular: false}) {
 						<div class="flex flex-wrap gap-2">
-							for _, genre := range movie.Genres {
+							for _, genre := range props.Movie.Genres {
 								<a
 									class="inline-flex items-center gap-1 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 border-b border-dashed border-neutral-500 dark:border-neutral-400"
 									href={ templ.URL(genre.LinkTo()) }
@@ -68,21 +75,21 @@ templ Movie(movie types.Movie, back bool) {
 							}
 						</div>
 					}
-					if movie.Rating.Valid {
+					if props.Movie.Rating.Valid {
 						@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Rating", IsTabular: false}) {
-							{ strconv.FormatInt(movie.Rating.Int64, 10) }
+							{ strconv.FormatInt(props.Movie.Rating.Int64, 10) }
 						}
 					}
 					@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Watched", IsTabular: false}) {
-						<span hx-get={ fmt.Sprintf("/movie/%d/seen?imdbId=%s", movie.ID, movie.ImdbId) } hx-trigger="load"></span>
+						<span hx-get={ fmt.Sprintf("/movie/%d/seen?imdbId=%s", props.Movie.ID, props.Movie.ImdbId) } hx-trigger="load"></span>
 					}
 				}
 			}
 			<div
-				hx-get={ fmt.Sprintf("/movie/%d/cast", movie.ID) }
+				hx-get={ fmt.Sprintf("/movie/%d/cast", props.Movie.ID) }
 				hx-trigger="load"
 				hx-swap="outerHTML"
 			></div>
-		</div>
+		}
 	}
 }

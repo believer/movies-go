@@ -57,9 +57,16 @@ func InitializeConnection() error {
 		return err
 	}
 
+	movieQueries, err := dotsql.LoadFromFile("./db/movieQueries.sql")
+
+	if err != nil {
+		return err
+	}
+
 	dot := dotsql.Merge(
 		generalQueries,
 		genreQueries,
+		movieQueries,
 		seriesQueries,
 		statsQueries,
 		watchlistQueries,
