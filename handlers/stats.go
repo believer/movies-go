@@ -45,6 +45,11 @@ func executeQuery(queryType string, target interface{}, query string, args ...in
 	}
 }
 
+type QueryTask struct {
+	queryFunc func() error
+	desc      string
+}
+
 // Handler for /stats.
 // Gets most of the necessary data (some is is loaded onload)
 func HandleGetStats(c *fiber.Ctx) error {
@@ -63,10 +68,7 @@ func HandleGetStats(c *fiber.Ctx) error {
 
 	var wg sync.WaitGroup
 
-	queries := []struct {
-		queryFunc func() error
-		desc      string
-	}{
+	queries := []QueryTask{
 		{executeQuery("select", &movies, "stats-most-watched-movies", userId), "stats-most-watched-movies"},
 		{executeQuery("select", &shortestAndLongest, "shortest-and-longest-movie", userId), "shortest-and-longest-movie"},
 		{executeQuery("select", &totals, "total-watched-by-job-and-year", userId, "cast", "All"), "total-watched-by-job-and-year"},
