@@ -723,6 +723,10 @@ video {
   flex-direction: column;
 }
 
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
 .items-end {
   align-items: flex-end;
 }
