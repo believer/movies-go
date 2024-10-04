@@ -1,8 +1,10 @@
 # Movies
 
-I've been keeping track of the movies I watch for 20 years. First, using lists in IMDb and from 2011 using my own database. The site has seen multiple design iterations over the years and is the pet project I've worked most on. This version using [Go](https://go.dev/), [htmx](https://htmx.org/) and a [PostgreSQL](https://www.postgresql.org/) database is the most feature-rich of all versions. It's also the most fun I've had in building any of the versions.
+I've been keeping track of the movies I watch for 20 years. First, using lists in IMDb and from 2011 using my own database. The site has seen multiple design iterations over the years and is the pet project I've worked most on.
 
-This projects is also a testing ground for new technologies and browser features. For example, [CSS scroll-driven animations](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_scroll-driven_animations) and the [Popover API](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API) with [anchoring](https://developer.mozilla.org/en-US/docs/Web/CSS/anchor). Currently, both features are only available in Chrome and Edge.
+This version is built with [Go](https://go.dev/), [htmx](https://htmx.org/), a [PostgreSQL](https://www.postgresql.org/) database, and a tiny amount of [hyperscript](https://hyperscript.org/) for some client side interactivity. It is the most feature-rich of all versions. It's also the most fun I've had in building any of the versions.
+
+I use this project as a testing ground for new technologies and browser features. For example, [CSS scroll-driven animations](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_scroll-driven_animations) and the [Popover API](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API) with [anchoring](https://developer.mozilla.org/en-US/docs/Web/CSS/anchor). Currently, both features are only available in Chrome and Edge.
 
 ## Previous iterations
 
