@@ -96,11 +96,11 @@ SELECT
     se.id AS "series_id",
     ms.number_in_series,
     r.rating,
-    ARRAY_TO_JSON(ARRAY_AGG(json_build_object('name', g.name, 'id', g.id))) AS genres
+    COALESCE(ARRAY_TO_JSON(ARRAY_AGG(json_build_object('name', g.name, 'id', g.id)) FILTER (WHERE g.name IS NOT NULL)), '[]') AS genres
 FROM
     movie AS m
-    INNER JOIN movie_genre AS mg ON mg.movie_id = m.id
-    INNER JOIN genre AS g ON g.id = mg.genre_id
+    LEFT JOIN movie_genre AS mg ON mg.movie_id = m.id
+    LEFT JOIN genre AS g ON g.id = mg.genre_id
     LEFT JOIN rating AS r ON r.movie_id = m.id
         AND r.user_id = $2
     LEFT JOIN movie_series AS ms ON ms.movie_id = m.id
@@ -126,11 +126,11 @@ SELECT
     se.id AS "series_id",
     ms.number_in_series,
     r.rating,
-    ARRAY_TO_JSON(ARRAY_AGG(json_build_object('name', g.name, 'id', g.id))) AS genres
+    COALESCE(ARRAY_TO_JSON(ARRAY_AGG(json_build_object('name', g.name, 'id', g.id)) FILTER (WHERE g.name IS NOT NULL)), '[]') AS genres
 FROM
     movie AS m
-    INNER JOIN movie_genre AS mg ON mg.movie_id = m.id
-    INNER JOIN genre AS g ON g.id = mg.genre_id
+    LEFT JOIN movie_genre AS mg ON mg.movie_id = m.id
+    LEFT JOIN genre AS g ON g.id = mg.genre_id
     LEFT JOIN rating AS r ON r.movie_id = m.id
     LEFT JOIN movie_series AS ms ON ms.movie_id = m.id
     LEFT JOIN series AS se ON se.id = ms.series_id

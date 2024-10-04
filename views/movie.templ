@@ -48,32 +48,36 @@ templ Movie(props MovieProps) {
 							}
 						}
 					}
-					@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "IMDb"}) {
-						<a
-							href={ templ.URL(fmt.Sprintf("https://www.imdb.com/title/%s", props.Movie.ImdbId)) }
-							class="inline-flex items-center gap-1 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-							<span
-								class="border-b border-dashed border-neutral-500 dark:border-neutral-400"
+					if props.Movie.ImdbId != "tt0000000" {
+						@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "IMDb"}) {
+							<a
+								href={ templ.URL(fmt.Sprintf("https://www.imdb.com/title/%s", props.Movie.ImdbId)) }
+								class="inline-flex items-center gap-1 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
+								target="_blank"
+								rel="noopener noreferrer"
 							>
-								{ props.Movie.ImdbId }
-							</span>
-							@components.IconExternalLink()
-						</a>
-					}
-					@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Genres", IsTabular: false}) {
-						<div class="flex flex-wrap gap-2">
-							for _, genre := range props.Movie.Genres {
-								<a
-									class="inline-flex items-center gap-1 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 border-b border-dashed border-neutral-500 dark:border-neutral-400"
-									href={ templ.URL(genre.LinkTo()) }
+								<span
+									class="border-b border-dashed border-neutral-500 dark:border-neutral-400"
 								>
-									{ genre.Name }
-								</a>
-							}
-						</div>
+									{ props.Movie.ImdbId }
+								</span>
+								@components.IconExternalLink()
+							</a>
+						}
+					}
+					if len(props.Movie.Genres) > 0 {
+						@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Genres", IsTabular: false}) {
+							<div class="flex flex-wrap gap-2">
+								for _, genre := range props.Movie.Genres {
+									<a
+										class="inline-flex items-center gap-1 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 border-b border-dashed border-neutral-500 dark:border-neutral-400"
+										href={ templ.URL(genre.LinkTo()) }
+									>
+										{ genre.Name }
+									</a>
+								}
+							</div>
+						}
 					}
 					if props.Movie.Rating.Valid {
 						@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Rating", IsTabular: false}) {
