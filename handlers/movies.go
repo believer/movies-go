@@ -311,12 +311,14 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 	}
 
 	data := new(struct {
-		ImdbID           string `form:"imdb_id"`
-		Rating           int    `form:"rating"`
-		IsWatchlist      bool   `form:"watchlist"`
 		HasWilhelmScream bool   `form:"wilhelm_scream"`
-		Series           string `form:"series"`
+		ImdbID           string `form:"imdb_id"`
+		IsPrivateReview  bool   `form:"review_private"`
+		IsWatchlist      bool   `form:"watchlist"`
 		NumberInSeries   int    `form:"number_in_series"`
+		Rating           int    `form:"rating"`
+		Review           string `form:"review"`
+		Series           string `form:"series"`
 		WatchedAt        string `form:"watched_at"`
 	})
 
@@ -325,6 +327,7 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 	}
 
 	imdbId, err := utils.ParseId(data.ImdbID)
+	userId := c.Locals("UserId").(string)
 
 	if err != nil {
 		c.Set("HX-Retarget", "#error")
@@ -352,7 +355,19 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 	tx := db.Client.MustBegin()
 
 	// Insert movie information
-	err = tx.Get(&movieId, `INSERT INTO movie (title, runtime, release_date, imdb_id, overview, poster, tagline, wilhelm) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) ON CONFLICT (imdb_id) DO UPDATE SET title = $1 RETURNING id`, movie.Title, movie.Runtime, movie.ReleaseDate, movie.ImdbId, movie.Overview, movie.Poster, movie.Tagline, data.HasWilhelmScream)
+	err = db.Dot.Get(
+		db.Client,
+		&movieId,
+		"insert-movie",
+		movie.Title,
+		movie.Runtime,
+		movie.ReleaseDate,
+		movie.ImdbId,
+		movie.Overview,
+		movie.Poster,
+		movie.Tagline,
+		data.HasWilhelmScream,
+	)
 
 	if err != nil {
 		return err
@@ -360,7 +375,10 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 
 	log.Println("Movie inserted")
 
-	userId := c.Locals("UserId").(string)
+	// Add review if any
+	if data.Review != "" {
+		db.Dot.MustExec(db.Client, "insert-review", data.Review, data.IsPrivateReview, userId, movieId)
+	}
 
 	// Insert series
 	if data.Series != "" && data.NumberInSeries != 0 {

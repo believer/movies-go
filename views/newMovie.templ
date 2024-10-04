@@ -29,19 +29,18 @@ templ NewMovie(props NewMovieProps) {
 				</div>
 			}
 			if props.ImdbID == "" {
-				<div class="relative flex flex-col gap-2">
+				<div class="flex flex-col gap-2">
 					@components.Label("search", "Search")
 					<input
 						type="text"
 						hx-get="/movie/search"
 						hx-trigger="keyup changed delay:500ms"
 						hx-target="#search-results"
-						hx-indicator="none"
 						hx-validate="true"
 						minlength="3"
 						name="search"
 						id="search"
-						class="w-full rounded border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500 peer"
+						class="w-full rounded border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500"
 					/>
 					<div
 						id="search-results"
@@ -49,7 +48,7 @@ templ NewMovie(props NewMovieProps) {
 					></div>
 				</div>
 			}
-			<div class="relative flex flex-col gap-2 group">
+			<div class="flex flex-col gap-2">
 				if props.ImdbID != "" {
 					@components.Label("imdb_id", "IMDb ID")
 				} else {
@@ -61,11 +60,10 @@ templ NewMovie(props NewMovieProps) {
 					hx-get="/movie/imdb"
 					hx-trigger="blur changed"
 					hx-target="#movie-exists"
-					hx-indicator="none"
 					hx-validate="true"
 					name="imdb_id"
 					id="imdb_id"
-					class="w-full rounded border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500 peer"
+					class="w-full rounded border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500"
 					if props.ImdbID != "" {
 						value={ props.ImdbID }
 						readonly
@@ -84,18 +82,26 @@ templ NewMovie(props NewMovieProps) {
 					@components.Label("watchlist", "Add to watchlist")
 				</div>
 			}
+			<div class="flex flex-col gap-2 group">
+				@components.Label("review", "Review")
+				<textarea name="review" id="review" class="w-full h-40 rounded border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500 block" _="on keyup if me.value is not empty add @required='' to #review_private otherwise remove @required from #review_private"></textarea>
+				<div class="flex gap-x-2 items-center">
+					<input type="checkbox" name="review_private" id="review_private" class="rounded accent-neutral-700 border border-neutral-700 bg-neutral-800 focus:outline-dashed focus:outline-offset-2 focus:outline-neutral-500"/>
+					@components.Label("review_private", "Review is private")
+				</div>
+			</div>
 			<details>
 				<summary class="cursor-pointer">Additional fields</summary>
 				<div class="mt-4 flex flex-col gap-y-6">
 					@components.DateTimeInput("watched_at", "Watched at", "Defaults to current time if left empty.")
-					<div class="relative flex flex-col gap-2 group">
+					<div class="flex flex-col gap-2">
 						@components.Label("series", "Series")
 						<input
 							type="text"
 							name="series"
 							id="series"
 							list="series_list"
-							class="w-full rounded border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500 peer"
+							class="w-full rounded border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500"
 							_="on keyup if my.value is not empty add @required='' to #number_in_series otherwise remove @required from #number_in_series"
 						/>
 						<div hx-get="/movie/new/series" hx-swap="outerHTML" hx-trigger="load"></div>

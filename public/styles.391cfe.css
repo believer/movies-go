@@ -616,6 +616,10 @@ video {
   -webkit-line-clamp: 3;
 }
 
+.block {
+  display: block;
+}
+
 .flex {
   display: flex;
 }
@@ -643,6 +647,10 @@ video {
 
 .h-4 {
   height: 1rem;
+}
+
+.h-40 {
+  height: 10rem;
 }
 
 .h-6 {

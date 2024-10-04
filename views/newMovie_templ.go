@@ -102,7 +102,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 				}
 			}
 			if props.ImdbID == "" {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"relative flex flex-col gap-2\">")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex flex-col gap-2\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -110,12 +110,12 @@ func NewMovie(props NewMovieProps) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<input type=\"text\" hx-get=\"/movie/search\" hx-trigger=\"keyup changed delay:500ms\" hx-target=\"#search-results\" hx-indicator=\"none\" hx-validate=\"true\" minlength=\"3\" name=\"search\" id=\"search\" class=\"w-full rounded border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500 peer\"><div id=\"search-results\" class=\"text-xs empty:hidden lg:absolute lg:-right-52 lg:top-6 lg:w-48 lg:rounded lg:p-2 lg:outline-dashed lg:outline-offset-4 lg:outline-neutral-500\"></div></div>")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<input type=\"text\" hx-get=\"/movie/search\" hx-trigger=\"keyup changed delay:500ms\" hx-target=\"#search-results\" hx-validate=\"true\" minlength=\"3\" name=\"search\" id=\"search\" class=\"w-full rounded border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500\"><div id=\"search-results\" class=\"text-xs empty:hidden lg:absolute lg:-right-52 lg:top-6 lg:w-48 lg:rounded lg:p-2 lg:outline-dashed lg:outline-offset-4 lg:outline-neutral-500\"></div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"relative flex flex-col gap-2 group\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex flex-col gap-2\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -130,7 +130,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<input required type=\"text\" hx-get=\"/movie/imdb\" hx-trigger=\"blur changed\" hx-target=\"#movie-exists\" hx-indicator=\"none\" hx-validate=\"true\" name=\"imdb_id\" id=\"imdb_id\" class=\"w-full rounded border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500 peer\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<input required type=\"text\" hx-get=\"/movie/imdb\" hx-trigger=\"blur changed\" hx-target=\"#movie-exists\" hx-validate=\"true\" name=\"imdb_id\" id=\"imdb_id\" class=\"w-full rounded border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -142,7 +142,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(props.ImdbID)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/newMovie.templ`, Line: 70, Col: 26}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/newMovie.templ`, Line: 68, Col: 26}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -183,7 +183,23 @@ func NewMovie(props NewMovieProps) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<details><summary class=\"cursor-pointer\">Additional fields</summary><div class=\"mt-4 flex flex-col gap-y-6\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex flex-col gap-2 group\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.Label("review", "Review").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<textarea name=\"review\" id=\"review\" class=\"w-full h-40 rounded border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500 block\" _=\"on keyup if me.value is not empty add @required=&#39;&#39; to #review_private otherwise remove @required from #review_private\"></textarea><div class=\"flex gap-x-2 items-center\"><input type=\"checkbox\" name=\"review_private\" id=\"review_private\" class=\"rounded accent-neutral-700 border border-neutral-700 bg-neutral-800 focus:outline-dashed focus:outline-offset-2 focus:outline-neutral-500\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.Label("review_private", "Review is private").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div><details><summary class=\"cursor-pointer\">Additional fields</summary><div class=\"mt-4 flex flex-col gap-y-6\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -191,7 +207,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"relative flex flex-col gap-2 group\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex flex-col gap-2\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -199,7 +215,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<input type=\"text\" name=\"series\" id=\"series\" list=\"series_list\" class=\"w-full rounded border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500 peer\" _=\"on keyup if my.value is not empty add @required=&#39;&#39; to #number_in_series otherwise remove @required from #number_in_series\"><div hx-get=\"/movie/new/series\" hx-swap=\"outerHTML\" hx-trigger=\"load\"></div></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<input type=\"text\" name=\"series\" id=\"series\" list=\"series_list\" class=\"w-full rounded border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500\" _=\"on keyup if my.value is not empty add @required=&#39;&#39; to #number_in_series otherwise remove @required from #number_in_series\"><div hx-get=\"/movie/new/series\" hx-swap=\"outerHTML\" hx-trigger=\"load\"></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
