@@ -7,8 +7,7 @@ FROM
     review
 WHERE
     movie_id = $1
-    AND user_id = $2
-    AND private IS FALSE;
+    AND user_id = $2;
 
 -- name: insert-movie
 INSERT INTO movie (title, runtime, release_date, imdb_id, overview, poster, tagline, wilhelm)

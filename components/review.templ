@@ -3,9 +3,15 @@ package components
 import "believer/movies/types"
 
 templ Review(props types.Review) {
-	if props.Content != "" {
+	if (props.Private == false && props.Content != "") {
 		@Section("Review", 0) {
 			{ props.Content }
+		}
+	} else if (props.Private == true && props.Content != "") {
+		if ctx.Value("IsAuthenticated").(bool) {
+			@Section("Review", 0) {
+				{ props.Content }
+			}
 		}
 	}
 }
