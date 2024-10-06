@@ -1,8 +1,10 @@
 package types
 
 type SearchResult struct {
-	Title string `json:"title"`
-	Id    int    `json:"id"`
+	Overview    string `json:"overview"`
+	Title       string `json:"title"`
+	ReleaseDate string `json:"release_date"`
+	Id          int    `json:"id"`
 }
 
 // https://api.themoviedb.org/3/search/movie

@@ -29,7 +29,7 @@ templ NewMovie(props NewMovieProps) {
 				</div>
 			}
 			if props.ImdbID == "" {
-				<div class="flex flex-col gap-2">
+				<div class="flex flex-col gap-2 relative">
 					@components.Label("search", "Search")
 					<input
 						type="text"
@@ -44,7 +44,7 @@ templ NewMovie(props NewMovieProps) {
 					/>
 					<div
 						id="search-results"
-						class="text-xs empty:hidden lg:absolute lg:-right-52 lg:top-6 lg:w-48 lg:rounded lg:p-2 lg:outline-dashed lg:outline-offset-4 lg:outline-neutral-500"
+						class="text-xs empty:hidden rounded p-2 outline-dashed outline-neutral-400 dark:outline-neutral-500"
 					></div>
 				</div>
 			}

@@ -7,7 +7,7 @@ import (
 
 templ MovieSearch(movies []types.SearchResult) {
 	if len(movies) > 0 {
-		<ul class="space-y-1 list-disc ml-5">
+		<ul class="flex flex-col gap-y-2">
 			for i, movie := range movies {
 				if i <= 4 {
 					<li>
@@ -15,9 +15,23 @@ templ MovieSearch(movies []types.SearchResult) {
 							_="on click set the (value of #imdb_id) to @data-id then remove closest <ul/> then set the (value of #search) to ''"
 							data-id={ strconv.Itoa(movie.Id) }
 							href="#"
-							class="focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 border-b border-dashed border-neutral-500 dark:border-neutral-400"
+							class="flex flex-col gap-y-2 focus:outline-none p-2 rounded transition-colors hover:bg-neutral-200 dark:hover:bg-neutral-800 focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
 						>
-							{ movie.Title }
+							<div>
+								<span
+									class="border-b border-dashed border-neutral-500 dark:border-neutral-400"
+								>
+									{ movie.Title }
+									if movie.ReleaseDate != "" {
+										<span>
+											({ movie.ReleaseDate[0:4] })
+										</span>
+									}
+								</span>
+							</div>
+							if movie.Overview != "" {
+								<p class="line-clamp-3">{ movie.Overview }</p>
+							}
 						</a>
 					</li>
 				}
