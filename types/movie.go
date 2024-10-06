@@ -70,6 +70,11 @@ func (m Movie) ISOReleaseDate() string {
 	return m.ReleaseDate.Format("2006-01-02")
 }
 
+// Release year
+func (m Movie) ReleaseYear() string {
+	return m.ReleaseDate.Format("2006")
+}
+
 // Link to the movie
 func (m Movie) LinkTo() templ.SafeURL {
 	return templ.URL(fmt.Sprintf("/movie/%s-%d", utils.Slugify(m.Title), m.ID))

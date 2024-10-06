@@ -1462,6 +1462,10 @@ video {
     position: absolute;
   }
 
+  .md\:gap-2 {
+    gap: 0.5rem;
+  }
+
   .md\:pt-0 {
     padding-top: 0px;
   }
