@@ -83,7 +83,8 @@ WHERE
 GROUP BY
     p.id
 ORDER BY
-    count DESC
+    count DESC,
+    name ASC
 LIMIT 10;
 
 -- name: total-watched-by-job-and-year
