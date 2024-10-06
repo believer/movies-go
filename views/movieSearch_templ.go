@@ -35,7 +35,7 @@ func MovieSearch(movies []types.SearchResult) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		if len(movies) > 0 {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<ul class=\"flex flex-col gap-y-2\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<ul class=\"flex flex-col gap-y-1\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

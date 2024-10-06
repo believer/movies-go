@@ -7,7 +7,7 @@ import (
 
 templ MovieSearch(movies []types.SearchResult) {
 	if len(movies) > 0 {
-		<ul class="flex flex-col gap-y-2">
+		<ul class="flex flex-col gap-y-1">
 			for i, movie := range movies {
 				if i <= 4 {
 					<li>

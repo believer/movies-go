@@ -795,6 +795,10 @@ video {
        column-gap: 1.5rem;
 }
 
+.gap-y-1 {
+  row-gap: 0.25rem;
+}
+
 .gap-y-2 {
   row-gap: 0.5rem;
 }
