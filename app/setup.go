@@ -85,9 +85,9 @@ func SetupAndRunApp() error {
 	})
 
 	// Serve static files
+	app.Static("/robots.txt", "./public/robots.txt")
 	app.Static("/public", "./public", fiber.Static{
-		MaxAge:   86400, // 1 day
-		Compress: true,
+		MaxAge: 86_400, // 1 day
 	})
 
 	// Setup routes
