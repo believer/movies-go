@@ -5,3 +5,4 @@ backup.sh
 tmp
 *.gz
 main
+*.test
