@@ -436,12 +436,18 @@ func HandleGetGenreStats(c *fiber.Ctx) error {
 	var genres []components.ListItem
 
 	userId := c.Locals("UserId").(string)
+	year := c.Query("year", "All")
+	years := append([]string{"All"}, availableYears()...)
 
-	err := db.Dot.Select(db.Client, &genres, "stats-genres", userId)
+	err := db.Dot.Select(db.Client, &genres, "stats-genres", userId, year)
 
 	if err != nil {
 		return err
 	}
 
-	return utils.TemplRender(c, components.MostWatchedGenres(genres))
+	return utils.TemplRender(c, components.MostWatchedGenres(components.MostWatchedGenresProps{
+		Data:  genres,
+		Year:  year,
+		Years: years,
+	}))
 }

@@ -30,10 +30,19 @@ templ MostWatchedPerson(props MostWatchedPersonProps) {
 	}
 }
 
-templ MostWatchedGenres(data []ListItem) {
-	@Section("Most watched genre", 0) {
-		if len(data) > 0 {
-			@OrderedList(data, "genre")
+type MostWatchedGenresProps struct {
+	Data  []ListItem
+	Year  string
+	Years []string
+}
+
+templ MostWatchedGenres(props MostWatchedGenresProps) {
+	@Section("", 0) {
+		@SectionTitleWithDropdown("Genre") {
+			@Dropdown(DropdownProps{Route: "/stats/genres", Options: props.Years, Value: props.Year})
+		}
+		if len(props.Data) > 0 {
+			@OrderedList(props.Data, "genre")
 		} else {
 			@EmptyState("No movies seen")
 		}
