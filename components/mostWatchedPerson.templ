@@ -1,9 +1,49 @@
 package components
 
 import (
+	"believer/movies/types"
 	"fmt"
 	"strconv"
 )
+
+type HighestRatingProps struct {
+	Data  []types.HighestRated
+	Job   string
+	Jobs  []string
+	Title string
+}
+
+templ HighestRating(props HighestRatingProps) {
+	@Section("", 0) {
+		@SectionTitleWithDropdown(props.Title) {
+			@Dropdown(DropdownProps{Route: "/stats/highest-ranked-person", Name: "job", Options: props.Jobs, Value: props.Job})
+		}
+		if len(props.Data) > 0 {
+			<ol class="flex flex-col gap-2">
+				for i, item := range props.Data {
+					<li
+						class="flex items-end justify-between gap-4 before:content-[attr(data-position)] before:text-right before:tabular-nums before:w-[2ch] before:text-neutral-400 dark:before:text-neutral-600"
+						data-position={ strconv.Itoa(i + 1) }
+					>
+						@Link(LinkProps{Href: item.LinkTo()}) {
+							{ item.Name }
+						}
+						@Divider()
+						<span class="tabular-nums text-sm text-neutral-500 dark:text-neutral-400 relative top-1">
+							<span class="text-xs text-neutral-400 dark:text-neutral-600">({ strconv.Itoa(item.Appearances) } movies)</span>
+							{ item.Rank() }
+						</span>
+					</li>
+				}
+			</ol>
+			<div class="text-xs text-right text-neutral-500 dark:text-neutral-400">
+				Only rated movies included
+			</div>
+		} else {
+			@EmptyState("No movies seen")
+		}
+	}
+}
 
 type MostWatchedPersonProps struct {
 	Data  []ListItem
@@ -17,7 +57,7 @@ type MostWatchedPersonProps struct {
 templ MostWatchedPerson(props MostWatchedPersonProps) {
 	@Section("", 0) {
 		@SectionTitleWithDropdown(props.Title) {
-			@Dropdown(DropdownProps{Route: fmt.Sprintf("/stats/most-watched-person/%s", props.Job), Options: props.Years, Value: props.Year})
+			@Dropdown(DropdownProps{Route: fmt.Sprintf("/stats/most-watched-person/%s", props.Job), Name: "year", Options: props.Years, Value: props.Year})
 		}
 		if len(props.Data) > 0 {
 			@OrderedList(props.Data, "person")
@@ -39,7 +79,7 @@ type MostWatchedGenresProps struct {
 templ MostWatchedGenres(props MostWatchedGenresProps) {
 	@Section("", 0) {
 		@SectionTitleWithDropdown("Genre") {
-			@Dropdown(DropdownProps{Route: "/stats/genres", Options: props.Years, Value: props.Year})
+			@Dropdown(DropdownProps{Route: "/stats/genres", Name: "year", Options: props.Years, Value: props.Year})
 		}
 		if len(props.Data) > 0 {
 			@OrderedList(props.Data, "genre")

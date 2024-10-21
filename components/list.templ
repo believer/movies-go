@@ -1,14 +1,27 @@
 package components
 
 import (
+	"believer/movies/utils"
 	"fmt"
 	"strconv"
 )
 
 type ListItem struct {
 	Name  string `db:"name"`
-	ID    string `db:"id"`
+	ID    int    `db:"id"`
 	Count int    `db:"count"`
+}
+
+func (l ListItem) LinkToMovie() templ.SafeURL {
+	return templ.URL(fmt.Sprintf("/movie/%s-%d", utils.Slugify(l.Name), l.ID))
+}
+
+func (l ListItem) LinkToGenre() templ.SafeURL {
+	return templ.URL(fmt.Sprintf("/genre/%s-%d", utils.Slugify(l.Name), l.ID))
+}
+
+func (l ListItem) LinkToPerson() templ.SafeURL {
+	return templ.URL(fmt.Sprintf("/person/%s-%d", utils.Slugify(l.Name), l.ID))
 }
 
 templ OrderedList(data []ListItem, listType string) {
@@ -19,15 +32,15 @@ templ OrderedList(data []ListItem, listType string) {
 				data-position={ strconv.Itoa(i + 1) }
 			>
 				if listType == "movie" {
-					@Link(LinkProps{Href: templ.URL(fmt.Sprintf("/movie/%s", item.ID))}) {
+					@Link(LinkProps{Href: item.LinkToMovie()}) {
 						{ item.Name }
 					}
 				} else if listType == "person" {
-					@Link(LinkProps{Href: templ.URL(fmt.Sprintf("/person/%s", item.ID))}) {
+					@Link(LinkProps{Href: item.LinkToPerson()}) {
 						{ item.Name }
 					}
 				} else if listType == "genre" {
-					@Link(LinkProps{Href: templ.URL(fmt.Sprintf("/genre/%s", item.ID))}) {
+					@Link(LinkProps{Href: item.LinkToGenre()}) {
 						{ item.Name }
 					}
 				}

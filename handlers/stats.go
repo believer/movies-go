@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -235,6 +236,30 @@ func HandleGetMostWatchedByJob(c *fiber.Ctx) error {
 			Total: totalJob,
 			Year:  year,
 			Years: years,
+		}))
+}
+
+func HandleGetHighestRankedPersonByJob(c *fiber.Ctx) error {
+	var persons []types.HighestRated
+
+	job := c.Query("job", "cast")
+	userId := c.Locals("UserId")
+	title := "Highest ranked " + job
+
+	err := db.Dot.Select(db.Client, &persons, "stats-highest-ranked-persons-by-job", userId, strings.ToLower(job))
+
+	if err != nil {
+		return err
+	}
+
+	jobs := []string{"Cast", "Composer", "Director", "Producer", "Writer"}
+
+	return utils.TemplRender(c, components.HighestRating(
+		components.HighestRatingProps{
+			Data:  persons,
+			Job:   job,
+			Jobs:  jobs,
+			Title: title,
 		}))
 }
 

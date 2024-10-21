@@ -218,3 +218,32 @@ ORDER BY
     count DESC
 LIMIT 10;
 
+-- name: stats-highest-ranked-persons-by-job
+WITH person_ratings AS (
+    SELECT
+        p.name,
+        p.id,
+        COUNT(*) AS appearances,
+        SUM(r.rating) AS total_rating
+    FROM
+        rating AS r
+        INNER JOIN movie_person AS mp ON mp.movie_id = r.movie_id
+            AND mp.job = $2
+        INNER JOIN person AS p ON mp.person_id = p.id
+    WHERE
+        r.user_id = $1
+    GROUP BY
+        p.id
+)
+SELECT
+    id,
+    name,
+    total_rating,
+    (total_rating::float / appearances) * LOG(appearances) AS weighted_average_rating,
+    appearances
+FROM
+    person_ratings
+ORDER BY
+    weighted_average_rating DESC
+LIMIT 10;
+

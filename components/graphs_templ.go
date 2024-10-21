@@ -163,6 +163,7 @@ func GraphWithYear(props GraphWithYearProps) templ.Component {
 				}
 				ctx = templ.InitializeContext(ctx)
 				templ_7745c5c3_Err = Dropdown(DropdownProps{
+					Name:    "year",
 					Route:   props.Route,
 					Options: props.Years,
 					Value:   props.SelectedYear,

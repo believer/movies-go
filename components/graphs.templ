@@ -31,6 +31,7 @@ templ GraphWithYear(props GraphWithYearProps) {
 	@section() {
 		@SectionTitleWithDropdown(props.Title) {
 			@Dropdown(DropdownProps{
+				Name:    "year",
 				Route:   props.Route,
 				Options: props.Years,
 				Value:   props.SelectedYear,

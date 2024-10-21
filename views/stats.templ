@@ -179,6 +179,11 @@ templ Stats(props StatsProps) {
 					@statsSection("composer")
 					@statsSection("producer")
 					<section
+						hx-get="/stats/highest-ranked-person"
+						hx-trigger="load"
+						hx-swap="outerHTML"
+					></section>
+					<section
 						hx-get="/stats/genres"
 						hx-trigger="load"
 						hx-swap="outerHTML"

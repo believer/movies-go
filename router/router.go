@@ -63,6 +63,7 @@ func SetupRoutes(app *fiber.App) {
 	statsGroup.Get("/genres", handlers.HandleGetGenreStats)
 	statsGroup.Get("/ratings", handlers.HandleGetRatingsByYear)
 	statsGroup.Get("/by-month", handlers.HandleGetThisYearByMonth)
+	statsGroup.Get("/highest-ranked-person", handlers.HandleGetHighestRankedPersonByJob)
 	statsGroup.Get("/most-watched-person/:job", handlers.HandleGetMostWatchedByJob)
 
 	// Series

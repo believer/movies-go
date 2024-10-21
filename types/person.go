@@ -1,6 +1,7 @@
 package types
 
 import (
+	"believer/movies/utils"
 	"encoding/json"
 	"fmt"
 	"time"
@@ -61,7 +62,7 @@ type Person struct {
 
 // Link to the person
 func (p Person) LinkTo() templ.SafeURL {
-	return templ.URL(fmt.Sprintf("/person/%d", p.ID))
+	return templ.URL(fmt.Sprintf("/person/%s-%d", utils.Slugify(p.Name), p.ID))
 }
 
 type Persons []Person
