@@ -125,9 +125,9 @@ func HandleGetStats(c *fiber.Ctx) error {
 
 	// Process all graph data in parallel
 	errChan = make(chan error, 5)
-	var ratingsBars, yearBars, watchedByYearBar, seenThisYearByMonthBars, moviesByYearBars []types.Bar
+	var ratingsBars, yearBars, watchedByYearBar, seenThisYearByMonthBars []types.Bar
 
-	wg.Add(5)
+	wg.Add(4)
 
 	go func() {
 		defer wg.Done()
@@ -165,15 +165,6 @@ func HandleGetStats(c *fiber.Ctx) error {
 		}
 	}()
 
-	go func() {
-		defer wg.Done()
-		var err error
-		moviesByYearBars, err = constructGraphFromData(moviesByYear)
-		if err != nil {
-			errChan <- err
-		}
-	}()
-
 	// Close the error channel once all goroutines are done
 	go func() {
 		wg.Wait()
@@ -194,7 +185,7 @@ func HandleGetStats(c *fiber.Ctx) error {
 			FormattedTotalRuntime:   utils.FormatRuntime(stats.TotalRuntime),
 			MostWatchedCast:         cast,
 			MostWatchedMovies:       movies,
-			MoviesByYear:            moviesByYearBars,
+			MoviesByYear:            moviesByYear,
 			Ratings:                 ratingsBars,
 			SeenThisYear:            seenThisYearByMonthBars,
 			Stats:                   stats,

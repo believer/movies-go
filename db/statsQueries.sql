@@ -157,11 +157,13 @@ LIMIT 1;
 SELECT
     EXTRACT(YEAR FROM release_date) AS label,
     COUNT(*) AS value
-FROM
-    rating AS r
-    INNER JOIN movie AS m ON m.id = r.movie_id
-WHERE
-    r.user_id = $1
+FROM ( SELECT DISTINCT
+        movie_id
+    FROM
+        seen
+    WHERE
+        user_id = $1) AS s
+    INNER JOIN movie AS m ON m.id = s.movie_id
 GROUP BY
     label
 ORDER BY
