@@ -165,7 +165,7 @@ func HighestRating(props HighestRatingProps) templ.Component {
 						return templ_7745c5c3_Err
 					}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ol><div class=\"text-xs text-right text-neutral-500 dark:text-neutral-400\">Only rated movies included</div>")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ol><div class=\"text-xs text-right text-neutral-500 dark:text-neutral-400\">Only rated movies included. Score is log-adjusted average rating.</div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
