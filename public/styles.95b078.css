@@ -1152,7 +1152,7 @@ video {
   font-size: 1.875rem;
   line-height: 2.25rem;
   color: transparent;
-  -webkit-text-stroke-color: rgba(0,0,0,0.1);
+  -webkit-text-stroke-color: rgba(163 163 163/1);
 }
 
 @media (min-width: 1024px) {
@@ -1170,7 +1170,7 @@ video {
   .year {
     --tw-bg-opacity: 1;
     background-color: rgb(23 23 23 / var(--tw-bg-opacity));
-    -webkit-text-stroke-color: rgba(255,255,255,0.1);
+    -webkit-text-stroke-color: rgba(82 82 82/1);
   }
 }
 
@@ -1188,7 +1188,7 @@ video {
   font-size: 1.125rem;
   line-height: 1.75rem;
   --tw-text-opacity: 1;
-  color: rgb(229 229 229 / var(--tw-text-opacity));
+  color: rgb(163 163 163 / var(--tw-text-opacity));
 }
 
 @media (min-width: 1024px) {
