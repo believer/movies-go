@@ -1068,6 +1068,10 @@ video {
   outline-style: dashed;
 }
 
+.outline-1 {
+  outline-width: 1px;
+}
+
 .outline-neutral-400 {
   outline-color: #a3a3a3;
 }
@@ -1119,6 +1123,11 @@ video {
   transition-duration: 1000ms;
 }
 
+.\[text-align-last\:center\] {
+  -moz-text-align-last: center;
+       text-align-last: center;
+}
+
 .htmx-indicator {
   opacity: 0;
   transition: opacity 500ms ease-in;
@@ -1165,6 +1174,13 @@ video {
   -webkit-text-stroke-color: rgba(163 163 163/1);
 }
 
+.year:focus-visible {
+  border-radius: 0.125rem;
+  outline-style: dashed;
+  outline-width: 1px;
+  outline-color: #a3a3a3;
+}
+
 @media (min-width: 1024px) {
   .year {
     position: absolute;
@@ -1182,6 +1198,10 @@ video {
     background-color: rgb(23 23 23 / var(--tw-bg-opacity));
     -webkit-text-stroke-color: rgba(82 82 82/1);
   }
+
+  .year:focus-visible {
+    outline-color: #525252;
+  }
 }
 
 .year {
@@ -1193,8 +1213,8 @@ video {
   z-index: 10;
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
   font-size: 1.125rem;
   line-height: 1.75rem;
   --tw-text-opacity: 1;
@@ -1222,7 +1242,13 @@ video {
 }
 
 .month-indicator + li {
-  margin-top: -1.5rem;
+  margin-top: -0.75rem;
+}
+
+@media (min-width: 1024px) {
+  .month-indicator + li {
+    margin-top: -1.5rem;
+  }
 }
 
 .year-indicator + .month-indicator {
@@ -1375,6 +1401,10 @@ video {
   outline-style: dashed;
 }
 
+.focus\:outline-1:focus {
+  outline-width: 1px;
+}
+
 .focus\:outline-offset-2:focus {
   outline-offset: 2px;
 }
@@ -1404,6 +1434,10 @@ video {
 
 .focus-visible\:outline-dashed:focus-visible {
   outline-style: dashed;
+}
+
+.focus-visible\:outline-1:focus-visible {
+  outline-width: 1px;
 }
 
 .focus-visible\:outline-offset-2:focus-visible {

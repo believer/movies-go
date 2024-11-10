@@ -138,7 +138,7 @@ templ Stats(props StatsProps) {
                   templ.KV("text-yellow-800 dark:text-yellow-200", props.BestYear == year.Label ) }
 									>
 										<a
-											class="text-sm tabular-nums inline-flex items-center gap-1 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 border-b border-dashed border-neutral-500 dark:border-neutral-400"
+											class="text-sm tabular-nums inline-flex items-center gap-1 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 border-b border-dashed border-neutral-500 dark:border-neutral-400"
 											href={ templ.URL(fmt.Sprintf("/year/%s", year.Label)) }
 										>
 											{ year.Label }

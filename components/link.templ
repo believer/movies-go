@@ -10,8 +10,10 @@ type LinkProps struct {
 
 templ Link(props LinkProps) {
 	<a
-		aria-label={ props.AriaLabel }
-		class={ "truncate border-b border-dashed border-neutral-500 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600", templ.KV("flex-1 basis-3/5", props.Long) }
+		if props.AriaLabel != "" {
+			aria-label={ props.AriaLabel }
+		}
+		class={ "truncate border-b border-dashed border-neutral-500 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600", templ.KV("flex-1 basis-3/5", props.Long) }
 		if props.ToRoot {
 			href="/"
 		} else {
@@ -31,7 +33,7 @@ type SimpleLinkProps struct {
 
 templ SimpleLink(props SimpleLinkProps) {
 	<a
-		class="tabular-nums inline-flex items-center gap-1 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 border-b border-dashed border-neutral-500 dark:border-neutral-400"
+		class="tabular-nums inline-flex items-center gap-1 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 border-b border-dashed border-neutral-500 dark:border-neutral-400"
 		href={ props.Href }
 	>
 		{ children... }

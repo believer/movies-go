@@ -24,17 +24,17 @@
 }
 
 .year {
-  @apply block text-3xl lg:text-7xl font-mono text-transparent lg:absolute lg:top-3 -left-52 [-webkit-text-stroke-color:_rgba(163_163_163/1)] dark:[-webkit-text-stroke-color:_rgba(82_82_82/1)] z-20 bg-white dark:bg-neutral-900 py-2 lg:py-4;
+  @apply block text-3xl lg:text-7xl font-mono text-transparent lg:absolute lg:top-3 -left-52 [-webkit-text-stroke-color:_rgba(163_163_163/1)] dark:[-webkit-text-stroke-color:_rgba(82_82_82/1)] z-20 bg-white dark:bg-neutral-900 py-2 lg:py-4 focus-visible:outline-1 focus-visible:outline-dashed focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 focus-visible:rounded-sm;
 
   -webkit-text-stroke-width: 2px;
 }
 
 .month {
-  @apply text-lg lg:text-xl lg:absolute lg:-top-2 -left-52 z-10 bg-white dark:bg-neutral-900 py-2 lg:w-40 lg:text-right text-neutral-400 dark:text-neutral-700;
+  @apply text-lg lg:text-xl lg:absolute lg:-top-2 -left-52 z-10 bg-white dark:bg-neutral-900 py-1 lg:w-40 lg:text-right text-neutral-400 dark:text-neutral-700;
 }
 
 .month-indicator + li {
-  @apply -mt-6;
+  @apply -mt-3 lg:-mt-6;
 }
 
 .year-indicator + .month-indicator {

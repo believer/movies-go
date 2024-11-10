@@ -11,7 +11,7 @@ css anchorPosition(name string) {
 }
 
 templ Popover(anchorName string, content templ.Component, toggle templ.Component) {
-	<button popovertarget={ anchorName } class={ anchor(anchorName),"focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 rounded-full" }>
+	<button popovertarget={ anchorName } class={ anchor(anchorName),"focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 rounded-full" }>
 		@toggle
 	</button>
 	<div id={ anchorName } popover class={ "text-xs shadow-md text-neutral-700 bg-neutral-200 dark:text-neutral-300 dark:bg-neutral-800 p-2 rounded", anchorPosition(anchorName) }>
