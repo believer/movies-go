@@ -71,9 +71,23 @@ templ Movie(props MovieProps) {
 								for _, genre := range props.Movie.Genres {
 									<a
 										class="inline-flex items-center gap-1 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 border-b border-dashed border-neutral-500 dark:border-neutral-400"
-										href={ templ.URL(genre.LinkTo()) }
+										href={ templ.URL(genre.LinkTo("genre")) }
 									>
 										{ genre.Name }
+									</a>
+								}
+							</div>
+						}
+					}
+					if len(props.Movie.Languages) > 0 {
+						@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Languages", IsTabular: false}) {
+							<div class="flex flex-wrap gap-2">
+								for _, language := range props.Movie.Languages {
+									<a
+										class="inline-flex items-center gap-1 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 border-b border-dashed border-neutral-500 dark:border-neutral-400"
+										href={ templ.URL(language.LinkTo("language")) }
+									>
+										{ language.Name }
 									</a>
 								}
 							</div>

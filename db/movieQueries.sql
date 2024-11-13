@@ -1,3 +1,36 @@
+-- name: movie-by-id
+SELECT
+    m.id,
+    m.title,
+    m.release_date,
+    m.runtime,
+    m.imdb_id,
+    m.overview,
+    m.tagline,
+    se.name AS "series",
+    se.id AS "series_id",
+    ms.number_in_series,
+    r.rating,
+    COALESCE(ARRAY_TO_JSON(ARRAY_AGG(DISTINCT jsonb_build_object('name', g.name, 'id', g.id)) FILTER (WHERE g.name IS NOT NULL)), '[]') AS genres,
+    COALESCE(ARRAY_TO_JSON(ARRAY_AGG(DISTINCT jsonb_build_object('name', l.english_name, 'id', l.id)) FILTER (WHERE l.english_name IS NOT NULL)), '[]') AS languages
+FROM
+    movie AS m
+    LEFT JOIN movie_genre AS mg ON mg.movie_id = m.id
+    LEFT JOIN genre AS g ON g.id = mg.genre_id
+    LEFT JOIN rating AS r ON r.movie_id = m.id
+        AND r.user_id = $2
+    LEFT JOIN movie_series AS ms ON ms.movie_id = m.id
+    LEFT JOIN series AS se ON se.id = ms.series_id
+    LEFT JOIN movie_language AS ml ON ml.movie_id = m.id
+    LEFT JOIN "language" AS l ON l.id = ml.language_id
+WHERE
+    m.id = $1
+GROUP BY
+    1,
+    r.rating,
+    se.id,
+    ms.number_in_series;
+
 -- name: review-by-movie-id
 SELECT
     id,

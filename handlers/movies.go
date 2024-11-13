@@ -33,16 +33,12 @@ func HandleGetMovieByID(c *fiber.Ctx) error {
 	err := db.Dot.Get(db.Client, &movie, "movie-by-id", id, userId)
 
 	if err != nil {
-		err := db.Dot.Get(db.Client, &movie, "movie-by-name", c.Params("id"))
-
-		if err != nil {
-			// TODO: Handle this better
-			if err == sql.ErrNoRows {
-				return c.Status(404).SendString("Movie not found")
-			}
-
-			return err
+		// TODO: Handle this better
+		if err == sql.ErrNoRows {
+			return c.Status(404).SendString("Movie not found")
 		}
+
+		return err
 	}
 
 	err = db.Dot.Get(db.Client, &review, "review-by-movie-id", id, userId)
@@ -422,19 +418,56 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 		tx.MustExec(`INSERT INTO rating (user_id, movie_id, rating) VALUES ($1, $2, $3)`, userId, movieId, data.Rating)
 	}
 
+	// Insert languages
+	type Language struct {
+		ISO639      string `db:"iso_639_1"`
+		EnglishName string `db:"english_name"`
+		Name        string `db:"name"`
+		MovieId     int    `db:"movie_id"`
+	}
+
+	languages := make([]Language, len(movie.SpokenLanguages))
+
+	for i, l := range movie.SpokenLanguages {
+		languages[i] = Language{
+			ISO639:      l.ISO639,
+			Name:        l.Name,
+			EnglishName: l.EnglishName,
+			MovieId:     movieId,
+		}
+	}
+
+	if len(languages) > 0 {
+		if _, err := tx.NamedExec(
+			`INSERT INTO language (name, english_name, iso_639_1) 
+     VALUES (:name, :english_name, :iso_639_1) 
+     ON CONFLICT DO NOTHING`, languages,
+		); err != nil {
+			return err
+		}
+
+		if _, err := tx.NamedExec(
+			`INSERT INTO movie_language (movie_id, language_id) 
+     VALUES (:movie_id, (SELECT id FROM language WHERE name = :name)) 
+     ON CONFLICT DO NOTHING`, languages,
+		); err != nil {
+			return err
+		}
+	}
+
+	// Insert genres
 	type Genre struct {
 		Name    string `db:"name"`
 		MovieId int    `db:"movie_id"`
 	}
 
-	var genres []Genre
+	genres := make([]Genre, len(movie.Genres))
 
-	// Insert genres
-	for _, genre := range movie.Genres {
-		genres = append(genres, Genre{
+	for i, genre := range movie.Genres {
+		genres[i] = Genre{
 			Name:    genre.Name,
 			MovieId: movieId,
-		})
+		}
 	}
 
 	if len(genres) > 0 {

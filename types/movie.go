@@ -15,32 +15,57 @@ type CastAndCrew struct {
 	Job  string `db:"job"`
 }
 
-type MovieGenre struct {
+type Entity struct {
 	Name string `db:"name" json:"name"`
 	ID   int    `db:"id" json:"id"`
 }
 
-func (g MovieGenre) LinkTo() string {
-	return fmt.Sprintf("/genre/%s-%d", utils.Slugify(g.Name), g.ID)
+func (e Entity) LinkTo(prefix string) string {
+	return fmt.Sprintf("/%s/%s-%d", prefix, utils.Slugify(e.Name), e.ID)
+}
+
+// MovieGenre and MovieLanguage now embed Entity
+type MovieGenre struct {
+	Entity
+}
+
+type MovieLanguage struct {
+	Entity
+}
+
+// MovieGenres and MovieLanguages share a common Scan implementation
+type Scannable interface {
+	Scan(v interface{}) error
+}
+
+func ScanEntity(v interface{}, dest interface{}) error {
+	switch vv := v.(type) {
+	case []byte:
+		return json.Unmarshal(vv, dest)
+	case string:
+		return json.Unmarshal([]byte(vv), dest)
+	default:
+		return fmt.Errorf("unsupported type: %T", v)
+	}
 }
 
 type MovieGenres []MovieGenre
 
 func (u *MovieGenres) Scan(v interface{}) error {
-	switch vv := v.(type) {
-	case []byte:
-		return json.Unmarshal(vv, u)
-	case string:
-		return json.Unmarshal([]byte(vv), u)
-	default:
-		return fmt.Errorf("unsupported type: %T", v)
-	}
+	return ScanEntity(v, u)
+}
+
+type MovieLanguages []MovieLanguage
+
+func (u *MovieLanguages) Scan(v interface{}) error {
+	return ScanEntity(v, u)
 }
 
 type Movie struct {
 	Cast           []CastAndCrew   `db:"cast"`
 	CreatedAt      time.Time       `db:"created_at"`
 	Genres         MovieGenres     `db:"genres"`
+	Languages      MovieLanguages  `db:"languages"`
 	ID             int             `db:"id" json:"id"`
 	ImdbId         string          `db:"imdb_id"`
 	ImdbRating     sql.NullFloat64 `db:"imdb_rating"`

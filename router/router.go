@@ -55,6 +55,13 @@ func SetupRoutes(app *fiber.App) {
 	genreGroup.Get("/", redirectToHome)
 	genreGroup.Get("/:id", handlers.HandleGetGenre)
 
+	// Language
+	// --------------------------
+	languageGroup := app.Group("/language")
+
+	languageGroup.Get("/", redirectToHome)
+	languageGroup.Get("/:id", handlers.HandleGetLanguage)
+
 	// Stats
 	// --------------------------
 	statsGroup := app.Group("/stats")

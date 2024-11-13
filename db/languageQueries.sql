@@ -1,4 +1,4 @@
--- name: movies-by-genre-id
+-- name: movies-by-language-id
 SELECT DISTINCT
     (m.id),
     m.title,
@@ -6,8 +6,8 @@ SELECT DISTINCT
     m.imdb_id,
     (s.id IS NOT NULL) AS "seen"
 FROM
-    movie_genre mg
-    INNER JOIN movie m ON m.id = mg.movie_id
+    movie_language ml
+    INNER JOIN movie m ON m.id = ml.movie_id
     LEFT JOIN ( SELECT DISTINCT ON (movie_id)
             movie_id,
             id
@@ -19,24 +19,17 @@ FROM
             movie_id,
             id) AS s ON m.id = s.movie_id
 WHERE
-    mg.genre_id = $1
+    ml.language_id = $1
 ORDER BY
     m.release_date DESC OFFSET $3
 LIMIT 50;
 
--- name: genre-by-id
+-- name: language-by-id
 SELECT
-    name
+    id,
+    english_name AS "name"
 FROM
-    genre
-WHERE
-    id = $1;
-
--- name: movies-in-genre
-SELECT
-    count(*)
-FROM
-    movie_genre
+    "language"
 WHERE
     id = $1;
 
