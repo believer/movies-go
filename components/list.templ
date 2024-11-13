@@ -24,6 +24,10 @@ func (l ListItem) LinkToPerson() templ.SafeURL {
 	return templ.URL(fmt.Sprintf("/person/%s-%d", utils.Slugify(l.Name), l.ID))
 }
 
+func (l ListItem) LinkToLanguage() templ.SafeURL {
+	return templ.URL(fmt.Sprintf("/language/%s-%d", utils.Slugify(l.Name), l.ID))
+}
+
 templ OrderedList(data []ListItem, listType string) {
 	<ol class="flex flex-col gap-2">
 		for i, item := range data {
@@ -41,6 +45,10 @@ templ OrderedList(data []ListItem, listType string) {
 					}
 				} else if listType == "genre" {
 					@Link(LinkProps{Href: item.LinkToGenre()}) {
+						{ item.Name }
+					}
+				} else if listType == "language" {
+					@Link(LinkProps{Href: item.LinkToLanguage()}) {
 						{ item.Name }
 					}
 				}

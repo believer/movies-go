@@ -27,7 +27,7 @@ LIMIT 50;
 -- name: language-by-id
 SELECT
     id,
-    english_name AS "name"
+    english_name AS name
 FROM
     "language"
 WHERE

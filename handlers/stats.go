@@ -467,3 +467,23 @@ func HandleGetGenreStats(c *fiber.Ctx) error {
 		Years: years,
 	}))
 }
+
+func HandleGetLanguageStats(c *fiber.Ctx) error {
+	var languages []components.ListItem
+
+	userId := c.Locals("UserId").(string)
+	year := c.Query("year", "All")
+	years := append([]string{"All"}, availableYears()...)
+
+	err := db.Dot.Select(db.Client, &languages, "stats-languages", userId, year)
+
+	if err != nil {
+		return err
+	}
+
+	return utils.TemplRender(c, components.MostWatchedLanguages(components.MostWatchedLanguagesProps{
+		Data:  languages,
+		Year:  year,
+		Years: years,
+	}))
+}

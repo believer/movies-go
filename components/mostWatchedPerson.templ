@@ -88,3 +88,22 @@ templ MostWatchedGenres(props MostWatchedGenresProps) {
 		}
 	}
 }
+
+type MostWatchedLanguagesProps struct {
+	Data  []ListItem
+	Year  string
+	Years []string
+}
+
+templ MostWatchedLanguages(props MostWatchedLanguagesProps) {
+	@Section("", 0) {
+		@SectionTitleWithDropdown("Language") {
+			@Dropdown(DropdownProps{Route: "/stats/languages", Name: "year", Options: props.Years, Value: props.Year})
+		}
+		if len(props.Data) > 0 {
+			@OrderedList(props.Data, "language")
+		} else {
+			@EmptyState("No movies seen")
+		}
+	}
+}
