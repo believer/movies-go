@@ -54,7 +54,7 @@ func MovieSearch(movies []types.SearchResult) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" href=\"#\" class=\"flex flex-col gap-y-2 focus:outline-none p-2 rounded transition-colors hover:bg-neutral-200 dark:hover:bg-neutral-800 focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600\"><div><span class=\"border-b border-dashed border-neutral-500 dark:border-neutral-400\">")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" href=\"#\" class=\"flex flex-col gap-y-2 focus:outline-hidden p-2 rounded-sm transition-colors hover:bg-neutral-200 dark:hover:bg-neutral-800 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600\"><div><span class=\"border-b border-dashed border-neutral-500 dark:border-neutral-400\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

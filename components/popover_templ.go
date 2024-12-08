@@ -94,7 +94,7 @@ func Popover(anchorName string, content templ.Component, toggle templ.Component)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var5 = []any{"text-xs shadow-md text-neutral-700 bg-neutral-200 dark:text-neutral-300 dark:bg-neutral-800 p-2 rounded", anchorPosition(anchorName)}
+		var templ_7745c5c3_Var5 = []any{"text-xs shadow-md text-neutral-700 bg-neutral-200 dark:text-neutral-300 dark:bg-neutral-800 p-2 rounded-sm", anchorPosition(anchorName)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var5...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

@@ -31,7 +31,7 @@ func h2() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h2 class=\"flex items-center gap-4 font-medium text-neutral-700 after:h-[0.5px] after:flex-grow after:bg-neutral-300 dark:text-neutral-300 dark:after:bg-neutral-700\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h2 class=\"flex items-center gap-4 font-medium text-neutral-700 after:h-[0.5px] after:grow after:bg-neutral-300 dark:text-neutral-300 dark:after:bg-neutral-700\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

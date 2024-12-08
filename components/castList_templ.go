@@ -72,7 +72,7 @@ func CastList(castOrCrew []CastDTO, hasCharacters bool) templ.Component {
 				}
 				for _, person := range job.People {
 					if hasCharacters {
-						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li class=\"col-span-2 flex items-end justify-between gap-4\"><a class=\"border-b border-dashed border-neutral-500 focus-visible:outline-1 focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600 whitespace-nowrap\" href=\"")
+						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li class=\"col-span-2 flex items-end justify-between gap-4\"><a class=\"border-b border-dashed border-neutral-500 focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600 whitespace-nowrap\" href=\"")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
@@ -122,7 +122,7 @@ func CastList(castOrCrew []CastDTO, hasCharacters bool) templ.Component {
 							return templ_7745c5c3_Err
 						}
 					} else {
-						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li><a class=\"border-b border-dashed border-neutral-500 focus-visible:rounded-sm focus-visible:outline-1 focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600\" href=\"")
+						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li><a class=\"border-b border-dashed border-neutral-500 focus-visible:rounded-xs focus-visible:outline-1 focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600\" href=\"")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}

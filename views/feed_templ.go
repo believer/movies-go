@@ -101,7 +101,7 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int, query string) templ.C
 				return templ_7745c5c3_Err
 			}
 			if isAdmin {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex gap-4 items-center\"><a class=\"fixed bottom-8 right-8 z-20 bg-neutral-700 w-14 h-14 shadow-lg flex justify-center items-center rounded-full sm:bg-transparent sm:bottom-0 sm:right-0 sm:w-auto sm:h-auto sm:relative focus:outline-none focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-offset-8 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600\" href=\"/movie/new\">")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex gap-4 items-center\"><a class=\"fixed bottom-8 right-8 z-20 bg-neutral-700 w-14 h-14 shadow-lg flex justify-center items-center rounded-full sm:bg-transparent sm:bottom-0 sm:right-0 sm:w-auto sm:h-auto sm:relative focus:outline-hidden focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-offset-8 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600\" href=\"/movie/new\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -109,7 +109,7 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int, query string) templ.C
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a> <a class=\"truncate border-b border-dashed border-neutral-500 focus:outline-none focus-visible:rounded-sm focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600\" href=\"/logout\" hx-post=\"/logout\">Logout</a></div>")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a> <a class=\"truncate border-b border-dashed border-neutral-500 focus:outline-hidden focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600\" href=\"/logout\" hx-post=\"/logout\">Logout</a></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -145,7 +145,7 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int, query string) templ.C
 					return templ_7745c5c3_Err
 				}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</nav><div class=\"mx-auto flex max-w-xl flex-col gap-12 px-5 pt-5 md:pt-0\"><input aria-label=\"Find a movie\" class=\"w-full rounded-full border border-neutral-300 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:placeholder:text-neutral-600 dark:focus:ring-neutral-500\" type=\"search\" name=\"search\" placeholder=\"Find a movie\" hx-get=\"/\" hx-select=\"li[data-movie]\" hx-trigger=\"keyup changed delay:500ms, search\" hx-push-url=\"true\" hx-target=\"ol\" minlength=\"3\" hx-validate=\"true\" value=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</nav><div class=\"mx-auto flex max-w-xl flex-col gap-12 px-5 pt-5 md:pt-0\"><input aria-label=\"Find a movie\" class=\"w-full rounded-full border border-neutral-300 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white placeholder:text-neutral-400 focus:outline-hidden focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:placeholder:text-neutral-600 dark:focus:ring-neutral-500\" type=\"search\" name=\"search\" placeholder=\"Find a movie\" hx-get=\"/\" hx-select=\"li[data-movie]\" hx-trigger=\"keyup changed delay:500ms, search\" hx-push-url=\"true\" hx-target=\"ol\" minlength=\"3\" hx-validate=\"true\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -216,7 +216,7 @@ func Feed(isAdmin bool, movies types.Movies, nextPage int, query string) templ.C
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"flex flex-col gap-4 rounded focus:outline-none focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-offset-8 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600\"><header class=\"flex flex-col gap-1\"><h2 class=\"truncate text-base font-medium text-neutral-700 dark:text-neutral-300\">")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"flex flex-col gap-4 rounded-sm focus:outline-hidden focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-offset-8 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600\"><header class=\"flex flex-col gap-1\"><h2 class=\"truncate text-base font-medium text-neutral-700 dark:text-neutral-300\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

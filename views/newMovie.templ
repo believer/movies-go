@@ -40,11 +40,11 @@ templ NewMovie(props NewMovieProps) {
 						minlength="3"
 						name="search"
 						id="search"
-						class="w-full rounded border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500"
+						class="w-full rounded-sm border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-hidden focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500"
 					/>
 					<div
 						id="search-results"
-						class="text-xs empty:hidden rounded p-2 outline-dashed outline-1 outline-neutral-400 dark:outline-neutral-500"
+						class="text-xs empty:hidden rounded-sm p-2 outline-dashed outline-1 outline-neutral-400 dark:outline-neutral-500"
 					></div>
 				</div>
 			}
@@ -58,12 +58,12 @@ templ NewMovie(props NewMovieProps) {
 					required
 					type="text"
 					hx-get="/movie/imdb"
-					hx-trigger="blur changed"
+					hx-trigger="blur-sm changed"
 					hx-target="#movie-exists"
 					hx-validate="true"
 					name="imdb_id"
 					id="imdb_id"
-					class="w-full rounded border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500"
+					class="w-full rounded-sm border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-hidden focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500"
 					if props.ImdbID != "" {
 						value={ props.ImdbID }
 						readonly
@@ -71,22 +71,22 @@ templ NewMovie(props NewMovieProps) {
 				/>
 				<div
 					id="movie-exists"
-					class="text-xs empty:hidden lg:absolute lg:-right-52 lg:top-6 lg:w-48 lg:rounded lg:p-2 lg:outline-dashed lg:outline-offset-4 lg:outline-neutral-500"
+					class="text-xs empty:hidden lg:absolute lg:-right-52 lg:top-6 lg:w-48 lg:rounded-sm lg:p-2 lg:outline-dashed lg:outline-offset-4 lg:outline-neutral-500"
 				></div>
 				@components.Help("For example, https://www.imdb.com/title/tt0111161/, or just tt0111161.")
 			</div>
 			@components.NumberInput("rating", "Rating", "A value between 0 and 10", 0, 10, true)
 			if !props.InWatchlist {
 				<div class="flex gap-x-2 items-center">
-					<input type="checkbox" name="watchlist" id="watchlist" class="rounded accent-neutral-700 border border-neutral-700 bg-neutral-800 focus:outline-dashed focus:outline-offset-2 focus:outline-neutral-500" _="on click if me.checked remove @required from #rating otherwise add @required='' to #rating"/>
+					<input type="checkbox" name="watchlist" id="watchlist" class="rounded-sm accent-neutral-700 border border-neutral-700 bg-neutral-800 focus:outline-dashed focus:outline-offset-2 focus:outline-neutral-500" _="on click if me.checked remove @required from #rating otherwise add @required='' to #rating"/>
 					@components.Label("watchlist", "Add to watchlist")
 				</div>
 			}
 			<div class="flex flex-col gap-2 group">
 				@components.Label("review", "Review")
-				<textarea name="review" id="review" class="w-full h-40 rounded border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500 block"></textarea>
+				<textarea name="review" id="review" class="w-full h-40 rounded-sm border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-hidden focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500 block"></textarea>
 				<div class="flex gap-x-2 items-center">
-					<input type="checkbox" name="review_private" id="review_private" class="rounded accent-neutral-700 border border-neutral-700 bg-neutral-800 focus:outline-dashed focus:outline-offset-2 focus:outline-neutral-500"/>
+					<input type="checkbox" name="review_private" id="review_private" class="rounded-sm accent-neutral-700 border border-neutral-700 bg-neutral-800 focus:outline-dashed focus:outline-offset-2 focus:outline-neutral-500"/>
 					@components.Label("review_private", "Review is private")
 				</div>
 			</div>
@@ -101,22 +101,22 @@ templ NewMovie(props NewMovieProps) {
 							name="series"
 							id="series"
 							list="series_list"
-							class="w-full rounded border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500"
+							class="w-full rounded-sm border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-hidden focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500"
 							_="on keyup if my.value is not empty add @required='' to #number_in_series otherwise remove @required from #number_in_series"
 						/>
 						<div hx-get="/movie/new/series" hx-swap="outerHTML" hx-trigger="load"></div>
 					</div>
 					@components.NumberInput("number_in_series", "Number in series", "", 0, 1000, false)
 					<div class="flex gap-x-2 items-center">
-						<input type="checkbox" name="wilhelm_scream" id="wilhelm_scream" class="rounded accent-neutral-700 border border-neutral-700 bg-neutral-800 focus:outline-dashed focus:outline-offset-2 focus:outline-neutral-500"/>
+						<input type="checkbox" name="wilhelm_scream" id="wilhelm_scream" class="rounded-sm accent-neutral-700 border border-neutral-700 bg-neutral-800 focus:outline-dashed focus:outline-offset-2 focus:outline-neutral-500"/>
 						@components.Label("wilhelm_scream", "Wilhelm scream")
 					</div>
 				</div>
 			</details>
 			<footer class="flex flex-col gap-y-4">
-				<div id="error" class="empty:hidden text-rose-700 dark:text-rose-400 border border-dashed border-rose-700 dark:border-rose-400 p-4 rounded"></div>
+				<div id="error" class="empty:hidden text-rose-700 dark:text-rose-400 border border-dashed border-rose-700 dark:border-rose-400 p-4 rounded-sm"></div>
 				<button
-					class="rounded bg-neutral-200 px-6 py-2 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200"
+					class="rounded-sm bg-neutral-200 px-6 py-2 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200"
 					type="submit"
 				>
 					Add

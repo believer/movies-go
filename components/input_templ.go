@@ -10,7 +10,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import "strconv"
 
-var inputClass = "w-full rounded border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500 appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+var inputClass = "w-full rounded-sm border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-hidden focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500 appearance-none [&::-webkit-inner-spin-button]:appearance-none"
 
 func Label(name string, label string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -46,7 +46,7 @@ func Label(name string, label string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"text-sm font-semibold text-neutral-500 dark:text-neutral-400 group-has-[:required]:after:content-[&#39;*&#39;] after:text-neutral-400 dark:after:text-neutral-500\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"text-sm font-semibold text-neutral-500 dark:text-neutral-400 group-has-required:after:content-[&#39;*&#39;] after:text-neutral-400 dark:after:text-neutral-500\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

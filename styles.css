@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 .htmx-indicator {
   opacity: 0;
@@ -24,7 +22,7 @@
 }
 
 .year {
-  @apply block text-3xl lg:text-7xl font-mono text-transparent lg:absolute lg:top-3 -left-52 [-webkit-text-stroke-color:_rgba(163_163_163/1)] dark:[-webkit-text-stroke-color:_rgba(82_82_82/1)] z-20 bg-white dark:bg-neutral-900 py-2 lg:py-4 focus-visible:outline-1 focus-visible:outline-dashed focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 focus-visible:rounded-sm;
+  @apply block text-3xl lg:text-7xl font-mono text-transparent lg:absolute lg:top-3 -left-52 [-webkit-text-stroke-color:_rgba(163_163_163/1)] dark:[-webkit-text-stroke-color:_rgba(82_82_82/1)] z-20 bg-white dark:bg-neutral-900 py-2 lg:py-4 focus-visible:outline-1 focus-visible:outline-dashed focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 focus-visible:rounded-xs;
 
   -webkit-text-stroke-width: 2px;
 }

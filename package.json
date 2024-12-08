@@ -8,8 +8,9 @@
   },
   "main": "tailwind.config.js",
   "devDependencies": {
+    "@tailwindcss/cli": "4.0.0-beta.6",
     "caniuse-lite": "1.0.30001658",
-    "tailwindcss": "3.4.1"
+    "tailwindcss": "4.0.0-beta.6"
   },
   "bugs": {
     "url": "https://github.com/believer/movies-go/issues"
@@ -19,6 +20,6 @@
   "keywords": [],
   "license": "ISC",
   "scripts": {
-    "css": "tailwindcss -i ./styles.css -o ./public/styles.css --watch --minify"
+    "css": "npx @tailwindcss/cli -i ./styles.css -o ./public/styles.css --watch --minify"
   }
 }

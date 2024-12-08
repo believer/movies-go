@@ -29,7 +29,7 @@ func EmptyState(text string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"rounded border border-dashed border-neutral-300 px-5 py-8 text-center text-neutral-500 dark:border-neutral-700 dark:text-neutral-400\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"rounded-sm border border-dashed border-neutral-300 px-5 py-8 text-center text-neutral-500 dark:border-neutral-700 dark:text-neutral-400\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
