@@ -9,26 +9,28 @@ import (
 templ Credit(title string, data types.PersonMovies, id string) {
 	if len(data) > 0 {
 		@components.Section(title, len(data)) {
-			<ol class="flex flex-col gap-1 md:gap-2">
+			<ol class="flex flex-col gap-y-2 md:gap-y-3">
 				for _, movie := range data {
-					<li class="flex items-end justify-between gap-x-4">
-						@components.Link(components.LinkProps{Href: movie.LinkTo(), Long: len(movie.Title) > 60}) {
-							{ movie.Title }
-						}
-						@components.Divider()
-						if movie.Character != "" {
-							<div class="text-sm truncate relative top-1">{ movie.Character }</div>
-						}
-						<span class="flex items-center gap-x-2 whitespace-nowrap">
-							@components.SimpleLink(components.SimpleLinkProps{Href: movie.LinkToYear()}) {
-								{ movie.ReleaseYear() }
+					<li>
+						<div class="flex items-end justify-between gap-x-4">
+							@components.Link(components.LinkProps{Href: movie.LinkTo(), Long: len(movie.Title) > 60}) {
+								{ movie.Title }
 							}
-							@Seen(SeenProps{
-								Title: title,
-								Seen:  movie.Seen,
-								ID:    movie.ID,
-							})
-						</span>
+							@components.Divider()
+							<span class="flex items-center gap-x-2 whitespace-nowrap">
+								@components.SimpleLink(components.SimpleLinkProps{Href: movie.LinkToYear()}) {
+									{ movie.ReleaseYear() }
+								}
+								@Seen(SeenProps{
+									Title: title,
+									Seen:  movie.Seen,
+									ID:    movie.ID,
+								})
+							</span>
+						</div>
+						if movie.Character != "" {
+							<div class="text-xs truncate relative top-1 text-neutral-500 dark:text-neutral-400">{ movie.Character }</div>
+						}
 					</li>
 				}
 			</ol>

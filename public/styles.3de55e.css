@@ -1486,8 +1486,8 @@ video {
     position: absolute;
   }
 
-  .md\:gap-2 {
-    gap: 0.5rem;
+  .md\:gap-y-3 {
+    row-gap: 0.75rem;
   }
 
   .md\:pt-0 {
