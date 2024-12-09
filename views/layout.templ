@@ -1,6 +1,6 @@
 package views
 
-import "believer/movies/components"
+import c "believer/movies/components"
 
 type LayoutProps struct {
 	Title       string
@@ -65,7 +65,7 @@ templ Layout(props LayoutProps) {
 
 templ StandardBody(title string) {
 	<section class="mx-auto flex max-w-xl flex-col gap-y-8 px-5 py-8">
-		@components.H1(title, false)
+		@c.H1(title, false)
 		{ children... }
 	</section>
 }

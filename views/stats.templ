@@ -1,7 +1,7 @@
 package views
 
 import (
-	"believer/movies/components"
+	c "believer/movies/components"
 	"believer/movies/types"
 	"believer/movies/utils"
 	"fmt"
@@ -20,8 +20,8 @@ type StatsProps struct {
 	BestOfTheYear           types.Movie
 	BestYear                string
 	FormattedTotalRuntime   string
-	MostWatchedCast         []components.ListItem
-	MostWatchedMovies       []components.ListItem
+	MostWatchedCast         []c.ListItem
+	MostWatchedMovies       []c.ListItem
 	MoviesByYear            []types.GraphData
 	Ratings                 []types.Bar
 	SeenThisYear            []types.Bar
@@ -40,35 +40,35 @@ templ Stats(props StatsProps) {
 		<div class="mx-auto flex max-w-xl lg:max-w-5xl flex-col gap-y-8 px-5 pb-8 pt-8 lg:pt-12">
 			<nav>
 				<div class="left-5 top-5 md:absolute">
-					@components.Link(components.LinkProps{Href: "/"}) {
+					@c.Link(c.LinkProps{Href: "/"}) {
 						Home
 					}
 				</div>
 			</nav>
 			<div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
 				<div class="flex flex-col gap-y-8">
-					@components.Section("Stats", 0) {
-						@components.DescriptionList() {
-							@components.DescriptionListItem(components.DescriptionListItemProps{
+					@c.Section("Stats", 0) {
+						@c.DescriptionList() {
+							@c.DescriptionListItem(c.DescriptionListItemProps{
 								Detail:    "Unique movies seen",
 								IsTabular: true,
 							}) {
 								{ strconv.Itoa(props.Stats.UniqueMovies) }
 							}
-							@components.DescriptionListItem(components.DescriptionListItemProps{
+							@c.DescriptionListItem(c.DescriptionListItemProps{
 								Detail:    "Movies seen with rewatches",
 								IsTabular: true,
 							}) {
 								{ strconv.Itoa(props.Stats.SeenWithRewatches) }
 							}
-							@components.DescriptionListItem(components.DescriptionListItemProps{
+							@c.DescriptionListItem(c.DescriptionListItemProps{
 								Detail:    "Time watched",
 								IsTabular: true,
 							}) {
 								{ props.FormattedTotalRuntime }
 							}
 							if props.WilhelmScreams > 0 {
-								@components.DescriptionListItem(components.DescriptionListItemProps{
+								@c.DescriptionListItem(c.DescriptionListItemProps{
 									Detail:    "Wilhelm screams",
 									IsTabular: true,
 								}) {
@@ -76,10 +76,10 @@ templ Stats(props StatsProps) {
 								}
 							}
 							if props.BestOfTheYear.ID != 0 {
-								@components.DescriptionListItem(components.DescriptionListItemProps{
+								@c.DescriptionListItem(c.DescriptionListItemProps{
 									Detail: "Best of the year",
 								}) {
-									@components.Link(components.LinkProps{Href: templ.URL(fmt.Sprintf("/movie/%d", props.BestOfTheYear.ID))}) {
+									@c.Link(c.LinkProps{Href: templ.URL(fmt.Sprintf("/movie/%d", props.BestOfTheYear.ID))}) {
 										{ props.BestOfTheYear.Title }
 									}
 									if props.BestOfTheYear.Rating.Valid {
@@ -90,20 +90,20 @@ templ Stats(props StatsProps) {
 								}
 							}
 							if len(props.ShortestAndLongestMovie) == 2 {
-								@components.DescriptionListItem(components.DescriptionListItemProps{
+								@c.DescriptionListItem(c.DescriptionListItemProps{
 									Detail: "Shortest movie",
 								}) {
-									@components.Link(components.LinkProps{Href: templ.URL(fmt.Sprintf("/movie/%d", props.ShortestAndLongestMovie[0].ID))}) {
+									@c.Link(c.LinkProps{Href: templ.URL(fmt.Sprintf("/movie/%d", props.ShortestAndLongestMovie[0].ID))}) {
 										{ props.ShortestAndLongestMovie[0].Title }
 									}
 									<span class="text-xs">
 										({ utils.FormatRuntime(props.ShortestAndLongestMovie[0].Runtime) })
 									</span>
 								}
-								@components.DescriptionListItem(components.DescriptionListItemProps{
+								@c.DescriptionListItem(c.DescriptionListItemProps{
 									Detail: "Longest movie",
 								}) {
-									@components.Link(components.LinkProps{Href: templ.URL(fmt.Sprintf("/movie/%d", props.ShortestAndLongestMovie[1].ID))}) {
+									@c.Link(c.LinkProps{Href: templ.URL(fmt.Sprintf("/movie/%d", props.ShortestAndLongestMovie[1].ID))}) {
 										{ props.ShortestAndLongestMovie[1].Title }
 									}
 									<span class="text-xs">
@@ -113,23 +113,23 @@ templ Stats(props StatsProps) {
 							}
 						}
 					}
-					@components.Graph(props.WatchedByYear, "Watched by year")
-					@components.Graph(props.Ratings, "Ratings")
-					@components.GraphWithYear(components.GraphWithYearProps{
+					@c.Graph(props.WatchedByYear, "Watched by year")
+					@c.Graph(props.Ratings, "Ratings")
+					@c.GraphWithYear(c.GraphWithYearProps{
 						Route:        "/stats/ratings",
 						Title:        "Ratings this year",
 						Bars:         props.YearRatings,
 						SelectedYear: props.Year,
 						Years:        props.Years,
 					})
-					@components.GraphWithYear(components.GraphWithYearProps{
+					@c.GraphWithYear(c.GraphWithYearProps{
 						Route:        "/stats/by-month",
 						Title:        "Seen this year by month",
 						Bars:         props.SeenThisYear,
 						SelectedYear: props.Year,
 						Years:        props.Years,
 					})
-					@components.Section("Movies by year", 0) {
+					@c.Section("Movies by year", 0) {
 						if len(props.MoviesByYear) > 0 {
 							<ol class="flex flex-col gap-2">
 								for _, year := range props.MoviesByYear {
@@ -143,7 +143,7 @@ templ Stats(props StatsProps) {
 										>
 											{ year.Label }
 										</a>
-										@components.DividerHighlight(props.BestYear == year.Label)
+										@c.DividerHighlight(props.BestYear == year.Label)
 										<span
 											class={ "tabular-nums text-sm relative top-1",
                     templ.KV("text-neutral-500 dark:text-neutral-400", props.BestYear != year.Label) }
@@ -154,19 +154,19 @@ templ Stats(props StatsProps) {
 								}
 							</ol>
 						} else {
-							@components.EmptyState("No movies seen")
+							@c.EmptyState("No movies seen")
 						}
 					}
 				</div>
 				<div class="flex flex-col gap-y-8">
-					@components.Section("Most watched movies", 0) {
+					@c.Section("Most watched movies", 0) {
 						if len(props.MostWatchedMovies) > 0 {
-							@components.OrderedList(props.MostWatchedMovies, "movie")
+							@c.OrderedList(props.MostWatchedMovies, "movie")
 						} else {
-							@components.EmptyState("No movies seen")
+							@c.EmptyState("No movies seen")
 						}
 					}
-					@components.MostWatchedPerson(components.MostWatchedPersonProps{
+					@c.MostWatchedPerson(c.MostWatchedPersonProps{
 						Job:   "cast",
 						Title: "Cast",
 						Data:  props.MostWatchedCast,

@@ -9,7 +9,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"believer/movies/components"
+	c "believer/movies/components"
 	"believer/movies/types"
 	"strconv"
 )
@@ -104,11 +104,11 @@ func list(movies types.Movies) templ.Component {
 					}
 					return templ_7745c5c3_Err
 				})
-				templ_7745c5c3_Err = components.Link(components.LinkProps{Href: movie.LinkTo(), Long: len(movie.Title) > 60}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = c.Link(c.LinkProps{Href: movie.LinkTo(), Long: len(movie.Title) > 60}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = components.Divider().Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = c.Divider().Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -139,7 +139,7 @@ func list(movies types.Movies) templ.Component {
 					}
 					return templ_7745c5c3_Err
 				})
-				templ_7745c5c3_Err = components.SimpleLink(components.SimpleLinkProps{Href: movie.LinkToYear()}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = c.SimpleLink(c.SimpleLinkProps{Href: movie.LinkToYear()}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -159,7 +159,7 @@ func list(movies types.Movies) templ.Component {
 			}
 			return templ_7745c5c3_Err
 		})
-		templ_7745c5c3_Err = components.Ol().Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = c.Ol().Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -235,7 +235,7 @@ func Series(props SeriesProps) templ.Component {
 						}
 						return templ_7745c5c3_Err
 					})
-					templ_7745c5c3_Err = components.SimpleLink(components.SimpleLinkProps{Href: props.Series.LinkToParent()}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = c.SimpleLink(c.SimpleLinkProps{Href: props.Series.LinkToParent()}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -270,19 +270,19 @@ func Series(props SeriesProps) templ.Component {
 								}
 								return templ_7745c5c3_Err
 							})
-							templ_7745c5c3_Err = components.LinkedSection(series.Name, series.LinkTo(), len(series.Movies)).Render(templ.WithChildren(ctx, templ_7745c5c3_Var12), templ_7745c5c3_Buffer)
+							templ_7745c5c3_Err = c.LinkedSection(series.Name, series.LinkTo(), len(series.Movies)).Render(templ.WithChildren(ctx, templ_7745c5c3_Var12), templ_7745c5c3_Buffer)
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
 							}
 						} else if series.Name != props.Series.Name {
-							templ_7745c5c3_Err = components.LinkedSectionTitle(series.Name, series.LinkTo()).Render(ctx, templ_7745c5c3_Buffer)
+							templ_7745c5c3_Err = c.LinkedSectionTitle(series.Name, series.LinkTo()).Render(ctx, templ_7745c5c3_Buffer)
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
 							}
 						}
 					}
 				} else {
-					templ_7745c5c3_Err = components.EmptyState("No movies in series").Render(ctx, templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = c.EmptyState("No movies in series").Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

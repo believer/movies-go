@@ -9,7 +9,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"believer/movies/components"
+	c "believer/movies/components"
 	"believer/movies/types"
 	"believer/movies/utils"
 	"fmt"
@@ -62,8 +62,8 @@ type StatsProps struct {
 	BestOfTheYear           types.Movie
 	BestYear                string
 	FormattedTotalRuntime   string
-	MostWatchedCast         []components.ListItem
-	MostWatchedMovies       []components.ListItem
+	MostWatchedCast         []c.ListItem
+	MostWatchedMovies       []c.ListItem
 	MoviesByYear            []types.GraphData
 	Ratings                 []types.Bar
 	SeenThisYear            []types.Bar
@@ -132,7 +132,7 @@ func Stats(props StatsProps) templ.Component {
 				}
 				return templ_7745c5c3_Err
 			})
-			templ_7745c5c3_Err = components.Link(components.LinkProps{Href: "/"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = c.Link(c.LinkProps{Href: "/"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -187,7 +187,7 @@ func Stats(props StatsProps) templ.Component {
 						}
 						return templ_7745c5c3_Err
 					})
-					templ_7745c5c3_Err = components.DescriptionListItem(components.DescriptionListItemProps{
+					templ_7745c5c3_Err = c.DescriptionListItem(c.DescriptionListItemProps{
 						Detail:    "Unique movies seen",
 						IsTabular: true,
 					}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
@@ -221,7 +221,7 @@ func Stats(props StatsProps) templ.Component {
 						}
 						return templ_7745c5c3_Err
 					})
-					templ_7745c5c3_Err = components.DescriptionListItem(components.DescriptionListItemProps{
+					templ_7745c5c3_Err = c.DescriptionListItem(c.DescriptionListItemProps{
 						Detail:    "Movies seen with rewatches",
 						IsTabular: true,
 					}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
@@ -255,7 +255,7 @@ func Stats(props StatsProps) templ.Component {
 						}
 						return templ_7745c5c3_Err
 					})
-					templ_7745c5c3_Err = components.DescriptionListItem(components.DescriptionListItemProps{
+					templ_7745c5c3_Err = c.DescriptionListItem(c.DescriptionListItemProps{
 						Detail:    "Time watched",
 						IsTabular: true,
 					}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var12), templ_7745c5c3_Buffer)
@@ -290,7 +290,7 @@ func Stats(props StatsProps) templ.Component {
 							}
 							return templ_7745c5c3_Err
 						})
-						templ_7745c5c3_Err = components.DescriptionListItem(components.DescriptionListItemProps{
+						templ_7745c5c3_Err = c.DescriptionListItem(c.DescriptionListItemProps{
 							Detail:    "Wilhelm screams",
 							IsTabular: true,
 						}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var14), templ_7745c5c3_Buffer)
@@ -338,7 +338,7 @@ func Stats(props StatsProps) templ.Component {
 								}
 								return templ_7745c5c3_Err
 							})
-							templ_7745c5c3_Err = components.Link(components.LinkProps{Href: templ.URL(fmt.Sprintf("/movie/%d", props.BestOfTheYear.ID))}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var17), templ_7745c5c3_Buffer)
+							templ_7745c5c3_Err = c.Link(c.LinkProps{Href: templ.URL(fmt.Sprintf("/movie/%d", props.BestOfTheYear.ID))}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var17), templ_7745c5c3_Buffer)
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
 							}
@@ -367,7 +367,7 @@ func Stats(props StatsProps) templ.Component {
 							}
 							return templ_7745c5c3_Err
 						})
-						templ_7745c5c3_Err = components.DescriptionListItem(components.DescriptionListItemProps{
+						templ_7745c5c3_Err = c.DescriptionListItem(c.DescriptionListItemProps{
 							Detail: "Best of the year",
 						}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var16), templ_7745c5c3_Buffer)
 						if templ_7745c5c3_Err != nil {
@@ -414,7 +414,7 @@ func Stats(props StatsProps) templ.Component {
 								}
 								return templ_7745c5c3_Err
 							})
-							templ_7745c5c3_Err = components.Link(components.LinkProps{Href: templ.URL(fmt.Sprintf("/movie/%d", props.ShortestAndLongestMovie[0].ID))}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var21), templ_7745c5c3_Buffer)
+							templ_7745c5c3_Err = c.Link(c.LinkProps{Href: templ.URL(fmt.Sprintf("/movie/%d", props.ShortestAndLongestMovie[0].ID))}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var21), templ_7745c5c3_Buffer)
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
 							}
@@ -437,7 +437,7 @@ func Stats(props StatsProps) templ.Component {
 							}
 							return templ_7745c5c3_Err
 						})
-						templ_7745c5c3_Err = components.DescriptionListItem(components.DescriptionListItemProps{
+						templ_7745c5c3_Err = c.DescriptionListItem(c.DescriptionListItemProps{
 							Detail: "Shortest movie",
 						}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var20), templ_7745c5c3_Buffer)
 						if templ_7745c5c3_Err != nil {
@@ -482,7 +482,7 @@ func Stats(props StatsProps) templ.Component {
 								}
 								return templ_7745c5c3_Err
 							})
-							templ_7745c5c3_Err = components.Link(components.LinkProps{Href: templ.URL(fmt.Sprintf("/movie/%d", props.ShortestAndLongestMovie[1].ID))}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var25), templ_7745c5c3_Buffer)
+							templ_7745c5c3_Err = c.Link(c.LinkProps{Href: templ.URL(fmt.Sprintf("/movie/%d", props.ShortestAndLongestMovie[1].ID))}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var25), templ_7745c5c3_Buffer)
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
 							}
@@ -505,7 +505,7 @@ func Stats(props StatsProps) templ.Component {
 							}
 							return templ_7745c5c3_Err
 						})
-						templ_7745c5c3_Err = components.DescriptionListItem(components.DescriptionListItemProps{
+						templ_7745c5c3_Err = c.DescriptionListItem(c.DescriptionListItemProps{
 							Detail: "Longest movie",
 						}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var24), templ_7745c5c3_Buffer)
 						if templ_7745c5c3_Err != nil {
@@ -514,25 +514,25 @@ func Stats(props StatsProps) templ.Component {
 					}
 					return templ_7745c5c3_Err
 				})
-				templ_7745c5c3_Err = components.DescriptionList().Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = c.DescriptionList().Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				return templ_7745c5c3_Err
 			})
-			templ_7745c5c3_Err = components.Section("Stats", 0).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = c.Section("Stats", 0).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.Graph(props.WatchedByYear, "Watched by year").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = c.Graph(props.WatchedByYear, "Watched by year").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.Graph(props.Ratings, "Ratings").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = c.Graph(props.Ratings, "Ratings").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.GraphWithYear(components.GraphWithYearProps{
+			templ_7745c5c3_Err = c.GraphWithYear(c.GraphWithYearProps{
 				Route:        "/stats/ratings",
 				Title:        "Ratings this year",
 				Bars:         props.YearRatings,
@@ -542,7 +542,7 @@ func Stats(props StatsProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.GraphWithYear(components.GraphWithYearProps{
+			templ_7745c5c3_Err = c.GraphWithYear(c.GraphWithYearProps{
 				Route:        "/stats/by-month",
 				Title:        "Seen this year by month",
 				Bars:         props.SeenThisYear,
@@ -615,7 +615,7 @@ func Stats(props StatsProps) templ.Component {
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
-						templ_7745c5c3_Err = components.DividerHighlight(props.BestYear == year.Label).Render(ctx, templ_7745c5c3_Buffer)
+						templ_7745c5c3_Err = c.DividerHighlight(props.BestYear == year.Label).Render(ctx, templ_7745c5c3_Buffer)
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
@@ -661,14 +661,14 @@ func Stats(props StatsProps) templ.Component {
 						return templ_7745c5c3_Err
 					}
 				} else {
-					templ_7745c5c3_Err = components.EmptyState("No movies seen").Render(ctx, templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = c.EmptyState("No movies seen").Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
 				return templ_7745c5c3_Err
 			})
-			templ_7745c5c3_Err = components.Section("Movies by year", 0).Render(templ.WithChildren(ctx, templ_7745c5c3_Var28), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = c.Section("Movies by year", 0).Render(templ.WithChildren(ctx, templ_7745c5c3_Var28), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -689,23 +689,23 @@ func Stats(props StatsProps) templ.Component {
 				}
 				ctx = templ.InitializeContext(ctx)
 				if len(props.MostWatchedMovies) > 0 {
-					templ_7745c5c3_Err = components.OrderedList(props.MostWatchedMovies, "movie").Render(ctx, templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = c.OrderedList(props.MostWatchedMovies, "movie").Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				} else {
-					templ_7745c5c3_Err = components.EmptyState("No movies seen").Render(ctx, templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = c.EmptyState("No movies seen").Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
 				return templ_7745c5c3_Err
 			})
-			templ_7745c5c3_Err = components.Section("Most watched movies", 0).Render(templ.WithChildren(ctx, templ_7745c5c3_Var36), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = c.Section("Most watched movies", 0).Render(templ.WithChildren(ctx, templ_7745c5c3_Var36), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.MostWatchedPerson(components.MostWatchedPersonProps{
+			templ_7745c5c3_Err = c.MostWatchedPerson(c.MostWatchedPersonProps{
 				Job:   "cast",
 				Title: "Cast",
 				Data:  props.MostWatchedCast,

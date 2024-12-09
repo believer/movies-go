@@ -9,7 +9,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"believer/movies/components"
+	c "believer/movies/components"
 	"fmt"
 )
 
@@ -45,7 +45,7 @@ func SeenToggle() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.IconCheck().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = c.IconCheck().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -105,7 +105,7 @@ func AddWatch(id int, imdbId string) templ.Component {
 			}
 			return templ_7745c5c3_Err
 		})
-		templ_7745c5c3_Err = components.IsAuthenticated().Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = c.IsAuthenticated().Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -138,7 +138,7 @@ func UnseenToggle() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.IconTimes().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = c.IconTimes().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -246,7 +246,7 @@ func Seen(props SeenProps) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		if props.Seen {
-			templ_7745c5c3_Err = components.Popover(
+			templ_7745c5c3_Err = c.Popover(
 				fmt.Sprintf("--anchor-%s-%d", props.Title, props.ID),
 				SeenContent(props.ID, props.ImdbId),
 				SeenToggle(),
@@ -255,7 +255,7 @@ func Seen(props SeenProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = components.Popover(
+			templ_7745c5c3_Err = c.Popover(
 				fmt.Sprintf("--anchor-%s-%d", props.Title, props.ID),
 				UnseenContent(props.ID, props.ImdbId),
 				UnseenToggle(),

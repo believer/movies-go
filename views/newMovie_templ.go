@@ -9,7 +9,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"believer/movies/components"
+	c "believer/movies/components"
 	"believer/movies/types"
 )
 
@@ -74,7 +74,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 				}
 				return templ_7745c5c3_Err
 			})
-			templ_7745c5c3_Err = components.Link(components.LinkProps{Href: "/"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = c.Link(c.LinkProps{Href: "/"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -106,7 +106,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = components.Label("search", "Search").Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = c.Label("search", "Search").Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -120,12 +120,12 @@ func NewMovie(props NewMovieProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			if props.ImdbID != "" {
-				templ_7745c5c3_Err = components.Label("imdb_id", "IMDb ID").Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = c.Label("imdb_id", "IMDb ID").Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = components.Label("imdb_id", "IMDb ID or TMDB ID").Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = c.Label("imdb_id", "IMDb ID or TMDB ID").Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -157,7 +157,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.Help("For example, https://www.imdb.com/title/tt0111161/, or just tt0111161.").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = c.Help("For example, https://www.imdb.com/title/tt0111161/, or just tt0111161.").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -165,7 +165,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.NumberInput("rating", "Rating", "A value between 0 and 10", 0, 10, true).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = c.NumberInput("rating", "Rating", "A value between 0 and 10", 0, 10, true).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -174,7 +174,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = components.Label("watchlist", "Add to watchlist").Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = c.Label("watchlist", "Add to watchlist").Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -187,7 +187,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.Label("review", "Review").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = c.Label("review", "Review").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -195,7 +195,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.Label("review_private", "Review is private").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = c.Label("review_private", "Review is private").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -203,7 +203,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.DateTimeInput("watched_at", "Watched at", "Defaults to current time if left empty.").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = c.DateTimeInput("watched_at", "Watched at", "Defaults to current time if left empty.").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -211,7 +211,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.Label("series", "Series").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = c.Label("series", "Series").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -219,7 +219,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.NumberInput("number_in_series", "Number in series", "", 0, 1000, false).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = c.NumberInput("number_in_series", "Number in series", "", 0, 1000, false).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -227,7 +227,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.Label("wilhelm_scream", "Wilhelm scream").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = c.Label("wilhelm_scream", "Wilhelm scream").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

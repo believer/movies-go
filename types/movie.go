@@ -96,6 +96,14 @@ func (m Movie) ISOReleaseDate() string {
 	return m.ReleaseDate.Format("2006-01-02")
 }
 
+func (m Movie) ReleaseDateOrCreatedAt() string {
+	if m.ReleaseDate.Year() == 1 {
+		return m.CreatedAt.Format("2006-01-02")
+	}
+
+	return m.ISOReleaseDate()
+}
+
 // Release year
 func (m Movie) ReleaseYear() string {
 	return m.ReleaseDate.Format("2006")

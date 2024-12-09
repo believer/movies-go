@@ -1,7 +1,7 @@
 package views
 
 import (
-	"believer/movies/components"
+	c "believer/movies/components"
 	"believer/movies/types"
 )
 
@@ -19,7 +19,7 @@ templ NewMovie(props NewMovieProps) {
 			class="mx-auto flex max-w-xl flex-col gap-y-6 px-4 py-8"
 		>
 			<div>
-				@components.Link(components.LinkProps{Href: "/"}) {
+				@c.Link(c.LinkProps{Href: "/"}) {
 					Back
 				}
 			</div>
@@ -30,7 +30,7 @@ templ NewMovie(props NewMovieProps) {
 			}
 			if props.ImdbID == "" {
 				<div class="flex flex-col gap-2 relative">
-					@components.Label("search", "Search")
+					@c.Label("search", "Search")
 					<input
 						type="text"
 						hx-get="/movie/search"
@@ -50,9 +50,9 @@ templ NewMovie(props NewMovieProps) {
 			}
 			<div class="flex flex-col gap-2">
 				if props.ImdbID != "" {
-					@components.Label("imdb_id", "IMDb ID")
+					@c.Label("imdb_id", "IMDb ID")
 				} else {
-					@components.Label("imdb_id", "IMDb ID or TMDB ID")
+					@c.Label("imdb_id", "IMDb ID or TMDB ID")
 				}
 				<input
 					required
@@ -73,29 +73,29 @@ templ NewMovie(props NewMovieProps) {
 					id="movie-exists"
 					class="text-xs empty:hidden lg:absolute lg:-right-52 lg:top-6 lg:w-48 lg:rounded-sm lg:p-2 lg:outline-dashed lg:outline-offset-4 lg:outline-neutral-500"
 				></div>
-				@components.Help("For example, https://www.imdb.com/title/tt0111161/, or just tt0111161.")
+				@c.Help("For example, https://www.imdb.com/title/tt0111161/, or just tt0111161.")
 			</div>
-			@components.NumberInput("rating", "Rating", "A value between 0 and 10", 0, 10, true)
+			@c.NumberInput("rating", "Rating", "A value between 0 and 10", 0, 10, true)
 			if !props.InWatchlist {
 				<div class="flex gap-x-2 items-center">
 					<input type="checkbox" name="watchlist" id="watchlist" class="rounded-sm accent-neutral-700 border border-neutral-700 bg-neutral-800 focus:outline-dashed focus:outline-offset-2 focus:outline-neutral-500" _="on click if me.checked remove @required from #rating otherwise add @required='' to #rating"/>
-					@components.Label("watchlist", "Add to watchlist")
+					@c.Label("watchlist", "Add to watchlist")
 				</div>
 			}
 			<div class="flex flex-col gap-2 group">
-				@components.Label("review", "Review")
+				@c.Label("review", "Review")
 				<textarea name="review" id="review" class="w-full h-40 rounded-sm border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-hidden focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500 block"></textarea>
 				<div class="flex gap-x-2 items-center">
 					<input type="checkbox" name="review_private" id="review_private" class="rounded-sm accent-neutral-700 border border-neutral-700 bg-neutral-800 focus:outline-dashed focus:outline-offset-2 focus:outline-neutral-500"/>
-					@components.Label("review_private", "Review is private")
+					@c.Label("review_private", "Review is private")
 				</div>
 			</div>
 			<details>
 				<summary class="cursor-pointer">Additional fields</summary>
 				<div class="mt-4 flex flex-col gap-y-6">
-					@components.DateTimeInput("watched_at", "Watched at", "Defaults to current time if left empty.")
+					@c.DateTimeInput("watched_at", "Watched at", "Defaults to current time if left empty.")
 					<div class="flex flex-col gap-2">
-						@components.Label("series", "Series")
+						@c.Label("series", "Series")
 						<input
 							type="text"
 							name="series"
@@ -106,10 +106,10 @@ templ NewMovie(props NewMovieProps) {
 						/>
 						<div hx-get="/movie/new/series" hx-swap="outerHTML" hx-trigger="load"></div>
 					</div>
-					@components.NumberInput("number_in_series", "Number in series", "", 0, 1000, false)
+					@c.NumberInput("number_in_series", "Number in series", "", 0, 1000, false)
 					<div class="flex gap-x-2 items-center">
 						<input type="checkbox" name="wilhelm_scream" id="wilhelm_scream" class="rounded-sm accent-neutral-700 border border-neutral-700 bg-neutral-800 focus:outline-dashed focus:outline-offset-2 focus:outline-neutral-500"/>
-						@components.Label("wilhelm_scream", "Wilhelm scream")
+						@c.Label("wilhelm_scream", "Wilhelm scream")
 					</div>
 				</div>
 			</details>

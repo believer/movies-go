@@ -1,7 +1,7 @@
 package views
 
 import (
-	"believer/movies/components"
+	c "believer/movies/components"
 	"believer/movies/types"
 	"fmt"
 )
@@ -17,15 +17,15 @@ templ Language(props LanguageProps) {
 	@Layout(LayoutProps{Title: props.Name}) {
 		@StandardBody(props.Name) {
 			if len(props.Movies) > 0 {
-				@components.Ol() {
+				@c.Ol() {
 					for _, movie := range props.Movies {
-						@components.Li() {
-							@components.Link(components.LinkProps{Href: movie.LinkTo()}) {
+						@c.Li() {
+							@c.Link(c.LinkProps{Href: movie.LinkTo()}) {
 								{ movie.Title }
 							}
-							@components.Divider()
+							@c.Divider()
 							<span class="flex items-center gap-x-2 whitespace-nowrap text-sm">
-								@components.SimpleLink(components.SimpleLinkProps{Href: movie.LinkToYear()}) {
+								@c.SimpleLink(c.SimpleLinkProps{Href: movie.LinkToYear()}) {
 									{ movie.ISOReleaseDate() }
 								}
 								@Seen(SeenProps{
@@ -45,7 +45,7 @@ templ Language(props LanguageProps) {
 					></li>
 				}
 			} else {
-				@components.EmptyState("No movies this year")
+				@c.EmptyState("No movies this year")
 			}
 		}
 	}

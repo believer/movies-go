@@ -1,7 +1,7 @@
 package views
 
 import (
-	"believer/movies/components"
+	c "believer/movies/components"
 	"believer/movies/types"
 	"strconv"
 )
@@ -13,7 +13,7 @@ type SeriesProps struct {
 }
 
 templ list(movies types.Movies) {
-	@components.Ol() {
+	@c.Ol() {
 		for _, movie := range movies {
 			<li
 				class="flex items-end justify-between gap-x-4 before:content-[attr(data-position)] before:text-right before:tabular-nums before:w-[2ch] before:text-neutral-400 dark:before:text-neutral-600"
@@ -21,12 +21,12 @@ templ list(movies types.Movies) {
 					data-position={ strconv.FormatInt(movie.NumberInSeries.Int64, 10) }
 				}
 			>
-				@components.Link(components.LinkProps{Href: movie.LinkTo(), Long: len(movie.Title) > 60}) {
+				@c.Link(c.LinkProps{Href: movie.LinkTo(), Long: len(movie.Title) > 60}) {
 					{ movie.Title }
 				}
-				@components.Divider()
+				@c.Divider()
 				<span class="flex items-center gap-x-2 tabular-nums whitespace-nowrap text-sm">
-					@components.SimpleLink(components.SimpleLinkProps{Href: movie.LinkToYear()}) {
+					@c.SimpleLink(c.SimpleLinkProps{Href: movie.LinkToYear()}) {
 						{ movie.ISOReleaseDate() }
 					}
 					@Seen(SeenProps{
@@ -46,7 +46,7 @@ templ Series(props SeriesProps) {
 		@StandardBody(props.Series.Name) {
 			<section>
 				if props.Series.ParentSeries.Valid {
-					@components.SimpleLink(components.SimpleLinkProps{Href: props.Series.LinkToParent()}) {
+					@c.SimpleLink(c.SimpleLinkProps{Href: props.Series.LinkToParent()}) {
 						Go to parent series
 					}
 				}
@@ -56,15 +56,15 @@ templ Series(props SeriesProps) {
 					if len(props.Movies) == 1 {
 						@list(series.Movies)
 					} else if len(series.Movies) > 0 {
-						@components.LinkedSection(series.Name, series.LinkTo(), len(series.Movies)) {
+						@c.LinkedSection(series.Name, series.LinkTo(), len(series.Movies)) {
 							@list(series.Movies)
 						}
 					} else if series.Name != props.Series.Name {
-						@components.LinkedSectionTitle(series.Name, series.LinkTo())
+						@c.LinkedSectionTitle(series.Name, series.LinkTo())
 					}
 				}
 			} else {
-				@components.EmptyState("No movies in series")
+				@c.EmptyState("No movies in series")
 			}
 		}
 	}

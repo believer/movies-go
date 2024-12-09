@@ -1,7 +1,7 @@
 package views
 
 import (
-	"believer/movies/components"
+	c "believer/movies/components"
 	"believer/movies/types"
 	"fmt"
 	"strconv"
@@ -23,38 +23,38 @@ templ Movie(props MovieProps) {
 			if props.Movie.Overview != "" {
 				<p class="text-neutral-500 dark:text-neutral-400">{ props.Movie.Overview }</p>
 			}
-			@components.Review(props.Review)
-			@components.Section("Metadata", 0) {
-				@components.DescriptionList() {
+			@c.Review(props.Review)
+			@c.Section("Metadata", 0) {
+				@c.DescriptionList() {
 					if props.Movie.Tagline != "" {
-						@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Tagline"}) {
+						@c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Tagline"}) {
 							{ props.Movie.Tagline }
 						}
 					}
 					if props.Movie.OriginalTitle.Valid && props.Movie.OriginalTitle.String != props.Movie.Title {
-						@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Original title"}) {
+						@c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Original title"}) {
 							{ props.Movie.OriginalTitle.String }
 						}
 					}
-					@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Release date"}) {
-						@components.SimpleLink(components.SimpleLinkProps{Href: props.Movie.LinkToYear()}) {
+					@c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Release date"}) {
+						@c.SimpleLink(c.SimpleLinkProps{Href: props.Movie.LinkToYear()}) {
 							{ props.Movie.ISOReleaseDate() }
 						}
 					}
 					if props.Movie.Runtime != 0 {
-						@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Runtime"}) {
+						@c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Runtime"}) {
 							{ props.Movie.RuntimeFormatted() }
 						}
 					}
 					if props.Movie.Series.Valid && props.Movie.NumberInSeries.Valid {
-						@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Series"}) {
-							@components.SimpleLink(components.SimpleLinkProps{Href: props.Movie.LinkToSeries()}) {
+						@c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Series"}) {
+							@c.SimpleLink(c.SimpleLinkProps{Href: props.Movie.LinkToSeries()}) {
 								{ props.Movie.Series.String } #{ strconv.FormatInt( props.Movie.NumberInSeries.Int64, 10 ) }
 							}
 						}
 					}
 					if props.Movie.ImdbId != "tt0000000" {
-						@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "IMDb"}) {
+						@c.DescriptionListItem(c.DescriptionListItemProps{Detail: "IMDb"}) {
 							<a
 								href={ templ.URL(fmt.Sprintf("https://www.imdb.com/title/%s", props.Movie.ImdbId)) }
 								class="inline-flex items-center gap-1 focus:outline-hidden focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
@@ -66,12 +66,12 @@ templ Movie(props MovieProps) {
 								>
 									{ props.Movie.ImdbId }
 								</span>
-								@components.IconExternalLink()
+								@c.IconExternalLink()
 							</a>
 						}
 					}
 					if len(props.Movie.Genres) > 0 {
-						@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Genres", IsTabular: false}) {
+						@c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Genres", IsTabular: false}) {
 							<div class="flex flex-wrap gap-2">
 								for _, genre := range props.Movie.Genres {
 									<a
@@ -85,7 +85,7 @@ templ Movie(props MovieProps) {
 						}
 					}
 					if len(props.Movie.Languages) > 0 {
-						@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Languages", IsTabular: false}) {
+						@c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Languages", IsTabular: false}) {
 							<div class="flex flex-wrap gap-2">
 								for _, language := range props.Movie.Languages {
 									<a
@@ -99,11 +99,11 @@ templ Movie(props MovieProps) {
 						}
 					}
 					if props.Movie.Rating.Valid {
-						@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Rating", IsTabular: false}) {
+						@c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Rating", IsTabular: false}) {
 							{ strconv.FormatInt(props.Movie.Rating.Int64, 10) }
 						}
 					}
-					@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Watched", IsTabular: false}) {
+					@c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Watched", IsTabular: false}) {
 						<span hx-get={ fmt.Sprintf("/movie/%d/seen?imdbId=%s", props.Movie.ID, props.Movie.ImdbId) } hx-trigger="load"></span>
 					}
 				}

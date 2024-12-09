@@ -9,7 +9,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"believer/movies/components"
+	c "believer/movies/components"
 	"believer/movies/types"
 	"fmt"
 	"strconv"
@@ -93,7 +93,7 @@ func Movie(props MovieProps) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = components.Review(props.Review).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = c.Review(props.Review).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -149,7 +149,7 @@ func Movie(props MovieProps) templ.Component {
 								}
 								return templ_7745c5c3_Err
 							})
-							templ_7745c5c3_Err = components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Tagline"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
+							templ_7745c5c3_Err = c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Tagline"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
 							}
@@ -182,7 +182,7 @@ func Movie(props MovieProps) templ.Component {
 								}
 								return templ_7745c5c3_Err
 							})
-							templ_7745c5c3_Err = components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Original title"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
+							templ_7745c5c3_Err = c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Original title"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
 							}
@@ -226,13 +226,13 @@ func Movie(props MovieProps) templ.Component {
 								}
 								return templ_7745c5c3_Err
 							})
-							templ_7745c5c3_Err = components.SimpleLink(components.SimpleLinkProps{Href: props.Movie.LinkToYear()}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var12), templ_7745c5c3_Buffer)
+							templ_7745c5c3_Err = c.SimpleLink(c.SimpleLinkProps{Href: props.Movie.LinkToYear()}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var12), templ_7745c5c3_Buffer)
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
 							}
 							return templ_7745c5c3_Err
 						})
-						templ_7745c5c3_Err = components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Release date"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
+						templ_7745c5c3_Err = c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Release date"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
@@ -264,7 +264,7 @@ func Movie(props MovieProps) templ.Component {
 								}
 								return templ_7745c5c3_Err
 							})
-							templ_7745c5c3_Err = components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Runtime"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var14), templ_7745c5c3_Buffer)
+							templ_7745c5c3_Err = c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Runtime"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var14), templ_7745c5c3_Buffer)
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
 							}
@@ -322,13 +322,13 @@ func Movie(props MovieProps) templ.Component {
 									}
 									return templ_7745c5c3_Err
 								})
-								templ_7745c5c3_Err = components.SimpleLink(components.SimpleLinkProps{Href: props.Movie.LinkToSeries()}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var17), templ_7745c5c3_Buffer)
+								templ_7745c5c3_Err = c.SimpleLink(c.SimpleLinkProps{Href: props.Movie.LinkToSeries()}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var17), templ_7745c5c3_Buffer)
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
 								}
 								return templ_7745c5c3_Err
 							})
-							templ_7745c5c3_Err = components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Series"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var16), templ_7745c5c3_Buffer)
+							templ_7745c5c3_Err = c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Series"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var16), templ_7745c5c3_Buffer)
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
 							}
@@ -376,7 +376,7 @@ func Movie(props MovieProps) templ.Component {
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
 								}
-								templ_7745c5c3_Err = components.IconExternalLink().Render(ctx, templ_7745c5c3_Buffer)
+								templ_7745c5c3_Err = c.IconExternalLink().Render(ctx, templ_7745c5c3_Buffer)
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
 								}
@@ -386,7 +386,7 @@ func Movie(props MovieProps) templ.Component {
 								}
 								return templ_7745c5c3_Err
 							})
-							templ_7745c5c3_Err = components.DescriptionListItem(components.DescriptionListItemProps{Detail: "IMDb"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var20), templ_7745c5c3_Buffer)
+							templ_7745c5c3_Err = c.DescriptionListItem(c.DescriptionListItemProps{Detail: "IMDb"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var20), templ_7745c5c3_Buffer)
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
 							}
@@ -446,7 +446,7 @@ func Movie(props MovieProps) templ.Component {
 								}
 								return templ_7745c5c3_Err
 							})
-							templ_7745c5c3_Err = components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Genres", IsTabular: false}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var23), templ_7745c5c3_Buffer)
+							templ_7745c5c3_Err = c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Genres", IsTabular: false}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var23), templ_7745c5c3_Buffer)
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
 							}
@@ -506,7 +506,7 @@ func Movie(props MovieProps) templ.Component {
 								}
 								return templ_7745c5c3_Err
 							})
-							templ_7745c5c3_Err = components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Languages", IsTabular: false}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var26), templ_7745c5c3_Buffer)
+							templ_7745c5c3_Err = c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Languages", IsTabular: false}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var26), templ_7745c5c3_Buffer)
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
 							}
@@ -539,7 +539,7 @@ func Movie(props MovieProps) templ.Component {
 								}
 								return templ_7745c5c3_Err
 							})
-							templ_7745c5c3_Err = components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Rating", IsTabular: false}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var29), templ_7745c5c3_Buffer)
+							templ_7745c5c3_Err = c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Rating", IsTabular: false}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var29), templ_7745c5c3_Buffer)
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
 							}
@@ -579,19 +579,19 @@ func Movie(props MovieProps) templ.Component {
 							}
 							return templ_7745c5c3_Err
 						})
-						templ_7745c5c3_Err = components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Watched", IsTabular: false}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var31), templ_7745c5c3_Buffer)
+						templ_7745c5c3_Err = c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Watched", IsTabular: false}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var31), templ_7745c5c3_Buffer)
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
 						return templ_7745c5c3_Err
 					})
-					templ_7745c5c3_Err = components.DescriptionList().Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = c.DescriptionList().Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					return templ_7745c5c3_Err
 				})
-				templ_7745c5c3_Err = components.Section("Metadata", 0).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = c.Section("Metadata", 0).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

@@ -1,7 +1,7 @@
 package views
 
 import (
-	"believer/movies/components"
+	c "believer/movies/components"
 	"fmt"
 )
 
@@ -14,12 +14,12 @@ type SeenProps struct {
 
 templ SeenToggle() {
 	<span class="text-neutral-300 dark:text-neutral-700" slot="button">
-		@components.IconCheck()
+		@c.IconCheck()
 	</span>
 }
 
 templ AddWatch(id int, imdbId string) {
-	@components.IsAuthenticated() {
+	@c.IsAuthenticated() {
 		<a
 			href={ templ.URL(fmt.Sprintf("/movie/new?imdbId=%s&id=%d", imdbId, id)) }
 			title="Add watch"
@@ -32,7 +32,7 @@ templ AddWatch(id int, imdbId string) {
 
 templ UnseenToggle() {
 	<span class="text-neutral-700 dark:text-neutral-300">
-		@components.IconTimes()
+		@c.IconTimes()
 	</span>
 }
 
@@ -52,13 +52,13 @@ templ UnseenContent(id int, imdbId string) {
 
 templ Seen(props SeenProps) {
 	if props.Seen {
-		@components.Popover(
+		@c.Popover(
 			fmt.Sprintf("--anchor-%s-%d", props.Title, props.ID),
 			SeenContent(props.ID, props.ImdbId),
 			SeenToggle(),
 		)
 	} else {
-		@components.Popover(
+		@c.Popover(
 			fmt.Sprintf("--anchor-%s-%d", props.Title, props.ID),
 			UnseenContent(props.ID, props.ImdbId),
 			UnseenToggle(),

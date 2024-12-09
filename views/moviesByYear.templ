@@ -1,7 +1,7 @@
 package views
 
 import (
-	"believer/movies/components"
+	c "believer/movies/components"
 	"believer/movies/types"
 )
 
@@ -12,13 +12,13 @@ templ MoviesByYear(year string, movies types.Movies) {
 				{ movies.NumberOfMovies() }
 			</div>
 			if len(movies) > 0 {
-				@components.Ol() {
+				@c.Ol() {
 					for _, movie := range movies {
-						@components.Li() {
-							@components.Link(components.LinkProps{Href: movie.LinkTo()}) {
+						@c.Li() {
+							@c.Link(c.LinkProps{Href: movie.LinkTo()}) {
 								{ movie.Title }
 							}
-							@components.Divider()
+							@c.Divider()
 							<span class="flex items-center gap-x-2 whitespace-nowrap text-sm tabular-nums relative top-1">
 								{ movie.ISOReleaseDate() }
 								@Seen(SeenProps{

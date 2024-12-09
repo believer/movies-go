@@ -1,7 +1,7 @@
 package views
 
 import (
-	"believer/movies/components"
+	c "believer/movies/components"
 	"believer/movies/types"
 )
 
@@ -11,27 +11,23 @@ type WatchlistProps struct {
 }
 
 templ watchlistList(movies types.Movies, title string) {
-	@components.Section(title, len(movies)) {
+	@c.Section(title, len(movies)) {
 		<ol class="flex flex-col gap-2 md:text-sm text-neutral-500 dark:text-neutral-400">
 			for _, movie := range movies {
 				<li class="flex items-end justify-between gap-4">
-					@components.Link(components.LinkProps{Href: movie.LinkTo()}) {
+					@c.Link(c.LinkProps{Href: movie.LinkTo()}) {
 						{ movie.Title }
 					}
-					@components.Divider()
+					@c.Divider()
 					<span class="flex items-center gap-x-2 relative top-1">
 						<span class="tabular-nums whitespace-nowrap">
-							@components.SimpleLink(components.SimpleLinkProps{Href: movie.LinkToYear()}) {
-								if movie.ReleaseDate.Year() == 1 {
-									{ movie.CreatedAt.Format("2006-01-02") }
-								} else {
-									{ movie.ReleaseDate.Format("2006-01-02") }
-								}
+							@c.SimpleLink(c.SimpleLinkProps{Href: movie.LinkToYear()}) {
+								{ movie.ReleaseDateOrCreatedAt() }
 							}
 						</span>
-						@components.IsAuthenticated() {
+						@c.IsAuthenticated() {
 							<a href={ movie.LinkToWatchlistAdd() } class="text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors" title="Add watch">
-								@components.IconEye()
+								@c.IconEye()
 							</a>
 						}
 					</span>
@@ -46,16 +42,16 @@ templ Watchlist(props WatchlistProps) {
 		<div class="mx-auto flex max-w-xl flex-col gap-8 px-5 py-8">
 			<nav>
 				<div class="left-5 top-5 md:absolute">
-					@components.Link(components.LinkProps{Href: "/"}) {
+					@c.Link(c.LinkProps{Href: "/"}) {
 						Home
 					}
 				</div>
 			</nav>
-			@components.H1("Watchlist", false)
+			@c.H1("Watchlist", false)
 			if len(props.Movies) > 0 {
 				@watchlistList(props.Movies, "Movies")
 			} else {
-				@components.EmptyState("Watchlist empty")
+				@c.EmptyState("Watchlist empty")
 			}
 			if len(props.UnreleasedMovies) > 0 {
 				@watchlistList(props.UnreleasedMovies, "Unreleased movies")

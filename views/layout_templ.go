@@ -8,7 +8,7 @@ package views
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "believer/movies/components"
+import c "believer/movies/components"
 
 type LayoutProps struct {
 	Title       string
@@ -159,7 +159,7 @@ func StandardBody(title string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.H1(title, false).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = c.H1(title, false).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

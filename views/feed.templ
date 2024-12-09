@@ -1,7 +1,7 @@
 package views
 
 import (
-	"believer/movies/components"
+	c "believer/movies/components"
 	"believer/movies/types"
 	"fmt"
 	"strconv"
@@ -11,10 +11,10 @@ templ Feed(isAdmin bool, movies types.Movies, nextPage int, query string) {
 	@Layout(LayoutProps{}) {
 		<nav class="flex items-center justify-between px-5 pt-5">
 			<div class="flex gap-x-4">
-				@components.Link(components.LinkProps{Href: "/stats"}) {
+				@c.Link(c.LinkProps{Href: "/stats"}) {
 					Stats
 				}
-				@components.Link(components.LinkProps{Href: "/watchlist"}) {
+				@c.Link(c.LinkProps{Href: "/watchlist"}) {
 					Watchlist
 				}
 			</div>
@@ -24,7 +24,7 @@ templ Feed(isAdmin bool, movies types.Movies, nextPage int, query string) {
 						class="fixed bottom-8 right-8 z-20 bg-neutral-700 w-14 h-14 shadow-lg flex justify-center items-center rounded-full sm:bg-transparent sm:bottom-0 sm:right-0 sm:w-auto sm:h-auto sm:relative focus:outline-hidden focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-offset-8 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
 						href="/movie/new"
 					>
-						@components.IconPlus()
+						@c.IconPlus()
 					</a>
 					<a
 						class="truncate border-b border-dashed border-neutral-500 focus:outline-hidden focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600"
@@ -34,7 +34,7 @@ templ Feed(isAdmin bool, movies types.Movies, nextPage int, query string) {
 				</div>
 			} else {
 				<div class="md:absolute right-8 top-10 flex gap-4">
-					@components.Link(components.LinkProps{Href: "/login"}) {
+					@c.Link(c.LinkProps{Href: "/login"}) {
 						Login
 					}
 				</div>
@@ -138,7 +138,7 @@ end
 					></li>
 				</ol>
 			} else {
-				@components.EmptyState("No movies seen")
+				@c.EmptyState("No movies seen")
 			}
 		</div>
 	}
