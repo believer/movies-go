@@ -98,7 +98,6 @@ func Slugify(text string) string {
 
 func SelfHealingUrl(text string) string {
 	parts := strings.Split(path.Base(text), "-")
-	lastPart := parts[len(parts)-1]
 
-	return lastPart
+	return parts[len(parts)-1]
 }
