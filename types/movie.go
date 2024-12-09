@@ -70,6 +70,7 @@ type Movie struct {
 	ImdbId         string          `db:"imdb_id"`
 	ImdbRating     sql.NullFloat64 `db:"imdb_rating"`
 	NumberInSeries JSONNullInt64   `db:"number_in_series" json:"number_in_series"`
+	OriginalTitle  sql.NullString  `db:"original_title"`
 	Overview       string          `db:"overview" json:"overview"`
 	Poster         string          `db:"poster"`
 	Rating         sql.NullInt64   `db:"rating"`

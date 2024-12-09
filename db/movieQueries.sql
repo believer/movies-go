@@ -6,6 +6,7 @@ SELECT
     m.runtime,
     m.imdb_id,
     m.overview,
+    m.original_title,
     m.tagline,
     se.name AS "series",
     se.id AS "series_id",

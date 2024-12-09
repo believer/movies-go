@@ -31,6 +31,11 @@ templ Movie(props MovieProps) {
 							{ props.Movie.Tagline }
 						}
 					}
+					if props.Movie.OriginalTitle.Valid && props.Movie.OriginalTitle.String != props.Movie.Title {
+						@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Original title"}) {
+							{ props.Movie.OriginalTitle.String }
+						}
+					}
 					@components.DescriptionListItem(components.DescriptionListItemProps{Detail: "Release date"}) {
 						@components.SimpleLink(components.SimpleLinkProps{Href: props.Movie.LinkToYear()}) {
 							{ props.Movie.ISOReleaseDate() }
