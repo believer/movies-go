@@ -29,20 +29,20 @@ func EmptyState(text string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"rounded-sm border border-dashed border-neutral-300 px-5 py-8 text-center text-neutral-500 dark:border-neutral-700 dark:text-neutral-400\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<ol><li data-type=\"list-item\" class=\"list-none rounded-sm border border-dashed border-neutral-300 px-5 py-8 text-center text-neutral-500 dark:border-neutral-700 dark:text-neutral-400\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(text)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/emptyState.templ`, Line: 5, Col: 8}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/emptyState.templ`, Line: 6, Col: 9}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</li></ol>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

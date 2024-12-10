@@ -84,6 +84,23 @@ WHERE
 ORDER BY
     m.release_date DESC;
 
+-- name: feed-search-job
+SELECT
+    p.id,
+    p.name,
+    count(*)
+FROM
+    person p
+    INNER JOIN movie_person mp ON mp.person_id = p.id
+WHERE
+    p."name" ILIKE '%' || $1 || '%'
+    AND mp.job = $2
+GROUP BY
+    p.id
+ORDER BY
+    COUNT DESC
+LIMIT 100;
+
 -- name: seen-by-user-id
 SELECT
     date at time zone 'UTC' at time zone 'Europe/Stockholm' AS date

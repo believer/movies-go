@@ -7,7 +7,16 @@ import (
 	"strconv"
 )
 
-templ Feed(isAdmin bool, movies types.Movies, nextPage int, query string) {
+type FeedProps struct {
+	IsAdmin   bool
+	Movies    types.Movies
+	Persons   types.Persons
+	NextPage  int
+	Query     string
+	QueryType string
+}
+
+templ Feed(props FeedProps) {
 	@Layout(LayoutProps{}) {
 		<nav class="flex items-center justify-between px-5 pt-5">
 			<div class="flex gap-x-4">
@@ -18,7 +27,7 @@ templ Feed(isAdmin bool, movies types.Movies, nextPage int, query string) {
 					Watchlist
 				}
 			</div>
-			if isAdmin {
+			if props.IsAdmin {
 				<div class="flex gap-4 items-center">
 					<a
 						class="fixed bottom-8 right-8 z-20 bg-neutral-700 w-14 h-14 shadow-lg flex justify-center items-center rounded-full sm:bg-transparent sm:bottom-0 sm:right-0 sm:w-auto sm:h-auto sm:relative focus:outline-hidden focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-offset-8 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
@@ -48,24 +57,51 @@ templ Feed(isAdmin bool, movies types.Movies, nextPage int, query string) {
 				name="search"
 				placeholder="Find a movie"
 				hx-get="/"
-				hx-select="li[data-movie]"
+				hx-select="li[data-type]"
 				hx-trigger="keyup changed delay:500ms, search"
 				hx-push-url="true"
 				hx-target="ol"
 				minlength="3"
 				hx-validate="true"
-				value={ query }
+				value={ props.Query }
 			/>
 		</div>
 		<div class="mx-auto max-w-xl px-5 py-8">
-			if len(movies) > 0 {
-				<ol class="relative flex flex-col gap-y-6 text-sm -mt-6">
-					for _, movie := range movies {
-						<li
-							data-movie={ strconv.Itoa(movie.ID) }
-							data-year={ movie.WatchedAt.Format("2006") }
-							data-month={ movie.WatchedAt.Format("January") }
-							_="
+			switch props.QueryType {
+				case "person":
+					if len(props.Persons) > 0 {
+						<ol class="flex flex-col gap-y-4 text-sm">
+							for _, person := range props.Persons {
+								<li data-type="list-item">
+									<a
+										href={ person.LinkTo() }
+										class="flex justify-between items-center gap-x-4 rounded-sm focus:outline-hidden focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-offset-8 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
+									>
+										<h2
+											class="truncate text-base font-medium text-neutral-700 dark:text-neutral-300"
+										>
+											{ person.Name }
+										</h2>
+										<div class="text-xs text-neutral-500 dark:text-neutral-400">
+											{ strconv.Itoa(person.NumberOfMovies) } movies
+										</div>
+									</a>
+								</li>
+							}
+						</ol>
+					} else {
+						@c.EmptyState("No persons found")
+					}
+				case "movie":
+					if len(props.Movies) > 0 {
+						<ol class="relative flex flex-col gap-y-6 text-sm -mt-6">
+							for _, movie := range props.Movies {
+								<li
+									data-type="list-item"
+									data-movie={ strconv.Itoa(movie.ID) }
+									data-year={ movie.WatchedAt.Format("2006") }
+									data-month={ movie.WatchedAt.Format("January") }
+									_="
 init if my @data-year is not really equal to @data-year of previous <li/> then
   set dataYear to my @data-year
 
@@ -97,48 +133,49 @@ init if my @data-month is not really equal to @data-month of previous <li/> then
   end
 end
 "
-						>
-							<a
-								href={ movie.LinkTo() }
-								class="flex flex-col gap-4 rounded-sm focus:outline-hidden focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-offset-8 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
-							>
-								<header class="flex flex-col gap-1">
-									<h2
-										class="truncate text-base font-medium text-neutral-700 dark:text-neutral-300"
+								>
+									<a
+										href={ movie.LinkTo() }
+										class="flex flex-col gap-4 rounded-sm focus:outline-hidden focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-offset-8 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
 									>
-										{ movie.Title }
-									</h2>
-									<div class="text-xs text-neutral-500 dark:text-neutral-400">
-										<time
-											title={ movie.WatchedAt.Format("2006-01-02 15:04") }
-											datetime={ movie.WatchedAt.Format("2006-01-02T15:04:05Z") }
-										>
-											{ movie.WatchedAt.Format("January 02 2006") }
-										</time>
-										if movie.Series.Valid && movie.NumberInSeries.Valid {
-											<span>
-												- { movie.Series.String } #{ strconv.FormatInt( movie.NumberInSeries.Int64, 10 ) }
-											</span>
+										<header class="flex flex-col gap-1">
+											<h2
+												class="truncate text-base font-medium text-neutral-700 dark:text-neutral-300"
+											>
+												{ movie.Title }
+											</h2>
+											<div class="text-xs text-neutral-500 dark:text-neutral-400">
+												<time
+													title={ movie.WatchedAt.Format("2006-01-02 15:04") }
+													datetime={ movie.WatchedAt.Format("2006-01-02T15:04:05Z") }
+												>
+													{ movie.WatchedAt.Format("January 02 2006") }
+												</time>
+												if movie.Series.Valid && movie.NumberInSeries.Valid {
+													<span>
+														- { movie.Series.String } #{ strconv.FormatInt( movie.NumberInSeries.Int64, 10 ) }
+													</span>
+												}
+											</div>
+										</header>
+										if movie.Overview != "" {
+											<p class="line-clamp-3 text-neutral-500 dark:text-neutral-400">
+												{ movie.Overview }
+											</p>
 										}
-									</div>
-								</header>
-								if movie.Overview != "" {
-									<p class="line-clamp-3 text-neutral-500 dark:text-neutral-400">
-										{ movie.Overview }
-									</p>
-								}
-							</a>
-						</li>
+									</a>
+								</li>
+							}
+							<li
+								hx-get={ fmt.Sprintf("/?page=%d", props.NextPage) }
+								hx-trigger="revealed"
+								hx-swap="outerHTML"
+								hx-select="li"
+							></li>
+						</ol>
+					} else {
+						@c.EmptyState("No movies seen")
 					}
-					<li
-						hx-get={ fmt.Sprintf("/?page=%d", nextPage) }
-						hx-trigger="revealed"
-						hx-swap="outerHTML"
-						hx-select="li"
-					></li>
-				</ol>
-			} else {
-				@c.EmptyState("No movies seen")
 			}
 		</div>
 	}

@@ -6,6 +6,7 @@ import (
 	"believer/movies/utils"
 	"believer/movies/views"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -15,15 +16,45 @@ import (
 
 func HandleFeed(c *fiber.Ctx) error {
 	var movies types.Movies
+	var persons types.Persons
 
 	page := c.QueryInt("page", 1)
 	searchQuery := c.Query("search")
+	searchQueryType := "movie"
 
 	if searchQuery != "" {
-		err := db.Dot.Select(db.Client, &movies, "feed-search", searchQuery)
+		// Query string with a specifier for type. For example:
+		// - movie:godfa
+		// - actor:ryan
+		if queryType, query, ok := strings.Cut(searchQuery, ":"); ok {
+			switch strings.ToLower(queryType) {
+			case "movie":
+				err := db.Dot.Select(db.Client, &movies, "feed-search", query)
 
-		if err != nil {
-			return err
+				if err != nil {
+					return err
+				}
+			case "actor", "cast":
+				err := db.Dot.Select(db.Client, &persons, "feed-search-job", query, "cast")
+				searchQueryType = "person"
+
+				if err != nil {
+					return err
+				}
+			case "director", "writer", "producer", "composer":
+				err := db.Dot.Select(db.Client, &persons, "feed-search-job", query, queryType)
+				searchQueryType = "person"
+
+				if err != nil {
+					return err
+				}
+			}
+		} else {
+			err := db.Dot.Select(db.Client, &movies, "feed-search", searchQuery)
+
+			if err != nil {
+				return err
+			}
 		}
 	} else {
 		err := db.Dot.Select(db.Client, &movies, "feed", (page-1)*20, c.Locals("UserId"))
@@ -33,12 +64,14 @@ func HandleFeed(c *fiber.Ctx) error {
 		}
 	}
 
-	feed := views.Feed(
-		utils.IsAuthenticated(c),
-		movies,
-		page+1,
-		searchQuery,
-	)
+	feed := views.Feed(views.FeedProps{
+		IsAdmin:   utils.IsAuthenticated(c),
+		Movies:    movies,
+		NextPage:  page + 1,
+		Persons:   persons,
+		Query:     searchQuery,
+		QueryType: searchQueryType,
+	})
 
 	return utils.TemplRender(c, feed)
 }
