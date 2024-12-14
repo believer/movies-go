@@ -18,7 +18,7 @@
 }
 
 .month-indicator {
-  @apply sticky top-12 lg:top-28 z-10;
+  @apply sticky top-12 lg:top-29 z-10;
 }
 
 .year {
@@ -28,7 +28,7 @@
 }
 
 .month {
-  @apply text-lg lg:text-xl lg:absolute lg:-top-2 -left-52 z-10 bg-white dark:bg-neutral-900 py-1 lg:w-40 lg:text-right text-neutral-400 dark:text-neutral-700;
+  @apply text-lg lg:text-xl lg:absolute lg:-top-2 -left-49 z-10 bg-white dark:bg-neutral-900 py-1 lg:w-40 lg:text-right text-neutral-400 dark:text-neutral-700;
 }
 
 .month-indicator + li {

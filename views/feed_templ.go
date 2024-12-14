@@ -231,7 +231,7 @@ func Feed(props FeedProps) templ.Component {
 				}
 			case "movie":
 				if len(props.Movies) > 0 {
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<ol class=\"relative flex flex-col gap-y-6 text-sm -mt-6\">")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<ol class=\"relative flex flex-col gap-y-6 text-sm -mt-8\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

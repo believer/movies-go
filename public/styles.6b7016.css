@@ -566,8 +566,8 @@
   .mx-auto {
     margin-inline: auto;
   }
-  .-mt-6 {
-    margin-top: calc(var(--spacing) * -6);
+  .-mt-8 {
+    margin-top: calc(var(--spacing) * -8);
   }
   .mt-4 {
     margin-top: calc(var(--spacing) * 4);
@@ -1495,7 +1495,7 @@
   top: calc(var(--spacing) * 12);
   z-index: 10;
   @media (width >= 64rem) {
-    top: calc(var(--spacing) * 28);
+    top: calc(var(--spacing) * 29);
   }
 }
 .year {
@@ -1550,7 +1550,7 @@
   -webkit-text-stroke-width: 2px;
 }
 .month {
-  left: calc(var(--spacing) * -52);
+  left: calc(var(--spacing) * -49);
   z-index: 10;
   background-color: var(--color-white);
   padding-block: calc(var(--spacing) * 1);
