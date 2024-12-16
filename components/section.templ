@@ -10,6 +10,21 @@ templ h2() {
 	</h2>
 }
 
+templ SectionTitleWithAction(title string, numberOfItems int) {
+	<div class="flex items-center gap-4">
+		<h2 class="font-medium text-neutral-700 dark:text-neutral-300">
+			<span>
+				{ title }
+				<span class="font-regular text-xs dark:text-neutral-400">
+					({ strconv.Itoa(numberOfItems) })
+				</span>
+			</span>
+		</h2>
+		<hr class="m-0 flex-1 border-neutral-300 dark:border-neutral-700"/>
+		{ children... }
+	</div>
+}
+
 templ SectionTitleWithItems(title string, numberOfItems int) {
 	@h2() {
 		<span>
@@ -56,6 +71,17 @@ templ SectionTitleWithDropdown(title string) {
 		<hr class="m-0 flex-1 border-neutral-300 dark:border-neutral-700"/>
 		{ children... }
 	</div>
+}
+
+templ SectionWithAction(title string, numberOfItems int, action templ.Component) {
+	<section
+		class="flex flex-col gap-4 md:text-sm text-neutral-500 dark:text-neutral-400"
+	>
+		@SectionTitleWithAction(title, numberOfItems) {
+			@action
+		}
+		{ children... }
+	</section>
 }
 
 templ Section(title string, numberOfItems int) {

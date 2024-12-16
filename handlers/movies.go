@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"believer/movies/components"
+	"believer/movies/components/movie"
 	"believer/movies/db"
 	"believer/movies/types"
 	"believer/movies/utils"
@@ -134,7 +135,7 @@ func HandleGetMovieSeenByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.TemplRender(c, components.Watched(components.WatchedProps{
+	return utils.TemplRender(c, movie.Watched(movie.WatchedProps{
 		WatchedAt:   watchedAt,
 		IsAdmin:     isAuth,
 		InWatchlist: len(watchlist) > 0,

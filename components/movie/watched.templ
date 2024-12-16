@@ -1,7 +1,9 @@
-package components
+package movie
 
 import (
+	c "believer/movies/components"
 	"fmt"
+	"strconv"
 	"time"
 )
 
@@ -13,22 +15,38 @@ type WatchedProps struct {
 	ID          string
 }
 
+templ addWatch(id string) {
+	@c.IsAuthenticated() {
+		<a
+			href="#"
+			hx-post={ fmt.Sprintf("/movie/%s/seen", id) }
+			class="truncate border-b border-dashed border-neutral-500 focus:outline-hidden focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600"
+		>
+			Add new watch
+		</a>
+	}
+}
+
 templ Watched(props WatchedProps) {
-	@Section("", 0) {
+	@c.SectionWithAction("Watched", len(props.WatchedAt), addWatch(props.ID)) {
 		if len(props.WatchedAt) > 0 {
 			<ol class="flex flex-col gap-2">
-				for _, w := range props.WatchedAt {
-					<li class="tabular-nums">{ w.Format("2006-01-02 15:04") }</li>
-				}
-				if props.IsAdmin {
-					<li>
-						<a
-							href="#"
-							hx-post={ fmt.Sprintf("/movie/%s/seen", props.ID) }
-							class="truncate border-b border-dashed border-neutral-500 focus:outline-hidden focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600"
-						>
-							Add new watch
-						</a>
+				for i, w := range props.WatchedAt {
+					<li
+						class="flex gap-x-4 tabular-nums before:content-[attr(data-position)] before:text-right before:tabular-nums before:w-[2ch] before:text-neutral-400 dark:before:text-neutral-600"
+						data-position={ strconv.Itoa(len(props.WatchedAt) - i) }
+					>
+						<span class="flex gap-x-2">
+							<span>
+								{ w.Format("Monday, January 02, 2006") }
+							</span>
+							<span class="text-neutral-400 dark:text-neutral-600">
+								{ `@` }
+							</span>
+							<span>
+								{ w.Format("15:04") }
+							</span>
+						</span>
 					</li>
 				}
 			</ol>
@@ -38,9 +56,9 @@ templ Watched(props WatchedProps) {
 					class="border-b border-dashed border-neutral-500 focus:outline-hidden focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600"
 					href="/watchlist"
 				>In watchlist</a>
-				@IsAuthenticated() {
+				@c.IsAuthenticated() {
 					<a href={ templ.URL(fmt.Sprintf("/movie/new?imdbId=%s&id=%s", props.ImdbId, props.ID)) } class="text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors" title="Add watch">
-						@IconEye()
+						@c.IconEye()
 					</a>
 				}
 			</div>
