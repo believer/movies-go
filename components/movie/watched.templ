@@ -15,20 +15,22 @@ type WatchedProps struct {
 	ID          string
 }
 
-templ addWatch(id string) {
+templ addWatch(id string, isUnseen bool) {
 	@c.IsAuthenticated() {
-		<a
-			href="#"
-			hx-post={ fmt.Sprintf("/movie/%s/seen", id) }
-			class="truncate border-b border-dashed border-neutral-500 focus:outline-hidden focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600"
-		>
-			Add new watch
-		</a>
+		if !isUnseen {
+			<a
+				href="#"
+				hx-post={ fmt.Sprintf("/movie/%s/seen", id) }
+				class="truncate border-b border-dashed border-neutral-500 focus:outline-hidden focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600"
+			>
+				Add new watch
+			</a>
+		}
 	}
 }
 
 templ Watched(props WatchedProps) {
-	@c.SectionWithAction("Watched", len(props.WatchedAt), addWatch(props.ID)) {
+	@c.SectionWithAction("Watched", len(props.WatchedAt), addWatch(props.ID, len(props.WatchedAt) == 0 && !props.InWatchlist)) {
 		if len(props.WatchedAt) > 0 {
 			<ol class="flex flex-col gap-2">
 				for i, w := range props.WatchedAt {

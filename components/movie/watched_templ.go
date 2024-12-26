@@ -23,7 +23,7 @@ type WatchedProps struct {
 	ID          string
 }
 
-func addWatch(id string) templ.Component {
+func addWatch(id string, isUnseen bool) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -56,22 +56,24 @@ func addWatch(id string) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a href=\"#\" hx-post=\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/movie/%s/seen", id))
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/movie/watched.templ`, Line: 22, Col: 46}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"truncate border-b border-dashed border-neutral-500 focus:outline-hidden focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600\">Add new watch</a>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
+			if !isUnseen {
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a href=\"#\" hx-post=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var3 string
+				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/movie/%s/seen", id))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/movie/watched.templ`, Line: 23, Col: 47}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"truncate border-b border-dashed border-neutral-500 focus:outline-hidden focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600\">Add new watch</a>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
 			}
 			return templ_7745c5c3_Err
 		})
@@ -129,7 +131,7 @@ func Watched(props WatchedProps) templ.Component {
 					var templ_7745c5c3_Var6 string
 					templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(len(props.WatchedAt) - i))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/movie/watched.templ`, Line: 37, Col: 60}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/movie/watched.templ`, Line: 39, Col: 60}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 					if templ_7745c5c3_Err != nil {
@@ -142,7 +144,7 @@ func Watched(props WatchedProps) templ.Component {
 					var templ_7745c5c3_Var7 string
 					templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(w.Format("Monday, January 02, 2006"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/movie/watched.templ`, Line: 41, Col: 46}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/movie/watched.templ`, Line: 43, Col: 46}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 					if templ_7745c5c3_Err != nil {
@@ -155,7 +157,7 @@ func Watched(props WatchedProps) templ.Component {
 					var templ_7745c5c3_Var8 string
 					templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(`@`)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/movie/watched.templ`, Line: 44, Col: 13}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/movie/watched.templ`, Line: 46, Col: 13}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 					if templ_7745c5c3_Err != nil {
@@ -168,7 +170,7 @@ func Watched(props WatchedProps) templ.Component {
 					var templ_7745c5c3_Var9 string
 					templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(w.Format("15:04"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/movie/watched.templ`, Line: 47, Col: 27}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/movie/watched.templ`, Line: 49, Col: 27}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 					if templ_7745c5c3_Err != nil {
@@ -248,7 +250,7 @@ func Watched(props WatchedProps) templ.Component {
 			}
 			return templ_7745c5c3_Err
 		})
-		templ_7745c5c3_Err = c.SectionWithAction("Watched", len(props.WatchedAt), addWatch(props.ID)).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = c.SectionWithAction("Watched", len(props.WatchedAt), addWatch(props.ID, len(props.WatchedAt) == 0 && !props.InWatchlist)).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
