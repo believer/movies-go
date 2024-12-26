@@ -566,8 +566,8 @@
   .mx-auto {
     margin-inline: auto;
   }
-  .-mt-8 {
-    margin-top: calc(var(--spacing) * -8);
+  .-mt-6 {
+    margin-top: calc(var(--spacing) * -6);
   }
   .mt-4 {
     margin-top: calc(var(--spacing) * 4);
@@ -1191,6 +1191,11 @@
   .md\:absolute {
     @media (width >= 48rem) {
       position: absolute;
+    }
+  }
+  .md\:-mt-8 {
+    @media (width >= 48rem) {
+      margin-top: calc(var(--spacing) * -8);
     }
   }
   .md\:gap-y-3 {
