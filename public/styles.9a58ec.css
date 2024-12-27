@@ -1060,6 +1060,13 @@
       }
     }
   }
+  .hover\:text-neutral-700 {
+    &:hover {
+      @media (hover: hover) {
+        color: var(--color-neutral-700);
+      }
+    }
+  }
   .hover\:text-neutral-800 {
     &:hover {
       @media (hover: hover) {
@@ -1435,6 +1442,15 @@
       &:hover {
         @media (hover: hover) {
           color: var(--color-neutral-200);
+        }
+      }
+    }
+  }
+  .hover\:dark\:text-neutral-300 {
+    &:hover {
+      @media (hover: hover) {
+        @media (prefers-color-scheme: dark) {
+          color: var(--color-neutral-300);
         }
       }
     }

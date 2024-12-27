@@ -197,20 +197,20 @@ func Watched(props WatchedProps) templ.Component {
 							}()
 						}
 						ctx = templ.InitializeContext(ctx)
-						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button hx-delete=\"")
+						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button aria-label=\"Delete watch\" class=\"cursor-pointer text-neutral-300 hover:text-neutral-700 dark:text-neutral-700 hover:dark:text-neutral-300 transition-colors\" hx-confirm=\"Are you sure you want to delete this watch date?\" hx-delete=\"")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
 						var templ_7745c5c3_Var11 string
 						templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/movie/%s/seen/%d", props.ID, w.ID))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/movie/watched.templ`, Line: 59, Col: 68}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/movie/watched.templ`, Line: 62, Col: 68}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
-						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-target=\"closest section\" hx-swap=\"outerHTML\" hx-confirm=\"Are you sure you want to delete this watch date?\">")
+						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-swap=\"outerHTML\" hx-target=\"closest section\">")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
