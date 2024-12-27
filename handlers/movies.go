@@ -115,7 +115,7 @@ func HandleGetMovieCastByID(c *fiber.Ctx) error {
 }
 
 func HandleGetMovieSeenByID(c *fiber.Ctx) error {
-	var watchedAt []time.Time
+	var watchedAt []movie.WatchedAt
 	var watchlist types.Movies
 
 	isAuth := utils.IsAuthenticated(c)
@@ -671,7 +671,38 @@ func HandleGetByImdbId(c *fiber.Ctx) error {
 	return utils.TemplRender(c, components.MovieExists(movie))
 }
 
-func HandlePostMovieSeenNew(c *fiber.Ctx) error {
+func HandleDeleteMovieSeen(c *fiber.Ctx) error {
+	var watchedAt []movie.WatchedAt
+
+	movieId := c.Params("id")
+	seenId := c.Params("seenId")
+	userId := c.Locals("UserId")
+	isAuth := utils.IsAuthenticated(c)
+
+	if !isAuth {
+		return c.SendStatus(fiber.StatusUnauthorized)
+	}
+
+	_, err := db.Client.Exec(`DELETE FROM seen WHERE id = $1`, seenId)
+
+	if err != nil {
+		return err
+	}
+
+	err = db.Dot.Select(db.Client, &watchedAt, "seen-by-user-id", movieId, userId)
+
+	if err != nil {
+		return err
+	}
+
+	return utils.TemplRender(c, movie.Watched(movie.WatchedProps{
+		WatchedAt: watchedAt,
+		IsAdmin:   isAuth,
+		ID:        movieId,
+	}))
+}
+
+func HandlePostMovieSeen(c *fiber.Ctx) error {
 	isAuth := utils.IsAuthenticated(c)
 
 	if !isAuth {

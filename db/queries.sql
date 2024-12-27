@@ -103,6 +103,7 @@ LIMIT 100;
 
 -- name: seen-by-user-id
 SELECT
+    id,
     date at time zone 'UTC' at time zone 'Europe/Stockholm' AS date
 FROM
     seen

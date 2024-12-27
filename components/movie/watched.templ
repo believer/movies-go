@@ -7,8 +7,13 @@ import (
 	"time"
 )
 
+type WatchedAt struct {
+	ID   int       `db:"id"`
+	Date time.Time `db:"date"`
+}
+
 type WatchedProps struct {
-	WatchedAt   []time.Time
+	WatchedAt   []WatchedAt
 	IsAdmin     bool
 	InWatchlist bool
 	ImdbId      string
@@ -40,15 +45,25 @@ templ Watched(props WatchedProps) {
 					>
 						<span class="flex gap-x-2">
 							<span>
-								{ w.Format("Monday, January 02, 2006") }
+								{ w.Date.Format("Monday, January 02, 2006") }
 							</span>
 							<span class="text-neutral-400 dark:text-neutral-600">
 								{ `@` }
 							</span>
 							<span>
-								{ w.Format("15:04") }
+								{ w.Date.Format("15:04") }
 							</span>
 						</span>
+						@c.IsAuthenticated() {
+							<button
+								hx-delete={ fmt.Sprintf("/movie/%s/seen/%d", props.ID, w.ID) }
+								hx-target="closest section"
+								hx-swap="outerHTML"
+								hx-confirm="Are you sure you want to delete this watch date?"
+							>
+								@c.IconTimes()
+							</button>
+						}
 					</li>
 				}
 			</ol>
