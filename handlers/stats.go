@@ -244,7 +244,7 @@ func HandleGetHighestRankedPersonByJob(c *fiber.Ctx) error {
 
 	job := c.Query("job", "cast")
 	userId := c.Locals("UserId")
-	title := "Highest ranked " + job
+	title := "Highest ranked " + strings.ToLower(job)
 
 	err := db.Dot.Select(db.Client, &persons, "stats-highest-ranked-persons-by-job", userId, strings.ToLower(job))
 
