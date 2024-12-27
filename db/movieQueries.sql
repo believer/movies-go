@@ -12,6 +12,7 @@ SELECT
     se.id AS "series_id",
     ms.number_in_series,
     r.rating,
+    r.created_at at time zone 'UTC' at time zone 'Europe/Stockholm' AS "rated_at",
     COALESCE(ARRAY_TO_JSON(ARRAY_AGG(DISTINCT jsonb_build_object('name', g.name, 'id', g.id)) FILTER (WHERE g.name IS NOT NULL)), '[]') AS genres,
     COALESCE(ARRAY_TO_JSON(ARRAY_AGG(DISTINCT jsonb_build_object('name', l.english_name, 'id', l.id)) FILTER (WHERE l.english_name IS NOT NULL)), '[]') AS languages
 FROM
@@ -29,6 +30,7 @@ WHERE
 GROUP BY
     1,
     r.rating,
+    r.created_at,
     se.id,
     ms.number_in_series;
 

@@ -100,7 +100,12 @@ templ Movie(props MovieProps) {
 					}
 					if props.Movie.Rating.Valid {
 						@c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Rating", IsTabular: false}) {
-							{ strconv.FormatInt(props.Movie.Rating.Int64, 10) }
+							<time
+								title={ props.Movie.RatedAt.Format("2006-01-02 15:04") }
+								datetime={ props.Movie.RatedAt.Format("2006-01-02T15:04:05Z") }
+							>
+								{ strconv.FormatInt(props.Movie.Rating.Int64, 10) }
+							</time>
 						}
 					}
 				}
