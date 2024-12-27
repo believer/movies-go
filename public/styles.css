@@ -1193,11 +1193,6 @@
       position: absolute;
     }
   }
-  .md\:-mt-8 {
-    @media (width >= 48rem) {
-      margin-top: calc(var(--spacing) * -8);
-    }
-  }
   .md\:gap-y-3 {
     @media (width >= 48rem) {
       row-gap: calc(var(--spacing) * 3);
@@ -1227,6 +1222,11 @@
   .lg\:-right-52 {
     @media (width >= 64rem) {
       right: calc(var(--spacing) * -52);
+    }
+  }
+  .lg\:-mt-8 {
+    @media (width >= 64rem) {
+      margin-top: calc(var(--spacing) * -8);
     }
   }
   .lg\:w-48 {
