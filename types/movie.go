@@ -74,7 +74,7 @@ type Movie struct {
 	Overview       string          `db:"overview" json:"overview"`
 	Poster         string          `db:"poster"`
 	Rating         sql.NullInt64   `db:"rating"`
-	RatedAt        time.Time       `db:"rated_at"`
+	RatedAt        sql.NullTime    `db:"rated_at"`
 	ReleaseDate    time.Time       `db:"release_date" json:"release_date"`
 	Runtime        int             `db:"runtime"`
 	Seen           bool            `db:"seen"`

@@ -533,9 +533,9 @@ func Movie(props MovieProps) templ.Component {
 									return templ_7745c5c3_Err
 								}
 								var templ_7745c5c3_Var30 string
-								templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(props.Movie.RatedAt.Format("2006-01-02 15:04"))
+								templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(props.Movie.RatedAt.Time.Format("2006-01-02 15:04"))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 104, Col: 62}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 104, Col: 67}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 								if templ_7745c5c3_Err != nil {
@@ -546,9 +546,9 @@ func Movie(props MovieProps) templ.Component {
 									return templ_7745c5c3_Err
 								}
 								var templ_7745c5c3_Var31 string
-								templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(props.Movie.RatedAt.Format("2006-01-02T15:04:05Z"))
+								templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(props.Movie.RatedAt.Time.Format("2006-01-02T15:04:05Z"))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 105, Col: 69}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 105, Col: 74}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 								if templ_7745c5c3_Err != nil {
