@@ -138,19 +138,33 @@ ORDER BY
     months.month;
 
 -- name: stats-best-of-the-year
+WITH seen_once AS (
+    -- Get movies that have only been seen once
+    -- and that view is in the current year.
+    SELECT
+        s.movie_id,
+        COUNT(*) AS seen_count,
+        MAX(r.rating) AS max_rating -- Use MAX in case of differing ratings
+    FROM
+        seen AS s
+        INNER JOIN rating AS r ON s.movie_id = r.movie_id
+    WHERE
+        EXTRACT(YEAR FROM s.date) = EXTRACT(YEAR FROM CURRENT_DATE)
+        AND s.user_id = $1
+    GROUP BY
+        s.movie_id
+    HAVING
+        COUNT(*) = 1
+)
 SELECT
     m.id,
     m.title,
-    r.rating
+    so.max_rating AS "rating"
 FROM
-    seen AS s
-    INNER JOIN movie AS m ON m.id = s.movie_id
-    INNER JOIN rating AS r ON m.id = r.movie_id
-WHERE
-    EXTRACT(YEAR FROM s.date) = EXTRACT(YEAR FROM CURRENT_DATE)
-    AND s.user_id = $1
+    seen_once AS so
+    INNER JOIN movie AS m ON m.id = so.movie_id
 ORDER BY
-    rating DESC
+    so.max_rating DESC
 LIMIT 1;
 
 -- name: stats-movies-by-year
