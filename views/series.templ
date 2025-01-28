@@ -44,11 +44,13 @@ templ list(movies types.Movies) {
 templ Series(props SeriesProps) {
 	@Layout(LayoutProps{Title: props.Series.Name}) {
 		@StandardBody(props.Series.Name) {
-			<section>
-				if props.Series.ParentSeries.Valid {
-					@c.SimpleLink(c.SimpleLinkProps{Href: props.Series.LinkToParent()}) {
-						Go to parent series
-					}
+			<section class="flex flex-col gap-y-2">
+				for _, parent := range props.Series.ParentSeries {
+					<div>
+						@c.SimpleLink(c.SimpleLinkProps{Href: props.Series.LinkToParent(parent.ID)}) {
+							Go to { parent.Name } series
+						}
+					</div>
 				}
 			</section>
 			if props.TotalMovies > 0 {
