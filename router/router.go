@@ -34,6 +34,8 @@ func SetupRoutes(app *fiber.App) {
 	movieGroup.Get("/:id/seen", handlers.HandleGetMovieSeenByID)
 	movieGroup.Post("/:id/seen", handlers.HandlePostMovieSeen)
 	movieGroup.Delete("/:id/seen/:seenId", handlers.HandleDeleteMovieSeen)
+	movieGroup.Get("/:id/seen/:seenId/edit", handlers.HandleGetMovieSeen)
+	movieGroup.Put("/:id/seen/:seenId/edit", handlers.HandleUpdateMovieSeen)
 
 	// Year
 	// --------------------------

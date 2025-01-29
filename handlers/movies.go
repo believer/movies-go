@@ -702,6 +702,68 @@ func HandleDeleteMovieSeen(c *fiber.Ctx) error {
 	}))
 }
 
+func HandleGetMovieSeen(c *fiber.Ctx) error {
+	var time string
+
+	movieId := c.Params("id")
+	seenId := c.Params("seenId")
+
+	err := db.Client.Get(&time, `SELECT TO_CHAR(date AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/Stockholm', 'YYYY-MM-DD"T"HH24:MI') as date FROM seen WHERE id = $1`, seenId)
+
+	if err != nil {
+		return err
+	}
+
+	return utils.TemplRender(c, views.UpdateWatched(views.UpdateWatchedProps{
+		MovieId: movieId,
+		SeenId:  seenId,
+		Time:    time,
+	}))
+}
+
+func HandleUpdateMovieSeen(c *fiber.Ctx) error {
+	movieId := c.Params("id")
+	seenId := c.Params("seenId")
+	isAuth := utils.IsAuthenticated(c)
+
+	if !isAuth {
+		return c.SendStatus(fiber.StatusUnauthorized)
+	}
+
+	// Parse form data and watched at time
+	data := new(struct {
+		WatchedAt string `form:"watched_at"`
+	})
+
+	if err := c.BodyParser(data); err != nil {
+		return err
+	}
+
+	watchedAt, err := time.Parse("2006-01-02T15:04", data.WatchedAt)
+
+	if err != nil {
+		now := time.Now()
+		watchedAt, err = time.Parse("2006-01-02", data.WatchedAt)
+
+		if err != nil {
+			watchedAt = now
+		}
+
+		// Set the current time
+		watchedAt = watchedAt.Add(time.Duration(now.Hour()))
+	}
+
+	_, err = db.Client.Exec(`UPDATE seen SET date = $1 WHERE id = $2`, watchedAt, seenId)
+
+	if err != nil {
+		return err
+	}
+
+	c.Set("HX-Redirect", fmt.Sprintf("/movie/%s", movieId))
+
+	return c.SendStatus(fiber.StatusOK)
+}
+
 func HandlePostMovieSeen(c *fiber.Ctx) error {
 	isAuth := utils.IsAuthenticated(c)
 

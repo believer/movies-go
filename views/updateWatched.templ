@@ -1,0 +1,39 @@
+package views
+
+import (
+	c "believer/movies/components"
+	"fmt"
+)
+
+type UpdateWatchedProps struct {
+	MovieId string
+	SeenId  string
+	Time    string
+}
+
+templ UpdateWatched(props UpdateWatchedProps) {
+	@Layout(LayoutProps{Title: "Update watch"}) {
+		<form
+			hx-put={ fmt.Sprintf("/movie/%s/seen/%s/edit", props.MovieId, props.SeenId) }
+			hx-indicator="#sending"
+			class="mx-auto flex max-w-xl flex-col gap-y-6 px-4 py-8"
+		>
+			<div>
+				@c.Link(c.LinkProps{Href: "/"}) {
+					Back
+				}
+			</div>
+			@c.DateTimeInput("watched_at", "Watched at", "Defaults to current time if left empty. Time zone is UTC.", props.Time)
+			<footer class="flex flex-col gap-y-4">
+				<div id="error" class="empty:hidden text-rose-700 dark:text-rose-400 border border-dashed border-rose-700 dark:border-rose-400 p-4 rounded-sm"></div>
+				<button
+					class="rounded-sm bg-neutral-200 px-6 py-2 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200"
+					type="submit"
+				>
+					Add
+				</button>
+				<div id="sending" class="htmx-indicator">Sending...</div>
+			</footer>
+		</form>
+	}
+}

@@ -203,7 +203,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = c.DateTimeInput("watched_at", "Watched at", "Defaults to current time if left empty.").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = c.DateTimeInput("watched_at", "Watched at", "Defaults to current time if left empty.", "").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

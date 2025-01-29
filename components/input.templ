@@ -55,7 +55,7 @@ templ NumberInput(name string, labelText string, helpText string, min int, max i
 	</div>
 }
 
-templ DateTimeInput(name string, labelText string, helpText string) {
+templ DateTimeInput(name string, labelText string, helpText string, defaultValue string) {
 	<div class="relative flex flex-col gap-2">
 		@Label(name, labelText)
 		<input
@@ -63,6 +63,7 @@ templ DateTimeInput(name string, labelText string, helpText string) {
 			name={ name }
 			id={ name }
 			class={ inputClass, "h-11 dark:[color-scheme:dark]" }
+			value={ defaultValue }
 		/>
 		if helpText != "" {
 			@Help(helpText)
