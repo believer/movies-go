@@ -19,6 +19,13 @@ type MovieProps struct {
 
 templ Movie(props MovieProps) {
 	@Layout(LayoutProps{Title: props.Movie.Title, Description: props.Movie.Overview}) {
+		<nav>
+			<div class="left-5 top-5 md:absolute">
+				@c.Link(c.LinkProps{Href: "/"}) {
+					Home
+				}
+			</div>
+		</nav>
 		@StandardBody(props.Movie.Title) {
 			if props.Movie.Overview != "" {
 				<p class="text-neutral-500 dark:text-neutral-400">{ props.Movie.Overview }</p>

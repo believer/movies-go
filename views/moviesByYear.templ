@@ -7,6 +7,13 @@ import (
 
 templ MoviesByYear(year string, movies types.Movies) {
 	@Layout(LayoutProps{Title: year}) {
+		<nav>
+			<div class="left-5 top-5 md:absolute">
+				@c.Link(c.LinkProps{Href: "/"}) {
+					Home
+				}
+			</div>
+		</nav>
 		@StandardBody(year) {
 			<div>
 				{ movies.NumberOfMovies() }
