@@ -40,7 +40,7 @@ templ Watched(props WatchedProps) {
 			<ol class="flex flex-col gap-2">
 				for i, w := range props.WatchedAt {
 					<li
-						class="flex gap-x-4 justify-between tabular-nums before:content-[attr(data-position)] before:text-right before:tabular-nums before:w-[2ch] before:text-neutral-400 dark:before:text-neutral-600 items-baseline"
+						class={ "flex gap-x-4 tabular-nums before:content-[attr(data-position)] before:text-right before:tabular-nums before:w-[2ch] before:text-neutral-400 dark:before:text-neutral-600 items-baseline", templ.KV("justify-between", ctx.Value("IsAuthenticated")) }
 						data-position={ strconv.Itoa(len(props.WatchedAt) - i) }
 					>
 						<div>
@@ -51,8 +51,8 @@ templ Watched(props WatchedProps) {
 								{ w.Date.Format("15:04") }
 							</div>
 						</div>
-						@c.Divider()
 						@c.IsAuthenticated() {
+							@c.Divider()
 							<div class="flex gap-4">
 								<a
 									class="cursor-pointer text-neutral-300 hover:text-neutral-700 dark:text-neutral-700 hover:dark:text-neutral-300 transition-colors"
