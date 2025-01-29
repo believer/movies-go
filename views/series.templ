@@ -51,15 +51,17 @@ templ Series(props SeriesProps) {
 			</div>
 		</nav>
 		@StandardBody(props.Series.Name) {
-			<section class="flex flex-col gap-y-2">
-				for _, parent := range props.Series.ParentSeries {
-					<div>
-						@c.SimpleLink(c.SimpleLinkProps{Href: props.Series.LinkToParent(parent.ID)}) {
-							Go to { parent.Name } series
-						}
-					</div>
-				}
-			</section>
+			if len(props.Series.ParentSeries) > 0 {
+				<section class="flex flex-col gap-y-2">
+					for _, parent := range props.Series.ParentSeries {
+						<div>
+							@c.SimpleLink(c.SimpleLinkProps{Href: props.Series.LinkToParent(parent.ID)}) {
+								Go to { parent.Name } series
+							}
+						</div>
+					}
+				</section>
+			}
 			if props.TotalMovies > 0 {
 				for _, series := range props.Movies {
 					if len(props.Movies) == 1 {
@@ -67,6 +69,10 @@ templ Series(props SeriesProps) {
 					} else if len(series.Movies) > 0 {
 						@c.LinkedSection(series.Name, series.LinkTo(), len(series.Movies)) {
 							@list(series.Movies)
+						}
+					} else if len(series.Movies) == 0 && series.Name != props.Series.Name {
+						@c.LinkedSection(series.Name, series.LinkTo(), len(series.Movies)) {
+							@c.EmptyState("No movies in series")
 						}
 					} else if series.Name != props.Series.Name {
 						@c.LinkedSectionTitle(series.Name, series.LinkTo())
