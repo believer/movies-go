@@ -40,14 +40,7 @@ templ Credit(title string, data types.PersonMovies, id string) {
 
 templ Person(person types.Person, totalCredits int, id string) {
 	@Layout(LayoutProps{Title: person.Name}) {
-		<nav>
-			<div class="left-5 top-5 md:absolute">
-				@c.Link(c.LinkProps{Href: "/"}) {
-					Home
-				}
-			</div>
-		</nav>
-		@StandardBody(person.Name) {
+		@StandardBody(person.Name, true) {
 			<div>
 				{ strconv.Itoa(totalCredits) } credits
 			</div>

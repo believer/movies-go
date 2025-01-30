@@ -15,14 +15,7 @@ type GenreProps struct {
 
 templ Genre(props GenreProps) {
 	@Layout(LayoutProps{Title: props.Name}) {
-		<nav>
-			<div class="left-5 top-5 md:absolute">
-				@c.Link(c.LinkProps{Href: "/"}) {
-					Home
-				}
-			</div>
-		</nav>
-		@StandardBody(props.Name) {
+		@StandardBody(props.Name, true) {
 			if len(props.Movies) > 0 {
 				@c.Ol() {
 					for _, movie := range props.Movies {

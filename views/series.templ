@@ -43,14 +43,7 @@ templ list(movies types.Movies) {
 
 templ Series(props SeriesProps) {
 	@Layout(LayoutProps{Title: props.Series.Name}) {
-		<nav>
-			<div class="left-5 top-5 md:absolute">
-				@c.Link(c.LinkProps{Href: "/"}) {
-					Home
-				}
-			</div>
-		</nav>
-		@StandardBody(props.Series.Name) {
+		@StandardBody(props.Series.Name, true) {
 			if len(props.Series.ParentSeries) > 0 {
 				<section class="flex flex-col gap-y-2">
 					for _, parent := range props.Series.ParentSeries {

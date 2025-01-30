@@ -63,8 +63,9 @@ templ Layout(props LayoutProps) {
 	</html>
 }
 
-templ StandardBody(title string) {
+templ StandardBody(title string, hasHome bool) {
 	<section class="mx-auto flex max-w-xl flex-col gap-y-8 px-5 py-8">
+		@c.LinkHome()
 		@c.H1(title, false)
 		{ children... }
 	</section>
