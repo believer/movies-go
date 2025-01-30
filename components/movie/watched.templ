@@ -15,6 +15,7 @@ type WatchedAt struct {
 type WatchedProps struct {
 	WatchedAt   []WatchedAt
 	IsAdmin     bool
+	IsUnseen    bool
 	InWatchlist bool
 	ImdbId      string
 	ID          string
@@ -35,7 +36,7 @@ templ addWatch(id string, isUnseen bool) {
 }
 
 templ Watched(props WatchedProps) {
-	@c.SectionWithAction("Watched", len(props.WatchedAt), addWatch(props.ID, len(props.WatchedAt) == 0 && !props.InWatchlist)) {
+	@c.SectionWithAction("Watched", len(props.WatchedAt), addWatch(props.ID, props.IsUnseen)) {
 		if len(props.WatchedAt) > 0 {
 			<ol class="flex flex-col gap-2">
 				for i, w := range props.WatchedAt {

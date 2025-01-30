@@ -110,7 +110,11 @@ templ Movie(props MovieProps) {
 					}
 				}
 			}
-			<div hx-swap="outerHTML" hx-get={ fmt.Sprintf("/movie/%d/seen?imdbId=%s", props.Movie.ID, props.Movie.ImdbId) } hx-trigger="load"></div>
+			<div
+				hx-swap="outerHTML"
+				hx-get={ fmt.Sprintf("/movie/%d/seen?imdbId=%s", props.Movie.ID, props.Movie.ImdbId) }
+				hx-trigger="load"
+			></div>
 			<div
 				hx-get={ fmt.Sprintf("/movie/%d/cast", props.Movie.ID) }
 				hx-trigger="load"

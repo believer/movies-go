@@ -138,6 +138,7 @@ func HandleGetMovieSeenByID(c *fiber.Ctx) error {
 	return utils.TemplRender(c, movie.Watched(movie.WatchedProps{
 		WatchedAt:   watchedAt,
 		IsAdmin:     isAuth,
+		IsUnseen:    len(watchedAt) == 0,
 		InWatchlist: len(watchlist) > 0,
 		ImdbId:      imdbId,
 		ID:          id,
