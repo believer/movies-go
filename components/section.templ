@@ -56,9 +56,11 @@ templ LinkedSectionTitleNumbered(title string, href templ.SafeURL, items int) {
 			@SimpleLink(SimpleLinkProps{Href: href}) {
 				{ title }
 			}
-			<span class="font-regular text-xs dark:text-neutral-400">
-				({ strconv.Itoa(items) })
-			</span>
+			if items > 0 {
+				<span class="font-regular text-xs dark:text-neutral-400">
+					({ strconv.Itoa(items) })
+				</span>
+			}
 		</span>
 	}
 }
