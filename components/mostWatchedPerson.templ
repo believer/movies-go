@@ -21,10 +21,10 @@ templ HighestRating(props HighestRatingProps) {
 		if len(props.Data) > 0 {
 			<ol class="flex flex-col gap-2">
 				for i, item := range props.Data {
-					<li
-						class="flex items-end justify-between gap-x-4 before:content-[attr(data-position)] before:text-right before:tabular-nums before:w-[2ch] before:text-neutral-400 dark:before:text-neutral-600"
-						data-position={ strconv.Itoa(i + 1) }
-					>
+					<li class="items-end justify-between gap-x-4 grid grid-cols-[2ch_auto_1fr_auto]">
+						<div class="text-right tabular-nums w-[2ch] text-neutral-400 dark:text-neutral-600">
+							{ strconv.Itoa(i+1) }
+						</div>
 						@Link(LinkProps{Href: item.LinkTo()}) {
 							{ item.Name }
 						}

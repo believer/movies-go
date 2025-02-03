@@ -86,20 +86,20 @@ func HighestRating(props HighestRatingProps) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				for i, item := range props.Data {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<li class=\"flex items-end justify-between gap-x-4 before:content-[attr(data-position)] before:text-right before:tabular-nums before:w-[2ch] before:text-neutral-400 dark:before:text-neutral-600\" data-position=\"")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<li class=\"items-end justify-between gap-x-4 grid grid-cols-[2ch_auto_1fr_auto]\"><div class=\"text-right tabular-nums w-[2ch] text-neutral-400 dark:text-neutral-600\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var4 string
 					templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(i + 1))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/mostWatchedPerson.templ`, Line: 26, Col: 41}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/mostWatchedPerson.templ`, Line: 26, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\">")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

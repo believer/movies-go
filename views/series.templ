@@ -15,12 +15,10 @@ type SeriesProps struct {
 templ list(movies types.Movies) {
 	@c.Ol() {
 		for _, movie := range movies {
-			<li
-				class="flex items-end justify-between gap-x-4 before:content-[attr(data-position)] before:text-right before:tabular-nums before:w-[2ch] before:text-neutral-400 dark:before:text-neutral-600"
-				if movie.NumberInSeries.Valid {
-					data-position={ strconv.FormatInt(movie.NumberInSeries.Int64, 10) }
-				}
-			>
+			<li class="items-end justify-between gap-x-4 grid grid-cols-[2ch_auto_1fr_auto]">
+				<div class={ "text-right tabular-nums text-neutral-400 dark:text-neutral-600", templ.KV("w-[1ch]", len(movies) < 10), templ.KV("w-[2ch]", len(movies) >= 10) }>
+					{ strconv.FormatInt(movie.NumberInSeries.Int64, 10) }
+				</div>
 				@c.Link(c.LinkProps{Href: movie.LinkTo(), Long: len(movie.Title) > 60}) {
 					{ movie.Title }
 				}

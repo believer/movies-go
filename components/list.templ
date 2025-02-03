@@ -31,10 +31,10 @@ func (l ListItem) LinkToLanguage() templ.SafeURL {
 templ OrderedList(data []ListItem, listType string) {
 	<ol class="flex flex-col gap-2">
 		for i, item := range data {
-			<li
-				class="flex items-end justify-between gap-4 before:content-[attr(data-position)] before:text-right before:tabular-nums before:w-[2ch] before:text-neutral-400 dark:before:text-neutral-600"
-				data-position={ strconv.Itoa(i + 1) }
-			>
+			<li class="items-end justify-between gap-x-4 grid grid-cols-[2ch_auto_1fr_auto]">
+				<div class={ "text-right tabular-nums text-neutral-400 dark:text-neutral-600", templ.KV("w-[1ch]", len(data) < 10), templ.KV("w-[2ch]", len(data) >= 10) }>
+					{ strconv.Itoa(i+1) }
+				</div>
 				if listType == "movie" {
 					@Link(LinkProps{Href: item.LinkToMovie()}) {
 						{ item.Name }
