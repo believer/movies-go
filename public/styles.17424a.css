@@ -630,6 +630,12 @@
   .w-14 {
     width: calc(var(--spacing) * 14);
   }
+  .w-\[1ch\] {
+    width: 1ch;
+  }
+  .w-\[2ch\] {
+    width: 2ch;
+  }
   .w-full {
     width: 100%;
   }
@@ -667,6 +673,9 @@
   }
   .grid-cols-1 {
     grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+  .grid-cols-\[2ch_auto_1fr_auto\] {
+    grid-template-columns: 2ch auto 1fr auto;
   }
   .flex-col {
     flex-direction: column;
