@@ -66,7 +66,9 @@ func OrderedList(data []ListItem, listType string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var2 = []any{"text-right tabular-nums text-neutral-400 dark:text-neutral-600", templ.KV("w-[1ch]", len(data) < 10), templ.KV("w-[2ch]", len(data) >= 10)}
+			var templ_7745c5c3_Var2 = []any{"text-right tabular-nums text-neutral-400 dark:text-neutral-600",
+				templ.KV("w-[1ch]", len(data) < 10),
+				templ.KV("w-[2ch]", len(data) >= 10)}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -91,7 +93,7 @@ func OrderedList(data []ListItem, listType string) templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(i + 1))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/list.templ`, Line: 36, Col: 24}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/list.templ`, Line: 40, Col: 24}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -117,7 +119,7 @@ func OrderedList(data []ListItem, listType string) templ.Component {
 					var templ_7745c5c3_Var6 string
 					templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(item.Name)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/list.templ`, Line: 40, Col: 17}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/list.templ`, Line: 44, Col: 17}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 					if templ_7745c5c3_Err != nil {
@@ -145,7 +147,7 @@ func OrderedList(data []ListItem, listType string) templ.Component {
 					var templ_7745c5c3_Var8 string
 					templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(item.Name)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/list.templ`, Line: 44, Col: 17}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/list.templ`, Line: 48, Col: 17}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 					if templ_7745c5c3_Err != nil {
@@ -173,7 +175,7 @@ func OrderedList(data []ListItem, listType string) templ.Component {
 					var templ_7745c5c3_Var10 string
 					templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(item.Name)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/list.templ`, Line: 48, Col: 17}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/list.templ`, Line: 52, Col: 17}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 					if templ_7745c5c3_Err != nil {
@@ -201,7 +203,7 @@ func OrderedList(data []ListItem, listType string) templ.Component {
 					var templ_7745c5c3_Var12 string
 					templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(item.Name)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/list.templ`, Line: 52, Col: 17}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/list.templ`, Line: 56, Col: 17}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 					if templ_7745c5c3_Err != nil {
@@ -225,7 +227,7 @@ func OrderedList(data []ListItem, listType string) templ.Component {
 			var templ_7745c5c3_Var13 string
 			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(item.Count))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/list.templ`, Line: 57, Col: 31}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/list.templ`, Line: 61, Col: 31}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 			if templ_7745c5c3_Err != nil {
@@ -277,7 +279,7 @@ func DataList(options []DataListItem, id string) templ.Component {
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(id)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/list.templ`, Line: 70, Col: 18}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/list.templ`, Line: 74, Col: 18}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
@@ -295,7 +297,7 @@ func DataList(options []DataListItem, id string) templ.Component {
 			var templ_7745c5c3_Var16 string
 			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(option.Value)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/list.templ`, Line: 72, Col: 31}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/list.templ`, Line: 76, Col: 31}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
@@ -308,7 +310,7 @@ func DataList(options []DataListItem, id string) templ.Component {
 			var templ_7745c5c3_Var17 string
 			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(option.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/list.templ`, Line: 72, Col: 54}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/list.templ`, Line: 76, Col: 54}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 			if templ_7745c5c3_Err != nil {

@@ -58,7 +58,9 @@ func list(movies types.Movies) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var3 = []any{"text-right tabular-nums text-neutral-400 dark:text-neutral-600", templ.KV("w-[1ch]", len(movies) < 10), templ.KV("w-[2ch]", len(movies) >= 10)}
+				var templ_7745c5c3_Var3 = []any{"text-right tabular-nums text-neutral-400 dark:text-neutral-600",
+					templ.KV("w-[1ch]", len(movies) < 10),
+					templ.KV("w-[2ch]", len(movies) >= 10)}
 				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var3...)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -83,7 +85,7 @@ func list(movies types.Movies) templ.Component {
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatInt(movie.NumberInSeries.Int64, 10))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/series.templ`, Line: 20, Col: 56}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/series.templ`, Line: 24, Col: 56}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -108,7 +110,7 @@ func list(movies types.Movies) templ.Component {
 					var templ_7745c5c3_Var7 string
 					templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(movie.Title)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/series.templ`, Line: 23, Col: 18}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/series.templ`, Line: 27, Col: 18}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 					if templ_7745c5c3_Err != nil {
@@ -143,7 +145,7 @@ func list(movies types.Movies) templ.Component {
 					var templ_7745c5c3_Var9 string
 					templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(movie.ISOReleaseDate())
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/series.templ`, Line: 28, Col: 30}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/series.templ`, Line: 32, Col: 30}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 					if templ_7745c5c3_Err != nil {
@@ -253,7 +255,7 @@ func Series(props SeriesProps) templ.Component {
 							var templ_7745c5c3_Var14 string
 							templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(parent.Name)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/series.templ`, Line: 50, Col: 27}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/series.templ`, Line: 54, Col: 27}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 							if templ_7745c5c3_Err != nil {

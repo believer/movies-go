@@ -16,7 +16,11 @@ templ list(movies types.Movies) {
 	@c.Ol() {
 		for _, movie := range movies {
 			<li class="items-end justify-between gap-x-4 grid grid-cols-[2ch_auto_1fr_auto]">
-				<div class={ "text-right tabular-nums text-neutral-400 dark:text-neutral-600", templ.KV("w-[1ch]", len(movies) < 10), templ.KV("w-[2ch]", len(movies) >= 10) }>
+				<div
+					class={ "text-right tabular-nums text-neutral-400 dark:text-neutral-600",
+          templ.KV("w-[1ch]", len(movies) < 10),
+          templ.KV("w-[2ch]", len(movies) >= 10) }
+				>
 					{ strconv.FormatInt(movie.NumberInSeries.Int64, 10) }
 				</div>
 				@c.Link(c.LinkProps{Href: movie.LinkTo(), Long: len(movie.Title) > 60}) {
