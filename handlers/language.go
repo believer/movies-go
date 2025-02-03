@@ -29,6 +29,13 @@ func HandleGetLanguage(c *fiber.Ctx) error {
 		return err
 	}
 
+	// When there are no more movies to show, just return 200. Otherwise we
+	// would display the "No movies seen" empty state which should only be
+	// shown at the start.
+	if len(movies) == 0 && page > 1 {
+		return c.SendStatus(fiber.StatusOK)
+	}
+
 	return utils.TemplRender(c, views.Language(views.LanguageProps{
 		ID:       id,
 		Name:     language.Name,
