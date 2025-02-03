@@ -15,11 +15,13 @@ type SeriesProps struct {
 templ list(movies types.Movies) {
 	@c.Ol() {
 		for _, movie := range movies {
-			<li class="items-end justify-between gap-x-4 grid grid-cols-[2ch_auto_1fr_auto]">
+			<li
+				class={ "items-end justify-between gap-x-4 grid",
+          templ.KV("grid-cols-[1ch_auto_1fr_auto]", len(movies) < 10),
+          templ.KV("grid-cols-[2ch_auto_1fr_auto]", len(movies) >= 10) }
+			>
 				<div
-					class={ "text-right tabular-nums text-neutral-400 dark:text-neutral-600",
-          templ.KV("w-[1ch]", len(movies) < 10),
-          templ.KV("w-[2ch]", len(movies) >= 10) }
+					class="text-right tabular-nums text-neutral-400 dark:text-neutral-600"
 				>
 					{ strconv.FormatInt(movie.NumberInSeries.Int64, 10) }
 				</div>
