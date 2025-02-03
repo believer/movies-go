@@ -130,7 +130,10 @@ func Watched(props WatchedProps) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				for i, w := range props.WatchedAt {
-					var templ_7745c5c3_Var6 = []any{"flex gap-x-4 tabular-nums before:content-[attr(data-position)] before:text-right before:tabular-nums before:w-[2ch] before:text-neutral-400 dark:before:text-neutral-600 items-baseline", templ.KV("justify-between", ctx.Value("IsAuthenticated"))}
+					var templ_7745c5c3_Var6 = []any{"flex gap-x-4 tabular-nums items-baseline",
+						templ.KV("justify-between", ctx.Value("IsAuthenticated")),
+						templ.KV("grid-cols-[1ch_auto_1fr_auto]", len(props.WatchedAt) < 10),
+						templ.KV("grid-cols-[2ch_auto_1fr_auto]", len(props.WatchedAt) >= 10)}
 					templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var6...)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
@@ -148,27 +151,27 @@ func Watched(props WatchedProps) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" data-position=\"")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\"><div class=\"text-right tabular-nums text-neutral-400 dark:text-neutral-600\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var8 string
 					templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(len(props.WatchedAt) - i))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/movie/watched.templ`, Line: 45, Col: 60}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/movie/watched.templ`, Line: 52, Col: 47}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\"><div><div>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div><div><div>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var9 string
 					templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(w.Date.Format("Monday, January 02, 2006"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/movie/watched.templ`, Line: 49, Col: 51}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/movie/watched.templ`, Line: 56, Col: 51}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 					if templ_7745c5c3_Err != nil {
@@ -181,7 +184,7 @@ func Watched(props WatchedProps) templ.Component {
 					var templ_7745c5c3_Var10 string
 					templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(w.Date.Format("15:04"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/movie/watched.templ`, Line: 52, Col: 32}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/movie/watched.templ`, Line: 59, Col: 32}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 					if templ_7745c5c3_Err != nil {
@@ -223,7 +226,7 @@ func Watched(props WatchedProps) templ.Component {
 						var templ_7745c5c3_Var13 string
 						templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/movie/%s/seen/%d", props.ID, w.ID))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/movie/watched.templ`, Line: 67, Col: 69}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/movie/watched.templ`, Line: 74, Col: 69}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 						if templ_7745c5c3_Err != nil {

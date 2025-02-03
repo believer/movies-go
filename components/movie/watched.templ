@@ -41,9 +41,16 @@ templ Watched(props WatchedProps) {
 			<ol class="flex flex-col gap-2">
 				for i, w := range props.WatchedAt {
 					<li
-						class={ "flex gap-x-4 tabular-nums before:content-[attr(data-position)] before:text-right before:tabular-nums before:w-[2ch] before:text-neutral-400 dark:before:text-neutral-600 items-baseline", templ.KV("justify-between", ctx.Value("IsAuthenticated")) }
-						data-position={ strconv.Itoa(len(props.WatchedAt) - i) }
+						class={ "flex gap-x-4 tabular-nums items-baseline",
+            templ.KV("justify-between", ctx.Value("IsAuthenticated")),
+            templ.KV("grid-cols-[1ch_auto_1fr_auto]", len(props.WatchedAt) < 10),
+            templ.KV("grid-cols-[2ch_auto_1fr_auto]", len(props.WatchedAt) >= 10) }
 					>
+						<div
+							class="text-right tabular-nums text-neutral-400 dark:text-neutral-600"
+						>
+							{ strconv.Itoa(len(props.WatchedAt) - i) }
+						</div>
 						<div>
 							<div>
 								{ w.Date.Format("Monday, January 02, 2006") }
