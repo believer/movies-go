@@ -15,7 +15,7 @@ type LanguageProps struct {
 
 templ Language(props LanguageProps) {
 	@Layout(LayoutProps{Title: props.Name}) {
-		@StandardBody(props.Name, true) {
+		@StandardBody(props.Name) {
 			if len(props.Movies) > 0 {
 				@c.Ol() {
 					for _, movie := range props.Movies {

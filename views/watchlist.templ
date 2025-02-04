@@ -39,15 +39,7 @@ templ watchlistList(movies types.Movies, title string) {
 
 templ Watchlist(props WatchlistProps) {
 	@Layout(LayoutProps{Title: "Watchlist"}) {
-		<div class="mx-auto flex max-w-xl flex-col gap-8 px-5 py-8">
-			<nav>
-				<div class="left-5 top-5 md:absolute">
-					@c.Link(c.LinkProps{Href: "/"}) {
-						Home
-					}
-				</div>
-			</nav>
-			@c.H1("Watchlist", false)
+		@StandardBody("Watchlist") {
 			if len(props.Movies) > 0 {
 				@watchlistList(props.Movies, "Movies")
 			} else {
@@ -56,6 +48,6 @@ templ Watchlist(props WatchlistProps) {
 			if len(props.UnreleasedMovies) > 0 {
 				@watchlistList(props.UnreleasedMovies, "Unreleased movies")
 			}
-		</div>
+		}
 	}
 }

@@ -47,7 +47,7 @@ templ list(movies types.Movies) {
 
 templ Series(props SeriesProps) {
 	@Layout(LayoutProps{Title: props.Series.Name}) {
-		@StandardBody(props.Series.Name, true) {
+		@StandardBody(props.Series.Name) {
 			if len(props.Series.ParentSeries) > 0 {
 				<section class="flex flex-col gap-y-2">
 					for _, parent := range props.Series.ParentSeries {

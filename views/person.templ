@@ -40,7 +40,7 @@ templ Credit(title string, data types.PersonMovies, id string) {
 
 templ Person(person types.Person, totalCredits int, id string) {
 	@Layout(LayoutProps{Title: person.Name}) {
-		@StandardBody(person.Name, true) {
+		@StandardBody(person.Name) {
 			<div>
 				{ strconv.Itoa(totalCredits) } credits
 			</div>

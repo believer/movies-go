@@ -118,7 +118,7 @@ func Layout(props LayoutProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<meta property=\"og:type\" content=\"website\"><meta property=\"og:url\" content=\"https://movies.willcodefor.beer/\"><meta name=\"twitter:card\" content=\"summary\"><meta name=\"twitter:site\" content=\"@rnattochdag\"><meta name=\"twitter:creator\" content=\"@rnattochdag\"><link rel=\"icon\" type=\"image/png\" href=\"/public/favicon.png\"><link href=\"/public/styles.93e5d1.css\" rel=\"stylesheet\"><link rel=\"manifest\" href=\"/public/manifest.webmanifest\"><script defer src=\"/public/htmx.2.0.3.min.js\"></script><script defer src=\"/public/htmx.head-support.20240912.js\"></script><script defer src=\"/public/hyperscript.0.9.12.min.js\"></script></head><body class=\"text-neutral-700 dark:bg-neutral-900 dark:text-neutral-300\" hx-boost=\"true\" hx-ext=\"head-support\"><main>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<meta property=\"og:type\" content=\"website\"><meta property=\"og:url\" content=\"https://movies.willcodefor.beer/\"><meta name=\"twitter:card\" content=\"summary\"><meta name=\"twitter:site\" content=\"@rnattochdag\"><meta name=\"twitter:creator\" content=\"@rnattochdag\"><link rel=\"icon\" type=\"image/png\" href=\"/public/favicon.png\"><link href=\"/public/styles.css\" rel=\"stylesheet\"><link rel=\"manifest\" href=\"/public/manifest.webmanifest\"><script defer src=\"/public/htmx.2.0.3.min.js\"></script><script defer src=\"/public/htmx.head-support.20240912.js\"></script><script defer src=\"/public/hyperscript.0.9.12.min.js\"></script></head><body class=\"text-neutral-700 dark:bg-neutral-900 dark:text-neutral-300\" hx-boost=\"true\" hx-ext=\"head-support\"><main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -134,7 +134,7 @@ func Layout(props LayoutProps) templ.Component {
 	})
 }
 
-func StandardBody(title string, hasHome bool) templ.Component {
+func StandardBody(title string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -155,7 +155,7 @@ func StandardBody(title string, hasHome bool) templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<section class=\"mx-auto flex max-w-xl flex-col gap-y-8 px-5 py-8\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<section class=\"mx-auto flex max-w-xl flex-col gap-y-8 px-5 pt-8 pb-[calc(env(safe-area-inset-bottom)_+_32px)]\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

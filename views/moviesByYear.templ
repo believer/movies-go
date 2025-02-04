@@ -7,7 +7,7 @@ import (
 
 templ MoviesByYear(year string, movies types.Movies) {
 	@Layout(LayoutProps{Title: year}) {
-		@StandardBody(year, true) {
+		@StandardBody(year) {
 			<div>
 				{ movies.NumberOfMovies() }
 			</div>
