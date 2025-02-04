@@ -94,7 +94,9 @@ templ Feed(props FeedProps) {
 					}
 				case "movie":
 					if len(props.Movies) > 0 {
-						<ol class="relative flex flex-col gap-y-6 text-sm -mt-6 lg:-mt-8">
+						// Using space-y-6 instead of flex based setup removes the initial
+						// flash when the layout is calculated
+						<ol class="relative space-y-6 text-sm">
 							for _, movie := range props.Movies {
 								<li
 									data-type="list-item"

@@ -566,9 +566,6 @@
   .mx-auto {
     margin-inline: auto;
   }
-  .-mt-6 {
-    margin-top: calc(var(--spacing) * -6);
-  }
   .mt-4 {
     margin-top: calc(var(--spacing) * 4);
   }
@@ -730,6 +727,13 @@
   }
   .gap-x-6 {
     column-gap: calc(var(--spacing) * 6);
+  }
+  .space-y-6 {
+    :where(& > :not(:last-child)) {
+      --tw-space-y-reverse: 0;
+      margin-block-start: calc(calc(var(--spacing) * 6) * var(--tw-space-y-reverse));
+      margin-block-end: calc(calc(var(--spacing) * 6) * calc(1 - var(--tw-space-y-reverse)));
+    }
   }
   .gap-y-1 {
     row-gap: calc(var(--spacing) * 1);
@@ -1217,11 +1221,6 @@
       right: calc(var(--spacing) * -52);
     }
   }
-  .lg\:-mt-8 {
-    @media (width >= 64rem) {
-      margin-top: calc(var(--spacing) * -8);
-    }
-  }
   .lg\:w-48 {
     @media (width >= 64rem) {
       width: calc(var(--spacing) * 48);
@@ -1488,13 +1487,18 @@
   position: sticky;
   top: calc(var(--spacing) * 0);
   z-index: 20;
+  margin-block: calc(var(--spacing) * 0);
+  @media (width >= 64rem) {
+    top: calc(var(--spacing) * 4);
+  }
 }
 .month-indicator {
   position: sticky;
   top: calc(var(--spacing) * 12);
   z-index: 10;
+  margin-block: calc(var(--spacing) * 0);
   @media (width >= 64rem) {
-    top: calc(var(--spacing) * 29);
+    top: calc(var(--spacing) * 24);
   }
 }
 .year {
@@ -1526,7 +1530,7 @@
     position: absolute;
   }
   @media (width >= 64rem) {
-    top: calc(var(--spacing) * 3);
+    top: calc(var(--spacing) * -4);
   }
   @media (width >= 64rem) {
     padding-block: calc(var(--spacing) * 4);
@@ -1560,7 +1564,7 @@
     position: absolute;
   }
   @media (width >= 64rem) {
-    top: calc(var(--spacing) * -2);
+    top: calc(var(--spacing) * -1);
   }
   @media (width >= 64rem) {
     width: calc(var(--spacing) * 40);
@@ -1577,18 +1581,6 @@
   }
   @media (prefers-color-scheme: dark) {
     color: var(--color-neutral-700);
-  }
-}
-.month-indicator + li {
-  margin-top: calc(var(--spacing) * -3);
-  @media (width >= 64rem) {
-    margin-top: calc(var(--spacing) * -6);
-  }
-}
-.year-indicator + .month-indicator {
-  margin-top: calc(var(--spacing) * -6);
-  @media (width >= 64rem) {
-    margin-top: calc(var(--spacing) * 0);
   }
 }
 @media (prefers-reduced-motion: no-preference) and (min-width: 1024px) {
@@ -1670,6 +1662,11 @@
   syntax: "*";
   inherits: false;
   initial-value: 1;
+}
+@property --tw-space-y-reverse {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
 }
 @property --tw-border-style {
   syntax: "*";
