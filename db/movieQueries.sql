@@ -29,8 +29,7 @@ WHERE
     m.id = $1
 GROUP BY
     1,
-    r.rating,
-    r.created_at,
+    r.id,
     se.id,
     ms.number_in_series;
 

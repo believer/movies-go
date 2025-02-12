@@ -50,6 +50,10 @@ func HandleGetMovieByID(c *fiber.Ctx) error {
 		}
 	}
 
+	if c.Get("Accept") == "application/json" {
+		return c.JSON(movie)
+	}
+
 	return utils.TemplRender(c, views.Movie(
 		views.MovieProps{
 			Movie:  movie,
@@ -814,4 +818,22 @@ func HandleGetMoviesByYear(c *fiber.Ctx) error {
 	}
 
 	return utils.TemplRender(c, views.MoviesByYear(year, movies))
+}
+
+func HandleDeleteRating(c *fiber.Ctx) error {
+	isAuth := utils.IsAuthenticated(c)
+	movieId := c.Params("id")
+	userId := c.Locals("UserId")
+
+	if !isAuth {
+		return c.SendStatus(fiber.StatusUnauthorized)
+	}
+
+	_, err := db.Client.Exec(`DELETE FROM rating WHERE movie_id = $1 AND user_id = $2`, movieId, userId)
+
+	if err != nil {
+		return err
+	}
+
+	return c.SendString("")
 }

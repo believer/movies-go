@@ -19,13 +19,21 @@ templ DescriptionList() {
 }
 
 type DescriptionListItemProps struct {
+	ID        string
 	Detail    string
 	IsTabular bool
 }
 
 templ DescriptionListItem(props DescriptionListItemProps) {
-	@descriptionDetail(props.Detail)
-	@descriptionTerm(props.IsTabular) {
-		{ children... }
-	}
+	<div
+		class="contents"
+		if props.ID != "" {
+			id={ props.ID }
+		}
+	>
+		@descriptionDetail(props.Detail)
+		@descriptionTerm(props.IsTabular) {
+			{ children... }
+		}
+	</div>
 }

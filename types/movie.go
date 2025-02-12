@@ -11,8 +11,8 @@ import (
 )
 
 type CastAndCrew struct {
-	Name string `db:"name"`
-	Job  string `db:"job"`
+	Name string `db:"name" json:"name"`
+	Job  string `db:"job" json:"job"`
 }
 
 type Entity struct {
@@ -62,29 +62,29 @@ func (u *MovieLanguages) Scan(v interface{}) error {
 }
 
 type Movie struct {
-	Cast           []CastAndCrew   `db:"cast"`
-	CreatedAt      time.Time       `db:"created_at"`
-	Genres         MovieGenres     `db:"genres"`
-	Languages      MovieLanguages  `db:"languages"`
+	Cast           []CastAndCrew   `db:"cast" json:"cast"`
+	CreatedAt      time.Time       `db:"created_at" json:"createdAt"`
+	Genres         MovieGenres     `db:"genres" json:"genres"`
+	Languages      MovieLanguages  `db:"languages" json:"languages"`
 	ID             int             `db:"id" json:"id"`
-	ImdbId         string          `db:"imdb_id"`
-	ImdbRating     sql.NullFloat64 `db:"imdb_rating"`
-	NumberInSeries JSONNullInt64   `db:"number_in_series" json:"number_in_series"`
-	OriginalTitle  sql.NullString  `db:"original_title"`
+	ImdbId         string          `db:"imdb_id" json:"imdbId"`
+	ImdbRating     sql.NullFloat64 `db:"imdb_rating" json:"imdbRating"`
+	NumberInSeries JSONNullInt64   `db:"number_in_series" json:"numberInSeries"`
+	OriginalTitle  sql.NullString  `db:"original_title" json:"originaTitle"`
 	Overview       string          `db:"overview" json:"overview"`
-	Poster         string          `db:"poster"`
-	Rating         sql.NullInt64   `db:"rating"`
-	RatedAt        sql.NullTime    `db:"rated_at"`
-	ReleaseDate    time.Time       `db:"release_date" json:"release_date"`
-	Runtime        int             `db:"runtime"`
-	Seen           bool            `db:"seen"`
+	Poster         string          `db:"poster" json:"poster"`
+	Rating         sql.NullInt64   `db:"rating" json:"rating"`
+	RatedAt        sql.NullTime    `db:"rated_at" json:"ratedAt"`
+	ReleaseDate    time.Time       `db:"release_date" json:"releaseDate"`
+	Runtime        int             `db:"runtime" json:"runtime"`
+	Seen           bool            `db:"seen" json:"seen"`
 	Series         sql.NullString  `db:"series" json:"series"`
-	SeriesID       sql.NullInt64   `db:"series_id"`
-	Tagline        string          `db:"tagline"`
+	SeriesID       sql.NullInt64   `db:"series_id" json:"seriesId"`
+	Tagline        string          `db:"tagline" json:"tagline"`
 	Title          string          `db:"title" json:"title"`
-	UpdatedAt      time.Time       `db:"updated_at"`
+	UpdatedAt      time.Time       `db:"updated_at" json:"updatedAt"`
 	WatchedAt      time.Time       `db:"watched_at" json:"watchedAt"`
-	WilhelmScream  sql.NullBool    `db:"wilhelm"`
+	WilhelmScream  sql.NullBool    `db:"wilhelm" json:"wilhelm"`
 }
 
 // Format runtime in hours and minutes from minutes

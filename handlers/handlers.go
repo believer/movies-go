@@ -71,6 +71,10 @@ func HandleFeed(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusOK)
 	}
 
+	if c.Get("Accept") == "application/json" {
+		return c.JSON(movies)
+	}
+
 	feed := views.Feed(views.FeedProps{
 		IsAdmin:   utils.IsAuthenticated(c),
 		Movies:    movies,
