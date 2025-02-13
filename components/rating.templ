@@ -1,0 +1,71 @@
+package components
+
+import (
+	"fmt"
+	"strconv"
+	"time"
+)
+
+type RatingProps struct {
+	MovieID int
+	Rating  int64
+	RatedAt time.Time
+}
+
+templ Rating(props RatingProps) {
+	@DescriptionListItem(DescriptionListItemProps{Detail: "Rating", IsTabular: false, ID: "rating"}) {
+		<div class="flex flex-row gap-x-4" id="rating-value">
+			<time
+				title={ props.RatedAt.Format("2006-01-02 15:04") }
+				datetime={ props.RatedAt.Format("2006-01-02T15:04:05Z") }
+			>
+				{ strconv.FormatInt(props.Rating, 10) }
+			</time>
+			@IsAuthenticated() {
+				<button
+					hx-swap="outerHTML"
+					hx-target="#rating-value"
+					hx-get={ fmt.Sprintf("/movie/%d/rating?rating=%d", props.MovieID, props.Rating) }
+					class="cursor-pointer text-neutral-300 hover:text-neutral-700 dark:text-neutral-700 hover:dark:text-neutral-300 transition-colors"
+				>
+					Edit
+				</button>
+				<button
+					hx-swap="outerHTML"
+					hx-target="#rating"
+					hx-delete={ fmt.Sprintf("/movie/%d/rating", props.MovieID) }
+					hx-confirm="Are you sure you want to delete the rating?"
+					class="cursor-pointer text-neutral-300 hover:text-neutral-700 dark:text-neutral-700 hover:dark:text-neutral-300 transition-colors"
+				>
+					Delete
+				</button>
+			}
+		</div>
+	}
+}
+
+type EditRatingProps struct {
+	CurrentRating int
+	MovieId       int
+}
+
+templ EditRating(props EditRatingProps) {
+	<form
+		hx-put={ fmt.Sprintf("/movie/%d/rating", props.MovieId) }
+		hx-indicator="#sending"
+		hx-target="#rating"
+		hx-swap="outerHTML"
+		class="flex flex-row gap-x-4"
+	>
+		@TextInput(TextInputProps{
+			Name:  "rating",
+			Value: strconv.Itoa(props.CurrentRating),
+		})
+		<button
+			class="rounded-sm bg-neutral-200 px-6 py-2 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200"
+			type="submit"
+		>
+			Update rating
+		</button>
+	</form>
+}

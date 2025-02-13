@@ -837,3 +837,58 @@ func HandleDeleteRating(c *fiber.Ctx) error {
 
 	return c.SendString("")
 }
+
+func HandleEditRating(c *fiber.Ctx) error {
+	isAuth := utils.IsAuthenticated(c)
+	movieId, err := c.ParamsInt("id")
+	rating := c.QueryInt("rating")
+
+	if err != nil {
+		return err
+	}
+
+	if !isAuth {
+		return c.SendStatus(fiber.StatusUnauthorized)
+	}
+
+	return utils.TemplRender(c, components.EditRating(components.EditRatingProps{
+		CurrentRating: rating,
+		MovieId:       movieId,
+	}))
+}
+
+func HandleUpdateRating(c *fiber.Ctx) error {
+	isAuth := utils.IsAuthenticated(c)
+	movieId, err := c.ParamsInt("id")
+	userId := c.Locals("UserId")
+
+	if err != nil {
+		return err
+	}
+
+	if !isAuth {
+		return c.SendStatus(fiber.StatusUnauthorized)
+	}
+
+	data := new(struct {
+		Rating string `form:"rating"`
+	})
+
+	if err := c.BodyParser(data); err != nil {
+		return err
+	}
+
+	_, err = db.Client.Exec(`UPDATE rating SET rating = $1, updated_at = NOW() WHERE movie_id = $2 AND user_id = $3`, data.Rating, movieId, userId)
+
+	if err != nil {
+		return err
+	}
+
+	rating, _ := strconv.ParseInt(data.Rating, 10, 0)
+
+	return utils.TemplRender(c, components.Rating(components.RatingProps{
+		MovieID: movieId,
+		Rating:  rating,
+		RatedAt: time.Now(),
+	}))
+}

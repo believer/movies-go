@@ -19,18 +19,30 @@ templ Help(text string) {
 	</div>
 }
 
-templ TextInput(name string, labelText string, helpText string) {
+type TextInputProps struct {
+	Name     string
+	Label    string
+	HelpText string
+	Value    string
+}
+
+templ TextInput(props TextInputProps) {
 	<div class="relative flex flex-col gap-2">
-		@Label(name, labelText)
+		if props.Label != "" {
+			@Label(props.Name, props.Label)
+		}
 		<input
 			required
 			type="text"
-			name={ name }
-			id={ name }
+			name={ props.Name }
+			id={ props.Name }
 			class={ inputClass }
+			if props.Value != "" {
+				value={ props.Value }
+			}
 		/>
-		if helpText != "" {
-			@Help(helpText)
+		if props.HelpText != "" {
+			@Help(props.HelpText)
 		}
 	</div>
 }

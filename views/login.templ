@@ -10,7 +10,7 @@ templ Login() {
 			hx-swap="outerHTML"
 			hx-replace-url="/"
 		>
-			@c.TextInput("username", "Username", "")
+			@c.TextInput(c.TextInputProps{Name: "username", Label: "Username"})
 			@c.PasswordInput("password", "Password", "")
 			<footer class="flex flex-col gap-4">
 				<div id="error" class="empty:hidden text-rose-700 dark:text-rose-400 border border-dashed border-rose-700 dark:border-rose-400 p-4 rounded-sm"></div>

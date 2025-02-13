@@ -99,27 +99,11 @@ templ Movie(props MovieProps) {
 						}
 					}
 					if props.Movie.Rating.Valid {
-						@c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Rating", IsTabular: false, ID: "rating"}) {
-							<div class="flex flex-row gap-x-4">
-								<time
-									title={ props.Movie.RatedAt.Time.Format("2006-01-02 15:04") }
-									datetime={ props.Movie.RatedAt.Time.Format("2006-01-02T15:04:05Z") }
-								>
-									{ strconv.FormatInt(props.Movie.Rating.Int64, 10) }
-								</time>
-								@c.IsAuthenticated() {
-									<button
-										hx-swap="outerHTML"
-										hx-target="#rating"
-										hx-delete={ fmt.Sprintf("/movie/%d/rating", props.Movie.ID) }
-										hx-confirm="Are you sure you want to delete the rating?"
-										class="cursor-pointer text-neutral-300 hover:text-neutral-700 dark:text-neutral-700 hover:dark:text-neutral-300 transition-colors"
-									>
-										Delete
-									</button>
-								}
-							</div>
-						}
+						@c.Rating(c.RatingProps{
+							MovieID: props.Movie.ID,
+							Rating:  props.Movie.Rating.Int64,
+							RatedAt: props.Movie.RatedAt.Time,
+						})
 					}
 				}
 			}
