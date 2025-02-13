@@ -32,3 +32,21 @@ func HandleGetWatchlist(c *fiber.Ctx) error {
 		UnreleasedMovies: unreleasedMovies,
 	}))
 }
+
+func HandleDeleteFromWatchlist(c *fiber.Ctx) error {
+	isAuth := utils.IsAuthenticated(c)
+	movieId := c.Params("id")
+	userId := c.Locals("UserId")
+
+	if !isAuth {
+		return c.SendStatus(fiber.StatusUnauthorized)
+	}
+
+	_, err := db.Client.Exec(`DELETE FROM watchlist WHERE movie_id = $1 AND user_id = $2`, movieId, userId)
+
+	if err != nil {
+		return err
+	}
+
+	return c.SendString("")
+}

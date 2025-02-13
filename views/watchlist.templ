@@ -3,6 +3,7 @@ package views
 import (
 	c "believer/movies/components"
 	"believer/movies/types"
+	"fmt"
 )
 
 type WatchlistProps struct {
@@ -29,6 +30,15 @@ templ watchlistList(movies types.Movies, title string) {
 							<a href={ movie.LinkToWatchlistAdd() } class="text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors" title="Add watch">
 								@c.IconEye()
 							</a>
+							<button
+								class="cursor-pointer text-neutral-300 hover:text-neutral-700 dark:text-neutral-700 hover:dark:text-neutral-300 transition-colors"
+								hx-target="closest li"
+								hx-swap="outerHTML"
+								hx-delete={ fmt.Sprintf("/watchlist/%d", movie.ID) }
+								hx-confirm={ fmt.Sprintf("Are you sure you want to delete %s from watchlist?", movie.Title) }
+							>
+								Delete
+							</button>
 						}
 					</span>
 				</li>

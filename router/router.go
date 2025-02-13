@@ -16,7 +16,12 @@ func SetupRoutes(app *fiber.App) {
 	app.Get("/login", handlers.HandleGetLogin)
 	app.Post("/login", handlers.HandlePostLogin)
 	app.Post("/logout", handlers.HandlePostLogout)
-	app.Get("/watchlist", handlers.HandleGetWatchlist)
+
+	// Watchlist
+	watchlistGroup := app.Group("/watchlist")
+
+	watchlistGroup.Get("/", handlers.HandleGetWatchlist)
+	watchlistGroup.Delete("/:id", handlers.HandleDeleteFromWatchlist)
 
 	// Movies
 	// --------------------------
