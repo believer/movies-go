@@ -60,8 +60,6 @@ func HandleGetStats(c *fiber.Ctx) error {
 	var movies, totals, cast []components.ListItem
 	var ratings, yearRatings, watchedByYear, seenThisYearByMonth, moviesByYear []types.GraphData
 
-	bestOfTheYear := types.Movie{ID: 0}
-
 	userId := c.Locals("UserId").(string)
 	now := time.Now()
 	year := now.Format("2006")
@@ -75,7 +73,6 @@ func HandleGetStats(c *fiber.Ctx) error {
 		{executeQuery("select", &totals, "total-watched-by-job-and-year", userId, "cast", "All"), "total-watched-by-job-and-year"},
 		{executeQuery("get", &stats, "stats-data", userId), "stats-data"},
 		{executeQuery("select", &wilhelms, "wilhelm-screams", userId), "wilhelm-screams"},
-		{executeQuery("get", &bestOfTheYear, "stats-best-of-the-year", userId), "stats-best-of-the-year"},
 		{executeQuery("select", &cast, "stats-most-watched-by-job", "cast", userId, "All"), "stats-most-watched-by-job"},
 		{executeQuery("select", &ratings, "stats-ratings", userId), "stats-ratings"},
 		{executeQuery("select", &yearRatings, "stats-ratings-this-year", userId, currentYear), "stats-ratings-this-year"},
@@ -105,16 +102,6 @@ func HandleGetStats(c *fiber.Ctx) error {
 	for err := range errChan {
 		if err != nil {
 			return err
-		}
-	}
-
-	bestYear := ""
-	bestYearValue := 0
-
-	for _, year := range moviesByYear {
-		if year.Value > bestYearValue {
-			bestYear = year.Label
-			bestYearValue = year.Value
 		}
 	}
 
@@ -181,8 +168,6 @@ func HandleGetStats(c *fiber.Ctx) error {
 
 	return utils.TemplRender(c, views.Stats(
 		views.StatsProps{
-			BestOfTheYear:           bestOfTheYear,
-			BestYear:                bestYear,
 			FormattedTotalRuntime:   utils.FormatRuntime(stats.TotalRuntime),
 			MostWatchedCast:         cast,
 			MostWatchedMovies:       movies,
@@ -485,5 +470,26 @@ func HandleGetLanguageStats(c *fiber.Ctx) error {
 		Data:  languages,
 		Year:  year,
 		Years: years,
+	}))
+}
+
+func HandleGetBestOfTheYear(c *fiber.Ctx) error {
+	var movies []components.ListItem
+
+	userId := c.Locals("UserId")
+	currentYear := time.Now().Format("2006")
+	year := c.Query("year", currentYear)
+	years := availableYears()
+
+	err := db.Dot.Select(db.Client, &movies, "best-of-the-year", userId, year)
+
+	if err != nil {
+		return err
+	}
+
+	return utils.TemplRender(c, components.BestOfTheYear(components.BestOfTheYearProps{
+		Movies: movies,
+		Year:   year,
+		Years:  years,
 	}))
 }

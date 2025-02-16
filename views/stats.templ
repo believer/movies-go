@@ -75,20 +75,6 @@ templ Stats(props StatsProps) {
 									{ strconv.Itoa(props.WilhelmScreams) }
 								}
 							}
-							if props.BestOfTheYear.ID != 0 {
-								@c.DescriptionListItem(c.DescriptionListItemProps{
-									Detail: "Best of the year",
-								}) {
-									@c.Link(c.LinkProps{Href: templ.URL(fmt.Sprintf("/movie/%d", props.BestOfTheYear.ID))}) {
-										{ props.BestOfTheYear.Title }
-									}
-									if props.BestOfTheYear.Rating.Valid {
-										<span class="text-xs">
-											({ strconv.FormatInt(props.BestOfTheYear.Rating.Int64, 10) })
-										</span>
-									}
-								}
-							}
 							if len(props.ShortestAndLongestMovie) == 2 {
 								@c.DescriptionListItem(c.DescriptionListItemProps{
 									Detail: "Shortest movie",
@@ -129,6 +115,11 @@ templ Stats(props StatsProps) {
 						SelectedYear: props.Year,
 						Years:        props.Years,
 					})
+					<section
+						hx-get="/stats/best-of-the-year"
+						hx-trigger="load"
+						hx-swap="outerHTML"
+					></section>
 					@c.Section("Movies by year", 0) {
 						if len(props.MoviesByYear) > 0 {
 							<ol class="flex flex-col gap-2">

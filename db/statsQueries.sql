@@ -282,3 +282,46 @@ ORDER BY
     weighted_average_rating DESC
 LIMIT 10;
 
+-- name: best-of-the-year
+WITH max_rating AS (
+    SELECT
+        s.movie_id,
+        s.user_id,
+        r.rating
+    FROM
+        seen s
+        INNER JOIN rating r ON r.movie_id = s.movie_id
+            AND r.user_id = $1
+    WHERE
+        s.user_id = $1
+        AND date >= make_date($2, 1, 1)
+        AND date < make_date($2 + 1, 1, 1) -- Seen in the given year
+    GROUP BY
+        s.id,
+        r.rating
+    HAVING
+        COUNT(*) = 1 -- Seen exactly once in the given year
+        AND s.movie_id NOT IN (
+            SELECT
+                movie_id
+            FROM
+                seen
+            WHERE
+                user_id = $1
+                AND date < make_date($2, 1, 1) -- Seen before the given year
+                OR date >= make_date($2 + 1, 1, 1) -- Seen after the given year
+))
+SELECT
+    m.title AS "name",
+    m.id AS "id",
+    mr.rating AS "count"
+FROM
+    max_rating mr
+    INNER JOIN movie m ON m.id = mr.movie_id
+WHERE
+    rating = (
+        SELECT
+            max(rating)
+        FROM
+            max_rating);
+

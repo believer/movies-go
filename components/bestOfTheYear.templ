@@ -1,0 +1,20 @@
+package components
+
+type BestOfTheYearProps struct {
+	Movies []ListItem
+	Year   string
+	Years  []string
+}
+
+templ BestOfTheYear(props BestOfTheYearProps) {
+	@Section("", 0) {
+		@SectionTitleWithDropdown("Best of the Year") {
+			@Dropdown(DropdownProps{Route: "/stats/best-of-the-year", Name: "year", Options: props.Years, Value: props.Year})
+		}
+		if len(props.Movies) > 0 {
+			@OrderedList(props.Movies, "movie")
+		} else {
+			@EmptyState("No movies seen")
+		}
+	}
+}
