@@ -53,7 +53,7 @@ type QueryTask struct {
 
 // Handler for /stats.
 // Gets most of the necessary data (some is is loaded onload)
-func HandleGetStats(c *fiber.Ctx) error {
+func GetStats(c *fiber.Ctx) error {
 	var stats types.Stats
 	var shortestAndLongest types.Movies
 	var wilhelms []int
@@ -185,7 +185,7 @@ func HandleGetStats(c *fiber.Ctx) error {
 		}))
 }
 
-func HandleGetMostWatchedByJob(c *fiber.Ctx) error {
+func GetMostWatchedByJob(c *fiber.Ctx) error {
 	var persons []components.ListItem
 	var totals []components.ListItem
 
@@ -224,7 +224,7 @@ func HandleGetMostWatchedByJob(c *fiber.Ctx) error {
 		}))
 }
 
-func HandleGetHighestRankedPersonByJob(c *fiber.Ctx) error {
+func GetHighestRankedPersonByJob(c *fiber.Ctx) error {
 	var persons []types.HighestRated
 
 	job := c.Query("job", "cast")
@@ -343,7 +343,7 @@ func constructGraphFromData(data []types.GraphData) ([]types.Bar, error) {
 	return graphData, nil
 }
 
-func HandleGetRatingsByYear(c *fiber.Ctx) error {
+func GetRatingsByYear(c *fiber.Ctx) error {
 	userId := c.Locals("UserId").(string)
 	year := c.Query("year")
 	currentYear := time.Now().Format("2006")
@@ -375,7 +375,7 @@ func HandleGetRatingsByYear(c *fiber.Ctx) error {
 		}))
 }
 
-func HandleGetThisYearByMonth(c *fiber.Ctx) error {
+func GetThisYearByMonth(c *fiber.Ctx) error {
 	userId := c.Locals("UserId").(string)
 	year := c.Query("year")
 	currentYear := time.Now().Format("2006")
@@ -433,7 +433,7 @@ func availableYears() []string {
 	return years
 }
 
-func HandleGetGenreStats(c *fiber.Ctx) error {
+func GetGenreStats(c *fiber.Ctx) error {
 	var genres []components.ListItem
 
 	userId := c.Locals("UserId").(string)
@@ -453,7 +453,7 @@ func HandleGetGenreStats(c *fiber.Ctx) error {
 	}))
 }
 
-func HandleGetLanguageStats(c *fiber.Ctx) error {
+func GetLanguageStats(c *fiber.Ctx) error {
 	var languages []components.ListItem
 
 	userId := c.Locals("UserId").(string)
@@ -473,7 +473,7 @@ func HandleGetLanguageStats(c *fiber.Ctx) error {
 	}))
 }
 
-func HandleGetBestOfTheYear(c *fiber.Ctx) error {
+func GetBestOfTheYear(c *fiber.Ctx) error {
 	var movies []components.ListItem
 
 	userId := c.Locals("UserId")

@@ -10,7 +10,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func HandleGetSeries(c *fiber.Ctx) error {
+func GetSeries(c *fiber.Ctx) error {
 	var series types.Series
 	var movies []types.SeriesMovies
 

@@ -9,7 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func HandleGetGenre(c *fiber.Ctx) error {
+func GetGenre(c *fiber.Ctx) error {
 	var movies types.Movies
 	var genre types.MovieGenre
 

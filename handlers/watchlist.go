@@ -9,7 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func HandleGetWatchlist(c *fiber.Ctx) error {
+func GetWatchlist(c *fiber.Ctx) error {
 	var movies types.Movies
 	var unreleasedMovies types.Movies
 
@@ -33,7 +33,7 @@ func HandleGetWatchlist(c *fiber.Ctx) error {
 	}))
 }
 
-func HandleDeleteFromWatchlist(c *fiber.Ctx) error {
+func DeleteFromWatchlist(c *fiber.Ctx) error {
 	isAuth := utils.IsAuthenticated(c)
 	movieId := c.Params("id")
 	userId := c.Locals("UserId")

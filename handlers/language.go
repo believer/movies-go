@@ -9,7 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func HandleGetLanguage(c *fiber.Ctx) error {
+func GetLanguage(c *fiber.Ctx) error {
 	var movies types.Movies
 	var language types.MovieLanguage
 

@@ -22,7 +22,7 @@ import (
 	"github.com/lib/pq"
 )
 
-func HandleGetMovieByID(c *fiber.Ctx) error {
+func GetMovieByID(c *fiber.Ctx) error {
 	var movie types.Movie
 	var review types.Review
 
@@ -81,7 +81,7 @@ func ZipCast(names []string, ids []int32, characters []string) []components.Cast
 	return zipped
 }
 
-func HandleGetMovieCastByID(c *fiber.Ctx) error {
+func GetMovieCastByID(c *fiber.Ctx) error {
 	var castOrCrew []CastDB
 
 	err := db.Dot.Select(db.Client, &castOrCrew, "cast-by-id", c.Params("id"))
@@ -118,7 +118,7 @@ func HandleGetMovieCastByID(c *fiber.Ctx) error {
 	return utils.TemplRender(c, components.CastList(updatedCastOrCrew, hasCharacters))
 }
 
-func HandleGetMovieSeenByID(c *fiber.Ctx) error {
+func GetMovieSeenByID(c *fiber.Ctx) error {
 	var watchedAt []movie.WatchedAt
 	var watchlist types.Movies
 
@@ -658,7 +658,7 @@ func HandlePostMovieNew(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusOK)
 }
 
-func HandleGetByImdbId(c *fiber.Ctx) error {
+func GetByImdbId(c *fiber.Ctx) error {
 	var movie types.Movie
 
 	imdbId, err := utils.ParseId(c.Query("imdb_id"))
@@ -676,7 +676,7 @@ func HandleGetByImdbId(c *fiber.Ctx) error {
 	return utils.TemplRender(c, components.MovieExists(movie))
 }
 
-func HandleDeleteMovieSeen(c *fiber.Ctx) error {
+func DeleteSeenMovie(c *fiber.Ctx) error {
 	var watchedAt []movie.WatchedAt
 
 	movieId := c.Params("id")
@@ -707,7 +707,7 @@ func HandleDeleteMovieSeen(c *fiber.Ctx) error {
 	}))
 }
 
-func HandleGetMovieSeen(c *fiber.Ctx) error {
+func GetSeenMovie(c *fiber.Ctx) error {
 	var time string
 
 	movieId := c.Params("id")
@@ -726,7 +726,7 @@ func HandleGetMovieSeen(c *fiber.Ctx) error {
 	}))
 }
 
-func HandleUpdateMovieSeen(c *fiber.Ctx) error {
+func UpdateSeenMovie(c *fiber.Ctx) error {
 	movieId := c.Params("id")
 	seenId := c.Params("seenId")
 	isAuth := utils.IsAuthenticated(c)
@@ -769,7 +769,7 @@ func HandleUpdateMovieSeen(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusOK)
 }
 
-func HandlePostMovieSeen(c *fiber.Ctx) error {
+func CreateSeenMovie(c *fiber.Ctx) error {
 	isAuth := utils.IsAuthenticated(c)
 
 	if !isAuth {
@@ -805,7 +805,7 @@ func HandleSearch(c *fiber.Ctx) error {
 	return utils.TemplRender(c, views.MovieSearch(movies.Results))
 }
 
-func HandleGetMoviesByYear(c *fiber.Ctx) error {
+func GetMoviesByYear(c *fiber.Ctx) error {
 	var movies []types.Movie
 
 	year := c.Params("year")
@@ -820,7 +820,7 @@ func HandleGetMoviesByYear(c *fiber.Ctx) error {
 	return utils.TemplRender(c, views.MoviesByYear(year, movies))
 }
 
-func HandleDeleteRating(c *fiber.Ctx) error {
+func DeleteRating(c *fiber.Ctx) error {
 	isAuth := utils.IsAuthenticated(c)
 	movieId := c.Params("id")
 	userId := c.Locals("UserId")
@@ -838,7 +838,7 @@ func HandleDeleteRating(c *fiber.Ctx) error {
 	return c.SendString("")
 }
 
-func HandleEditRating(c *fiber.Ctx) error {
+func GetRating(c *fiber.Ctx) error {
 	isAuth := utils.IsAuthenticated(c)
 	movieId, err := c.ParamsInt("id")
 	rating := c.QueryInt("rating")
@@ -857,7 +857,7 @@ func HandleEditRating(c *fiber.Ctx) error {
 	}))
 }
 
-func HandleUpdateRating(c *fiber.Ctx) error {
+func UpdateRating(c *fiber.Ctx) error {
 	isAuth := utils.IsAuthenticated(c)
 	movieId, err := c.ParamsInt("id")
 	userId := c.Locals("UserId")

@@ -10,7 +10,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func HandleGetPersonByID(c *fiber.Ctx) error {
+func GetPersonByID(c *fiber.Ctx) error {
 	var person types.Person
 
 	id := utils.SelfHealingUrl(c.Params("id"))
