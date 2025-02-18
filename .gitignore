@@ -1,5 +1,6 @@
 node_modules
 backup.sh
+tailwindcss
 .env
 .DS_Store
 tmp
