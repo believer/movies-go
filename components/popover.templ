@@ -4,9 +4,12 @@ css anchor(name string) {
 	anchor-name: { name };
 }
 
+// TODO: position-try-fallbacks doesn't seem to work, but I can't understand why. The API seems correct.
+
 css anchorPosition(name string) {
+	position: absolute;
 	position-anchor: { name };
-	inset-area: top;
+	position-area: top;
 	position-try-fallbacks: flip-block;
 }
 

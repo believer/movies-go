@@ -18,10 +18,12 @@ func anchor(name string) templ.CSSClass {
 	}
 }
 
+// TODO: position-try-fallbacks doesn't seem to work, but I can't understand why. The API seems correct.
 func anchorPosition(name string) templ.CSSClass {
 	templ_7745c5c3_CSSBuilder := templruntime.GetBuilder()
+	templ_7745c5c3_CSSBuilder.WriteString(`position:absolute;`)
 	templ_7745c5c3_CSSBuilder.WriteString(string(templ.SanitizeCSS(`position-anchor`, name)))
-	templ_7745c5c3_CSSBuilder.WriteString(`inset-area:top;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`position-area:top;`)
 	templ_7745c5c3_CSSBuilder.WriteString(`position-try-fallbacks:flip-block;`)
 	templ_7745c5c3_CSSID := templ.CSSID(`anchorPosition`, templ_7745c5c3_CSSBuilder.String())
 	return templ.ComponentCSSClass{
@@ -63,7 +65,7 @@ func Popover(anchorName string, content templ.Component, toggle templ.Component)
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(anchorName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/popover.templ`, Line: 14, Col: 35}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/popover.templ`, Line: 17, Col: 35}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -106,7 +108,7 @@ func Popover(anchorName string, content templ.Component, toggle templ.Component)
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(anchorName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/popover.templ`, Line: 17, Col: 21}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/popover.templ`, Line: 20, Col: 21}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
