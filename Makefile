@@ -2,10 +2,17 @@
 all: build
 
 build:
-	@echo "Building..."
 	@templ generate
-	@npx @tailwindcss/cli -i styles.css -o public/styles.css
+	@./hasher.sh
 	@go build -o main main.go
+
+dev:
+	@templ generate
+	@go build -o main main.go
+
+css:
+	@sed -i "" "s/styles\(\.[a-z0-9]\{6\}\)\{0,1\}\.css/styles.css/g" ./views/layout.templ
+	@./tailwindcss -i styles.css -o public/styles.css --watch
 
 # Live Reload
 watch:

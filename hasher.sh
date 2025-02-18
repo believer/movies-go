@@ -7,13 +7,11 @@ function calculate_hash() {
     echo "$hash"
 }
 
-echo "Running the public hasher"
-
 # Remove the old CSS file
 rm ./public/styles.*.css
 
 # Generate the new CSS file
-npx tailwindcss -i ./styles.css -o ./public/styles.css
+./tailwindcss -i ./styles.css -o ./public/styles.css --minify
 
 # Add the 6 first characters of the hash to the file name
 # of the generated CSS file. This is to bust the cache of the CSS file.

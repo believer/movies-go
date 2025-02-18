@@ -1,7 +1,7 @@
 [build]
   bin = "./main"
   kill_delay = "10s"
-  cmd = "make build"
+  cmd = "make dev"
   delay = 1000
   include_dir = []
   exclude_dir = ["public", "tmp", "vendor", "node_modules"]
