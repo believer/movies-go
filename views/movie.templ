@@ -100,9 +100,13 @@ templ Movie(props MovieProps) {
 					}
 					if props.Movie.Rating.Valid {
 						@c.Rating(c.RatingProps{
-							MovieID: props.Movie.ID,
+							MovieId: props.Movie.ID,
 							Rating:  props.Movie.Rating.Int64,
 							RatedAt: props.Movie.RatedAt.Time,
+						})
+					} else {
+						@c.AddRating(c.AddRatingProps{
+							MovieId: props.Movie.ID,
 						})
 					}
 				}

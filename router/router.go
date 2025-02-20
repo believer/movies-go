@@ -34,9 +34,9 @@ func SetupRoutes(app *fiber.App) {
 	movieGroup.Get("/", redirectToHome)
 	movieGroup.Get("/imdb", h.GetByImdbId)
 	movieGroup.Get("/search", h.HandleSearch)
-	movieGroup.Get("/new", h.HandleGetMovieNew)
-	movieGroup.Get("/new/series", h.HandleGetMovieNewSeries)
-	movieGroup.Post("/new", h.HandlePostMovieNew)
+	movieGroup.Get("/new", h.GetMovieNew)
+	movieGroup.Get("/new/series", h.GetMovieNewSeries)
+	movieGroup.Post("/new", h.PostMovieNew)
 
 	movieGroup.Get("/:id", h.GetMovieByID)
 	movieGroup.Get("/:id/cast", h.GetMovieCastByID)
@@ -47,6 +47,8 @@ func SetupRoutes(app *fiber.App) {
 	movieGroup.Put("/:id/seen/:seenId/edit", h.UpdateSeenMovie)
 
 	movieGroup.Get("/:id/rating", h.GetRating)
+	movieGroup.Get("/:id/rating/edit", h.GetEditRating)
+	movieGroup.Post("/:id/rating", h.PostRating)
 	movieGroup.Put("/:id/rating", h.UpdateRating)
 	movieGroup.Delete("/:id/rating", h.DeleteRating)
 

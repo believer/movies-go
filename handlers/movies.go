@@ -150,7 +150,7 @@ func GetMovieSeenByID(c *fiber.Ctx) error {
 }
 
 // Render the add movie page
-func HandleGetMovieNew(c *fiber.Ctx) error {
+func GetMovieNew(c *fiber.Ctx) error {
 	var watchlist types.Movies
 	var movie types.Movie
 
@@ -184,7 +184,7 @@ func HandleGetMovieNew(c *fiber.Ctx) error {
 	}))
 }
 
-func HandleGetMovieNewSeries(c *fiber.Ctx) error {
+func GetMovieNewSeries(c *fiber.Ctx) error {
 	var options []components.DataListItem
 
 	err := db.Client.Select(&options, `SELECT id as "value", name FROM series ORDER BY name ASC`)
@@ -305,7 +305,7 @@ func personExists(arr []NewPerson, id int, job interface{}) (int, bool) {
 }
 
 // Handle adding a movie
-func HandlePostMovieNew(c *fiber.Ctx) error {
+func PostMovieNew(c *fiber.Ctx) error {
 	isAuth := utils.IsAuthenticated(c)
 
 	if !isAuth {
@@ -857,6 +857,63 @@ func GetRating(c *fiber.Ctx) error {
 	}))
 }
 
+func GetEditRating(c *fiber.Ctx) error {
+	isAuth := utils.IsAuthenticated(c)
+	movieId, err := c.ParamsInt("id")
+
+	if err != nil {
+		return err
+	}
+
+	if !isAuth {
+		return c.SendStatus(fiber.StatusUnauthorized)
+	}
+
+	return utils.TemplRender(c, components.AddRatingForm(components.AddRatingProps{
+		MovieId: movieId,
+	}))
+}
+
+func PostRating(c *fiber.Ctx) error {
+	isAuth := utils.IsAuthenticated(c)
+	movieId, err := c.ParamsInt("id")
+	userId := c.Locals("UserId")
+
+	if err != nil {
+		return err
+	}
+
+	if !isAuth {
+		return c.SendStatus(fiber.StatusUnauthorized)
+	}
+
+	data := new(struct {
+		Rating string `form:"rating"`
+	})
+
+	if err := c.BodyParser(data); err != nil {
+		return err
+	}
+
+	_, err = db.Client.Exec(`INSERT INTO rating (user_id, movie_id, rating) VALUES ($1, $2, $3)`, userId, movieId, data.Rating)
+
+	if err != nil {
+		return err
+	}
+
+	rating, err := strconv.ParseInt(data.Rating, 10, 64)
+
+	if err != nil {
+		return err
+	}
+
+	return utils.TemplRender(c, components.Rating(components.RatingProps{
+		MovieId: movieId,
+		Rating:  rating,
+		RatedAt: time.Now(),
+	}))
+}
+
 func UpdateRating(c *fiber.Ctx) error {
 	isAuth := utils.IsAuthenticated(c)
 	movieId, err := c.ParamsInt("id")
@@ -887,7 +944,7 @@ func UpdateRating(c *fiber.Ctx) error {
 	rating, _ := strconv.ParseInt(data.Rating, 10, 0)
 
 	return utils.TemplRender(c, components.Rating(components.RatingProps{
-		MovieID: movieId,
+		MovieId: movieId,
 		Rating:  rating,
 		RatedAt: time.Now(),
 	}))

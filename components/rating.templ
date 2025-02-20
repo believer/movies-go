@@ -7,13 +7,13 @@ import (
 )
 
 type RatingProps struct {
-	MovieID int
+	MovieId int
 	Rating  int64
 	RatedAt time.Time
 }
 
 templ Rating(props RatingProps) {
-	@DescriptionListItem(DescriptionListItemProps{Detail: "Rating", IsTabular: false, ID: "rating"}) {
+	@DescriptionListItem(DescriptionListItemProps{Detail: "Rating", ID: "rating"}) {
 		<div class="flex flex-row gap-x-4" id="rating-value">
 			<time
 				title={ props.RatedAt.Format("2006-01-02 15:04") }
@@ -25,7 +25,7 @@ templ Rating(props RatingProps) {
 				<button
 					hx-swap="outerHTML"
 					hx-target="#rating-value"
-					hx-get={ fmt.Sprintf("/movie/%d/rating?rating=%d", props.MovieID, props.Rating) }
+					hx-get={ fmt.Sprintf("/movie/%d/rating?rating=%d", props.MovieId, props.Rating) }
 					class="cursor-pointer text-neutral-300 hover:text-neutral-700 dark:text-neutral-700 hover:dark:text-neutral-300 transition-colors"
 				>
 					Edit
@@ -33,7 +33,7 @@ templ Rating(props RatingProps) {
 				<button
 					hx-swap="outerHTML"
 					hx-target="#rating"
-					hx-delete={ fmt.Sprintf("/movie/%d/rating", props.MovieID) }
+					hx-delete={ fmt.Sprintf("/movie/%d/rating", props.MovieId) }
 					hx-confirm="Are you sure you want to delete the rating?"
 					class="cursor-pointer text-neutral-300 hover:text-neutral-700 dark:text-neutral-700 hover:dark:text-neutral-300 transition-colors"
 				>
@@ -52,7 +52,6 @@ type EditRatingProps struct {
 templ EditRating(props EditRatingProps) {
 	<form
 		hx-put={ fmt.Sprintf("/movie/%d/rating", props.MovieId) }
-		hx-indicator="#sending"
 		hx-target="#rating"
 		hx-swap="outerHTML"
 		class="flex flex-row gap-x-4"
@@ -68,4 +67,44 @@ templ EditRating(props EditRatingProps) {
 			Update rating
 		</button>
 	</form>
+}
+
+type AddRatingProps struct {
+	MovieId int
+}
+
+templ AddRating(props AddRatingProps) {
+	@IsAuthenticated() {
+		@DescriptionListItem(DescriptionListItemProps{Detail: "Rating", ID: "rating"}) {
+			<button
+				hx-get={ fmt.Sprintf("/movie/%d/rating/edit", props.MovieId) }
+				hx-target="#rating"
+				hx-swap="outerHTML"
+				class="cursor-pointer text-neutral-300 hover:text-neutral-700 dark:text-neutral-700 hover:dark:text-neutral-300 transition-colors"
+			>
+				Add rating
+			</button>
+		}
+	}
+}
+
+templ AddRatingForm(props AddRatingProps) {
+	@DescriptionListItem(DescriptionListItemProps{Detail: "Rating", ID: "rating"}) {
+		<form
+			hx-post={ fmt.Sprintf("/movie/%d/rating", props.MovieId) }
+			hx-target="#rating"
+			hx-swap="outerHTML"
+			class="flex flex-row gap-x-4"
+		>
+			<div class="flex-1">
+				@NumberInput("rating", "", "", 0, 10, true)
+			</div>
+			<button
+				class="rounded-sm bg-neutral-200 px-6 py-2 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200"
+				type="submit"
+			>
+				Save rating
+			</button>
+		</form>
+	}
 }
