@@ -5,6 +5,7 @@ import (
 	"believer/movies/types"
 	"believer/movies/utils"
 	"believer/movies/views"
+	"fmt"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
@@ -19,6 +20,8 @@ func GetFeed(c *fiber.Ctx) error {
 	searchQueryType := "movie"
 
 	if searchQuery != "" {
+		c.Set("HX-Push-Url", fmt.Sprintf("/?search=%s", searchQuery))
+
 		// Query string with a specifier for type. For example:
 		// - movie:godfa
 		// - actor:ryan
@@ -54,6 +57,8 @@ func GetFeed(c *fiber.Ctx) error {
 		}
 	} else {
 		err := db.Dot.Select(db.Client, &movies, "feed", (page-1)*20, c.Locals("UserId"))
+
+		c.Set("HX-Push-Url", "/")
 
 		if err != nil {
 			return err
