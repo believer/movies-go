@@ -25,6 +25,8 @@ func SetupRoutes(app *fiber.App) {
 	watchlistGroup := app.Group("/watchlist")
 
 	watchlistGroup.Get("/", h.GetWatchlist)
+	watchlistGroup.Get("/movies", h.GetWatchlistMovies)
+	watchlistGroup.Get("/unreleased-movies", h.GetWatchlistUnreleasedMovies)
 	watchlistGroup.Delete("/:id", h.DeleteFromWatchlist)
 
 	// Movies

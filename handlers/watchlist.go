@@ -15,13 +15,13 @@ func GetWatchlist(c *fiber.Ctx) error {
 
 	userId := c.Locals("UserId")
 
-	err := db.Dot.Select(db.Client, &movies, "watchlist", userId)
+	err := db.Dot.Select(db.Client, &movies, "watchlist", userId, "Date added")
 
 	if err != nil {
 		return err
 	}
 
-	err = db.Dot.Select(db.Client, &unreleasedMovies, "watchlist-unreleased", userId)
+	err = db.Dot.Select(db.Client, &unreleasedMovies, "watchlist-unreleased", userId, "Release date")
 
 	if err != nil {
 		return err
@@ -31,6 +31,40 @@ func GetWatchlist(c *fiber.Ctx) error {
 		Movies:           movies,
 		UnreleasedMovies: unreleasedMovies,
 	}))
+}
+
+func GetWatchlistMovies(c *fiber.Ctx) error {
+	var movies types.Movies
+
+	sortOrder := c.Query("sortOrder", "Date added")
+	userId := c.Locals("UserId")
+
+	err := db.Dot.Select(db.Client, &movies, "watchlist", userId, sortOrder)
+
+	if err != nil {
+		return err
+	}
+
+	return utils.TemplRender(c, views.WatchlistList(
+		movies, "Movies", "/watchlist/movies", sortOrder,
+	))
+}
+
+func GetWatchlistUnreleasedMovies(c *fiber.Ctx) error {
+	var movies types.Movies
+
+	sortOrder := c.Query("sortOrder", "Release date")
+	userId := c.Locals("UserId")
+
+	err := db.Dot.Select(db.Client, &movies, "watchlist-unreleased", userId, sortOrder)
+
+	if err != nil {
+		return err
+	}
+
+	return utils.TemplRender(c, views.WatchlistList(
+		movies, "Movies", "/watchlist/unreleased-movies", sortOrder,
+	))
 }
 
 func DeleteFromWatchlist(c *fiber.Ctx) error {

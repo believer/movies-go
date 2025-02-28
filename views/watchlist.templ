@@ -11,8 +11,17 @@ type WatchlistProps struct {
 	UnreleasedMovies types.Movies
 }
 
-templ watchlistList(movies types.Movies, title string) {
-	@c.Section(title, len(movies)) {
+templ sortWatchlist(route string, currentOrder string) {
+	@c.Dropdown(c.DropdownProps{
+		Name:    "sortOrder",
+		Route:   route,
+		Options: []string{"Date added", "Release date"},
+		Value:   currentOrder,
+	})
+}
+
+templ WatchlistList(movies types.Movies, title string, route string, currentOrder string) {
+	@c.SectionWithAction(title, len(movies), sortWatchlist(route, currentOrder)) {
 		<ol class="flex flex-col gap-2 md:text-sm text-neutral-500 dark:text-neutral-400">
 			for _, movie := range movies {
 				<li class="flex items-end justify-between gap-4">
@@ -22,8 +31,14 @@ templ watchlistList(movies types.Movies, title string) {
 					@c.Divider()
 					<span class="flex items-center gap-x-2 relative top-1">
 						<span class="tabular-nums whitespace-nowrap">
-							@c.SimpleLink(c.SimpleLinkProps{Href: movie.LinkToYear()}) {
-								{ movie.ReleaseDateOrCreatedAt() }
+							if currentOrder == "Date added" {
+								@c.SimpleLink(c.SimpleLinkProps{Href: movie.LinkToCreatedYear()}) {
+									{ movie.ISOCreatedDate() }
+								}
+							} else if currentOrder == "Release date" {
+								@c.SimpleLink(c.SimpleLinkProps{Href: movie.LinkToCreatedYear()}) {
+									{ movie.ISOReleaseDate() }
+								}
 							}
 						</span>
 						@c.IsAuthenticated() {
@@ -51,12 +66,12 @@ templ Watchlist(props WatchlistProps) {
 	@Layout(LayoutProps{Title: "Watchlist"}) {
 		@StandardBody("Watchlist") {
 			if len(props.Movies) > 0 {
-				@watchlistList(props.Movies, "Movies")
+				@WatchlistList(props.Movies, "Movies", "/watchlist/movies", "Date added")
 			} else {
 				@c.EmptyState("Watchlist empty")
 			}
 			if len(props.UnreleasedMovies) > 0 {
-				@watchlistList(props.UnreleasedMovies, "Unreleased movies")
+				@WatchlistList(props.UnreleasedMovies, "Unreleased movies", "/watchlist/unreleased-movies", "Release date")
 			}
 		}
 	}
