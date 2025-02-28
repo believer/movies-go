@@ -28,6 +28,10 @@ func (l ListItem) LinkToLanguage() templ.SafeURL {
 	return templ.URL(fmt.Sprintf("/language/%s-%d", utils.Slugify(l.Name), l.ID))
 }
 
+func (l ListItem) FormattedCount() string {
+	return utils.Formatter().Sprintf("%d", l.Count)
+}
+
 templ OrderedList(data []ListItem, listType string) {
 	<ol class="flex flex-col gap-2">
 		for i, item := range data {
@@ -60,7 +64,7 @@ templ OrderedList(data []ListItem, listType string) {
 				}
 				@Divider()
 				<span class="tabular-nums text-sm text-neutral-500 dark:text-neutral-400 relative top-1">
-					{ strconv.Itoa(item.Count) }
+					{ item.FormattedCount() }
 				</span>
 			</li>
 		}

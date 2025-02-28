@@ -10,6 +10,8 @@ import (
 	"github.com/a-h/templ"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
+	"golang.org/x/text/language"
+	"golang.org/x/text/message"
 )
 
 var (
@@ -100,4 +102,8 @@ func SelfHealingUrl(text string) string {
 	parts := strings.Split(path.Base(text), "-")
 
 	return parts[len(parts)-1]
+}
+
+func Formatter() *message.Printer {
+	return message.NewPrinter(language.English)
 }

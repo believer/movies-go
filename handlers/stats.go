@@ -175,7 +175,7 @@ func GetStats(c *fiber.Ctx) error {
 			Ratings:                 ratingsBars,
 			SeenThisYear:            seenThisYearByMonthBars,
 			Stats:                   stats,
-			TotalCast:               totalCast,
+			TotalCast:               utils.Formatter().Sprintf("%d", totalCast),
 			WatchedByYear:           watchedByYearBar,
 			Year:                    year,
 			YearRatings:             yearBars,
@@ -212,13 +212,12 @@ func GetMostWatchedByJob(c *fiber.Ctx) error {
 	if len(totals) > 0 {
 		totalJob = totals[0].Count
 	}
-
 	return utils.TemplRender(c, components.MostWatchedPerson(
 		components.MostWatchedPersonProps{
 			Data:  persons,
 			Job:   job,
 			Title: cases.Title(language.English).String(job),
-			Total: totalJob,
+			Total: utils.Formatter().Sprintf("%d", totalJob),
 			Year:  year,
 			Years: years,
 		}))

@@ -14,6 +14,14 @@ type Stats struct {
 	TotalRuntime      int `db:"total_runtime"`
 }
 
+func (s *Stats) FormattedNumberOfMoviesSeen() string {
+	return utils.Formatter().Sprintf("%d", s.UniqueMovies)
+}
+
+func (s *Stats) FormattedNumberOfMoviesSeenWithRewatches() string {
+	return utils.Formatter().Sprintf("%d", s.SeenWithRewatches)
+}
+
 type MovieStats struct {
 	Title string `db:"title"`
 	ID    string `db:"id"`

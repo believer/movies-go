@@ -49,7 +49,7 @@ type MostWatchedPersonProps struct {
 	Data  []ListItem
 	Job   string
 	Title string
-	Total int
+	Total string
 	Year  string
 	Years []string
 }
@@ -65,7 +65,7 @@ templ MostWatchedPerson(props MostWatchedPersonProps) {
 			@EmptyState("No movies seen")
 		}
 		<div class="text-xs text-right text-neutral-500 dark:text-neutral-400">
-			{ strconv.Itoa( props.Total ) } people total
+			{  props.Total } people total
 		</div>
 	}
 }

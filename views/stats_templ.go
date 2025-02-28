@@ -69,7 +69,7 @@ type StatsProps struct {
 	SeenThisYear            []types.Bar
 	ShortestAndLongestMovie types.Movies
 	Stats                   types.Stats
-	TotalCast               int
+	TotalCast               string
 	WatchedByYear           []types.Bar
 	WilhelmScreams          int
 	Year                    string
@@ -177,9 +177,9 @@ func Stats(props StatsProps) templ.Component {
 						}
 						ctx = templ.InitializeContext(ctx)
 						var templ_7745c5c3_Var9 string
-						templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(props.Stats.UniqueMovies))
+						templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(props.Stats.FormattedNumberOfMoviesSeen())
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 56, Col: 48}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 56, Col: 51}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 						if templ_7745c5c3_Err != nil {
@@ -211,9 +211,9 @@ func Stats(props StatsProps) templ.Component {
 						}
 						ctx = templ.InitializeContext(ctx)
 						var templ_7745c5c3_Var11 string
-						templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(props.Stats.SeenWithRewatches))
+						templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(props.Stats.FormattedNumberOfMoviesSeenWithRewatches())
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 62, Col: 53}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 62, Col: 64}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 						if templ_7745c5c3_Err != nil {

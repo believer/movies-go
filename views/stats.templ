@@ -27,7 +27,7 @@ type StatsProps struct {
 	SeenThisYear            []types.Bar
 	ShortestAndLongestMovie types.Movies
 	Stats                   types.Stats
-	TotalCast               int
+	TotalCast               string
 	WatchedByYear           []types.Bar
 	WilhelmScreams          int
 	Year                    string
@@ -53,13 +53,13 @@ templ Stats(props StatsProps) {
 								Detail:    "Unique movies seen",
 								IsTabular: true,
 							}) {
-								{ strconv.Itoa(props.Stats.UniqueMovies) }
+								{ props.Stats.FormattedNumberOfMoviesSeen() }
 							}
 							@c.DescriptionListItem(c.DescriptionListItemProps{
 								Detail:    "Movies seen with rewatches",
 								IsTabular: true,
 							}) {
-								{ strconv.Itoa(props.Stats.SeenWithRewatches) }
+								{ props.Stats.FormattedNumberOfMoviesSeenWithRewatches() }
 							}
 							@c.DescriptionListItem(c.DescriptionListItemProps{
 								Detail:    "Time watched",
