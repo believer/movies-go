@@ -12,7 +12,7 @@ type SeriesProps struct {
 	Movies      []types.SeriesMovies
 }
 
-templ list(movies types.Movies) {
+templ list(movies types.MoviesInSeries) {
 	@c.Ol() {
 		for _, movie := range movies {
 			<li
