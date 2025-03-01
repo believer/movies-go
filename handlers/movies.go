@@ -949,3 +949,28 @@ func UpdateRating(c *fiber.Ctx) error {
 		RatedAt: time.Now(),
 	}))
 }
+
+func GetMovieAwards(c *fiber.Ctx) error {
+	var awards []types.Award
+
+	imdbId := c.Params("imdbId")
+
+	err := db.Dot.Select(db.Client, &awards, "movie-awards", imdbId)
+
+	if err != nil {
+		return err
+	}
+
+	won := 0
+
+	for _, award := range awards {
+		if award.Winner {
+			won++
+		}
+	}
+
+	return utils.TemplRender(c, components.MovieAwards(components.MovieAwardsProps{
+		Awards: awards,
+		Won:    won,
+	}))
+}

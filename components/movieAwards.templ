@@ -1,0 +1,35 @@
+package components
+
+import "believer/movies/types"
+
+type MovieAwardsProps struct {
+	Awards []types.Award
+	Won    int
+}
+
+templ MovieAwards(props MovieAwardsProps) {
+	if len(props.Awards) > 0 {
+		@Section("Awards", props.Won) {
+			<ul class="flex flex-col gap-2">
+				for _, award := range props.Awards {
+					<li class="col-span-2 flex items-baseline justify-between gap-4">
+						<span>
+							{ award.Name }
+							if award.Person.Valid {
+								({ award.Person.String })
+							}
+						</span>
+						@Divider()
+						<span>
+							if award.Winner {
+								Won
+							} else {
+								Nominated
+							}
+						</span>
+					</li>
+				}
+			</ul>
+		}
+	}
+}

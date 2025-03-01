@@ -59,3 +59,14 @@ INSERT INTO review (content, private, user_id, movie_id)
 ON CONFLICT
     DO NOTHING;
 
+-- name: movie-awards
+SELECT
+    *
+FROM
+    award
+WHERE
+    imdb_id = $1
+ORDER BY
+    winner DESC,
+    name ASC;
+

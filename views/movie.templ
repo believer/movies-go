@@ -121,6 +121,11 @@ templ Movie(props MovieProps) {
 				hx-trigger="load"
 				hx-swap="outerHTML"
 			></div>
+			<div
+				hx-swap="outerHTML"
+				hx-get={ fmt.Sprintf("/movie/%s/awards", props.Movie.ImdbId) }
+				hx-trigger="load"
+			></div>
 		}
 	}
 }
