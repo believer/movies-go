@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-templ Credit(title string, data types.PersonMovies, id string) {
+templ credit(title string, data types.PersonMovies) {
 	if len(data) > 0 {
 		@c.Section(title, len(data)) {
 			<ol class="flex flex-col gap-y-2 md:gap-y-3">
@@ -38,17 +38,29 @@ templ Credit(title string, data types.PersonMovies, id string) {
 	}
 }
 
-templ Person(person types.Person, totalCredits int, id string) {
-	@Layout(LayoutProps{Title: person.Name}) {
-		@StandardBody(person.Name) {
+type PersonProps struct {
+	Awards       []types.Award
+	Person       types.Person
+	TotalCredits int
+	Won          int
+}
+
+templ Person(props PersonProps) {
+	@Layout(LayoutProps{Title: props.Person.Name}) {
+		@StandardBody(props.Person.Name) {
 			<div>
-				{ strconv.Itoa(totalCredits) } credits
+				{ strconv.Itoa(props.TotalCredits) } credits
 			</div>
-			@Credit("Cast", person.Cast, id)
-			@Credit("Director", person.Director, id)
-			@Credit("Writer", person.Writer, id)
-			@Credit("Producer", person.Producer, id)
-			@Credit("Composer", person.Composer, id)
+			@c.MovieAwards(c.MovieAwardsProps{
+				Awards:      props.Awards,
+				DisplayYear: true,
+				Won:         props.Won,
+			})
+			@credit("Cast", props.Person.Cast)
+			@credit("Director", props.Person.Director)
+			@credit("Writer", props.Person.Writer)
+			@credit("Producer", props.Person.Producer)
+			@credit("Composer", props.Person.Composer)
 		}
 	}
 }

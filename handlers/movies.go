@@ -970,7 +970,8 @@ func GetMovieAwards(c *fiber.Ctx) error {
 	}
 
 	return utils.TemplRender(c, components.MovieAwards(components.MovieAwardsProps{
-		Awards: awards,
-		Won:    won,
+		Awards:      awards,
+		DisplayName: true,
+		Won:         won,
 	}))
 }

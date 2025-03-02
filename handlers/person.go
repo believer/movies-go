@@ -12,6 +12,7 @@ import (
 
 func GetPersonByID(c *fiber.Ctx) error {
 	var person types.Person
+	var awards []types.Award
 
 	id := utils.SelfHealingUrl(c.Params("id"))
 
@@ -26,6 +27,8 @@ func GetPersonByID(c *fiber.Ctx) error {
 		return err
 	}
 
+	err = db.Dot.Select(db.Client, &awards, "awards-by-person-id", id)
+
 	fields := []int{
 		len(person.Cast),
 		len(person.Director),
@@ -39,5 +42,17 @@ func GetPersonByID(c *fiber.Ctx) error {
 		totalCredits += field
 	}
 
-	return utils.TemplRender(c, views.Person(person, totalCredits, id))
+	won := 0
+	for _, award := range awards {
+		if award.Winner {
+			won++
+		}
+	}
+
+	return utils.TemplRender(c, views.Person(views.PersonProps{
+		Awards:       awards,
+		Person:       person,
+		TotalCredits: totalCredits,
+		Won:          won,
+	}))
 }

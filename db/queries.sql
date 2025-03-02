@@ -129,6 +129,18 @@ FROM
 WHERE
     p.id = $1;
 
+-- name: awards-by-person-id
+SELECT
+    a.*,
+    m.title
+FROM
+    award a
+    INNER JOIN movie m ON m.imdb_id = a.imdb_id
+WHERE
+    person_id = $1
+ORDER BY
+    a.year DESC;
+
 -- name: movies-by-year
 SELECT
     m.id,
