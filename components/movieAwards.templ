@@ -1,6 +1,10 @@
 package components
 
-import "believer/movies/types"
+import (
+	"believer/movies/types"
+	"believer/movies/utils"
+	"fmt"
+)
 
 type MovieAwardsProps struct {
 	Awards []types.Award
@@ -9,14 +13,24 @@ type MovieAwardsProps struct {
 
 templ MovieAwards(props MovieAwardsProps) {
 	if len(props.Awards) > 0 {
-		@Section("Awards", props.Won) {
+		@Section("Academy Awards", props.Won) {
 			<ul class="flex flex-col gap-2">
 				for _, award := range props.Awards {
 					<li class="col-span-2 flex items-baseline justify-between gap-4">
 						<span>
 							{ award.Name }
-							if award.Person.Valid {
+							if award.Person.Valid && award.PersonId.Valid {
+								<a
+									class="border-b border-dashed border-neutral-500 focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600 whitespace-nowrap"
+									href={ templ.SafeURL(fmt.Sprintf("/person/%s-%d", utils.Slugify(award.Person.String), award.PersonId.Int64)) }
+								>
+									({ award.Person.String })
+								</a>
+							} else if award.Person.Valid && !award.PersonId.Valid {
 								({ award.Person.String })
+							}
+							if award.Detail.Valid {
+								({ award.Detail.String })
 							}
 						</span>
 						@Divider()
