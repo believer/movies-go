@@ -19,7 +19,7 @@ type PersonMovie struct {
 
 // Link to the movie
 func (m PersonMovie) LinkTo() templ.SafeURL {
-	return templ.URL(fmt.Sprintf("/movie/%d", m.ID))
+	return templ.URL(fmt.Sprintf("/movie/%s-%d", utils.Slugify(m.Title), m.ID))
 }
 
 // Release year
