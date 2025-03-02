@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/url"
 	"path"
@@ -106,4 +107,15 @@ func SelfHealingUrl(text string) string {
 
 func Formatter() *message.Printer {
 	return message.NewPrinter(language.English)
+}
+
+func ScanJSON[T any](v interface{}, target *T) error {
+	switch vv := v.(type) {
+	case []byte:
+		return json.Unmarshal(vv, target)
+	case string:
+		return json.Unmarshal([]byte(vv), target)
+	default:
+		return fmt.Errorf("unsupported type: %T", v)
+	}
 }

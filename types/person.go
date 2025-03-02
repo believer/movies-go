@@ -2,7 +2,6 @@ package types
 
 import (
 	"believer/movies/utils"
-	"encoding/json"
 	"fmt"
 	"time"
 
@@ -40,14 +39,7 @@ func (m PersonMovie) LinkToYear() templ.SafeURL {
 type PersonMovies []PersonMovie
 
 func (u *PersonMovies) Scan(v interface{}) error {
-	switch vv := v.(type) {
-	case []byte:
-		return json.Unmarshal(vv, u)
-	case string:
-		return json.Unmarshal([]byte(vv), u)
-	default:
-		return fmt.Errorf("unsupported type: %T", v)
-	}
+	return utils.ScanJSON(v, u)
 }
 
 type Person struct {
@@ -69,14 +61,7 @@ func (p Person) LinkTo() templ.SafeURL {
 type Persons []Person
 
 func (u *Persons) Scan(v interface{}) error {
-	switch vv := v.(type) {
-	case []byte:
-		return json.Unmarshal(vv, u)
-	case string:
-		return json.Unmarshal([]byte(vv), u)
-	default:
-		return fmt.Errorf("unsupported type: %T", v)
-	}
+	return utils.ScanJSON(v, u)
 }
 
 type Cast struct {

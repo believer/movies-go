@@ -2,7 +2,6 @@ package types
 
 import (
 	"believer/movies/utils"
-	"encoding/json"
 	"fmt"
 
 	"github.com/a-h/templ"
@@ -16,14 +15,7 @@ type ParentSeries struct {
 type ParentSeriesMult []ParentSeries
 
 func (u *ParentSeriesMult) Scan(v interface{}) error {
-	switch vv := v.(type) {
-	case []byte:
-		return json.Unmarshal(vv, u)
-	case string:
-		return json.Unmarshal([]byte(vv), u)
-	default:
-		return fmt.Errorf("unsupported type: %T", v)
-	}
+	return utils.ScanJSON(v, u)
 }
 
 type Series struct {
@@ -46,14 +38,7 @@ type SeriesMovies struct {
 type MoviesInSeries Movies
 
 func (u *MoviesInSeries) Scan(v interface{}) error {
-	switch vv := v.(type) {
-	case []byte:
-		return json.Unmarshal(vv, u)
-	case string:
-		return json.Unmarshal([]byte(vv), u)
-	default:
-		return fmt.Errorf("unsupported type: %T", v)
-	}
+	return utils.ScanJSON(v, u)
 }
 
 // Link to series
