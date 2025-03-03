@@ -190,7 +190,7 @@ func MovieAwards(props MovieAwardsProps) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				if props.Won > 0 {
+				if props.Won > 0 && !props.DisplayYear {
 					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<div><a class=\"border-b border-dashed border-neutral-500 focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600 whitespace-nowrap\" href=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
