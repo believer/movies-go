@@ -83,6 +83,13 @@ func SetupRoutes(app *fiber.App) {
 	languageGroup.Get("/", redirectToHome)
 	languageGroup.Get("/:id", h.GetLanguage)
 
+	// Awards
+	// --------------------------
+	awardsGroup := app.Group("/awards")
+
+	awardsGroup.Get("/", redirectToHome)
+	awardsGroup.Get("/:awards", h.GetMoviesByNumberOfAwards)
+
 	// Stats
 	// --------------------------
 	statsGroup := app.Group("/stats")

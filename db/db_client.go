@@ -69,6 +69,12 @@ func InitializeConnection() error {
 		return err
 	}
 
+	awardQueries, err := dotsql.LoadFromFile("./db/awardQueries.sql")
+
+	if err != nil {
+		return err
+	}
+
 	dot := dotsql.Merge(
 		generalQueries,
 		genreQueries,
@@ -77,6 +83,7 @@ func InitializeConnection() error {
 		statsQueries,
 		watchlistQueries,
 		languageQueries,
+		awardQueries,
 	)
 
 	dotx := dotsqlx.Wrap(dot)

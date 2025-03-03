@@ -1,0 +1,44 @@
+
+package views
+
+import (
+	c "believer/movies/components"
+	"believer/movies/types"
+)
+
+type AwardsProps struct {
+	Name   string
+	Movies types.Movies
+}
+
+templ Awards(props AwardsProps) {
+	@Layout(LayoutProps{Title: props.Name}) {
+		@StandardBody(props.Name) {
+			if len(props.Movies) > 0 {
+				@c.Ol() {
+					for _, movie := range props.Movies {
+						@c.Li() {
+							@c.Link(c.LinkProps{Href: movie.LinkTo()}) {
+								{ movie.Title }
+							}
+							@c.Divider()
+							<span class="flex items-center gap-x-2 whitespace-nowrap text-sm">
+								@c.SimpleLink(c.SimpleLinkProps{Href: movie.LinkToYear()}) {
+									{ movie.ISOReleaseDate() }
+								}
+								@Seen(SeenProps{
+									Title:  "genre",
+									Seen:   movie.Seen,
+									ImdbId: movie.ImdbId,
+									ID:     movie.ID,
+								})
+							</span>
+						}
+					}
+				}
+			} else {
+				@c.EmptyState("No movies with this amount of Academy Awards")
+			}
+		}
+	}
+}
