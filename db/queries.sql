@@ -2,7 +2,12 @@
 -- The names, ids, and jobs are separated into arrays that are later zipped together in the backend.
 -- name: cast-by-id
 SELECT
-    INITCAP(mp.job::text) AS job,
+    CASE mp.job
+    WHEN 'cinematographer' THEN
+        'Director of Photography'
+    ELSE
+        INITCAP(mp.job::text)
+    END AS job,
     ARRAY_AGG(p.name ORDER BY num_movies DESC, p.popularity DESC) AS people_names,
     ARRAY_AGG(p.id ORDER BY num_movies DESC, p.popularity DESC) AS people_ids,
     CASE mp.job
@@ -41,6 +46,8 @@ ORDER BY
         4
     WHEN 'producer' THEN
         5
+    WHEN 'cinematographer' THEN
+        6
     END;
 
 -- Used for the start page feed. Returns the 20 most recently watched.
@@ -123,7 +130,8 @@ SELECT
     get_person_role_with_seen_json (p.id, 'cast', $2) AS cast,
     get_person_role_with_seen_json (p.id, 'writer', $2) AS writer,
     get_person_role_with_seen_json (p.id, 'composer', $2) AS composer,
-    get_person_role_with_seen_json (p.id, 'producer', $2) AS producer
+    get_person_role_with_seen_json (p.id, 'producer', $2) AS producer,
+    get_person_role_with_seen_json (p.id, 'cinematographer', $2) AS cinematographer
 FROM
     person AS p
 WHERE

@@ -35,6 +35,7 @@ func GetPersonByID(c *fiber.Ctx) error {
 		len(person.Writer),
 		len(person.Producer),
 		len(person.Composer),
+		len(person.Cinematographer),
 	}
 
 	totalCredits := 0

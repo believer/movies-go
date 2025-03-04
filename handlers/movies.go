@@ -538,7 +538,7 @@ func PostMovieNew(c *fiber.Ctx) error {
 	for _, crew := range movieCast.Crew {
 		department := crew.Department
 
-		if department != "Directing" && department != "Writing" && department != "Production" && department != "Sound" {
+		if department != "Directing" && department != "Writing" && department != "Production" && department != "Sound" && department != "Camera" {
 			continue
 		}
 
@@ -564,6 +564,8 @@ func PostMovieNew(c *fiber.Ctx) error {
 			job = "producer"
 		} else if job == "Director" {
 			job = "director"
+		} else if job == "Director of Photography" {
+			job = "cinematographer"
 		} else {
 			continue
 		}

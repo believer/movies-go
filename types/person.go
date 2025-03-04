@@ -43,14 +43,15 @@ func (u *PersonMovies) Scan(v interface{}) error {
 }
 
 type Person struct {
-	ID             int          `json:"id" db:"id"`
-	Name           string       `json:"name" db:"name"`
-	Cast           PersonMovies `json:"cast" db:"cast"`
-	Director       PersonMovies `json:"director" db:"director"`
-	Writer         PersonMovies `json:"writer" db:"writer"`
-	Composer       PersonMovies `json:"composer" db:"composer"`
-	Producer       PersonMovies `json:"producer" db:"producer"`
-	NumberOfMovies int          `db:"count"`
+	ID              int          `json:"id" db:"id"`
+	Name            string       `json:"name" db:"name"`
+	Cast            PersonMovies `json:"cast" db:"cast"`
+	Cinematographer PersonMovies `json:"cinematographer" db:"cinematographer"`
+	Director        PersonMovies `json:"director" db:"director"`
+	Writer          PersonMovies `json:"writer" db:"writer"`
+	Composer        PersonMovies `json:"composer" db:"composer"`
+	Producer        PersonMovies `json:"producer" db:"producer"`
+	NumberOfMovies  int          `db:"count"`
 }
 
 // Link to the person

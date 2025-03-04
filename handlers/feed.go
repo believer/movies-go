@@ -26,7 +26,14 @@ func GetFeed(c *fiber.Ctx) error {
 		// - movie:godfa
 		// - actor:ryan
 		if queryType, query, ok := strings.Cut(searchQuery, ":"); ok {
-			switch strings.ToLower(queryType) {
+			job := strings.ToLower(queryType)
+
+			if job == "dp" || job == "dop" {
+				job = "cinematographer"
+				queryType = "cinematographer"
+			}
+
+			switch job {
 			case "movie":
 				err := db.Dot.Select(db.Client, &movies, "feed-search", query)
 
@@ -40,7 +47,7 @@ func GetFeed(c *fiber.Ctx) error {
 				if err != nil {
 					return err
 				}
-			case "director", "writer", "producer", "composer":
+			case "director", "writer", "producer", "composer", "cinematographer":
 				err := db.Dot.Select(db.Client, &persons, "feed-search-job", query, queryType)
 				searchQueryType = "person"
 
