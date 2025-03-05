@@ -821,7 +821,11 @@ func GetMoviesByYear(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.TemplRender(c, views.MoviesByYear(year, movies))
+	return utils.TemplRender(c, components.ListView(components.ListViewProps{
+		EmptyState: "No movies this year",
+		Movies:     movies,
+		Name:       year,
+	}))
 }
 
 func DeleteRating(c *fiber.Ctx) error {

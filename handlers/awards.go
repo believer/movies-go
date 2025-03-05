@@ -1,10 +1,10 @@
 package handlers
 
 import (
+	"believer/movies/components"
 	"believer/movies/db"
 	"believer/movies/types"
 	"believer/movies/utils"
-	"believer/movies/views"
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
@@ -26,8 +26,9 @@ func GetMoviesByNumberOfAwards(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.TemplRender(c, views.Awards(views.AwardsProps{
-		Name:   fmt.Sprintf("Won %d Academy Awards", numberOfAwards),
-		Movies: movies,
+	return utils.TemplRender(c, components.ListView(components.ListViewProps{
+		EmptyState: "No movies with this amount of Academy Awards",
+		Name:       fmt.Sprintf("Won %d Academy Awards", numberOfAwards),
+		Movies:     movies,
 	}))
 }

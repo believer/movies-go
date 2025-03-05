@@ -1,10 +1,11 @@
 package handlers
 
 import (
+	"believer/movies/components"
 	"believer/movies/db"
 	"believer/movies/types"
 	"believer/movies/utils"
-	"believer/movies/views"
+	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -36,10 +37,10 @@ func GetGenre(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusOK)
 	}
 
-	return utils.TemplRender(c, views.Genre(views.GenreProps{
-		ID:       id,
-		Name:     genre.Name,
-		NextPage: page + 1,
-		Movies:   movies,
+	return utils.TemplRender(c, components.ListView(components.ListViewProps{
+		EmptyState: "No movies for this genre",
+		Name:       genre.Name,
+		NextPage:   fmt.Sprintf("/genre/%s?page=%d", id, page+1),
+		Movies:     movies,
 	}))
 }

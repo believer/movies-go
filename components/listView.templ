@@ -1,0 +1,50 @@
+package components
+
+import "believer/movies/types"
+
+type ListViewProps struct {
+	EmptyState string
+	Name       string
+	NextPage   string
+	Movies     types.Movies
+}
+
+templ ListView(props ListViewProps) {
+	@Layout(LayoutProps{Title: props.Name}) {
+		@StandardBody(props.Name) {
+			if len(props.Movies) > 0 {
+				@Ol() {
+					for _, movie := range props.Movies {
+						@Li() {
+							@Link(LinkProps{Href: movie.LinkTo()}) {
+								{ movie.Title }
+							}
+							@Divider()
+							<span class="flex items-center gap-x-2 whitespace-nowrap text-sm">
+								@SimpleLink(SimpleLinkProps{Href: movie.LinkToYear()}) {
+									{ movie.ISOReleaseDate() }
+								}
+								@Seen(SeenProps{
+									Title:  "id",
+									Seen:   movie.Seen,
+									ImdbId: movie.ImdbId,
+									ID:     movie.ID,
+								})
+							</span>
+						}
+					}
+					if props.NextPage != "" {
+						<li
+							hx-get={ props.NextPage }
+							hx-trigger="revealed"
+							hx-swap="outerHTML"
+							hx-select="li"
+						></li>
+					}
+				}
+			} else {
+				@EmptyState(props.EmptyState)
+			}
+		}
+	}
+}
