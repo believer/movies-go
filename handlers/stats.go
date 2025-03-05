@@ -59,6 +59,9 @@ func GetStats(c *fiber.Ctx) error {
 	var wilhelms []int
 	var movies, totals, cast []components.ListItem
 	var ratings, yearRatings, watchedByYear, seenThisYearByMonth, moviesByYear []types.GraphData
+	var awardWins types.AwardPersonStat
+	var awardNominations types.AwardPersonStat
+	var mostAwardedMovies []types.AwardMovieStat
 
 	userId := c.Locals("UserId").(string)
 	now := time.Now()
@@ -79,6 +82,9 @@ func GetStats(c *fiber.Ctx) error {
 		{executeQuery("select", &watchedByYear, "stats-watched-by-year", userId), "stats-watched-by-year"},
 		{executeQuery("select", &seenThisYearByMonth, "stats-watched-this-year-by-month", userId, currentYear), "stats-watched-this-year-by-month"},
 		{executeQuery("select", &moviesByYear, "stats-movies-by-year", userId), "stats-movies-by-year"},
+		{executeQuery("get", &awardWins, "stats-most-award-wins", userId), "stats-most-award-wins"},
+		{executeQuery("get", &awardNominations, "stats-most-award-nominations", userId), "stats-most-award-nominations"},
+		{executeQuery("select", &mostAwardedMovies, "stats-top-awarded-movies", userId), "stats-top-awarded-movies"},
 	}
 
 	errChan := make(chan error, len(queries))
@@ -168,7 +174,10 @@ func GetStats(c *fiber.Ctx) error {
 
 	return utils.TemplRender(c, views.Stats(
 		views.StatsProps{
+			AwardNominations:        awardNominations,
+			AwardWins:               awardWins,
 			FormattedTotalRuntime:   utils.FormatRuntime(stats.TotalRuntime),
+			MostAwardedMovies:       mostAwardedMovies,
 			MostWatchedCast:         cast,
 			MostWatchedMovies:       movies,
 			MoviesByYear:            moviesByYear,

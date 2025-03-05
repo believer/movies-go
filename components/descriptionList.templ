@@ -7,7 +7,7 @@ templ descriptionDetail(text string) {
 }
 
 templ descriptionTerm(isTabular bool) {
-	<dt class={ templ.KV("tabular-nums", isTabular) }>
+	<dt class={ templ.KV("tabular-nums overflow-hidden", isTabular) }>
 		{ children... }
 	</dt>
 }

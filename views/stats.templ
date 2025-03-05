@@ -17,9 +17,12 @@ templ statsSection(job string) {
 }
 
 type StatsProps struct {
+	AwardNominations        types.AwardPersonStat
+	AwardWins               types.AwardPersonStat
 	BestOfTheYear           types.Movie
 	BestYear                string
 	FormattedTotalRuntime   string
+	MostAwardedMovies       []types.AwardMovieStat
 	MostWatchedCast         []c.ListItem
 	MostWatchedMovies       []c.ListItem
 	MoviesByYear            []types.GraphData
@@ -95,6 +98,44 @@ templ Stats(props StatsProps) {
 									<span class="text-xs">
 										({ utils.FormatRuntime(props.ShortestAndLongestMovie[1].Runtime) })
 									</span>
+								}
+							}
+						}
+					}
+					@c.Section("Academy Awards", 0) {
+						@c.DescriptionList() {
+							@c.DescriptionListItem(c.DescriptionListItemProps{
+								Detail:    "Most awarded person",
+								IsTabular: true,
+							}) {
+								@c.Link(c.LinkProps{Href: props.AwardWins.LinkTo()}) {
+									{ props.AwardWins.Name }
+								}
+								({ strconv.Itoa( props.AwardWins.Count ) })
+							}
+							@c.DescriptionListItem(c.DescriptionListItemProps{
+								Detail:    "Most nominations",
+								IsTabular: true,
+							}) {
+								@c.Link(c.LinkProps{Href: props.AwardNominations.LinkTo()}) {
+									{ props.AwardNominations.Name }
+								}
+								({ strconv.Itoa( props.AwardNominations.Count ) })
+							}
+							if len(props.MostAwardedMovies) > 0 {
+								@c.DescriptionListItem(c.DescriptionListItemProps{
+									Detail:    fmt.Sprintf("Most wins (%d)", props.MostAwardedMovies[0].Count),
+									IsTabular: true,
+								}) {
+									@c.Ol() {
+										for _, m := range props.MostAwardedMovies {
+											<div class="flex items-center gap-x-1">
+												@c.Link(c.LinkProps{Href: m.LinkTo()}) {
+													{ m.Title }
+												}
+											</div>
+										}
+									}
 								}
 							}
 						}

@@ -239,11 +239,7 @@ func Person(props PersonProps) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = c.MovieAwards(c.MovieAwardsProps{
-					Awards:      props.Awards,
-					DisplayYear: true,
-					Won:         props.Won,
-				}).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = credit("Cast", props.Person.Cast).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -251,7 +247,7 @@ func Person(props PersonProps) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = credit("Cast", props.Person.Cast).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = credit("Director", props.Person.Director).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -259,7 +255,7 @@ func Person(props PersonProps) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = credit("Director", props.Person.Director).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = credit("Writer", props.Person.Writer).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -267,7 +263,7 @@ func Person(props PersonProps) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = credit("Writer", props.Person.Writer).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = credit("Producer", props.Person.Producer).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -275,7 +271,7 @@ func Person(props PersonProps) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = credit("Producer", props.Person.Producer).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = credit("Composer", props.Person.Composer).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -283,7 +279,7 @@ func Person(props PersonProps) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = credit("Composer", props.Person.Composer).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = credit("Director of Photography", props.Person.Cinematographer).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -291,7 +287,7 @@ func Person(props PersonProps) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = credit("Director of Photography", props.Person.Cinematographer).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = credit("Editor", props.Person.Editor).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -299,7 +295,11 @@ func Person(props PersonProps) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = credit("Editor", props.Person.Editor).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = c.MovieAwards(c.MovieAwardsProps{
+					Awards:      props.Awards,
+					DisplayYear: true,
+					Won:         props.Won,
+				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

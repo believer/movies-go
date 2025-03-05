@@ -1,8 +1,11 @@
 package types
 
 import (
+	"believer/movies/utils"
 	"database/sql"
 	"fmt"
+
+	"github.com/a-h/templ"
 )
 
 type Award struct {
@@ -27,4 +30,24 @@ func (a *Award) YearAndName(display bool) string {
 	}
 
 	return fmt.Sprintf("(%s)", a.Year)
+}
+
+type AwardPersonStat struct {
+	Count int    `db:"count"`
+	ID    int    `db:"person_id"`
+	Name  string `db:"person"`
+}
+
+func (a AwardPersonStat) LinkTo() templ.SafeURL {
+	return templ.URL(fmt.Sprintf("/person/%s-%d", utils.Slugify(a.Name), a.ID))
+}
+
+type AwardMovieStat struct {
+	Count int    `db:"award_count"`
+	ID    int    `db:"id"`
+	Title string `db:"title"`
+}
+
+func (a AwardMovieStat) LinkTo() templ.SafeURL {
+	return templ.URL(fmt.Sprintf("/movie/%s-%d", utils.Slugify(a.Title), a.ID))
 }

@@ -51,11 +51,6 @@ templ Person(props PersonProps) {
 			<div>
 				{ strconv.Itoa(props.TotalCredits) } credits
 			</div>
-			@c.MovieAwards(c.MovieAwardsProps{
-				Awards:      props.Awards,
-				DisplayYear: true,
-				Won:         props.Won,
-			})
 			@credit("Cast", props.Person.Cast)
 			@credit("Director", props.Person.Director)
 			@credit("Writer", props.Person.Writer)
@@ -63,6 +58,11 @@ templ Person(props PersonProps) {
 			@credit("Composer", props.Person.Composer)
 			@credit("Director of Photography", props.Person.Cinematographer)
 			@credit("Editor", props.Person.Editor)
+			@c.MovieAwards(c.MovieAwardsProps{
+				Awards:      props.Awards,
+				DisplayYear: true,
+				Won:         props.Won,
+			})
 		}
 	}
 }
