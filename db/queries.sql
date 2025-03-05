@@ -48,6 +48,8 @@ ORDER BY
         5
     WHEN 'cinematographer' THEN
         6
+    WHEN 'editor' THEN
+        7
     END;
 
 -- Used for the start page feed. Returns the 20 most recently watched.
@@ -131,7 +133,8 @@ SELECT
     get_person_role_with_seen_json (p.id, 'writer', $2) AS writer,
     get_person_role_with_seen_json (p.id, 'composer', $2) AS composer,
     get_person_role_with_seen_json (p.id, 'producer', $2) AS producer,
-    get_person_role_with_seen_json (p.id, 'cinematographer', $2) AS cinematographer
+    get_person_role_with_seen_json (p.id, 'cinematographer', $2) AS cinematographer,
+    get_person_role_with_seen_json (p.id, 'editor', $2) AS editor
 FROM
     person AS p
 WHERE

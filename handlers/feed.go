@@ -47,7 +47,7 @@ func GetFeed(c *fiber.Ctx) error {
 				if err != nil {
 					return err
 				}
-			case "director", "writer", "producer", "composer", "cinematographer":
+			case "director", "writer", "producer", "composer", "cinematographer", "editor":
 				err := db.Dot.Select(db.Client, &persons, "feed-search-job", query, queryType)
 				searchQueryType = "person"
 

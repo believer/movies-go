@@ -48,6 +48,7 @@ type Person struct {
 	Cast            PersonMovies `json:"cast" db:"cast"`
 	Cinematographer PersonMovies `json:"cinematographer" db:"cinematographer"`
 	Director        PersonMovies `json:"director" db:"director"`
+	Editor          PersonMovies `json:"editor" db:"editor"`
 	Writer          PersonMovies `json:"writer" db:"writer"`
 	Composer        PersonMovies `json:"composer" db:"composer"`
 	Producer        PersonMovies `json:"producer" db:"producer"`
