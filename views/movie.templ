@@ -12,9 +12,10 @@ import (
 // https://github.com/a-h/templ/issues/88
 
 type MovieProps struct {
-	Back   bool
-	Movie  types.Movie
-	Review types.Review
+	Back          bool
+	IsInWatchlist bool
+	Movie         types.Movie
+	Review        types.Review
 }
 
 templ Movie(props MovieProps) {
@@ -98,16 +99,18 @@ templ Movie(props MovieProps) {
 							</div>
 						}
 					}
-					if props.Movie.Rating.Valid {
-						@c.Rating(c.RatingProps{
-							MovieId: props.Movie.ID,
-							Rating:  props.Movie.Rating.Int64,
-							RatedAt: props.Movie.RatedAt.Time,
-						})
-					} else {
-						@c.AddRating(c.AddRatingProps{
-							MovieId: props.Movie.ID,
-						})
+					if !props.IsInWatchlist {
+						if props.Movie.Rating.Valid {
+							@c.Rating(c.RatingProps{
+								MovieId: props.Movie.ID,
+								Rating:  props.Movie.Rating.Int64,
+								RatedAt: props.Movie.RatedAt.Time,
+							})
+						} else {
+							@c.AddRating(c.AddRatingProps{
+								MovieId: props.Movie.ID,
+							})
+						}
 					}
 				}
 			}

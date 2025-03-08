@@ -25,6 +25,7 @@ import (
 func GetMovieByID(c *fiber.Ctx) error {
 	var movie types.Movie
 	var review types.Review
+	var isInWatchlist bool
 
 	backParam := c.QueryBool("back", false)
 
@@ -50,15 +51,27 @@ func GetMovieByID(c *fiber.Ctx) error {
 		}
 	}
 
+	err = db.Client.Get(
+		&isInWatchlist,
+		`select exists (select * from watchlist where movie_id = $1 and user_id = $2);`,
+		id,
+		userId,
+	)
+
+	if err != nil {
+		return err
+	}
+
 	if c.Get("Accept") == "application/json" {
 		return c.JSON(movie)
 	}
 
 	return utils.TemplRender(c, views.Movie(
 		views.MovieProps{
-			Movie:  movie,
-			Review: review,
-			Back:   backParam,
+			IsInWatchlist: isInWatchlist,
+			Movie:         movie,
+			Review:        review,
+			Back:          backParam,
 		}))
 }
 
