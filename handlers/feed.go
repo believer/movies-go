@@ -27,6 +27,7 @@ func GetFeed(c *fiber.Ctx) error {
 		// - actor:ryan
 		if queryType, query, ok := strings.Cut(searchQuery, ":"); ok {
 			job := strings.ToLower(queryType)
+			query = strings.TrimSpace(query)
 
 			if job == "dp" || job == "dop" {
 				job = "cinematographer"
