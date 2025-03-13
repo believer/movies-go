@@ -21,19 +21,7 @@ import (
 	"golang.org/x/text/language"
 )
 
-func getPersonsByJob(job string, userId string) ([]components.ListItem, error) {
-	var persons []components.ListItem
-
-	err := db.Dot.Select(db.Client, &persons, "stats-most-watched-by-job", job, userId, "All")
-
-	if err != nil {
-		return nil, err
-	}
-
-	return persons, nil
-}
-
-func executeQuery(queryType string, target interface{}, query string, args ...interface{}) func() error {
+func executeQuery(queryType string, target any, query string, args ...any) func() error {
 	return func() error {
 		switch queryType {
 		case "select":
@@ -254,18 +242,6 @@ func GetHighestRankedPersonByJob(c *fiber.Ctx) error {
 			Jobs:  jobs,
 			Title: title,
 		}))
-}
-
-func getGraphWithQuery(query string, userId string) ([]types.Bar, error) {
-	var data []types.GraphData
-
-	err := db.Dot.Select(db.Client, &data, query, userId)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return constructGraphFromData(data)
 }
 
 func getGraphByYearWithQuery(query string, userId string, year string) ([]types.Bar, error) {

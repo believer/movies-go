@@ -307,7 +307,7 @@ type NewPerson struct {
 	MovieId        int            `db:"movie_id"`
 }
 
-func personExists(arr []NewPerson, id int, job interface{}) (int, bool) {
+func personExists(arr []NewPerson, id int, job any) (int, bool) {
 	for i, person := range arr {
 		if person.ID == id && person.Job.String == job {
 			return i, true
