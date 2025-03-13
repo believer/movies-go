@@ -13,6 +13,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
+	"golang.org/x/text/unicode/norm"
 )
 
 var (
@@ -68,7 +69,7 @@ func FormatRuntime(runtime int) string {
 	}
 
 	if len(parts) == 0 {
-		return "0"
+		return "0m"
 	}
 
 	return strings.Join(parts, " ")
@@ -81,6 +82,9 @@ func TemplRender(c *fiber.Ctx, component templ.Component) error {
 func Slugify(text string) string {
 	// Convert to lowercase
 	text = strings.ToLower(text)
+
+	// Normalize diacritical marks
+	text = norm.NFD.String(text)
 
 	// Replace spaces with hyphens
 	text = strings.ReplaceAll(text, " ", "-")

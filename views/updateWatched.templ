@@ -12,7 +12,7 @@ type UpdateWatchedProps struct {
 }
 
 templ UpdateWatched(props UpdateWatchedProps) {
-	@Layout(LayoutProps{Title: "Update watch"}) {
+	@c.Layout(c.LayoutProps{Title: "Update watch"}) {
 		<form
 			hx-put={ fmt.Sprintf("/movie/%s/seen/%s/edit", props.MovieId, props.SeenId) }
 			hx-indicator="#sending"

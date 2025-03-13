@@ -63,8 +63,8 @@ templ WatchlistList(movies types.Movies, title string, route string, currentOrde
 }
 
 templ Watchlist(props WatchlistProps) {
-	@Layout(LayoutProps{Title: "Watchlist"}) {
-		@StandardBody("Watchlist") {
+	@c.Layout(c.LayoutProps{Title: "Watchlist"}) {
+		@c.StandardBody("Watchlist") {
 			if len(props.Movies) > 0 {
 				@WatchlistList(props.Movies, "Movies", "/watchlist/movies", "Date added")
 			} else {

@@ -12,7 +12,7 @@ type NewMovieProps struct {
 }
 
 templ NewMovie(props NewMovieProps) {
-	@Layout(LayoutProps{Title: "Add movie"}) {
+	@c.Layout(c.LayoutProps{Title: "Add movie"}) {
 		<form
 			hx-post="/movie/new"
 			hx-indicator="#sending"

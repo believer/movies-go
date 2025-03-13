@@ -17,7 +17,7 @@ type FeedProps struct {
 }
 
 templ Feed(props FeedProps) {
-	@Layout(LayoutProps{}) {
+	@c.Layout(c.LayoutProps{}) {
 		<nav class="flex items-center justify-between px-5 pt-5">
 			<div class="flex gap-x-4">
 				@c.Link(c.LinkProps{Href: "/stats"}) {

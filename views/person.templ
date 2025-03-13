@@ -46,8 +46,8 @@ type PersonProps struct {
 }
 
 templ Person(props PersonProps) {
-	@Layout(LayoutProps{Title: props.Person.Name}) {
-		@StandardBody(props.Person.Name) {
+	@c.Layout(c.LayoutProps{Title: props.Person.Name}) {
+		@c.StandardBody(props.Person.Name) {
 			<div>
 				{ strconv.Itoa(props.TotalCredits) } credits
 			</div>

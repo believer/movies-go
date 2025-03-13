@@ -19,8 +19,8 @@ type MovieProps struct {
 }
 
 templ Movie(props MovieProps) {
-	@Layout(LayoutProps{Title: props.Movie.Title, Description: props.Movie.Overview}) {
-		@StandardBody(props.Movie.Title) {
+	@c.Layout(c.LayoutProps{Title: props.Movie.Title, Description: props.Movie.Overview}) {
+		@c.StandardBody(props.Movie.Title) {
 			if props.Movie.Overview != "" {
 				<p class="text-neutral-500 dark:text-neutral-400">{ props.Movie.Overview }</p>
 			}

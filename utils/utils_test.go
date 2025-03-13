@@ -39,7 +39,7 @@ func TestFormatRuntime(t *testing.T) {
 		runtime int
 		want    string
 	}{
-		{runtime: 0, want: ""},
+		{runtime: 0, want: "0m"},
 		{runtime: 1, want: "1m"},
 		{runtime: 2, want: "2m"},
 		{runtime: 60, want: "1h"},
@@ -57,6 +57,24 @@ func TestFormatRuntime(t *testing.T) {
 
 		if got != tc.want {
 			t.Errorf("FormatRuntime(%d) = %v; want %v", tc.runtime, got, tc.want)
+		}
+	}
+}
+
+func TestSlugify(t *testing.T) {
+	tests := []struct {
+		text string
+		want string
+	}{
+		{text: "Hugh Jackman", want: "hugh-jackman"},
+		{text: "Alfonso Cuarón", want: "alfonso-cuaron"},
+	}
+
+	for _, tc := range tests {
+		got := Slugify(tc.text)
+
+		if got != tc.want {
+			t.Errorf("Slugify(%s) = %v; want %v", tc.text, got, tc.want)
 		}
 	}
 }
