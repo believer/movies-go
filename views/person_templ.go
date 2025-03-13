@@ -295,10 +295,9 @@ func Person(props PersonProps) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = c.MovieAwards(c.MovieAwardsProps{
-					Awards:      props.Awards,
-					DisplayYear: true,
-					Won:         props.Won,
+				templ_7745c5c3_Err = c.PersonAwards(c.MovieAwardsProps{
+					Awards: props.Awards,
+					Won:    props.Won,
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err

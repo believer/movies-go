@@ -2,62 +2,105 @@ package components
 
 import (
 	"believer/movies/types"
-	"believer/movies/utils"
 	"fmt"
 	"strconv"
 )
 
 type MovieAwardsProps struct {
-	Awards      []types.Award
-	DisplayName bool
-	DisplayYear bool
-	Won         int
+	Awards []types.Award
+	Won    int
+}
+
+templ awardSection(props MovieAwardsProps) {
+	if len(props.Awards) > 0 {
+		@Section("Academy Awards", props.Won) {
+			{ children... }
+		}
+	}
 }
 
 templ MovieAwards(props MovieAwardsProps) {
-	if len(props.Awards) > 0 {
-		@Section("Academy Awards", props.Won) {
-			<ul class="flex flex-col gap-2">
-				for _, award := range props.Awards {
-					<li class="col-span-2 flex items-baseline justify-between gap-4">
-						<span>
-							{ award.Name }
-							{ award.YearAndName(props.DisplayYear) }
-							if props.DisplayName {
-								if award.Person.Valid && award.PersonId.Valid {
-									<a
-										class="border-b border-dashed border-neutral-500 focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600 whitespace-nowrap"
-										href={ templ.SafeURL(fmt.Sprintf("/person/%s-%d", utils.Slugify(award.Person.String), award.PersonId.Int64)) }
-									>
-										({ award.Person.String })
-									</a>
-								} else if award.Person.Valid && !award.PersonId.Valid {
-									({ award.Person.String })
+	@awardSection(props) {
+		<ul class="flex flex-col gap-2">
+			for _, award := range props.Awards {
+				<li class="col-span-2 flex items-baseline justify-between gap-4">
+					<div>
+						{ award.Category }{ " " }
+						<div class="inline-flex">
+							if len(award.Nominees) > 0 {
+								<span>
+									(
+								</span>
+								for i, n := range award.Nominees {
+									if n.ID != 0 {
+										<a
+											class="border-b border-dashed border-neutral-500 focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600 whitespace-nowrap"
+											href={ n.LinkTo() }
+										>
+											{ n.Name }
+										</a>
+									} else {
+										{ n.Name }
+									}
+									if i < len(award.Nominees) - 1 {
+										<span class="mr-1">
+											{ ", " }
+										</span>
+									}
 								}
+								<span>
+									)
+								</span>
 							}
 							if award.Detail.Valid {
 								({ award.Detail.String })
 							}
-						</span>
-						@Divider()
-						<span>
-							if award.Winner {
-								Won
-							} else {
-								Nominated
-							}
-						</span>
-					</li>
-				}
-			</ul>
-			if props.Won > 0 && !props.DisplayYear {
-				<div>
-					<a
-						class="border-b border-dashed border-neutral-500 focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600 whitespace-nowrap"
-						href={ templ.SafeURL(fmt.Sprintf("/awards/%d", props.Won)) }
-					>All movies with { strconv.Itoa(props.Won) } Academy Awards</a>
-				</div>
+						</div>
+					</div>
+					@Divider()
+					<span>
+						if award.Winner {
+							Won
+						} else {
+							Nominated
+						}
+					</span>
+				</li>
 			}
+		</ul>
+		if props.Won > 0 {
+			<div>
+				<a
+					class="border-b border-dashed border-neutral-500 focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600 whitespace-nowrap"
+					href={ templ.SafeURL(fmt.Sprintf("/awards/%d", props.Won)) }
+				>All movies with { strconv.Itoa(props.Won) } Academy Awards</a>
+			</div>
 		}
+	}
+}
+
+templ PersonAwards(props MovieAwardsProps) {
+	@awardSection(props) {
+		<ul class="flex flex-col gap-2">
+			for _, award := range props.Awards {
+				<li class="col-span-2 flex items-baseline justify-between gap-4">
+					<span>
+						{ award.Category }
+						{ award.YearAndName() }
+						if award.Detail.Valid {
+							({ award.Detail.String })
+						}
+					</span>
+					@Divider()
+					<span>
+						if award.Winner {
+							Won
+						} else {
+							Nominated
+						}
+					</span>
+				</li>
+			}
+		</ul>
 	}
 }

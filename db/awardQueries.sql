@@ -85,7 +85,7 @@ WITH movie_awards AS (
     SELECT
         m.id,
         m.title,
-        COUNT(DISTINCT a.id) AS award_count
+        COUNT(DISTINCT a.name) AS award_count
     FROM
         seen s
         INNER JOIN movie m ON m.id = s.movie_id

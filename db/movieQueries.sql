@@ -61,12 +61,30 @@ ON CONFLICT
 
 -- name: movie-awards
 SELECT
-    *
+    name AS category,
+    year,
+    COALESCE(JSONB_AGG(
+            CASE WHEN person IS NOT NULL
+                AND person_id IS NOT NULL THEN
+                JSONB_BUILD_OBJECT('name', person, 'id', person_id)
+            WHEN person IS NOT NULL THEN
+                JSONB_BUILD_OBJECT('name', person)
+            ELSE
+                JSONB_BUILD_OBJECT('name', 'N/A')
+            END) FILTER (WHERE person IS NOT NULL
+            OR person_id IS NOT NULL), '[]'::jsonb) AS nominees,
+    winner,
+    detail
 FROM
     award
 WHERE
     imdb_id = $1
+GROUP BY
+    name,
+    year,
+    winner,
+    detail
 ORDER BY
     winner DESC,
-    name ASC;
+    category ASC;
 

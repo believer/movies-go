@@ -12,7 +12,8 @@ type Award struct {
 	ID       string         `db:"id"`
 	Detail   sql.NullString `db:"detail"`
 	ImdbID   string         `db:"imdb_id"`
-	Name     string         `db:"name"`
+	Category string         `db:"category"`
+	Nominees Nominees       `db:"nominees"`
 	Title    sql.NullString `db:"title"`
 	Person   sql.NullString `db:"person"`
 	PersonId sql.NullInt64  `db:"person_id"`
@@ -20,11 +21,13 @@ type Award struct {
 	Year     string         `db:"year"`
 }
 
-func (a *Award) YearAndName(display bool) string {
-	if !display {
-		return ""
-	}
+type Nominees []Person
 
+func (u *Nominees) Scan(v interface{}) error {
+	return ScanEntity(v, u)
+}
+
+func (a *Award) YearAndName() string {
 	if a.Title.Valid {
 		return fmt.Sprintf("(%s - %s)", a.Title.String, a.Year)
 	}
@@ -51,3 +54,11 @@ type AwardMovieStat struct {
 func (a AwardMovieStat) LinkTo() templ.SafeURL {
 	return templ.URL(fmt.Sprintf("/movie/%s-%d", utils.Slugify(a.Title), a.ID))
 }
+
+type GroupedAward struct {
+	Name     string
+	Winner   bool
+	Nominees []Award
+}
+
+type GroupedAwards map[string]GroupedAward

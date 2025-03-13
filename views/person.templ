@@ -58,10 +58,9 @@ templ Person(props PersonProps) {
 			@credit("Composer", props.Person.Composer)
 			@credit("Director of Photography", props.Person.Cinematographer)
 			@credit("Editor", props.Person.Editor)
-			@c.MovieAwards(c.MovieAwardsProps{
-				Awards:      props.Awards,
-				DisplayYear: true,
-				Won:         props.Won,
+			@c.PersonAwards(c.MovieAwardsProps{
+				Awards: props.Awards,
+				Won:    props.Won,
 			})
 		}
 	}

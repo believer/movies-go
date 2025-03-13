@@ -142,7 +142,10 @@ WHERE
 
 -- name: awards-by-person-id
 SELECT
-    a.*,
+    a.name AS "category",
+    a.detail,
+    a.winner,
+    a.year,
     m.title
 FROM
     award a
