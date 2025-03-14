@@ -11,6 +11,17 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: actions/setup-go@v4
+        with:
+          go-version-file: 'go.mod'
+      - name: Run tests
+        run: go test ./...
+
   deploy:
     name: Deploy app
     runs-on: ubuntu-latest
