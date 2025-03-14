@@ -24,7 +24,9 @@ func TestLink(t *testing.T) {
 	ctx := templ.WithChildren(context.Background(), children)
 
 	go func() {
-		_ = Link(href, "", false).Render(ctx, w)
+		_ = Link(LinkProps{
+			Href: templ.SafeURL(href),
+		}).Render(ctx, w)
 		_ = w.Close()
 	}()
 
@@ -63,7 +65,10 @@ func TestLinkWithHyperscript(t *testing.T) {
 	ctx := templ.WithChildren(context.Background(), children)
 
 	go func() {
-		_ = Link(href, hyperscript, false).Render(ctx, w)
+		_ = Link(LinkProps{
+			Href:        templ.SafeURL(href),
+			Hyperscript: hyperscript,
+		}).Render(ctx, w)
 		_ = w.Close()
 	}()
 
