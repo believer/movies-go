@@ -12,6 +12,7 @@ type Award struct {
 	ID       string         `db:"id"`
 	Detail   sql.NullString `db:"detail"`
 	ImdbID   string         `db:"imdb_id"`
+	MovieID  int            `db:"movie_id"`
 	Category string         `db:"category"`
 	Nominees Nominees       `db:"nominees"`
 	Title    sql.NullString `db:"title"`
@@ -23,16 +24,20 @@ type Award struct {
 
 type Nominees []Person
 
-func (u *Nominees) Scan(v interface{}) error {
+func (u *Nominees) Scan(v any) error {
 	return ScanEntity(v, u)
 }
 
-func (a *Award) YearAndName() string {
+func (a *Award) LinkToMovie() templ.SafeURL {
 	if a.Title.Valid {
-		return fmt.Sprintf("(%s - %s)", a.Title.String, a.Year)
+		return templ.SafeURL(fmt.Sprintf("/movie/%s-%d", utils.Slugify(a.Title.String), a.MovieID))
 	}
 
-	return fmt.Sprintf("(%s)", a.Year)
+	return "#"
+}
+
+func (a *Award) LinkToYear() templ.SafeURL {
+	return templ.SafeURL(fmt.Sprintf("/year/%s", a.Year))
 }
 
 type AwardPersonStat struct {

@@ -146,7 +146,8 @@ SELECT
     a.detail,
     a.winner,
     a.year,
-    m.title
+    m.title,
+    m.id AS "movie_id"
 FROM
     award a
     INNER JOIN movie m ON m.imdb_id = a.imdb_id
