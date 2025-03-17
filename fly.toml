@@ -3,6 +3,10 @@
 app = "movies-go"
 primary_region = "arn"
 
+[[vm]]
+  size = "shared-cpu-2x"
+  memory = "512mb"
+
 [build]
   builder = "paketobuildpacks/builder:base"
   buildpacks = ["gcr.io/paketo-buildpacks/go"]

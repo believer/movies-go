@@ -3,7 +3,6 @@ package db
 import (
 	"log"
 	"os"
-	"time"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -92,10 +91,6 @@ func InitializeConnection() error {
 	// Set the global DBClient variable to the db connection
 	Client = db
 	Dot = dotx
-
-	Client.SetMaxOpenConns(10)
-	Client.SetMaxIdleConns(5)
-	Client.SetConnMaxLifetime(5 * time.Minute)
 
 	return nil
 }
