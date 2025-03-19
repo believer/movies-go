@@ -294,6 +294,10 @@ func tmdbSearchMovie(query string) types.SearchMovieResponse {
 
 	err = json.Unmarshal([]byte(body), &result)
 
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	return result
 }
 

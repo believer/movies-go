@@ -29,6 +29,10 @@ func GetPersonByID(c *fiber.Ctx) error {
 
 	err = db.Dot.Select(db.Client, &awards, "awards-by-person-id", id)
 
+	if err != nil {
+		return err
+	}
+
 	fields := []int{
 		len(person.Cast),
 		len(person.Director),

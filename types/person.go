@@ -38,7 +38,7 @@ func (m PersonMovie) LinkToYear() templ.SafeURL {
 
 type PersonMovies []PersonMovie
 
-func (u *PersonMovies) Scan(v interface{}) error {
+func (u *PersonMovies) Scan(v any) error {
 	return utils.ScanJSON(v, u)
 }
 
@@ -62,7 +62,7 @@ func (p Person) LinkTo() templ.SafeURL {
 
 type Persons []Person
 
-func (u *Persons) Scan(v interface{}) error {
+func (u *Persons) Scan(v any) error {
 	return utils.ScanJSON(v, u)
 }
 
