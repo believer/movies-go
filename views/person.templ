@@ -39,7 +39,7 @@ templ credit(title string, data types.PersonMovies) {
 }
 
 type PersonProps struct {
-	Awards       []types.Award
+	Awards       map[string][]types.Award
 	Person       types.Person
 	TotalCredits int
 	Won          int
@@ -58,7 +58,7 @@ templ Person(props PersonProps) {
 			@credit("Composer", props.Person.Composer)
 			@credit("Director of Photography", props.Person.Cinematographer)
 			@credit("Editor", props.Person.Editor)
-			@c.PersonAwards(c.MovieAwardsProps{
+			@c.PersonAwards(c.PersonAwardsProps{
 				Awards: props.Awards,
 				Won:    props.Won,
 			})

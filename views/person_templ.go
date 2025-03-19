@@ -171,7 +171,7 @@ func credit(title string, data types.PersonMovies) templ.Component {
 }
 
 type PersonProps struct {
-	Awards       []types.Award
+	Awards       map[string][]types.Award
 	Person       types.Person
 	TotalCredits int
 	Won          int
@@ -295,7 +295,7 @@ func Person(props PersonProps) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = c.PersonAwards(c.MovieAwardsProps{
+				templ_7745c5c3_Err = c.PersonAwards(c.PersonAwardsProps{
 					Awards: props.Awards,
 					Won:    props.Won,
 				}).Render(ctx, templ_7745c5c3_Buffer)

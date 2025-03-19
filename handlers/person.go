@@ -48,15 +48,19 @@ func GetPersonByID(c *fiber.Ctx) error {
 		totalCredits += field
 	}
 
+	groupedAwards := make(map[string][]types.Award)
+
 	won := 0
 	for _, award := range awards {
 		if award.Winner {
 			won++
 		}
+
+		groupedAwards[award.Category] = append(groupedAwards[award.Category], award)
 	}
 
 	return utils.TemplRender(c, views.Person(views.PersonProps{
-		Awards:       awards,
+		Awards:       groupedAwards,
 		Person:       person,
 		TotalCredits: totalCredits,
 		Won:          won,

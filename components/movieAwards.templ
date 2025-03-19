@@ -6,24 +6,37 @@ import (
 	"strconv"
 )
 
+type SectionProps interface {
+	NumberOfAwards() int
+	Wins() int
+}
+
+templ awardSection(props SectionProps) {
+	if props.NumberOfAwards() > 0 {
+		@Section("Academy Awards", props.Wins()) {
+			{ children... }
+		}
+	}
+}
+
 type MovieAwardsProps struct {
 	Awards []types.Award
 	Won    int
 }
 
-templ awardSection(props MovieAwardsProps) {
-	if len(props.Awards) > 0 {
-		@Section("Academy Awards", props.Won) {
-			{ children... }
-		}
-	}
+func (p MovieAwardsProps) NumberOfAwards() int {
+	return len(p.Awards)
+}
+
+func (p MovieAwardsProps) Wins() int {
+	return p.Won
 }
 
 templ MovieAwards(props MovieAwardsProps) {
 	@awardSection(props) {
 		<ul class="flex flex-col gap-2">
 			for _, award := range props.Awards {
-				<li class="col-span-2 flex items-baseline justify-between gap-4">
+				<li class="col-span-2 flex items-baseline justify-between gap-x-4">
 					<div>
 						{ award.Category }{ " " }
 						<div class="inline-flex">
@@ -79,52 +92,66 @@ templ MovieAwards(props MovieAwardsProps) {
 	}
 }
 
-templ PersonAwards(props MovieAwardsProps) {
+type PersonAwardsProps struct {
+	Awards map[string][]types.Award
+	Won    int
+}
+
+func (p PersonAwardsProps) NumberOfAwards() int {
+	awards := 0
+
+	for _, c := range p.Awards {
+		awards = awards + len(c)
+	}
+
+	return awards
+}
+
+func (p PersonAwardsProps) Wins() int {
+	return p.Won
+}
+
+templ PersonAwards(props PersonAwardsProps) {
 	@awardSection(props) {
-		<ul class="flex flex-col gap-2">
-			for _, award := range props.Awards {
-				<li class="col-span-2 flex items-baseline justify-between gap-4">
-					<span>
-						{ award.Category }{ " " }
-						<div class="inline-flex">
-							<span>
-								(
-							</span>
-							if award.Title.Valid {
-								<a
-									class="border-b border-dashed border-neutral-500 focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600 whitespace-nowrap"
-									href={ award.LinkToMovie() }
-								>
-									{ award.Title.String }
-								</a>
-							}
-							<span class="mx-1">
-								-
-							</span>
-							<a
-								class="border-b border-dashed border-neutral-500 focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600 whitespace-nowrap"
-								href={ award.LinkToYear() }
-							>
-								{ award.Year }
-							</a>
-							<span>
-								)
-							</span>
-						</div>
-						if award.Detail.Valid {
-							({ award.Detail.String })
+		<section class="flex flex-col gap-y-6">
+			for category, awards := range props.Awards {
+				<section class="flex flex-col gap-y-4">
+					<h3 class="font-bold text-xs">{ category }</h3>
+					<ul class="flex flex-col gap-y-2">
+						for _, award := range awards {
+							<li class="col-span-2 flex items-end justify-between gap-x-4">
+								<span class="flex gap-x-2">
+									if award.Title.Valid {
+										<a
+											class="border-b border-dashed border-neutral-500 focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600 whitespace-nowrap"
+											href={ award.LinkToMovie() }
+										>
+											{ award.Title.String }
+										</a>
+									}
+									<a
+										class="border-b border-dashed border-neutral-500 focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600 whitespace-nowrap"
+										href={ award.LinkToYear() }
+									>
+										({ award.Year })
+									</a>
+									if award.Detail.Valid {
+										({ award.Detail.String })
+									}
+								</span>
+								@Divider()
+								<span>
+									if award.Winner {
+										Won
+									} else {
+										Nominated
+									}
+								</span>
+							</li>
 						}
-					</span>
-					@Divider()
-					<span>
-						if award.Winner {
-							Won
-						} else {
-							Nominated
-						}
-					</span>
-				</li>
+					</ul>
+				</section>
 			}
-		</ul>
+		</section>
 	}
 }
