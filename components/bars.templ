@@ -10,14 +10,18 @@ templ Bars(bars []types.Bar) {
 		for _, bar := range bars {
 			<g
 				class="fill-neutral-100 [@media(any-hover:hover){&:hover}]:fill-neutral-200 dark:fill-neutral-800 dark:[@media(any-hover:hover){&:hover}]:fill-neutral-700"
-				_="on mouseenter add .opacity-100 to <text /> in me
-         on mouseleave remove .opacity-100 from <text /> in me
+				_="on mouseenter
+          add .opacity-100 to <text /> in me
+          add .fill-neutral-200 .dark:fill-neutral-700 to <rect /> in me
+         on mouseleave
+          remove .opacity-100 from <text /> in me
+          remove .fill-neutral-200 .dark:fill-neutral-700 from <rect /> in me
          on touchstart 
           add .opacity-100 to <text /> in me
           add .fill-neutral-200 .dark:fill-neutral-700 to <rect /> in me
          on touchend wait 1s then
-            remove .fill-neutral-200 .dark:fill-neutral-700 from <rect /> in me
-            remove .opacity-100 from <text /> in me
+          remove .fill-neutral-200 .dark:fill-neutral-700 from <rect /> in me
+          remove .opacity-100 from <text /> in me
          end"
 			>
 				<rect
