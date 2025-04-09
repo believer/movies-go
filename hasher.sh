@@ -11,7 +11,7 @@ function calculate_hash() {
 rm ./public/styles.*.css
 
 # Generate the new CSS file
-./tailwindcss -i ./styles.css -o ./public/styles.css --minify
+./scripts/tailwindcss -i ./styles.css -o ./public/styles.css --minify
 
 # Add the 6 first characters of the hash to the file name
 # of the generated CSS file. This is to bust the cache of the CSS file.

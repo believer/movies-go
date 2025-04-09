@@ -178,7 +178,7 @@ templ Stats(props StatsProps) {
 										@c.DividerHighlight(props.BestYear == year.Label)
 										<span
 											class={ "tabular-nums text-sm relative top-1",
-                    templ.KV("text-neutral-500 dark:text-neutral-400", props.BestYear != year.Label) }
+                    templ.KV("text-content-secondary", props.BestYear != year.Label) }
 										>
 											{ strconv.Itoa(year.Value) }
 										</span>

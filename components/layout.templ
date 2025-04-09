@@ -43,19 +43,20 @@ templ Layout(props LayoutProps) {
 			<meta name="twitter:site" content="@rnattochdag"/>
 			<meta name="twitter:creator" content="@rnattochdag"/>
 			<link rel="icon" type="image/png" href="/public/favicon.png"/>
-			<link href="/public/styles.4c9979.css" rel="stylesheet"/>
+			<link href="/public/styles.f7dd43.css" rel="stylesheet"/>
 			<link rel="manifest" href="/public/manifest.webmanifest"/>
 			<script defer src="/public/htmx.2.0.3.min.js"></script>
 			<script defer src="/public/htmx.head-support.20240912.js"></script>
 			<script defer src="/public/hyperscript.0.9.12.min.js"></script>
 		</head>
 		<body
-			class="text-neutral-700 dark:bg-neutral-900 dark:text-neutral-300"
+			class="bg-background-primary text-content-primary"
 			hx-boost="true"
 			hx-ext="head-support"
 		>
 			<main>
 				{ children... }
+				<div class="text-ne"></div>
 			</main>
 		</body>
 	</html>

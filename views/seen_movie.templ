@@ -13,7 +13,7 @@ type SeenProps struct {
 }
 
 templ SeenToggle() {
-	<span class="text-neutral-300 dark:text-neutral-700" slot="button">
+	<span class="text-content-tertiary" slot="button">
 		@c.IconCheck()
 	</span>
 }
@@ -23,7 +23,7 @@ templ AddWatch(id int, imdbId string) {
 		<a
 			href={ templ.URL(fmt.Sprintf("/movie/new?imdbId=%s&id=%d", imdbId, id)) }
 			title="Add watch"
-			class="inline-flex items-center gap-1 focus:outline-hidden focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 border-b border-dashed border-neutral-500 dark:border-neutral-400"
+			class="inline-flex items-center gap-1 focus:outline-hidden focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 border-b border-dashed border-content-secondary"
 		>
 			Add watch
 		</a>
@@ -31,7 +31,7 @@ templ AddWatch(id int, imdbId string) {
 }
 
 templ UnseenToggle() {
-	<span class="text-neutral-700 dark:text-neutral-300">
+	<span class="text-content-primary">
 		@c.IconTimes()
 	</span>
 }

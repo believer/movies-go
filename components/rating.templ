@@ -26,7 +26,7 @@ templ Rating(props RatingProps) {
 					hx-swap="outerHTML"
 					hx-target="#rating-value"
 					hx-get={ fmt.Sprintf("/movie/%d/rating?rating=%d", props.MovieId, props.Rating) }
-					class="cursor-pointer text-neutral-300 hover:text-neutral-700 dark:text-neutral-700 hover:dark:text-neutral-300 transition-colors"
+					class="cursor-pointer text-content-secondary transition-colors link-focus"
 				>
 					Edit
 				</button>
@@ -35,7 +35,7 @@ templ Rating(props RatingProps) {
 					hx-target="#rating"
 					hx-delete={ fmt.Sprintf("/movie/%d/rating", props.MovieId) }
 					hx-confirm="Are you sure you want to delete the rating?"
-					class="cursor-pointer text-neutral-300 hover:text-neutral-700 dark:text-neutral-700 hover:dark:text-neutral-300 transition-colors"
+					class="cursor-pointer text-content-secondary transition-colors link-focus"
 				>
 					Delete
 				</button>
@@ -61,7 +61,7 @@ templ EditRating(props EditRatingProps) {
 			Value: strconv.Itoa(props.CurrentRating),
 		})
 		<button
-			class="rounded-sm bg-neutral-200 px-6 py-2 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200"
+			class="cursor-pointer rounded-sm bg-background-secondary px-6 py-2 text-content-secondary link-focus"
 			type="submit"
 		>
 			Update rating
@@ -80,7 +80,7 @@ templ AddRating(props AddRatingProps) {
 				hx-get={ fmt.Sprintf("/movie/%d/rating/edit", props.MovieId) }
 				hx-target="#rating"
 				hx-swap="outerHTML"
-				class="cursor-pointer text-neutral-300 hover:text-neutral-700 dark:text-neutral-700 hover:dark:text-neutral-300 transition-colors"
+				class="cursor-pointer text-content-secondary transition-colors link-focus"
 			>
 				Add rating
 			</button>
@@ -100,7 +100,7 @@ templ AddRatingForm(props AddRatingProps) {
 				@NumberInput("rating", "", "", 0, 10, true)
 			</div>
 			<button
-				class="rounded-sm bg-neutral-200 px-6 py-2 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200"
+				class="cursor-pointer rounded-sm bg-background-secondary px-6 py-2 text-content-secondary link-focus"
 				type="submit"
 			>
 				Save rating

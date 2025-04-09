@@ -30,13 +30,13 @@ templ Feed(props FeedProps) {
 			if props.IsAdmin {
 				<div class="flex gap-4 items-center">
 					<a
-						class="fixed bottom-8 right-8 z-20 text-neutral-900 dark:text-neutral-100 bg-neutral-200 dark:bg-neutral-700 w-14 h-14 shadow-lg flex justify-center items-center rounded-full dark:sm:shadow-transparent dark:sm:bg-transparent sm:shadow-transparent sm:bg-transparent sm:bottom-0 sm:right-0 sm:w-auto sm:h-auto sm:relative focus:outline-hidden focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-offset-8 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
+						class="fixed bottom-8 right-8 z-20 text-neutral-900 dark:text-neutral-100 bg-neutral-200 dark:bg-neutral-700 w-14 h-14 shadow-lg flex justify-center items-center rounded-full dark:sm:shadow-transparent dark:sm:bg-transparent sm:shadow-transparent sm:bg-transparent sm:bottom-0 sm:right-0 sm:w-auto sm:h-auto sm:relative link-focus"
 						href="/movie/new"
 					>
 						@c.IconPlus()
 					</a>
 					<a
-						class="truncate border-b border-dashed border-neutral-500 focus:outline-hidden focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600"
+						class="truncate border-b border-dashed border-content-secondary link-focus"
 						href="/logout"
 						hx-post="/logout"
 					>Logout</a>
@@ -74,14 +74,12 @@ templ Feed(props FeedProps) {
 								<li data-type="list-item">
 									<a
 										href={ person.LinkTo() }
-										class="flex justify-between items-center gap-x-4 rounded-sm focus:outline-hidden focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-offset-8 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
+										class="flex justify-between items-center gap-x-4 rounded-sm link-focus"
 									>
-										<h2
-											class="truncate text-base font-medium text-neutral-700 dark:text-neutral-300"
-										>
+										<h2 class="truncate text-base font-medium">
 											{ person.Name }
 										</h2>
-										<div class="text-xs text-neutral-500 dark:text-neutral-400">
+										<div class="text-xs text-content-secondary">
 											{ strconv.Itoa(person.NumberOfMovies) } movies
 										</div>
 									</a>
@@ -137,15 +135,13 @@ end
 								>
 									<a
 										href={ movie.LinkTo() }
-										class="flex flex-col gap-4 rounded-sm focus:outline-hidden focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-offset-8 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
+										class="flex flex-col gap-4 rounded-sm link-focus"
 									>
 										<header class="flex flex-col gap-1">
-											<h2
-												class="truncate text-base font-medium text-neutral-700 dark:text-neutral-300"
-											>
+											<h2 class="truncate text-base font-medium">
 												{ movie.Title }
 											</h2>
-											<div class="text-xs text-neutral-500 dark:text-neutral-400">
+											<div class="text-xs text-content-secondary">
 												<time
 													title={ movie.WatchedAt.Format("2006-01-02 15:04") }
 													datetime={ movie.WatchedAt.Format("2006-01-02T15:04:05Z") }
@@ -160,7 +156,7 @@ end
 											</div>
 										</header>
 										if movie.Overview != "" {
-											<p class="line-clamp-3 text-neutral-500 dark:text-neutral-400">
+											<p class="line-clamp-3 text-content-secondary">
 												{ movie.Overview }
 											</p>
 										}

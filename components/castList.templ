@@ -31,7 +31,7 @@ templ CastList(castOrCrew []CastDTO, hasCharacters bool) {
 						if hasCharacters {
 							<li class="col-span-2 flex items-end justify-between gap-4">
 								<a
-									class="border-b border-dashed border-neutral-500 focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600 whitespace-nowrap"
+									class="border-b border-dashed border-content-secondary link-focus whitespace-nowrap"
 									href={ person.LinkTo() }
 								>
 									{ person.Name }
@@ -44,7 +44,7 @@ templ CastList(castOrCrew []CastDTO, hasCharacters bool) {
 						} else {
 							<li>
 								<a
-									class="border-b border-dashed border-neutral-500 focus-visible:rounded-xs focus-visible:outline-1 focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600"
+									class="border-b border-dashed border-content-secondary focus-visible:rounded-xs focus-visible:outline-1 focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
 									href={ person.LinkTo() }
 								>
 									{ person.Name }

@@ -21,7 +21,7 @@ templ list(movies types.MoviesInSeries) {
           templ.KV("grid-cols-[2ch_auto_1fr_auto]", len(movies) >= 10) }
 			>
 				<div
-					class="text-right tabular-nums text-neutral-400 dark:text-neutral-600"
+					class="text-right tabular-nums text-content-tertiary"
 				>
 					{ strconv.FormatInt(movie.NumberInSeries.Int64, 10) }
 				</div>

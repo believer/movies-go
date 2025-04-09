@@ -4,7 +4,7 @@ import "strconv"
 
 templ h2() {
 	<h2
-		class="flex items-center gap-4 font-medium text-neutral-700 after:h-[0.5px] after:grow after:bg-neutral-300 dark:text-neutral-300 dark:after:bg-neutral-700"
+		class="flex items-center gap-4 font-medium after:h-[0.5px] after:grow after:bg-border-primary text-content-primary"
 	>
 		{ children... }
 	</h2>
@@ -12,15 +12,15 @@ templ h2() {
 
 templ SectionTitleWithAction(title string, numberOfItems int) {
 	<div class="flex items-center gap-4">
-		<h2 class="font-medium text-neutral-700 dark:text-neutral-300">
+		<h2 class="font-medium text-content-primary">
 			<span>
 				{ title }
-				<span class="font-regular text-xs dark:text-neutral-400">
+				<span class="font-regular text-xs text-content-secondary">
 					({ strconv.Itoa(numberOfItems) })
 				</span>
 			</span>
 		</h2>
-		<hr class="m-0 flex-1 border-neutral-300 dark:border-neutral-700"/>
+		<hr class="m-0 flex-1 border-border-primary"/>
 		{ children... }
 	</div>
 }
@@ -29,7 +29,7 @@ templ SectionTitleWithItems(title string, numberOfItems int) {
 	@h2() {
 		<span>
 			{ title }
-			<span class="font-regular text-xs dark:text-neutral-400">
+			<span class="font-regular text-xs text-content-secondary">
 				({ strconv.Itoa(numberOfItems) })
 			</span>
 		</span>
@@ -57,7 +57,7 @@ templ LinkedSectionTitleNumbered(title string, href templ.SafeURL, items int) {
 				{ title }
 			}
 			if items > 0 {
-				<span class="font-regular text-xs dark:text-neutral-400">
+				<span class="font-regular text-xs text-content-secondary">
 					({ strconv.Itoa(items) })
 				</span>
 			}
@@ -67,17 +67,17 @@ templ LinkedSectionTitleNumbered(title string, href templ.SafeURL, items int) {
 
 templ SectionTitleWithDropdown(title string) {
 	<div class="flex items-center gap-4">
-		<h2 class="font-medium text-neutral-700 dark:text-neutral-300">
+		<h2 class="font-medium text-content-primary">
 			{ title }
 		</h2>
-		<hr class="m-0 flex-1 border-neutral-300 dark:border-neutral-700"/>
+		<hr class="m-0 flex-1 border-border-primary"/>
 		{ children... }
 	</div>
 }
 
 templ SectionWithAction(title string, numberOfItems int, action templ.Component) {
 	<section
-		class="flex flex-col gap-4 md:text-sm text-neutral-500 dark:text-neutral-400"
+		class="flex flex-col gap-4 md:text-sm text-content-secondary"
 	>
 		@SectionTitleWithAction(title, numberOfItems) {
 			@action
@@ -88,7 +88,7 @@ templ SectionWithAction(title string, numberOfItems int, action templ.Component)
 
 templ Section(title string, numberOfItems int) {
 	<section
-		class="flex flex-col gap-4 md:text-sm text-neutral-500 dark:text-neutral-400"
+		class="flex flex-col gap-4 md:text-sm text-content-secondary"
 	>
 		if title != "" && numberOfItems > 0 {
 			@SectionTitleWithItems(title, numberOfItems)
@@ -101,7 +101,7 @@ templ Section(title string, numberOfItems int) {
 
 templ LinkedSection(title string, href templ.SafeURL, items int) {
 	<section
-		class="flex flex-col gap-4 md:text-sm text-neutral-500 dark:text-neutral-400"
+		class="flex flex-col gap-4 md:text-sm text-content-secondary"
 	>
 		@LinkedSectionTitleNumbered(title, href, items)
 		{ children... }

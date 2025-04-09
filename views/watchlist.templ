@@ -22,7 +22,7 @@ templ sortWatchlist(route string, currentOrder string) {
 
 templ WatchlistList(movies types.Movies, title string, route string, currentOrder string) {
 	@c.SectionWithAction(title, len(movies), sortWatchlist(route, currentOrder)) {
-		<ol class="flex flex-col gap-2 md:text-sm text-neutral-500 dark:text-neutral-400">
+		<ol class="flex flex-col gap-2 md:text-sm text-content-secondary">
 			for _, movie := range movies {
 				<li class="flex items-end justify-between gap-4">
 					@c.Link(c.LinkProps{Href: movie.LinkTo()}) {
@@ -42,11 +42,11 @@ templ WatchlistList(movies types.Movies, title string, route string, currentOrde
 							}
 						</span>
 						@c.IsAuthenticated() {
-							<a href={ movie.LinkToWatchlistAdd() } class="text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors" title="Add watch">
+							<a href={ movie.LinkToWatchlistAdd() } class="text-content-secondary hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors" title="Add watch">
 								@c.IconEye()
 							</a>
 							<button
-								class="cursor-pointer text-neutral-300 hover:text-neutral-700 dark:text-neutral-700 hover:dark:text-neutral-300 transition-colors"
+								class="cursor-pointer text-content-tertiary hover:text-neutral-700 hover:dark:text-neutral-300 transition-colors"
 								hx-target="closest li"
 								hx-swap="outerHTML"
 								hx-delete={ fmt.Sprintf("/watchlist/%d", movie.ID) }

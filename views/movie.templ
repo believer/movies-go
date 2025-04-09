@@ -22,7 +22,7 @@ templ Movie(props MovieProps) {
 	@c.Layout(c.LayoutProps{Title: props.Movie.Title, Description: props.Movie.Overview}) {
 		@c.StandardBody(props.Movie.Title) {
 			if props.Movie.Overview != "" {
-				<p class="text-neutral-500 dark:text-neutral-400">{ props.Movie.Overview }</p>
+				<p class="text-content-secondary">{ props.Movie.Overview }</p>
 			}
 			@c.Review(props.Review)
 			@c.Section("Metadata", 0) {
@@ -58,13 +58,11 @@ templ Movie(props MovieProps) {
 						@c.DescriptionListItem(c.DescriptionListItemProps{Detail: "IMDb"}) {
 							<a
 								href={ templ.URL(fmt.Sprintf("https://www.imdb.com/title/%s", props.Movie.ImdbId)) }
-								class="inline-flex items-center gap-1 focus:outline-hidden focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
+								class="inline-flex items-center gap-1 link-focus"
 								target="_blank"
 								rel="noopener noreferrer"
 							>
-								<span
-									class="border-b border-dashed border-neutral-500 dark:border-neutral-400"
-								>
+								<span class="border-b border-dashed border-content-secondary">
 									{ props.Movie.ImdbId }
 								</span>
 								@c.IconExternalLink()
@@ -76,7 +74,7 @@ templ Movie(props MovieProps) {
 							<div class="flex flex-wrap gap-2">
 								for _, genre := range props.Movie.Genres {
 									<a
-										class="inline-flex items-center gap-1 focus:outline-hidden focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 border-b border-dashed border-neutral-500 dark:border-neutral-400"
+										class="inline-flex items-center gap-1 border-b border-dashed border-content-secondary link-focus"
 										href={ templ.URL(genre.LinkTo("genre")) }
 									>
 										{ genre.Name }
@@ -90,7 +88,7 @@ templ Movie(props MovieProps) {
 							<div class="flex flex-wrap gap-2">
 								for _, language := range props.Movie.Languages {
 									<a
-										class="inline-flex items-center gap-1 focus:outline-hidden focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 border-b border-dashed border-neutral-500 dark:border-neutral-400"
+										class="inline-flex items-center gap-1 border-b border-dashed border-content-secondary link-focus"
 										href={ templ.URL(language.LinkTo("language")) }
 									>
 										{ language.Name }
