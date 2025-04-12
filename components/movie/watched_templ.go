@@ -76,7 +76,7 @@ func addWatch(id string, isUnseen bool) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" class=\"truncate border-b border-dashed border-neutral-500 focus:outline-hidden focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600\">Add new watch</a>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" class=\"truncate border-b border-dashed border-content-secondary link-focus\">Add new watch</a>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -210,7 +210,7 @@ func Watched(props WatchedProps) templ.Component {
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, " <div class=\"flex gap-4\"><a class=\"cursor-pointer text-neutral-300 hover:text-neutral-700 dark:text-neutral-700 hover:dark:text-neutral-300 transition-colors\" href=\"")
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, " <div class=\"flex gap-4\"><a class=\"text-content-secondary transition-colors link-focus\" href=\"")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
@@ -219,7 +219,7 @@ func Watched(props WatchedProps) templ.Component {
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\">Edit</a> <button class=\"cursor-pointer text-neutral-300 hover:text-neutral-700 dark:text-neutral-700 hover:dark:text-neutral-300 transition-colors\" hx-confirm=\"Are you sure you want to delete this watch date?\" hx-delete=\"")
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\">Edit</a> <button class=\"cursor-pointer text-content-secondary transition-colors link-focus\" hx-confirm=\"Are you sure you want to delete this watch date?\" hx-delete=\"")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
