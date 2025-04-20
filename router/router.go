@@ -90,6 +90,13 @@ func SetupRoutes(app *fiber.App) {
 	awardsGroup.Get("/", redirectToHome)
 	awardsGroup.Get("/:awards", h.GetMoviesByNumberOfAwards)
 
+	// Rating
+	// --------------------------
+	ratingGroup := app.Group("/rating")
+
+	ratingGroup.Get("/", redirectToHome)
+	ratingGroup.Get("/:rating", h.GetMoviesByRating)
+
 	// Stats
 	// --------------------------
 	statsGroup := app.Group("/stats")

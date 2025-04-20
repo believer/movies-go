@@ -15,12 +15,14 @@ type RatingProps struct {
 templ Rating(props RatingProps) {
 	@DescriptionListItem(DescriptionListItemProps{Detail: "Rating", ID: "rating"}) {
 		<div class="flex flex-row gap-x-4" id="rating-value">
-			<time
-				title={ props.RatedAt.Format("2006-01-02 15:04") }
-				datetime={ props.RatedAt.Format("2006-01-02T15:04:05Z") }
-			>
-				{ strconv.FormatInt(props.Rating, 10) }
-			</time>
+			@SimpleLink(SimpleLinkProps{Href: templ.SafeURL(fmt.Sprintf("/rating/%d", props.Rating))}) {
+				<time
+					title={ props.RatedAt.Format("2006-01-02 15:04") }
+					datetime={ props.RatedAt.Format("2006-01-02T15:04:05Z") }
+				>
+					{ strconv.FormatInt(props.Rating, 10) }
+				</time>
+			}
 			@IsAuthenticated() {
 				<button
 					hx-swap="outerHTML"
