@@ -17,6 +17,7 @@ func GetFeed(c *fiber.Ctx) error {
 
 	page := c.QueryInt("page", 1)
 	searchQuery := c.Query("search")
+	userId := c.Locals("UserId")
 	searchQueryType := "movie"
 
 	if searchQuery != "" {
@@ -25,16 +26,16 @@ func GetFeed(c *fiber.Ctx) error {
 		// Query string with a specifier for type. For example:
 		// - movie:godfa
 		// - actor:ryan
+		// - rating:3
 		if queryType, query, ok := strings.Cut(searchQuery, ":"); ok {
-			job := strings.ToLower(queryType)
+			queryType = strings.ToLower(queryType)
 			query = strings.TrimSpace(query)
 
-			if job == "dp" || job == "dop" {
-				job = "cinematographer"
+			if queryType == "dp" || queryType == "dop" {
 				queryType = "cinematographer"
 			}
 
-			switch job {
+			switch queryType {
 			case "movie":
 				err := db.Dot.Select(db.Client, &movies, "feed-search", query)
 
@@ -42,7 +43,7 @@ func GetFeed(c *fiber.Ctx) error {
 					return err
 				}
 			case "actor", "cast":
-				err := db.Dot.Select(db.Client, &persons, "feed-search-job", query, "cast")
+				err := db.Dot.Select(db.Client, &persons, "feed-search-queryType", query, "cast")
 				searchQueryType = "person"
 
 				if err != nil {
@@ -51,6 +52,12 @@ func GetFeed(c *fiber.Ctx) error {
 			case "director", "writer", "producer", "composer", "cinematographer", "editor":
 				err := db.Dot.Select(db.Client, &persons, "feed-search-job", query, queryType)
 				searchQueryType = "person"
+
+				if err != nil {
+					return err
+				}
+			case "rating":
+				err := db.Dot.Select(db.Client, &movies, "feed-search-rating", query, userId)
 
 				if err != nil {
 					return err
@@ -64,7 +71,7 @@ func GetFeed(c *fiber.Ctx) error {
 			}
 		}
 	} else {
-		err := db.Dot.Select(db.Client, &movies, "feed", (page-1)*20, c.Locals("UserId"))
+		err := db.Dot.Select(db.Client, &movies, "feed", (page-1)*20, userId)
 
 		c.Set("HX-Push-Url", "/")
 

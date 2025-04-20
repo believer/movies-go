@@ -110,6 +110,25 @@ ORDER BY
     COUNT DESC
 LIMIT 100;
 
+-- name: feed-search-rating
+SELECT
+    m.id,
+    m.title,
+    m.overview,
+    se.name AS "series",
+    ms.number_in_series,
+    m.release_date AS watched_at
+FROM
+    movie AS m
+    LEFT JOIN movie_series AS ms ON ms.movie_id = m.id
+    LEFT JOIN series AS se ON se.id = ms.series_id
+    LEFT JOIN rating AS r ON r.movie_id = m.id
+WHERE
+    r.rating = $1
+    AND r.user_id = $2
+ORDER BY
+    m.release_date DESC;
+
 -- name: seen-by-user-id
 SELECT
     id,
