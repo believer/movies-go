@@ -89,8 +89,8 @@ templ MovieAwards(props MovieAwardsProps) {
 				class="border-b border-dashed border-neutral-500 focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600 whitespace-nowrap"
 				href={ templ.SafeURL(fmt.Sprintf("/awards/%d?nominations=true", props.NumberOfAwards())) }
 			>{ strconv.Itoa(props.NumberOfAwards()) } nominations</a>
-			<span>or</span>
 			if props.Won > 0 {
+				<span>or</span>
 				<div>
 					<a
 						class="border-b border-dashed border-neutral-500 focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600 whitespace-nowrap"
