@@ -17,82 +17,40 @@ var (
 
 func InitializeConnection() error {
 	connectionString := os.Getenv("DATABASE_URL")
-
 	db := sqlx.MustConnect("postgres", connectionString)
-	err := db.Ping()
 
-	if err != nil {
-		return err
-	} else {
-		log.Println("Connected to database")
-	}
-
-	generalQueries, err := dotsql.LoadFromFile("./db/queries.sql")
-
-	if err != nil {
+	if err := db.Ping(); err != nil {
 		return err
 	}
 
-	seriesQueries, err := dotsql.LoadFromFile("./db/seriesQueries.sql")
+	log.Println("Connected to database")
 
-	if err != nil {
-		return err
+	files := []string{
+		"./db/awardQueries.sql",
+		"./db/genreQueries.sql",
+		"./db/languageQueries.sql",
+		"./db/movieQueries.sql",
+		"./db/queries.sql",
+		"./db/ratingQueries.sql",
+		"./db/seriesQueries.sql",
+		"./db/statsQueries.sql",
+		"./db/watchlistQueries.sql",
 	}
 
-	watchlistQueries, err := dotsql.LoadFromFile("./db/watchlistQueries.sql")
+	var queries []*dotsql.DotSql
 
-	if err != nil {
-		return err
+	// Load all query files
+	for _, file := range files {
+		q, err := dotsql.LoadFromFile(file)
+
+		if err != nil {
+			return err
+		}
+
+		queries = append(queries, q)
 	}
 
-	statsQueries, err := dotsql.LoadFromFile("./db/statsQueries.sql")
-
-	if err != nil {
-		return err
-	}
-
-	genreQueries, err := dotsql.LoadFromFile("./db/genreQueries.sql")
-
-	if err != nil {
-		return err
-	}
-
-	movieQueries, err := dotsql.LoadFromFile("./db/movieQueries.sql")
-
-	if err != nil {
-		return err
-	}
-
-	languageQueries, err := dotsql.LoadFromFile("./db/languageQueries.sql")
-
-	if err != nil {
-		return err
-	}
-
-	awardQueries, err := dotsql.LoadFromFile("./db/awardQueries.sql")
-
-	if err != nil {
-		return err
-	}
-
-	ratingQueries, err := dotsql.LoadFromFile("./db/ratingQueries.sql")
-
-	if err != nil {
-		return err
-	}
-
-	dot := dotsql.Merge(
-		generalQueries,
-		genreQueries,
-		movieQueries,
-		seriesQueries,
-		statsQueries,
-		watchlistQueries,
-		languageQueries,
-		awardQueries,
-		ratingQueries,
-	)
-
+	dot := dotsql.Merge(queries...)
 	dotx := dotsqlx.Wrap(dot)
 
 	// Set the global DBClient variable to the db connection
