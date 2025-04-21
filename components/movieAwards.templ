@@ -2,10 +2,8 @@ package components
 
 import (
 	"believer/movies/types"
+	"believer/movies/utils"
 	"fmt"
-	"golang.org/x/text/feature/plural"
-	"golang.org/x/text/language"
-	"golang.org/x/text/message"
 )
 
 type SectionProps interface {
@@ -35,29 +33,11 @@ func (p MovieAwardsProps) Wins() int {
 }
 
 func (p MovieAwardsProps) NominationMsg() string {
-	msg := plural.Selectf(1, "%d",
-		plural.One, "%d nomination",
-		plural.Other, "%d nominations",
-	)
-	key := "%d nomination"
-	lTag := language.MustParse("en")
-	message.Set(lTag, key, msg)
-
-	output := message.NewPrinter(language.English)
-	return output.Sprintf(key, p.NumberOfAwards())
+	return utils.PluralMessage(utils.NominationKey, p.NumberOfAwards())
 }
 
 func (p MovieAwardsProps) WinMsg() string {
-	msg := plural.Selectf(1, "%d",
-		plural.One, "%d win",
-		plural.Other, "%d wins",
-	)
-	key := "%d win"
-	lTag := language.MustParse("en")
-	message.Set(lTag, key, msg)
-
-	output := message.NewPrinter(language.English)
-	return output.Sprintf(key, p.Won)
+	return utils.PluralMessage(utils.WinKey, p.Wins())
 }
 
 templ MovieAwards(props MovieAwardsProps) {
