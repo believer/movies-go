@@ -6,6 +6,7 @@ import (
 	"believer/movies/db"
 	"believer/movies/types"
 	"believer/movies/utils"
+	"believer/movies/utils/awards"
 	"believer/movies/views"
 	"database/sql"
 	"encoding/json"
@@ -673,6 +674,9 @@ func PostMovieNew(c *fiber.Ctx) error {
 
 		return err
 	}
+
+	// Add awards
+	awards.Add(movie.ImdbId)
 
 	c.Set("HX-Redirect", fmt.Sprintf("/movie/%d?back=true", movieId))
 

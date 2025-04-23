@@ -102,8 +102,14 @@ templ NewMovie(props NewMovieProps) {
 							id="series"
 							list="series_list"
 							class="w-full rounded-sm border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-hidden focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500"
-							_="on keyup if my.value is not empty add @required='' to #number_in_series otherwise remove @required from #number_in_series"
+							_="on keyup
+                if my.value is not empty
+                  add @required='' to #number_in_series
+                otherwise
+                  remove @required from #number_in_series
+              end"
 						/>
+						<div class="text-xs text-content-secondary hidden" id="series_name"></div>
 						<div hx-get="/movie/new/series" hx-swap="outerHTML" hx-trigger="load"></div>
 					</div>
 					@c.NumberInput("number_in_series", "Number in series", "", 0, 1000, false)
@@ -124,5 +130,6 @@ templ NewMovie(props NewMovieProps) {
 				<div id="sending" class="htmx-indicator">Sending...</div>
 			</footer>
 		</form>
+		<script src="/public/interactions.js"></script>
 	}
 }
