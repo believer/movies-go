@@ -215,7 +215,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<input type=\"text\" name=\"series\" id=\"series\" list=\"series_list\" class=\"w-full rounded-sm border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-hidden focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500\" _=\"on keyup\n                if my.value is not empty\n                  add @required=&#39;&#39; to #number_in_series\n                otherwise\n                  remove @required from #number_in_series\n              end\"><div class=\"text-xs text-content-secondary hidden\" id=\"series_name\"></div><div hx-get=\"/movie/new/series\" hx-swap=\"outerHTML\" hx-trigger=\"load\"></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<input type=\"text\" name=\"series\" id=\"series\" list=\"series_list\" class=\"w-full rounded-sm border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-hidden focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500\" _=\"on keyup\n                if my.value is not empty\n                  add @required=&#39;&#39; to #number_in_series\n                otherwise\n                  remove @required from #number_in_series\n              end\n              on change\n                if my.value is not empty\n                  put &lt;datalist&gt;option[value=&#39;${my.value}&#39;]/&gt;&#39;s @label into #series_name\n                  remove .hidden from #series_name \n                otherwise\n                  set #series_name&#39;s innerText to &#39;&#39; \n                  add .hidden to #series_name\n                \"><div class=\"text-xs text-content-secondary hidden\" id=\"series_name\"></div><div hx-get=\"/movie/new/series\" hx-swap=\"outerHTML\" hx-trigger=\"load\"></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -231,7 +231,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</div></div></details><footer class=\"flex flex-col gap-y-4\"><div id=\"error\" class=\"empty:hidden text-rose-700 dark:text-rose-400 border border-dashed border-rose-700 dark:border-rose-400 p-4 rounded-sm\"></div><button class=\"rounded-sm bg-neutral-200 px-6 py-2 text-content-primary dark:bg-neutral-700\" type=\"submit\">Add</button><div id=\"sending\" class=\"htmx-indicator\">Sending...</div></footer></form><script src=\"/public/interactions.js\"></script>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</div></div></details><footer class=\"flex flex-col gap-y-4\"><div id=\"error\" class=\"empty:hidden text-rose-700 dark:text-rose-400 border border-dashed border-rose-700 dark:border-rose-400 p-4 rounded-sm\"></div><button class=\"rounded-sm bg-neutral-200 px-6 py-2 text-content-primary dark:bg-neutral-700\" type=\"submit\">Add</button><div id=\"sending\" class=\"htmx-indicator\">Sending...</div></footer></form>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

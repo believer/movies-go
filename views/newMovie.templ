@@ -107,7 +107,15 @@ templ NewMovie(props NewMovieProps) {
                   add @required='' to #number_in_series
                 otherwise
                   remove @required from #number_in_series
-              end"
+              end
+              on change
+                if my.value is not empty
+                  put <datalist>option[value='${my.value}']/>'s @label into #series_name
+                  remove .hidden from #series_name 
+                otherwise
+                  set #series_name's innerText to '' 
+                  add .hidden to #series_name
+                "
 						/>
 						<div class="text-xs text-content-secondary hidden" id="series_name"></div>
 						<div hx-get="/movie/new/series" hx-swap="outerHTML" hx-trigger="load"></div>
@@ -130,6 +138,5 @@ templ NewMovie(props NewMovieProps) {
 				<div id="sending" class="htmx-indicator">Sending...</div>
 			</footer>
 		</form>
-		<script src="/public/interactions.js"></script>
 	}
 }
