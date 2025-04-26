@@ -43,7 +43,7 @@ func GetFeed(c *fiber.Ctx) error {
 					return err
 				}
 			case "actor", "cast":
-				err := db.Dot.Select(db.Client, &persons, "feed-search-queryType", query, "cast")
+				err := db.Dot.Select(db.Client, &persons, "feed-search-job", query, "cast")
 				searchQueryType = "person"
 
 				if err != nil {
