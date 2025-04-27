@@ -12,7 +12,7 @@ primary_region = "arn"
   buildpacks = ["gcr.io/paketo-buildpacks/go"]
 
 [build.args]
-  BP_KEEP_FILES = "public/*:views/*:db/*.sql"
+  BP_KEEP_FILES = "public/*:views/*:db/*.sql:utils/awards/oscars.csv"
 
 [env]
   PORT = "8080"
