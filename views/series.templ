@@ -52,7 +52,7 @@ templ Series(props SeriesProps) {
 				<section class="flex flex-col gap-y-2">
 					for _, parent := range props.Series.ParentSeries {
 						<div>
-							@c.SimpleLink(c.SimpleLinkProps{Href: props.Series.LinkToParent(parent.ID)}) {
+							@c.SimpleLink(c.SimpleLinkProps{Href: parent.LinkTo()}) {
 								Go to { parent.Name } series
 							}
 						</div>

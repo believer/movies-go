@@ -14,8 +14,16 @@ type ParentSeries struct {
 
 type ParentSeriesMult []ParentSeries
 
-func (u *ParentSeriesMult) Scan(v interface{}) error {
+func (u *ParentSeriesMult) Scan(v any) error {
 	return utils.ScanJSON(v, u)
+}
+
+func seriesLink(name string, id int) templ.SafeURL {
+	return templ.URL(fmt.Sprintf("/series/%s-%d", utils.Slugify(name), id))
+}
+
+func (p *ParentSeries) LinkTo() templ.SafeURL {
+	return seriesLink(p.Name, p.ID)
 }
 
 type Series struct {
@@ -26,7 +34,7 @@ type Series struct {
 
 // Link to series
 func (s Series) LinkToParent(id int) templ.SafeURL {
-	return templ.URL(fmt.Sprintf("/series/%s-%d", utils.Slugify(s.Name), id))
+	return seriesLink(s.Name, id)
 }
 
 type SeriesMovies struct {
@@ -37,11 +45,11 @@ type SeriesMovies struct {
 
 type MoviesInSeries Movies
 
-func (u *MoviesInSeries) Scan(v interface{}) error {
+func (u *MoviesInSeries) Scan(v any) error {
 	return utils.ScanJSON(v, u)
 }
 
 // Link to series
 func (s SeriesMovies) LinkTo() templ.SafeURL {
-	return templ.URL(fmt.Sprintf("/series/%s-%d", utils.Slugify(s.Name), s.ID))
+	return seriesLink(s.Name, s.ID)
 }
