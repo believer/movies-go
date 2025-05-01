@@ -35,10 +35,10 @@ type MovieLanguage struct {
 
 // MovieGenres and MovieLanguages share a common Scan implementation
 type Scannable interface {
-	Scan(v interface{}) error
+	Scan(v any) error
 }
 
-func ScanEntity(v interface{}, dest interface{}) error {
+func ScanEntity(v any, dest any) error {
 	switch vv := v.(type) {
 	case []byte:
 		return json.Unmarshal(vv, dest)
@@ -51,13 +51,13 @@ func ScanEntity(v interface{}, dest interface{}) error {
 
 type MovieGenres []MovieGenre
 
-func (u *MovieGenres) Scan(v interface{}) error {
+func (u *MovieGenres) Scan(v any) error {
 	return ScanEntity(v, u)
 }
 
 type MovieLanguages []MovieLanguage
 
-func (u *MovieLanguages) Scan(v interface{}) error {
+func (u *MovieLanguages) Scan(v any) error {
 	return ScanEntity(v, u)
 }
 
@@ -154,7 +154,7 @@ func (m Movie) LinkToSeries() templ.SafeURL {
 
 type Movies []Movie
 
-func (u *Movies) Scan(v interface{}) error {
+func (u *Movies) Scan(v any) error {
 	return utils.ScanJSON(v, u)
 }
 

@@ -113,7 +113,7 @@ func Formatter() *message.Printer {
 	return message.NewPrinter(language.English)
 }
 
-func ScanJSON[T any](v interface{}, target *T) error {
+func ScanJSON[T any](v any, target *T) error {
 	switch vv := v.(type) {
 	case []byte:
 		return json.Unmarshal(vv, target)

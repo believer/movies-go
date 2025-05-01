@@ -59,7 +59,7 @@ func SetupAndRunApp() error {
 		// Parse the JWT token if it exists
 		// and set the user ID in the locals
 		if tokenString != "" {
-			token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+			token, err := jwt.Parse(tokenString, func(token *jwt.Token) (any, error) {
 				// Validate the signing method
 				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 					return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
