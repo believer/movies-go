@@ -1,9 +1,4 @@
-@import "tailwindcss";
-
-:root {
-  /* Enable light and dark mode colors */
-  color-scheme: light dark;
-}
+@import 'tailwindcss';
 
 /* Design tokens */
 @theme inline {
@@ -41,6 +36,11 @@
   );
 }
 
+:root {
+  /* Enable light and dark mode colors */
+  color-scheme: light dark;
+}
+
 /* Component styles */
 @layer components {
   .link-focus {
@@ -48,7 +48,7 @@
   }
 
   .year {
-    @apply block text-3xl lg:text-7xl font-mono text-transparent lg:absolute lg:-top-4 -left-52 [-webkit-text-stroke-color:_rgba(163_163_163/1)] dark:[-webkit-text-stroke-color:_rgba(82_82_82/1)] z-20 bg-white dark:bg-neutral-900 py-2 lg:py-4 focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-3 focus-visible:outline-content-secondary;
+    @apply block text-3xl lg:text-7xl font-mono text-transparent lg:absolute lg:-top-4 -left-52 [-webkit-text-stroke-color:rgba(163_163_163/1)] dark:[-webkit-text-stroke-color:rgba(82_82_82/1)] z-20 bg-white dark:bg-neutral-900 py-2 lg:py-4 focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-3 focus-visible:outline-content-secondary;
 
     -webkit-text-stroke-width: 2px;
   }

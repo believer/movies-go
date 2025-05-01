@@ -153,7 +153,7 @@ func StandardBody(title string) templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<section class=\"mx-auto flex max-w-xl flex-col gap-y-8 px-5 pt-8 pb-[calc(env(safe-area-inset-bottom)_+_32px)]\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<section class=\"mx-auto flex max-w-xl flex-col gap-y-8 px-5 pt-8 pb-[calc(env(safe-area-inset-bottom)+32px)]\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
