@@ -8,6 +8,7 @@ import (
 
 type SeriesProps struct {
 	TotalMovies int
+	Seen        int
 	Series      types.Series
 	Movies      []types.SeriesMovies
 }
@@ -45,6 +46,15 @@ templ list(movies types.MoviesInSeries) {
 	}
 }
 
+templ section(series types.SeriesMovies) {
+	<section class="flex flex-col gap-y-4">
+		@list(series.Movies)
+		<div class="text-xs text-right text-content-secondary">
+			{ series.SeenInSeries() }
+		</div>
+	</section>
+}
+
 templ Series(props SeriesProps) {
 	@c.Layout(c.LayoutProps{Title: props.Series.Name}) {
 		@c.StandardBody(props.Series.Name) {
@@ -62,10 +72,10 @@ templ Series(props SeriesProps) {
 			if props.TotalMovies > 0 {
 				for _, series := range props.Movies {
 					if len(props.Movies) == 1 {
-						@list(series.Movies)
+						@section(series)
 					} else if len(series.Movies) > 0 {
 						@c.LinkedSection(series.Name, series.LinkTo(), len(series.Movies)) {
-							@list(series.Movies)
+							@section(series)
 						}
 					} else if series.Name != props.Series.Name {
 						@c.LinkedSectionTitle(series.Name, series.LinkTo())

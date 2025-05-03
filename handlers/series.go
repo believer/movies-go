@@ -39,8 +39,17 @@ func GetSeries(c *fiber.Ctx) error {
 
 	totalMovies := 0
 
-	for _, s := range movies {
+	for i, s := range movies {
+		seen := 0
 		totalMovies += len(s.Movies)
+
+		for _, m := range s.Movies {
+			if m.Seen {
+				seen += 1
+			}
+		}
+
+		movies[i].Seen = seen
 	}
 
 	props := views.SeriesProps{

@@ -41,6 +41,7 @@ type SeriesMovies struct {
 	ID     int            `db:"id"`
 	Name   string         `db:"name"`
 	Movies MoviesInSeries `db:"movies"`
+	Seen   int
 }
 
 type MoviesInSeries Movies
@@ -52,4 +53,8 @@ func (u *MoviesInSeries) Scan(v any) error {
 // Link to series
 func (s SeriesMovies) LinkTo() templ.SafeURL {
 	return seriesLink(s.Name, s.ID)
+}
+
+func (s SeriesMovies) SeenInSeries() string {
+	return fmt.Sprintf("Seen %d of %d movies", s.Seen, len(s.Movies))
 }
