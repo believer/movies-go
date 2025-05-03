@@ -49,7 +49,7 @@ INSERT INTO movie (title, runtime, release_date, imdb_id, overview, poster, tagl
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 ON CONFLICT (imdb_id)
     DO UPDATE SET
-        title = $1
+        title = excluded.title, runtime = excluded.runtime, release_date = excluded.release_date, overview = excluded.overview, poster = excluded.poster, tagline = excluded.tagline
     RETURNING
         id;
 
