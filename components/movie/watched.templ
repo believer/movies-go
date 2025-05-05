@@ -46,16 +46,14 @@ templ Watched(props WatchedProps) {
             templ.KV("grid-cols-[1ch_auto_1fr_auto]", len(props.WatchedAt) < 10),
             templ.KV("grid-cols-[2ch_auto_1fr_auto]", len(props.WatchedAt) >= 10) }
 					>
-						<div
-							class="text-right tabular-nums text-neutral-400 dark:text-neutral-600"
-						>
+						<div class="text-right tabular-nums text-content-tertiary">
 							{ strconv.Itoa(len(props.WatchedAt) - i) }
 						</div>
 						<div>
 							<div>
 								{ w.Date.Format("Monday, January 02, 2006") }
 							</div>
-							<div class="text-neutral-400 dark:text-neutral-600 text-sm">
+							<div class="text-content-secondary text-sm">
 								{ w.Date.Format("15:04") }
 							</div>
 						</div>

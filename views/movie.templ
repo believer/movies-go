@@ -15,6 +15,7 @@ type MovieProps struct {
 	Back          bool
 	IsInWatchlist bool
 	Movie         types.Movie
+	Others        types.OthersStats
 	Review        types.Review
 }
 
@@ -108,6 +109,16 @@ templ Movie(props MovieProps) {
 							@c.AddRating(c.AddRatingProps{
 								MovieId: props.Movie.ID,
 							})
+						}
+					}
+					if len(props.Movie.Languages) > 0 {
+						@c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Global rating", IsTabular: true}) {
+							<div class="flex gap-x-2 items-center">
+								{ strconv.FormatFloat(props.Others.AverageRating, 'f', 1, 64) }
+								<span class="text-content-secondary text-xs">
+									({ strconv.Itoa(props.Others.Seen) } users)
+								</span>
+							</div>
 						}
 					}
 				}

@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 /* Design tokens */
 @theme inline {
@@ -31,6 +31,11 @@
   );
 
   --color-content-tertiary: light-dark(
+    var(--color-neutral-400),
+    var(--color-neutral-600)
+  );
+
+  --color-content-quarternary: light-dark(
     var(--color-neutral-300),
     var(--color-neutral-700)
   );

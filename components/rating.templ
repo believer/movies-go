@@ -13,7 +13,7 @@ type RatingProps struct {
 }
 
 templ Rating(props RatingProps) {
-	@DescriptionListItem(DescriptionListItemProps{Detail: "Rating", ID: "rating"}) {
+	@DescriptionListItem(DescriptionListItemProps{Detail: "My rating", ID: "rating"}) {
 		<div class="flex flex-row gap-x-4" id="rating-value">
 			@SimpleLink(SimpleLinkProps{Href: templ.SafeURL(fmt.Sprintf("/rating/%d", props.Rating))}) {
 				<time

@@ -220,7 +220,7 @@ func WatchlistList(movies types.Movies, title string, route string, currentOrder
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</a> <button class=\"cursor-pointer text-content-tertiary hover:text-neutral-700 hover:dark:text-neutral-300 transition-colors\" hx-target=\"closest li\" hx-swap=\"outerHTML\" hx-delete=\"")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</a> <button class=\"cursor-pointer text-content-quarternary hover:text-neutral-700 hover:dark:text-neutral-300 transition-colors\" hx-target=\"closest li\" hx-swap=\"outerHTML\" hx-delete=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

@@ -88,3 +88,20 @@ ORDER BY
     winner DESC,
     category ASC;
 
+-- name: others-ratings
+SELECT
+    (
+        SELECT
+            count(DISTINCT user_id)
+        FROM
+            seen
+        WHERE
+            movie_id = $1) AS seen_count,
+    (
+        SELECT
+            avg(rating)
+        FROM
+            rating
+        WHERE
+            movie_id = $1) AS avg_rating;
+

@@ -116,7 +116,7 @@ func Layout(props LayoutProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<meta property=\"og:type\" content=\"website\"><meta property=\"og:url\" content=\"https://movies.willcodefor.beer/\"><meta name=\"twitter:card\" content=\"summary\"><meta name=\"twitter:site\" content=\"@rnattochdag\"><meta name=\"twitter:creator\" content=\"@rnattochdag\"><link rel=\"icon\" type=\"image/png\" href=\"/public/favicon.png\"><link href=\"/public/styles.2ea21c.css\" rel=\"stylesheet\"><link rel=\"manifest\" href=\"/public/manifest.webmanifest\"><script defer src=\"/public/htmx.2.0.3.min.js\"></script><script defer src=\"/public/htmx.head-support.20240912.js\"></script><script defer src=\"/public/hyperscript.0.9.12.min.js\"></script></head><body class=\"bg-background-primary text-content-primary\" hx-boost=\"true\" hx-ext=\"head-support\"><main>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<meta property=\"og:type\" content=\"website\"><meta property=\"og:url\" content=\"https://movies.willcodefor.beer/\"><meta name=\"twitter:card\" content=\"summary\"><meta name=\"twitter:site\" content=\"@rnattochdag\"><meta name=\"twitter:creator\" content=\"@rnattochdag\"><link rel=\"icon\" type=\"image/png\" href=\"/public/favicon.png\"><link href=\"/public/styles.cb4a43.css\" rel=\"stylesheet\"><link rel=\"manifest\" href=\"/public/manifest.webmanifest\"><script defer src=\"/public/htmx.2.0.3.min.js\"></script><script defer src=\"/public/htmx.head-support.20240912.js\"></script><script defer src=\"/public/hyperscript.0.9.12.min.js\"></script></head><body class=\"bg-background-primary text-content-primary\" hx-boost=\"true\" hx-ext=\"head-support\"><main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -124,7 +124,7 @@ func Layout(props LayoutProps) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div class=\"text-ne\"></div></main></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</main></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

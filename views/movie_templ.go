@@ -23,6 +23,7 @@ type MovieProps struct {
 	Back          bool
 	IsInWatchlist bool
 	Movie         types.Movie
+	Others        types.OthersStats
 	Review        types.Review
 }
 
@@ -79,7 +80,7 @@ func Movie(props MovieProps) templ.Component {
 					var templ_7745c5c3_Var4 string
 					templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(props.Movie.Overview)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 25, Col: 60}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 26, Col: 60}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 					if templ_7745c5c3_Err != nil {
@@ -142,7 +143,7 @@ func Movie(props MovieProps) templ.Component {
 								var templ_7745c5c3_Var8 string
 								templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(props.Movie.Tagline)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 32, Col: 28}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 33, Col: 28}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 								if templ_7745c5c3_Err != nil {
@@ -175,7 +176,7 @@ func Movie(props MovieProps) templ.Component {
 								var templ_7745c5c3_Var10 string
 								templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(props.Movie.OriginalTitle.String)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 37, Col: 41}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 38, Col: 41}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 								if templ_7745c5c3_Err != nil {
@@ -219,7 +220,7 @@ func Movie(props MovieProps) templ.Component {
 								var templ_7745c5c3_Var13 string
 								templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(props.Movie.ISOReleaseDate())
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 42, Col: 37}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 43, Col: 37}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 								if templ_7745c5c3_Err != nil {
@@ -257,7 +258,7 @@ func Movie(props MovieProps) templ.Component {
 								var templ_7745c5c3_Var15 string
 								templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(props.Movie.RuntimeFormatted())
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 47, Col: 39}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 48, Col: 39}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 								if templ_7745c5c3_Err != nil {
@@ -302,7 +303,7 @@ func Movie(props MovieProps) templ.Component {
 									var templ_7745c5c3_Var18 string
 									templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(props.Movie.Series.String)
 									if templ_7745c5c3_Err != nil {
-										return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 53, Col: 35}
+										return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 54, Col: 35}
 									}
 									_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 									if templ_7745c5c3_Err != nil {
@@ -315,7 +316,7 @@ func Movie(props MovieProps) templ.Component {
 									var templ_7745c5c3_Var19 string
 									templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatInt(props.Movie.NumberInSeries.Int64, 10))
 									if templ_7745c5c3_Err != nil {
-										return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 53, Col: 98}
+										return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 54, Col: 98}
 									}
 									_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 									if templ_7745c5c3_Err != nil {
@@ -367,7 +368,7 @@ func Movie(props MovieProps) templ.Component {
 								var templ_7745c5c3_Var22 string
 								templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(props.Movie.ImdbId)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 66, Col: 29}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 67, Col: 29}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 								if templ_7745c5c3_Err != nil {
@@ -430,7 +431,7 @@ func Movie(props MovieProps) templ.Component {
 									var templ_7745c5c3_Var25 string
 									templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(genre.Name)
 									if templ_7745c5c3_Err != nil {
-										return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 80, Col: 22}
+										return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 81, Col: 22}
 									}
 									_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 									if templ_7745c5c3_Err != nil {
@@ -490,7 +491,7 @@ func Movie(props MovieProps) templ.Component {
 									var templ_7745c5c3_Var28 string
 									templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(language.Name)
 									if templ_7745c5c3_Err != nil {
-										return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 94, Col: 25}
+										return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 95, Col: 25}
 									}
 									_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 									if templ_7745c5c3_Err != nil {
@@ -535,6 +536,60 @@ func Movie(props MovieProps) templ.Component {
 								}
 							}
 						}
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, " ")
+						if templ_7745c5c3_Err != nil {
+							return templ_7745c5c3_Err
+						}
+						if len(props.Movie.Languages) > 0 {
+							templ_7745c5c3_Var29 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+								templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+								templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+								if !templ_7745c5c3_IsBuffer {
+									defer func() {
+										templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+										if templ_7745c5c3_Err == nil {
+											templ_7745c5c3_Err = templ_7745c5c3_BufErr
+										}
+									}()
+								}
+								ctx = templ.InitializeContext(ctx)
+								templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<div class=\"flex gap-x-2 items-center\">")
+								if templ_7745c5c3_Err != nil {
+									return templ_7745c5c3_Err
+								}
+								var templ_7745c5c3_Var30 string
+								templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatFloat(props.Others.AverageRating, 'f', 1, 64))
+								if templ_7745c5c3_Err != nil {
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 117, Col: 69}
+								}
+								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
+								if templ_7745c5c3_Err != nil {
+									return templ_7745c5c3_Err
+								}
+								templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, " <span class=\"text-content-secondary text-xs\">(")
+								if templ_7745c5c3_Err != nil {
+									return templ_7745c5c3_Err
+								}
+								var templ_7745c5c3_Var31 string
+								templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(props.Others.Seen))
+								if templ_7745c5c3_Err != nil {
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 119, Col: 43}
+								}
+								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
+								if templ_7745c5c3_Err != nil {
+									return templ_7745c5c3_Err
+								}
+								templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, " users)</span></div>")
+								if templ_7745c5c3_Err != nil {
+									return templ_7745c5c3_Err
+								}
+								return nil
+							})
+							templ_7745c5c3_Err = c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Global rating", IsTabular: true}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var29), templ_7745c5c3_Buffer)
+							if templ_7745c5c3_Err != nil {
+								return templ_7745c5c3_Err
+							}
+						}
 						return nil
 					})
 					templ_7745c5c3_Err = c.DescriptionList().Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
@@ -547,46 +602,46 @@ func Movie(props MovieProps) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, " <div hx-swap=\"outerHTML\" hx-get=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, " <div hx-swap=\"outerHTML\" hx-get=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var29 string
-				templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/movie/%d/seen?imdbId=%s", props.Movie.ID, props.Movie.ImdbId))
+				var templ_7745c5c3_Var32 string
+				templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/movie/%d/seen?imdbId=%s", props.Movie.ID, props.Movie.ImdbId))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 117, Col: 88}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 128, Col: 88}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "\" hx-trigger=\"load\"></div><div hx-get=\"")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var30 string
-				templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/movie/%d/cast", props.Movie.ID))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 121, Col: 58}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "\" hx-trigger=\"load\"></div><div hx-get=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></div><div hx-swap=\"outerHTML\" hx-get=\"")
+				var templ_7745c5c3_Var33 string
+				templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/movie/%d/cast", props.Movie.ID))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 132, Col: 58}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var31 string
-				templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/movie/%s/awards", props.Movie.ImdbId))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 127, Col: 64}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></div><div hx-swap=\"outerHTML\" hx-get=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "\" hx-trigger=\"load\"></div>")
+				var templ_7745c5c3_Var34 string
+				templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/movie/%s/awards", props.Movie.ImdbId))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie.templ`, Line: 138, Col: 64}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var34))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "\" hx-trigger=\"load\"></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

@@ -27,6 +27,7 @@ func GetMovieByID(c *fiber.Ctx) error {
 	var movie types.Movie
 	var review types.Review
 	var isInWatchlist bool
+	var others types.OthersStats
 
 	backParam := c.QueryBool("back", false)
 
@@ -63,6 +64,12 @@ func GetMovieByID(c *fiber.Ctx) error {
 		return err
 	}
 
+	err = db.Dot.Get(db.Client, &others, "others-ratings", id)
+
+	if err != nil {
+		return err
+	}
+
 	if c.Get("Accept") == "application/json" {
 		return c.JSON(movie)
 	}
@@ -71,6 +78,7 @@ func GetMovieByID(c *fiber.Ctx) error {
 		views.MovieProps{
 			IsInWatchlist: isInWatchlist,
 			Movie:         movie,
+			Others:        others,
 			Review:        review,
 			Back:          backParam,
 		}))

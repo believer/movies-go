@@ -172,7 +172,7 @@ func Rating(props RatingProps) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = DescriptionListItem(DescriptionListItemProps{Detail: "Rating", ID: "rating"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = DescriptionListItem(DescriptionListItemProps{Detail: "My rating", ID: "rating"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
