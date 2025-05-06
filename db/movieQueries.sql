@@ -99,7 +99,7 @@ SELECT
             movie_id = $1) AS seen_count,
     (
         SELECT
-            avg(rating)
+            COALESCE(avg(rating), 0)
         FROM
             rating
         WHERE
