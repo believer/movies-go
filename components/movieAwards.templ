@@ -21,6 +21,7 @@ templ awardSection(props SectionProps) {
 
 type MovieAwardsProps struct {
 	Awards []types.Award
+	Year   string
 	Won    int
 }
 
@@ -30,6 +31,10 @@ func (p MovieAwardsProps) NumberOfAwards() int {
 
 func (p MovieAwardsProps) Wins() int {
 	return p.Won
+}
+
+func (p MovieAwardsProps) LinkTo() templ.SafeURL {
+	return templ.SafeURL(fmt.Sprintf("/awards/year/%s", p.Year))
 }
 
 func (p MovieAwardsProps) NominationMsg() string {
@@ -89,23 +94,35 @@ templ MovieAwards(props MovieAwardsProps) {
 				</li>
 			}
 		</ul>
-		<div class="flex gap-x-1">
-			<span>
-				All movies with 
-			</span>
-			<a
-				class="border-b border-dashed border-neutral-500 focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600 whitespace-nowrap"
-				href={ templ.SafeURL(fmt.Sprintf("/awards/%d?nominations=true", props.NumberOfAwards())) }
-			>{ props.NominationMsg() }</a>
-			if props.Won > 0 {
-				<span>or</span>
-				<div>
-					<a
-						class="border-b border-dashed border-neutral-500 focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600 whitespace-nowrap"
-						href={ templ.SafeURL(fmt.Sprintf("/awards/%d", props.Won)) }
-					>{ props.WinMsg() }</a>
-				</div>
-			}
+		@Divider()
+		<div class="flex flex-col gap-y-1 text-xs">
+			<div class="flex gap-x-1">
+				<span>
+					All movies with 
+				</span>
+				<a
+					class="border-b border-dashed border-neutral-500 focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600 whitespace-nowrap"
+					href={ templ.SafeURL(fmt.Sprintf("/awards/%d?nominations=true", props.NumberOfAwards())) }
+				>{ props.NominationMsg() }</a>
+				if props.Won > 0 {
+					<span>or</span>
+					<div>
+						<a
+							class="border-b border-dashed border-neutral-500 focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600 whitespace-nowrap"
+							href={ templ.SafeURL(fmt.Sprintf("/awards/%d", props.Won)) }
+						>{ props.WinMsg() }</a>
+					</div>
+				}
+			</div>
+			<div class="flex gap-x-1">
+				<span>
+					All awards in 
+				</span>
+				<a
+					class="border-b border-dashed border-neutral-500 focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600 whitespace-nowrap"
+					href={ props.LinkTo() }
+				>{ props.Year }</a>
+			</div>
 		</div>
 	}
 }

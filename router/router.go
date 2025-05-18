@@ -89,6 +89,7 @@ func SetupRoutes(app *fiber.App) {
 
 	awardsGroup.Get("/", redirectToHome)
 	awardsGroup.Get("/:awards", h.GetMoviesByNumberOfAwards)
+	awardsGroup.Get("/year/:year", h.GetAwardsByYear)
 
 	// Rating
 	// --------------------------

@@ -136,3 +136,19 @@ WHERE
         FROM
             movie_awards);
 
+-- name: awards-by-year
+SELECT
+    m.id AS movie_id,
+    m.title,
+    COALESCE(JSONB_AGG(jsonb_build_object('person', a.person, 'person_id', a.person_id, 'winner', a.winner, 'category', a.name, 'detail', a.detail)
+        ORDER BY a.winner DESC, a.name ASC), '[]'::jsonb) AS awards
+FROM
+    award AS a
+    INNER JOIN movie AS m ON m.imdb_id = a.imdb_id
+WHERE
+    a.year = $1
+GROUP BY
+    m.id,
+    m.title
+ORDER BY
+    m.title ASC

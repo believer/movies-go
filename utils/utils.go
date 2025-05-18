@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/url"
@@ -122,4 +123,44 @@ func ScanJSON[T any](v any, target *T) error {
 	default:
 		return fmt.Errorf("unsupported type: %T", v)
 	}
+}
+
+// Custom NullString and NullInt64 to support parsing
+// JSONB from Postgres
+type NullString struct {
+	sql.NullString
+}
+
+func (ns *NullString) UnmarshalJSON(b []byte) error {
+	var s *string
+	if err := json.Unmarshal(b, &s); err != nil {
+		return err
+	}
+	if s != nil {
+		ns.String = *s
+		ns.Valid = true
+	} else {
+		ns.String = ""
+		ns.Valid = false
+	}
+	return nil
+}
+
+type NullInt64 struct {
+	sql.NullInt64
+}
+
+func (ni *NullInt64) UnmarshalJSON(b []byte) error {
+	var i *int64
+	if err := json.Unmarshal(b, &i); err != nil {
+		return err
+	}
+	if i != nil {
+		ni.Int64 = *i
+		ni.Valid = true
+	} else {
+		ni.Int64 = 0
+		ni.Valid = false
+	}
+	return nil
 }

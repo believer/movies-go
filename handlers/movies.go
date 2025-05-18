@@ -989,6 +989,7 @@ func UpdateRating(c *fiber.Ctx) error {
 
 func GetMovieAwards(c *fiber.Ctx) error {
 	var awards []types.Award
+	var year string
 
 	imdbId := c.Params("imdbId")
 
@@ -1001,6 +1002,8 @@ func GetMovieAwards(c *fiber.Ctx) error {
 	won := 0
 
 	for _, award := range awards {
+		year = award.Year
+
 		if award.Winner {
 			won++
 		}
@@ -1008,6 +1011,7 @@ func GetMovieAwards(c *fiber.Ctx) error {
 
 	return utils.TemplRender(c, components.MovieAwards(components.MovieAwardsProps{
 		Awards: awards,
+		Year:   year,
 		Won:    won,
 	}))
 }

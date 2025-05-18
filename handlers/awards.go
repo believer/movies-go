@@ -46,3 +46,20 @@ func GetMoviesByNumberOfAwards(c *fiber.Ctx) error {
 		Movies:     movies,
 	}))
 }
+
+func GetAwardsByYear(c *fiber.Ctx) error {
+	var awards []types.GlobalAward
+
+	year := c.Params("year")
+
+	err := db.Dot.Select(db.Client, &awards, "awards-by-year", year)
+
+	if err != nil {
+		return err
+	}
+
+	return utils.TemplRender(c, components.AwardsPage(components.AwardsPageProps{
+		GroupedAwards: awards,
+		Name:          year,
+	}))
+}
