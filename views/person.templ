@@ -8,7 +8,7 @@ import (
 
 templ credit(title string, data types.PersonMovies) {
 	if len(data) > 0 {
-		@c.Section(title, len(data)) {
+		@c.Section(title, len(data), 0) {
 			<ol class="flex flex-col gap-y-2 md:gap-y-3">
 				for _, movie := range data {
 					<li>

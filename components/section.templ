@@ -1,6 +1,7 @@
 package components
 
 import "strconv"
+import "fmt"
 
 templ h2() {
 	<h2
@@ -25,12 +26,16 @@ templ SectionTitleWithAction(title string, numberOfItems int) {
 	</div>
 }
 
-templ SectionTitleWithItems(title string, numberOfItems int) {
+templ SectionTitleWithItems(title string, numberOfItems int, totalItems int) {
 	@h2() {
 		<span>
 			{ title }
 			<span class="font-regular text-xs text-content-secondary">
-				({ strconv.Itoa(numberOfItems) })
+				if totalItems != 0 {
+					({ fmt.Sprintf("%d / %d", numberOfItems, totalItems) })
+				} else {
+					({ fmt.Sprintf("%d", numberOfItems) })
+				}
 			</span>
 		</span>
 	}
@@ -86,12 +91,15 @@ templ SectionWithAction(title string, numberOfItems int, action templ.Component)
 	</section>
 }
 
-templ Section(title string, numberOfItems int) {
+// TODO: Change to props
+templ Section(title string, numberOfItems int, totalItems int) {
 	<section
 		class="flex flex-col gap-4 md:text-sm text-content-secondary"
 	>
 		if title != "" && numberOfItems > 0 {
-			@SectionTitleWithItems(title, numberOfItems)
+			@SectionTitleWithItems(title, numberOfItems, totalItems)
+		} else if title != "" && numberOfItems == 0 && totalItems > 0 {
+			@SectionTitleWithItems(title, numberOfItems, totalItems)
 		} else if title != "" {
 			@SectionTitle(title)
 		}

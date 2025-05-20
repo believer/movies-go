@@ -13,7 +13,7 @@ type SectionProps interface {
 
 templ awardSection(props SectionProps) {
 	if props.NumberOfAwards() > 0 {
-		@Section("Academy Awards", props.Wins()) {
+		@Section("Academy Awards", props.Wins(), props.NumberOfAwards()) {
 			{ children... }
 		}
 	}

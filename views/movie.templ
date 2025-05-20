@@ -26,7 +26,7 @@ templ Movie(props MovieProps) {
 				<p class="text-content-secondary">{ props.Movie.Overview }</p>
 			}
 			@c.Review(props.Review)
-			@c.Section("Metadata", 0) {
+			@c.Section("Metadata", 0, 0) {
 				@c.DescriptionList() {
 					if props.Movie.Tagline != "" {
 						@c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Tagline"}) {

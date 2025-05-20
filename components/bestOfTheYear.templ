@@ -7,7 +7,7 @@ type BestOfTheYearProps struct {
 }
 
 templ BestOfTheYear(props BestOfTheYearProps) {
-	@Section("", 0) {
+	@Section("", 0, 0) {
 		@SectionTitleWithDropdown("Best of the Year") {
 			@Dropdown(DropdownProps{Route: "/stats/best-of-the-year", Name: "year", Options: props.Years, Value: props.Year})
 		}

@@ -14,7 +14,7 @@ type HighestRatingProps struct {
 }
 
 templ HighestRating(props HighestRatingProps) {
-	@Section("", 0) {
+	@Section("", 0, 0) {
 		@SectionTitleWithDropdown(props.Title) {
 			@Dropdown(DropdownProps{Route: "/stats/highest-ranked-person", Name: "job", Options: props.Jobs, Value: props.Job})
 		}
@@ -55,7 +55,7 @@ type MostWatchedPersonProps struct {
 }
 
 templ MostWatchedPerson(props MostWatchedPersonProps) {
-	@Section("", 0) {
+	@Section("", 0, 0) {
 		@SectionTitleWithDropdown(props.Title) {
 			@Dropdown(DropdownProps{Route: fmt.Sprintf("/stats/most-watched-person/%s", props.Job), Name: "year", Options: props.Years, Value: props.Year})
 		}
@@ -77,7 +77,7 @@ type MostWatchedGenresProps struct {
 }
 
 templ MostWatchedGenres(props MostWatchedGenresProps) {
-	@Section("", 0) {
+	@Section("", 0, 0) {
 		@SectionTitleWithDropdown("Genre") {
 			@Dropdown(DropdownProps{Route: "/stats/genres", Name: "year", Options: props.Years, Value: props.Year})
 		}
@@ -96,7 +96,7 @@ type MostWatchedLanguagesProps struct {
 }
 
 templ MostWatchedLanguages(props MostWatchedLanguagesProps) {
-	@Section("", 0) {
+	@Section("", 0, 0) {
 		@SectionTitleWithDropdown("Language") {
 			@Dropdown(DropdownProps{Route: "/stats/languages", Name: "year", Options: props.Years, Value: props.Year})
 		}
