@@ -41,6 +41,17 @@ templ SectionTitleWithItems(title string, numberOfItems int, totalItems int) {
 	}
 }
 
+templ SectionTitleWithSubtitle(props SectionTitleProps) {
+	@h2() {
+		<span>
+			{ props.Title }
+			<span class="font-regular text-xs text-content-secondary">
+				({ props.Subtitle })
+			</span>
+		</span>
+	}
+}
+
 templ SectionTitle(title string) {
 	@h2() {
 		{ title }
@@ -52,6 +63,19 @@ templ LinkedSectionTitle(title string, href templ.SafeURL) {
 		@SimpleLink(SimpleLinkProps{Href: href}) {
 			{ title }
 		}
+	}
+}
+
+templ LinkedSectionTitleWithSubtitle(props SectionTitleProps) {
+	@h2() {
+		<span class="flex gap-x-1 items-center">
+			@SimpleLink(SimpleLinkProps{Href: props.Href}) {
+				{ props.Title }
+			}
+			<span class="font-regular text-xs text-content-secondary">
+				({ props.Subtitle })
+			</span>
+		</span>
 	}
 }
 
@@ -86,6 +110,27 @@ templ SectionWithAction(title string, numberOfItems int, action templ.Component)
 	>
 		@SectionTitleWithAction(title, numberOfItems) {
 			@action
+		}
+		{ children... }
+	</section>
+}
+
+type SectionTitleProps struct {
+	Href     templ.SafeURL
+	Title    string
+	Subtitle string
+}
+
+templ SectionNew(props SectionTitleProps) {
+	<section
+		class="flex flex-col gap-4 md:text-sm text-content-secondary"
+	>
+		if props.Title != "" && props.Subtitle != "" && props.Href != "" {
+			@LinkedSectionTitleWithSubtitle(props)
+		} else if props.Title != "" && props.Subtitle != "" {
+			@SectionTitleWithSubtitle(props)
+		} else if props.Title != "" {
+			@SectionTitle(props.Title)
 		}
 		{ children... }
 	</section>

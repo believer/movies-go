@@ -7,13 +7,20 @@ import (
 )
 
 type SectionProps interface {
+	Href() templ.SafeURL
 	NumberOfAwards() int
+	Subtitle() string
+	Title() string
 	Wins() int
 }
 
 templ awardSection(props SectionProps) {
 	if props.NumberOfAwards() > 0 {
-		@Section("Academy Awards", props.Wins(), props.NumberOfAwards()) {
+		@SectionNew(SectionTitleProps{
+			Href:     props.Href(),
+			Title:    props.Title(),
+			Subtitle: props.Subtitle(),
+		}) {
 			{ children... }
 		}
 	}
@@ -25,6 +32,16 @@ type MovieAwardsProps struct {
 	Won    int
 }
 
+func (p MovieAwardsProps) Subtitle() string {
+	wins := p.Wins()
+
+	if p.Wins() == 0 {
+		return fmt.Sprintf("%s", utils.PluralMessage(utils.NominationKey, p.NumberOfAwards()))
+	}
+
+	return fmt.Sprintf("%s / %s", utils.PluralMessage(utils.NominationKey, p.NumberOfAwards()), utils.PluralMessage(utils.WinKey, wins))
+}
+
 func (p MovieAwardsProps) NumberOfAwards() int {
 	return len(p.Awards)
 }
@@ -33,7 +50,11 @@ func (p MovieAwardsProps) Wins() int {
 	return p.Won
 }
 
-func (p MovieAwardsProps) LinkTo() templ.SafeURL {
+func (p MovieAwardsProps) Title() string {
+	return fmt.Sprintf("Academy Awards %s", p.Year)
+}
+
+func (p MovieAwardsProps) Href() templ.SafeURL {
 	return templ.SafeURL(fmt.Sprintf("/awards/year/%s", p.Year))
 }
 
@@ -114,15 +135,6 @@ templ MovieAwards(props MovieAwardsProps) {
 					</div>
 				}
 			</div>
-			<div class="flex gap-x-1">
-				<span>
-					All awards in 
-				</span>
-				<a
-					class="border-b border-dashed border-neutral-500 focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600 whitespace-nowrap"
-					href={ props.LinkTo() }
-				>{ props.Year }</a>
-			</div>
 		</div>
 	}
 }
@@ -130,6 +142,10 @@ templ MovieAwards(props MovieAwardsProps) {
 type PersonAwardsProps struct {
 	Awards map[string][]types.Award
 	Won    int
+}
+
+func (p PersonAwardsProps) Subtitle() string {
+	return fmt.Sprintf("%s / %s", utils.PluralMessage(utils.NominationKey, p.NumberOfAwards()), utils.PluralMessage(utils.WinKey, p.Wins()))
 }
 
 func (p PersonAwardsProps) NumberOfAwards() int {
@@ -144,6 +160,14 @@ func (p PersonAwardsProps) NumberOfAwards() int {
 
 func (p PersonAwardsProps) Wins() int {
 	return p.Won
+}
+
+func (p PersonAwardsProps) Title() string {
+	return "Academy Awards"
+}
+
+func (p PersonAwardsProps) Href() templ.SafeURL {
+	return templ.SafeURL("")
 }
 
 templ PersonAwards(props PersonAwardsProps) {
