@@ -160,10 +160,21 @@ func GetStats(c *fiber.Ctx) error {
 		}
 	}
 
+	bestYear := ""
+	maxYear := 0
+
+	for _, m := range moviesByYear {
+		if m.Value > maxYear {
+			maxYear = m.Value
+			bestYear = m.Label
+		}
+	}
+
 	return utils.TemplRender(c, views.Stats(
 		views.StatsProps{
 			AwardNominations:        awardNominations,
 			AwardWins:               awardWins,
+			BestYear:                bestYear,
 			FormattedTotalRuntime:   utils.FormatRuntime(stats.TotalRuntime),
 			MostAwardedMovies:       mostAwardedMovies,
 			MostWatchedCast:         cast,
