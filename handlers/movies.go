@@ -653,7 +653,10 @@ func PostMovieNew(c *fiber.Ctx) error {
 		_, err = tx.NamedExec(`
 	INSERT INTO person (name, original_id, popularity, profile_picture)
 	VALUES (:name, :id, :popularity, :profile_picture)
-	ON CONFLICT DO NOTHING
+	ON CONFLICT (original_id)
+	DO UPDATE SET
+	  popularity = excluded.popularity,
+	  profile_picture = excluded.profile_picture
 	`, crewStructs)
 
 		if err != nil {
@@ -664,7 +667,8 @@ func PostMovieNew(c *fiber.Ctx) error {
 		_, err = tx.NamedExec(`
 	INSERT INTO movie_person (movie_id, person_id, job)
 	   VALUES (:movie_id, (SELECT id FROM person WHERE original_id = :id), :job)
-	ON CONFLICT DO NOTHING
+	ON CONFLICT (movie_id, person_id, job)
+	DO UPDATE SET job = excluded.job
 	`, crewStructs)
 
 		if err != nil {
