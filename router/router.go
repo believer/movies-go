@@ -55,6 +55,13 @@ func SetupRoutes(app *fiber.App) {
 	movieGroup.Put("/:id/rating", h.UpdateRating)
 	movieGroup.Delete("/:id/rating", h.DeleteRating)
 
+	// Review
+	// --------------------------
+	reviewGroup := app.Group("/review")
+
+	reviewGroup.Get("/:id/edit", h.EditMovieReview)
+	reviewGroup.Post("/:id/update", h.UpdateMovieReview)
+
 	// Year
 	// --------------------------
 	yearGroup := app.Group("/year")

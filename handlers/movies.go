@@ -1013,3 +1013,55 @@ func GetMovieAwards(c *fiber.Ctx) error {
 		Won:    won,
 	}))
 }
+
+func EditMovieReview(c *fiber.Ctx) error {
+	var review types.Review
+	isAuth := utils.IsAuthenticated(c)
+
+	if !isAuth {
+		return c.SendStatus(fiber.StatusUnauthorized)
+	}
+
+	id := c.Params("id")
+	err := db.Dot.Get(db.Client, &review, "review-by-id", id)
+
+	if err != nil {
+		return err
+	}
+
+	return utils.TemplRender(c, components.EditReview(review))
+}
+
+func UpdateMovieReview(c *fiber.Ctx) error {
+	var review types.Review
+
+	id := c.Params("id")
+	isAuth := utils.IsAuthenticated(c)
+
+	if !isAuth {
+		return c.SendStatus(fiber.StatusUnauthorized)
+	}
+
+	data := new(struct {
+		Review          string `form:"review"`
+		IsPrivateReview bool   `form:"review_private"`
+	})
+
+	if err := c.BodyParser(data); err != nil {
+		return err
+	}
+
+	_, err := db.Client.Exec(`UPDATE review SET content = $1, private = $2 WHERE id = $3`, data.Review, data.IsPrivateReview, id)
+
+	if err != nil {
+		return err
+	}
+
+	err = db.Dot.Get(db.Client, &review, "review-by-id", id)
+
+	if err != nil {
+		return err
+	}
+
+	return utils.TemplRender(c, components.ReviewContent(review))
+}

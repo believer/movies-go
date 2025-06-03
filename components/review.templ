@@ -1,17 +1,64 @@
 package components
 
 import "believer/movies/types"
+import "fmt"
 
 templ Review(props types.Review) {
 	if (props.Private == false && props.Content != "") {
 		@Section("Review", 0, 0) {
-			{ props.Content }
+			@ReviewContent(props)
 		}
 	} else if (props.Private == true && props.Content != "") {
 		if ctx.Value("IsAuthenticated").(bool) {
 			@Section("Review", 0, 0) {
-				{ props.Content }
+				@ReviewContent(props)
 			}
 		}
 	}
+}
+
+templ ReviewContent(props types.Review) {
+	<div id="review-content" class="flex flex-col gap-y-4">
+		{ props.Content }
+		if ctx.Value("IsAuthenticated").(bool) {
+			<footer>
+				<a
+					class="cursor-pointer md:text-sm tabular-nums inline-flex items-center gap-1 border-b border-dashed border-content-secondary link-focus"
+					hx-get={ props.Edit() }
+					hx-target="#review-content"
+					hx-swap="outerHTML"
+				>
+					Edit review
+				</a>
+			</footer>
+		}
+	</div>
+}
+
+templ EditReview(props types.Review) {
+	<form class="flex flex-col gap-y-4" hx-post={ fmt.Sprintf("/review/%d/update", props.ID) } hx-swap="outerHTML">
+		<textarea name="review" id="review" class="w-full h-40 rounded-sm border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-hidden focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500 block">
+			{ props.Content }
+		</textarea>
+		<div class="flex gap-x-2 items-center">
+			<input
+				type="checkbox"
+				name="review_private"
+				id="review_private"
+				class="rounded-sm accent-neutral-700 border border-neutral-700 bg-neutral-800 focus:outline-dashed focus:outline-offset-2 focus:outline-neutral-500"
+				if props.Private {
+					checked="true"
+				}
+			/>
+			@Label("review_private", "Review is private")
+		</div>
+		<footer>
+			<button
+				class="cursor-pointer rounded-sm bg-background-secondary px-6 py-2 text-content-secondary link-focus"
+				type="submit"
+			>
+				Update review
+			</button>
+		</footer>
+	</form>
 }

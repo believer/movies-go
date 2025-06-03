@@ -44,6 +44,16 @@ WHERE
     movie_id = $1
     AND user_id = $2;
 
+-- name: review-by-id
+SELECT
+    id,
+    content,
+    private
+FROM
+    review
+WHERE
+    id = $1;
+
 -- name: insert-movie
 INSERT INTO movie (title, runtime, release_date, imdb_id, overview, poster, tagline, wilhelm)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
