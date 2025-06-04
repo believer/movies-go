@@ -44,6 +44,7 @@ func SetupRoutes(app *fiber.App) {
 	movieGroup.Get("/:imdbId/awards", h.GetMovieAwards)
 	movieGroup.Get("/:id/cast", h.GetMovieCastByID)
 	movieGroup.Get("/:id/seen", h.GetMovieSeenByID)
+	movieGroup.Get("/:id/seen/others", h.GetMovieOthersSeenByID)
 	movieGroup.Post("/:id/seen", h.CreateSeenMovie)
 	movieGroup.Delete("/:id/seen/:seenId", h.DeleteSeenMovie)
 	movieGroup.Get("/:id/seen/:seenId/edit", h.GetSeenMovie)

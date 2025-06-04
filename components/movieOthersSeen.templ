@@ -1,0 +1,25 @@
+package components
+
+import (
+	"believer/movies/types"
+	"fmt"
+	"strconv"
+)
+
+type MovieOthersSeenProps struct {
+	ID     int
+	Others types.OthersStats
+}
+
+templ MovieOthersSeen(props MovieOthersSeenProps) {
+	if props.Others.Seen > 0 {
+		@DescriptionListItem(DescriptionListItemProps{Detail: "Global rating", IsTabular: true}) {
+			<div class="flex gap-x-2 items-center" hx-target="closest .contents" hx-get={ fmt.Sprintf("/movie/%d/seen/others", props.ID) } hx-trigger="update-rating from:body">
+				{ strconv.FormatFloat(props.Others.AverageRating, 'f', 1, 64) }
+				<span class="text-content-secondary text-xs">
+					({ strconv.Itoa(props.Others.Seen) } users)
+				</span>
+			</div>
+		}
+	}
+}

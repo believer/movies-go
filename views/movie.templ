@@ -111,16 +111,10 @@ templ Movie(props MovieProps) {
 							})
 						}
 					}
-					if props.Others.Seen > 0 {
-						@c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Global rating", IsTabular: true}) {
-							<div class="flex gap-x-2 items-center">
-								{ strconv.FormatFloat(props.Others.AverageRating, 'f', 1, 64) }
-								<span class="text-content-secondary text-xs">
-									({ strconv.Itoa(props.Others.Seen) } users)
-								</span>
-							</div>
-						}
-					}
+					@c.MovieOthersSeen(c.MovieOthersSeenProps{
+						ID:     props.Movie.ID,
+						Others: props.Others,
+					})
 				}
 			}
 			<div

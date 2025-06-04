@@ -84,6 +84,29 @@ func GetMovieByID(c *fiber.Ctx) error {
 		}))
 }
 
+func GetMovieOthersSeenByID(c *fiber.Ctx) error {
+	var others types.OthersStats
+
+	movieId := c.Params("id")
+	id := utils.SelfHealingUrl(movieId)
+	idAsInt, err := strconv.Atoi(id)
+
+	if err != nil {
+		return err
+	}
+
+	err = db.Dot.Get(db.Client, &others, "others-ratings", id)
+
+	if err != nil {
+		return err
+	}
+
+	return utils.TemplRender(c, components.MovieOthersSeen(components.MovieOthersSeenProps{
+		ID:     idAsInt,
+		Others: others,
+	}))
+}
+
 type CastDB struct {
 	Job        string         `db:"job"`
 	Names      pq.StringArray `db:"people_names"`
@@ -857,20 +880,26 @@ func GetMoviesByYear(c *fiber.Ctx) error {
 
 func DeleteRating(c *fiber.Ctx) error {
 	isAuth := utils.IsAuthenticated(c)
-	movieId := c.Params("id")
+	movieId, err := c.ParamsInt("id")
 	userId := c.Locals("UserId")
-
-	if !isAuth {
-		return c.SendStatus(fiber.StatusUnauthorized)
-	}
-
-	_, err := db.Client.Exec(`DELETE FROM rating WHERE movie_id = $1 AND user_id = $2`, movieId, userId)
 
 	if err != nil {
 		return err
 	}
 
-	return c.SendString("")
+	if !isAuth {
+		return c.SendStatus(fiber.StatusUnauthorized)
+	}
+
+	_, err = db.Client.Exec(`DELETE FROM rating WHERE movie_id = $1 AND user_id = $2`, movieId, userId)
+
+	if err != nil {
+		return err
+	}
+
+	return utils.TemplRender(c, components.AddRating(components.AddRatingProps{
+		MovieId: movieId,
+	}))
 }
 
 func GetRating(c *fiber.Ctx) error {
@@ -942,7 +971,7 @@ func PostRating(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.TemplRender(c, components.Rating(components.RatingProps{
+	return utils.TemplRender(c, components.GetRating(components.RatingProps{
 		MovieId: movieId,
 		Rating:  rating,
 		RatedAt: time.Now(),
@@ -978,7 +1007,7 @@ func UpdateRating(c *fiber.Ctx) error {
 
 	rating, _ := strconv.ParseInt(data.Rating, 10, 0)
 
-	return utils.TemplRender(c, components.Rating(components.RatingProps{
+	return utils.TemplRender(c, components.GetRating(components.RatingProps{
 		MovieId: movieId,
 		Rating:  rating,
 		RatedAt: time.Now(),

@@ -14,36 +14,41 @@ type RatingProps struct {
 
 templ Rating(props RatingProps) {
 	@DescriptionListItem(DescriptionListItemProps{Detail: "My rating", ID: "rating"}) {
-		<div class="flex flex-row gap-x-4" id="rating-value">
-			@SimpleLink(SimpleLinkProps{Href: templ.SafeURL(fmt.Sprintf("/rating/%d", props.Rating))}) {
-				<time
-					title={ props.RatedAt.Format("2006-01-02 15:04") }
-					datetime={ props.RatedAt.Format("2006-01-02T15:04:05Z") }
-				>
-					{ strconv.FormatInt(props.Rating, 10) }
-				</time>
-			}
-			@IsAuthenticated() {
-				<button
-					hx-swap="outerHTML"
-					hx-target="#rating-value"
-					hx-get={ fmt.Sprintf("/movie/%d/rating?rating=%d", props.MovieId, props.Rating) }
-					class="cursor-pointer text-content-secondary transition-colors link-focus"
-				>
-					Edit
-				</button>
-				<button
-					hx-swap="outerHTML"
-					hx-target="#rating"
-					hx-delete={ fmt.Sprintf("/movie/%d/rating", props.MovieId) }
-					hx-confirm="Are you sure you want to delete the rating?"
-					class="cursor-pointer text-content-secondary transition-colors link-focus"
-				>
-					Delete
-				</button>
-			}
-		</div>
+		@GetRating(props)
 	}
+}
+
+templ GetRating(props RatingProps) {
+	<div class="flex flex-row gap-x-4" id="rating-value">
+		@SimpleLink(SimpleLinkProps{Href: templ.SafeURL(fmt.Sprintf("/rating/%d", props.Rating))}) {
+			<time
+				title={ props.RatedAt.Format("2006-01-02 15:04") }
+				datetime={ props.RatedAt.Format("2006-01-02T15:04:05Z") }
+			>
+				{ strconv.FormatInt(props.Rating, 10) }
+			</time>
+		}
+		@IsAuthenticated() {
+			<button
+				hx-swap="outerHTML"
+				hx-target="#rating-value"
+				hx-get={ fmt.Sprintf("/movie/%d/rating?rating=%d", props.MovieId, props.Rating) }
+				class="cursor-pointer text-content-secondary transition-colors link-focus"
+			>
+				Edit
+			</button>
+			<button
+				hx-swap="outerHTML"
+				hx-target="#rating"
+				hx-delete={ fmt.Sprintf("/movie/%d/rating", props.MovieId) }
+				hx-confirm="Are you sure you want to delete the rating?"
+				hx-on::before-cleanup-element="document.body.dispatchEvent(new Event('update-rating'))"
+				class="cursor-pointer text-content-secondary transition-colors link-focus"
+			>
+				Delete
+			</button>
+		}
+	</div>
 }
 
 type EditRatingProps struct {
@@ -54,8 +59,8 @@ type EditRatingProps struct {
 templ EditRating(props EditRatingProps) {
 	<form
 		hx-put={ fmt.Sprintf("/movie/%d/rating", props.MovieId) }
-		hx-target="#rating"
 		hx-swap="outerHTML"
+		hx-on::before-cleanup-element="document.body.dispatchEvent(new Event('update-rating'))"
 		class="flex flex-row gap-x-4"
 	>
 		@TextInput(TextInputProps{
@@ -77,7 +82,7 @@ type AddRatingProps struct {
 
 templ AddRating(props AddRatingProps) {
 	@IsAuthenticated() {
-		@DescriptionListItem(DescriptionListItemProps{Detail: "Rating", ID: "rating"}) {
+		@DescriptionListItem(DescriptionListItemProps{Detail: "My rating", ID: "rating"}) {
 			<button
 				hx-get={ fmt.Sprintf("/movie/%d/rating/edit", props.MovieId) }
 				hx-target="#rating"
@@ -91,11 +96,11 @@ templ AddRating(props AddRatingProps) {
 }
 
 templ AddRatingForm(props AddRatingProps) {
-	@DescriptionListItem(DescriptionListItemProps{Detail: "Rating", ID: "rating"}) {
+	@DescriptionListItem(DescriptionListItemProps{Detail: "My rating", ID: "rating"}) {
 		<form
 			hx-post={ fmt.Sprintf("/movie/%d/rating", props.MovieId) }
-			hx-target="#rating"
 			hx-swap="outerHTML"
+			hx-on::before-swap="document.body.dispatchEvent(new Event('update-rating'))"
 			class="flex flex-row gap-x-4"
 		>
 			<div class="flex-1">
