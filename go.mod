@@ -11,7 +11,7 @@ require (
 
 require (
 	github.com/PuerkitoBio/goquery v1.10.1
-	github.com/a-h/templ v0.3.865
+	github.com/a-h/templ v0.3.894
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/qustavo/dotsql v1.2.0
 	golang.org/x/crypto v0.38.0
