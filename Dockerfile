@@ -1,6 +1,6 @@
-# Build
+# Install
 ARG GO_VERSION=1
-FROM golang:${GO_VERSION}-alpine as builder
+FROM golang:${GO_VERSION}-alpine as install
 
 WORKDIR /app
 COPY go.mod go.sum ./
@@ -11,6 +11,12 @@ FROM ghcr.io/a-h/templ:latest AS generate
 COPY --chown=65532:65532 . /app
 WORKDIR /app
 RUN ["templ", "generate"]
+
+# Build
+FROM golang:latest AS build
+COPY --from=generate /app /app
+WORKDIR /app
+RUN CGO_ENABLED=0 GOOS=linux go build -o /run-app
 
 # App
 FROM alpine:latest
