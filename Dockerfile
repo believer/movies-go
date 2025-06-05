@@ -4,6 +4,7 @@ ARG GO_VERSION=1
 FROM golang:${GO_VERSION}-alpine AS install
 
 COPY go.mod go.sum /app
+COPY --chown=65532:65532 . /app
 WORKDIR /app
 RUN go mod download && go mod verify
 
