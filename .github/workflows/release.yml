@@ -19,6 +19,8 @@ jobs:
       - uses: actions/setup-go@v4
         with:
           go-version-file: 'go.mod'
+      - name: Build
+        run: make build
       - name: Run tests
         run: go test ./...
 
