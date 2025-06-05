@@ -24,7 +24,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -buildvcs=false -o movies
 # App
 FROM alpine:latest AS deploy
 
-WORKDIR /
+WORKDIR /app
 COPY --from=build /app/db /app/db
 COPY --from=build /app/public /app/public
 COPY --from=build /app/views /app/views
