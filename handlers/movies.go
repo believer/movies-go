@@ -39,7 +39,7 @@ func GetMovieByID(c *fiber.Ctx) error {
 	if err != nil {
 		// TODO: Handle this better
 		if err == sql.ErrNoRows {
-			return c.Status(404).SendString("Movie not found")
+			return utils.Render(c, components.NotFound())
 		}
 
 		return err

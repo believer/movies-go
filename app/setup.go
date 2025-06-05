@@ -1,6 +1,7 @@
 package app
 
 import (
+	"believer/movies/components"
 	"believer/movies/db"
 	"believer/movies/router"
 	"believer/movies/utils"
@@ -93,6 +94,8 @@ func SetupAndRunApp() error {
 	// Setup routes
 	router.SetupRoutes(app)
 
+	app.Use(NotFoundMiddleware)
+
 	// Start the app
 	port := os.Getenv("PORT")
 
@@ -103,4 +106,9 @@ func SetupAndRunApp() error {
 	log.Fatal(app.Listen(":" + port))
 
 	return nil
+}
+
+func NotFoundMiddleware(c *fiber.Ctx) error {
+	c.Status(fiber.StatusNotFound)
+	return utils.Render(c, components.NotFound())
 }

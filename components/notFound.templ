@@ -1,0 +1,16 @@
+package components
+
+templ NotFound() {
+	@Layout(LayoutProps{Title: "Not found"}) {
+		<div class="flex items-center justify-center h-dvh">
+			<div class="text-center space-y-4">
+				<h1 class="text-xl font-bold">
+					Not found
+				</h1>
+				@Link(LinkProps{ToRoot: true}) {
+					Go back home
+				}
+			</div>
+		</div>
+	}
+}
