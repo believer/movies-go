@@ -37,7 +37,7 @@ func GetGenre(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusOK)
 	}
 
-	return utils.TemplRender(c, components.ListView(components.ListViewProps{
+	return utils.Render(c, components.ListView(components.ListViewProps{
 		EmptyState: "No movies for this genre",
 		Name:       genre.Name,
 		NextPage:   fmt.Sprintf("/genre/%s?page=%d", id, page+1),

@@ -37,7 +37,7 @@ func GetLanguage(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusOK)
 	}
 
-	return utils.TemplRender(c, components.ListView(components.ListViewProps{
+	return utils.Render(c, components.ListView(components.ListViewProps{
 		EmptyState: "No movies for this language",
 		Name:       language.Name,
 		NextPage:   fmt.Sprintf("/language/%s?page=%d", id, page+1),

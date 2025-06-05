@@ -170,7 +170,7 @@ func GetStats(c *fiber.Ctx) error {
 		}
 	}
 
-	return utils.TemplRender(c, views.Stats(
+	return utils.Render(c, views.Stats(
 		views.StatsProps{
 			AwardNominations:        awardNominations,
 			AwardWins:               awardWins,
@@ -220,7 +220,7 @@ func GetMostWatchedByJob(c *fiber.Ctx) error {
 	if len(totals) > 0 {
 		totalJob = totals[0].Count
 	}
-	return utils.TemplRender(c, components.MostWatchedPerson(
+	return utils.Render(c, components.MostWatchedPerson(
 		components.MostWatchedPersonProps{
 			Data:  persons,
 			Job:   job,
@@ -246,7 +246,7 @@ func GetHighestRankedPersonByJob(c *fiber.Ctx) error {
 
 	jobs := []string{"Cast", "Composer", "Director", "Producer", "Writer"}
 
-	return utils.TemplRender(c, components.HighestRating(
+	return utils.Render(c, components.HighestRating(
 		components.HighestRatingProps{
 			Data:  persons,
 			Job:   job,
@@ -360,7 +360,7 @@ func GetRatingsByYear(c *fiber.Ctx) error {
 		title = "Ratings this year"
 	}
 
-	return utils.TemplRender(c, components.GraphWithYear(
+	return utils.Render(c, components.GraphWithYear(
 		components.GraphWithYearProps{
 			Bars:         yearRatings,
 			Title:        title,
@@ -392,7 +392,7 @@ func GetThisYearByMonth(c *fiber.Ctx) error {
 		title = "Seen this year by month"
 	}
 
-	return utils.TemplRender(c, components.GraphWithYear(
+	return utils.Render(c, components.GraphWithYear(
 		components.GraphWithYearProps{
 			Bars:         yearRatings,
 			Title:        title,
@@ -441,7 +441,7 @@ func GetGenreStats(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.TemplRender(c, components.MostWatchedGenres(components.MostWatchedGenresProps{
+	return utils.Render(c, components.MostWatchedGenres(components.MostWatchedGenresProps{
 		Data:  genres,
 		Year:  year,
 		Years: years,
@@ -461,7 +461,7 @@ func GetLanguageStats(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.TemplRender(c, components.MostWatchedLanguages(components.MostWatchedLanguagesProps{
+	return utils.Render(c, components.MostWatchedLanguages(components.MostWatchedLanguagesProps{
 		Data:  languages,
 		Year:  year,
 		Years: years,
@@ -482,7 +482,7 @@ func GetBestOfTheYear(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.TemplRender(c, components.BestOfTheYear(components.BestOfTheYearProps{
+	return utils.Render(c, components.BestOfTheYear(components.BestOfTheYearProps{
 		Movies: movies,
 		Year:   year,
 		Years:  years,

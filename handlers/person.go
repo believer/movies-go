@@ -59,7 +59,7 @@ func GetPersonByID(c *fiber.Ctx) error {
 		groupedAwards[award.Category] = append(groupedAwards[award.Category], award)
 	}
 
-	return utils.TemplRender(c, views.Person(views.PersonProps{
+	return utils.Render(c, views.Person(views.PersonProps{
 		Awards:       groupedAwards,
 		Person:       person,
 		TotalCredits: totalCredits,

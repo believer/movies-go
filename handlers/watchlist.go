@@ -27,7 +27,7 @@ func GetWatchlist(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.TemplRender(c, views.Watchlist(views.WatchlistProps{
+	return utils.Render(c, views.Watchlist(views.WatchlistProps{
 		Movies:           movies,
 		UnreleasedMovies: unreleasedMovies,
 	}))
@@ -45,7 +45,7 @@ func GetWatchlistMovies(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.TemplRender(c, views.WatchlistList(
+	return utils.Render(c, views.WatchlistList(
 		movies, "Movies", "/watchlist/movies", sortOrder,
 	))
 }
@@ -62,7 +62,7 @@ func GetWatchlistUnreleasedMovies(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.TemplRender(c, views.WatchlistList(
+	return utils.Render(c, views.WatchlistList(
 		movies, "Movies", "/watchlist/unreleased-movies", sortOrder,
 	))
 }

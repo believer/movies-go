@@ -40,7 +40,7 @@ func GetMoviesByNumberOfAwards(c *fiber.Ctx) error {
 		}
 	}
 
-	return utils.TemplRender(c, components.ListView(components.ListViewProps{
+	return utils.Render(c, components.ListView(components.ListViewProps{
 		EmptyState: "No movies with this amount of Academy Awards",
 		Name:       name,
 		Movies:     movies,
@@ -58,7 +58,7 @@ func GetAwardsByYear(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.TemplRender(c, components.AwardsPage(components.AwardsPageProps{
+	return utils.Render(c, components.AwardsPage(components.AwardsPageProps{
 		GroupedAwards: awards,
 		Name:          year,
 	}))

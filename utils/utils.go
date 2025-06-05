@@ -11,7 +11,6 @@ import (
 
 	"github.com/a-h/templ"
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/adaptor"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
 	"golang.org/x/text/unicode/norm"
@@ -76,8 +75,9 @@ func FormatRuntime(runtime int) string {
 	return strings.Join(parts, " ")
 }
 
-func TemplRender(c *fiber.Ctx, component templ.Component) error {
-	return adaptor.HTTPHandler(templ.Handler(component))(c)
+func Render(c *fiber.Ctx, component templ.Component) error {
+	c.Set("Content-Type", "text/html")
+	return component.Render(c.Context(), c.Response().BodyWriter())
 }
 
 func Slugify(text string) string {

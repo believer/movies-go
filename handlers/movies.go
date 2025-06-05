@@ -74,7 +74,7 @@ func GetMovieByID(c *fiber.Ctx) error {
 		return c.JSON(movie)
 	}
 
-	return utils.TemplRender(c, views.Movie(
+	return utils.Render(c, views.Movie(
 		views.MovieProps{
 			IsInWatchlist: isInWatchlist,
 			Movie:         movie,
@@ -101,7 +101,7 @@ func GetMovieOthersSeenByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.TemplRender(c, components.MovieOthersSeen(components.MovieOthersSeenProps{
+	return utils.Render(c, components.MovieOthersSeen(components.MovieOthersSeenProps{
 		ID:     idAsInt,
 		Others: others,
 	}))
@@ -160,7 +160,7 @@ func GetMovieCastByID(c *fiber.Ctx) error {
 		}
 	}
 
-	return utils.TemplRender(c, components.CastList(updatedCastOrCrew, hasCharacters))
+	return utils.Render(c, components.CastList(updatedCastOrCrew, hasCharacters))
 }
 
 func GetMovieSeenByID(c *fiber.Ctx) error {
@@ -184,7 +184,7 @@ func GetMovieSeenByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.TemplRender(c, movie.Watched(movie.WatchedProps{
+	return utils.Render(c, movie.Watched(movie.WatchedProps{
 		WatchedAt:   watchedAt,
 		IsAdmin:     isAuth,
 		IsUnseen:    len(watchedAt) == 0,
@@ -222,7 +222,7 @@ func GetMovieNew(c *fiber.Ctx) error {
 		}
 	}
 
-	return utils.TemplRender(c, views.NewMovie(views.NewMovieProps{
+	return utils.Render(c, views.NewMovie(views.NewMovieProps{
 		ImdbID:      imdbId,
 		InWatchlist: len(watchlist) > 0,
 		Movie:       movie,
@@ -238,7 +238,7 @@ func GetMovieNewSeries(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.TemplRender(c, components.DataList(options, "series_list"))
+	return utils.Render(c, components.DataList(options, "series_list"))
 }
 
 func tmdbFetchMovie(id string) types.MovieDetailsResponse {
@@ -727,7 +727,7 @@ func GetByImdbId(c *fiber.Ctx) error {
 		return c.SendString("")
 	}
 
-	return utils.TemplRender(c, components.MovieExists(movie))
+	return utils.Render(c, components.MovieExists(movie))
 }
 
 func DeleteSeenMovie(c *fiber.Ctx) error {
@@ -754,7 +754,7 @@ func DeleteSeenMovie(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.TemplRender(c, movie.Watched(movie.WatchedProps{
+	return utils.Render(c, movie.Watched(movie.WatchedProps{
 		WatchedAt: watchedAt,
 		IsAdmin:   isAuth,
 		ID:        movieId,
@@ -773,7 +773,7 @@ func GetSeenMovie(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.TemplRender(c, views.UpdateWatched(views.UpdateWatchedProps{
+	return utils.Render(c, views.UpdateWatched(views.UpdateWatchedProps{
 		MovieId: movieId,
 		SeenId:  seenId,
 		Time:    time,
@@ -851,12 +851,12 @@ func HandleSearch(c *fiber.Ctx) error {
 	query := c.Query("search")
 
 	if query == "" {
-		return utils.TemplRender(c, views.MovieSearch([]types.SearchResult{}))
+		return utils.Render(c, views.MovieSearch([]types.SearchResult{}))
 	}
 
 	movies := tmdbSearchMovie(query)
 
-	return utils.TemplRender(c, views.MovieSearch(movies.Results))
+	return utils.Render(c, views.MovieSearch(movies.Results))
 }
 
 func GetMoviesByYear(c *fiber.Ctx) error {
@@ -871,7 +871,7 @@ func GetMoviesByYear(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.TemplRender(c, components.ListView(components.ListViewProps{
+	return utils.Render(c, components.ListView(components.ListViewProps{
 		EmptyState: "No movies this year",
 		Movies:     movies,
 		Name:       year,
@@ -897,7 +897,7 @@ func DeleteRating(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.TemplRender(c, components.AddRating(components.AddRatingProps{
+	return utils.Render(c, components.AddRating(components.AddRatingProps{
 		MovieId: movieId,
 	}))
 }
@@ -915,7 +915,7 @@ func GetRating(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	return utils.TemplRender(c, components.EditRating(components.EditRatingProps{
+	return utils.Render(c, components.EditRating(components.EditRatingProps{
 		CurrentRating: rating,
 		MovieId:       movieId,
 	}))
@@ -933,7 +933,7 @@ func GetEditRating(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	return utils.TemplRender(c, components.AddRatingForm(components.AddRatingProps{
+	return utils.Render(c, components.AddRatingForm(components.AddRatingProps{
 		MovieId: movieId,
 	}))
 }
@@ -971,7 +971,7 @@ func PostRating(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.TemplRender(c, components.GetRating(components.RatingProps{
+	return utils.Render(c, components.GetRating(components.RatingProps{
 		MovieId: movieId,
 		Rating:  rating,
 		RatedAt: time.Now(),
@@ -1007,7 +1007,7 @@ func UpdateRating(c *fiber.Ctx) error {
 
 	rating, _ := strconv.ParseInt(data.Rating, 10, 0)
 
-	return utils.TemplRender(c, components.GetRating(components.RatingProps{
+	return utils.Render(c, components.GetRating(components.RatingProps{
 		MovieId: movieId,
 		Rating:  rating,
 		RatedAt: time.Now(),
@@ -1036,7 +1036,7 @@ func GetMovieAwards(c *fiber.Ctx) error {
 		}
 	}
 
-	return utils.TemplRender(c, components.MovieAwards(components.MovieAwardsProps{
+	return utils.Render(c, components.MovieAwards(components.MovieAwardsProps{
 		Awards: awards,
 		Year:   year,
 		Won:    won,
@@ -1058,7 +1058,7 @@ func EditMovieReview(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.TemplRender(c, components.EditReview(review))
+	return utils.Render(c, components.EditReview(review))
 }
 
 func UpdateMovieReview(c *fiber.Ctx) error {
@@ -1092,5 +1092,5 @@ func UpdateMovieReview(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.TemplRender(c, components.ReviewContent(review))
+	return utils.Render(c, components.ReviewContent(review))
 }

@@ -100,5 +100,5 @@ func GetFeed(c *fiber.Ctx) error {
 		QueryType: searchQueryType,
 	})
 
-	return utils.TemplRender(c, feed)
+	return utils.Render(c, feed)
 }

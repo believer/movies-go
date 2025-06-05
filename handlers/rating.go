@@ -34,7 +34,7 @@ func GetMoviesByRating(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusOK)
 	}
 
-	return utils.TemplRender(c, components.ListView(components.ListViewProps{
+	return utils.Render(c, components.ListView(components.ListViewProps{
 		EmptyState: "No movies for this rating",
 		Name:       fmt.Sprintf("Movies rated %d", rating),
 		NextPage:   fmt.Sprintf("/rating/%d?page=%d", rating, page+1),

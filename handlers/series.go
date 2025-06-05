@@ -58,5 +58,5 @@ func GetSeries(c *fiber.Ctx) error {
 		Series:      series,
 	}
 
-	return utils.TemplRender(c, views.Series(props))
+	return utils.Render(c, views.Series(props))
 }

@@ -19,7 +19,7 @@ type LoginData struct {
 
 // Display the login view
 func GetLogin(c *fiber.Ctx) error {
-	return utils.TemplRender(c, views.Login())
+	return utils.Render(c, views.Login())
 }
 
 // Login
