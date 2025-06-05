@@ -16,7 +16,7 @@ RUN ["templ", "generate"]
 FROM golang:latest AS build
 COPY --from=generate /app /app
 WORKDIR /app
-RUN CGO_ENABLED=0 GOOS=linux go build -o /run-app
+RUN GOOS=linux go build -v -o /run-app
 
 # App
 FROM alpine:latest
