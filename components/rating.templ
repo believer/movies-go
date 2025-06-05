@@ -63,9 +63,12 @@ templ EditRating(props EditRatingProps) {
 		hx-on::before-cleanup-element="document.body.dispatchEvent(new Event('update-rating'))"
 		class="flex flex-row gap-x-4"
 	>
-		@TextInput(TextInputProps{
-			Name:  "rating",
-			Value: strconv.Itoa(props.CurrentRating),
+		@NumberInput(NumberInputProps{
+			Name:     "rating",
+			Min:      0,
+			Max:      10,
+			Required: true,
+			Value:    props.CurrentRating,
 		})
 		<button
 			class="cursor-pointer rounded-sm bg-background-secondary px-6 py-2 text-content-secondary link-focus"
@@ -104,7 +107,12 @@ templ AddRatingForm(props AddRatingProps) {
 			class="flex flex-row gap-x-4"
 		>
 			<div class="flex-1">
-				@NumberInput("rating", "", "", 0, 10, true)
+				@NumberInput(NumberInputProps{
+					Name:     "rating",
+					Min:      0,
+					Max:      10,
+					Required: true,
+				})
 			</div>
 			<button
 				class="cursor-pointer rounded-sm bg-background-secondary px-6 py-2 text-content-secondary link-focus"

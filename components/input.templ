@@ -47,22 +47,33 @@ templ TextInput(props TextInputProps) {
 	</div>
 }
 
-templ NumberInput(name string, labelText string, helpText string, min int, max int, required bool) {
+type NumberInputProps struct {
+	Name     string
+	Label    string
+	HelpText string
+	Min      int
+	Max      int
+	Required bool
+	Value    int
+}
+
+templ NumberInput(props NumberInputProps) {
 	<div class="relative flex flex-col gap-2 group">
-		@Label(name, labelText)
+		@Label(props.Name, props.Label)
 		<input
-			if required {
+			if props.Required {
 				required
 			}
 			type="number"
-			name={ name }
-			id={ name }
+			name={ props.Name }
+			id={ props.Name }
 			class={ inputClass }
-			min={ strconv.Itoa(min) }
-			max={ strconv.Itoa(max) }
+			min={ strconv.Itoa(props.Min) }
+			max={ strconv.Itoa(props.Max) }
+			value={ props.Value }
 		/>
-		if helpText != "" {
-			@Help(helpText)
+		if props.HelpText != "" {
+			@Help(props.HelpText)
 		}
 	</div>
 }
