@@ -7,17 +7,10 @@ COPY go.mod go.sum /app
 WORKDIR /app
 RUN go mod download && go mod verify
 
-# Templ generate
-FROM ghcr.io/a-h/templ:latest AS generate
-
-COPY --chown=65532:65532 . /app
-WORKDIR /app
-RUN ["templ", "generate"]
-
 # Build
 FROM golang:${GO_VERSION} AS build
 
-COPY --from=generate /app /app
+COPY --from=install /app /app
 WORKDIR /app
 RUN CGO_ENABLED=0 GOOS=linux go build -buildvcs=false -o movies
 

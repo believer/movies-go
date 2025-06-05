@@ -19,13 +19,6 @@ jobs:
       - uses: actions/setup-go@v4
         with:
           go-version-file: 'go.mod'
-      - name: Install
-        run: |
-          go mod download
-          go mod verify
-          go install github.com/a-h/templ/cmd/templ@latest
-      - name: Build
-        run: make build
       - name: Run tests
         run: go test ./...
 
