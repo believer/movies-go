@@ -18,4 +18,7 @@ css:
 watch:
 	air
 
-
+build-prod:
+	@templ generate
+	@./hasher.sh
+	@go build -v -o /run-app .
