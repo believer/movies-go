@@ -25,6 +25,6 @@ COPY --from=generate /app/db /db
 COPY --from=generate /app/public /public
 COPY --from=generate /app/views /views
 COPY --from=generate /app/oscars.csv /
-COPY --from=generate /run-app /usr/local/bin/run-app
+COPY --from=build /run-app /usr/local/bin/run-app
 
 CMD ["run-app"]
