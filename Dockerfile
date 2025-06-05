@@ -2,19 +2,23 @@
 ARG GO_VERSION=1
 FROM golang:${GO_VERSION}-alpine as builder
 
-WORKDIR /usr/src/app
+WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download && go mod verify
-COPY . .
-RUN make build-prod
+
+# Templ generate
+FROM ghcr.io/a-h/templ:latest AS generate
+COPY --chown=65532:65532 . /app
+WORKDIR /app
+RUN ["templ", "generate"]
 
 # App
 FROM alpine:latest
 
-COPY --from=builder /usr/src/app/db /db
-COPY --from=builder /usr/src/app/public /public
-COPY --from=builder /usr/src/app/views /views
-COPY --from=builder /usr/src/app/oscars.csv /
-COPY --from=builder /run-app /usr/local/bin/run-app
+COPY --from=generate /app/db /db
+COPY --from=generate /app/public /public
+COPY --from=generate /app/views /views
+COPY --from=generate /app/oscars.csv /
+COPY --from=generate /run-app /usr/local/bin/run-app
 
 CMD ["run-app"]
