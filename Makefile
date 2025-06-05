@@ -7,16 +7,14 @@ build:
 	@go build -o main main.go
 
 dev:
-	@templ generate
-	@go build -o main main.go
+	@templ generate --watch \
+		--proxy=http://localhost:8080 \
+		--watch-pattern='.+\.(css|go|sql|templ)$$' \
+		--cmd='go run .'
 
 css:
 	@sed -i "" "s/styles\(\.[a-z0-9]\{6\}\)\{0,1\}\.css/styles.css/g" ./components/layout.templ
 	@./scripts/tailwindcss -i styles.css -o public/styles.css --watch
-
-# Live Reload
-watch:
-	air
 
 build-prod:
 	@templ generate
