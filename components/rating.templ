@@ -100,7 +100,7 @@ templ AddRatingForm(props AddRatingProps) {
 		<form
 			hx-post={ fmt.Sprintf("/movie/%d/rating", props.MovieId) }
 			hx-swap="outerHTML"
-			hx-on::before-swap="document.body.dispatchEvent(new Event('update-rating'))"
+			hx-on::before-cleanup-element="document.body.dispatchEvent(new Event('update-rating'))"
 			class="flex flex-row gap-x-4"
 		>
 			<div class="flex-1">

@@ -395,7 +395,7 @@ func AddRatingForm(props AddRatingProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" hx-swap=\"outerHTML\" hx-on::before-swap=\"document.body.dispatchEvent(new Event(&#39;update-rating&#39;))\" class=\"flex flex-row gap-x-4\"><div class=\"flex-1\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" hx-swap=\"outerHTML\" hx-on::before-cleanup-element=\"document.body.dispatchEvent(new Event(&#39;update-rating&#39;))\" class=\"flex flex-row gap-x-4\"><div class=\"flex-1\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
