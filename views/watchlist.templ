@@ -50,7 +50,7 @@ templ WatchlistList(movies types.Movies, title string, route string, currentOrde
 								hx-target="closest li"
 								hx-swap="outerHTML"
 								hx-delete={ fmt.Sprintf("/watchlist/%d", movie.ID) }
-								hx-confirm={ fmt.Sprintf("Are you sure you want to delete %s from watchlist?", movie.Title) }
+								hx-confirm={ fmt.Sprintf("Delete %s from watchlist?", movie.Title) }
 							>
 								Delete
 							</button>

@@ -219,7 +219,7 @@ func Watched(props WatchedProps) templ.Component {
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\">Edit</a> <button class=\"cursor-pointer text-content-secondary transition-colors link-focus\" hx-confirm=\"Are you sure you want to delete this watch date?\" hx-delete=\"")
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\">Edit</a> <button class=\"cursor-pointer text-content-secondary transition-colors link-focus\" hx-confirm=\"Delete this watch date?\" hx-delete=\"")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}

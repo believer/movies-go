@@ -68,7 +68,7 @@ templ Watched(props WatchedProps) {
 								</a>
 								<button
 									class="cursor-pointer text-content-secondary transition-colors link-focus"
-									hx-confirm="Are you sure you want to delete this watch date?"
+									hx-confirm="Delete this watch date?"
 									hx-delete={ fmt.Sprintf("/movie/%s/seen/%d", props.ID, w.ID) }
 									hx-swap="outerHTML"
 									hx-target="closest section"

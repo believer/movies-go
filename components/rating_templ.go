@@ -191,7 +191,7 @@ func GetRating(props RatingProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" hx-confirm=\"Are you sure you want to delete the rating?\" hx-on::before-cleanup-element=\"document.body.dispatchEvent(new Event('update-rating'))\" class=\"cursor-pointer text-content-secondary transition-colors link-focus\">Delete</button>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" hx-confirm=\"Delete rating?\" hx-on::before-cleanup-element=\"document.body.dispatchEvent(new Event('update-rating'))\" class=\"cursor-pointer text-content-secondary transition-colors link-focus\">Delete</button>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
