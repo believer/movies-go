@@ -115,9 +115,15 @@ SELECT
             movie_id = $1) AS seen_count,
     (
         SELECT
-            COALESCE(avg(rating), 0)
-        FROM
-            rating
-        WHERE
-            movie_id = $1) AS avg_rating;
+            COALESCE(AVG(r.latest_rating), 0)
+        FROM ( SELECT DISTINCT ON (user_id)
+                user_id,
+                rating AS latest_rating
+            FROM
+                rating
+            WHERE
+                movie_id = $1
+            ORDER BY
+                user_id,
+                created_at DESC) r) AS avg_rating;
 
