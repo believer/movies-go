@@ -17,6 +17,7 @@ import (
 	"net/url"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -33,13 +34,24 @@ func GetMovieByID(c *fiber.Ctx) error {
 
 	movieId := c.Params("id")
 	userId := c.Locals("UserId")
-	id := utils.SelfHealingUrl(movieId)
-	err := db.Dot.Get(db.Client, &movie, "movie-by-id", id, userId)
+	id, err := utils.SelfHealingUrl(movieId)
+
+	if err != nil {
+		return utils.Render(c, components.NotFound())
+	}
+
+	err = db.Dot.Get(db.Client, &movie, "movie-by-id", id, userId)
 
 	if err != nil {
 		// TODO: Handle this better
 		if err == sql.ErrNoRows {
 			return utils.Render(c, components.NotFound())
+		}
+
+		if pgErr, ok := err.(*pq.Error); ok {
+			if strings.Contains(pgErr.Message, "is out of range for type integer") {
+				return utils.Render(c, components.NotFound())
+			}
 		}
 
 		return err
@@ -88,7 +100,7 @@ func GetMovieOthersSeenByID(c *fiber.Ctx) error {
 	var others types.OthersStats
 
 	movieId := c.Params("id")
-	id := utils.SelfHealingUrl(movieId)
+	id, _ := utils.SelfHealingUrl(movieId)
 	idAsInt, err := strconv.Atoi(id)
 
 	if err != nil {

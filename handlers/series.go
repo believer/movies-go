@@ -14,7 +14,7 @@ func GetSeries(c *fiber.Ctx) error {
 	var series types.Series
 	var movies []types.SeriesMovies
 
-	id := utils.SelfHealingUrl(c.Params("id"))
+	id, _ := utils.SelfHealingUrl(c.Params("id"))
 	userId := c.Locals("UserId")
 
 	// Get series information

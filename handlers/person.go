@@ -14,7 +14,7 @@ func GetPersonByID(c *fiber.Ctx) error {
 	var person types.Person
 	var awards []types.Award
 
-	id := utils.SelfHealingUrl(c.Params("id"))
+	id, _ := utils.SelfHealingUrl(c.Params("id"))
 
 	err := db.Dot.Get(db.Client, &person, "person-by-id", id, c.Locals("UserId"))
 

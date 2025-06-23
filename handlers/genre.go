@@ -16,7 +16,7 @@ func GetGenre(c *fiber.Ctx) error {
 
 	page := c.QueryInt("page", 1)
 	userId := c.Locals("UserId").(string)
-	id := utils.SelfHealingUrl(c.Params("id"))
+	id, _ := utils.SelfHealingUrl(c.Params("id"))
 
 	err := db.Dot.Get(db.Client, &genre, "genre-by-id", id)
 

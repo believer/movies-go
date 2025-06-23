@@ -3,10 +3,12 @@ package utils
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/url"
 	"path"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/a-h/templ"
@@ -104,10 +106,16 @@ func Slugify(text string) string {
 	return text
 }
 
-func SelfHealingUrl(text string) string {
+func SelfHealingUrl(text string) (string, error) {
 	parts := strings.Split(path.Base(text), "-")
+	id := parts[len(parts)-1]
+	_, err := strconv.Atoi(parts[len(parts)-1])
 
-	return parts[len(parts)-1]
+	if err != nil {
+		return "", errors.New("Not a valid ID")
+	}
+
+	return id, nil
 }
 
 func Formatter() *message.Printer {
