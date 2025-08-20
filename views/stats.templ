@@ -27,6 +27,7 @@ type StatsProps struct {
 	MostWatchedMovies       []c.ListItem
 	MoviesByYear            []types.GraphData
 	Ratings                 []types.Bar
+	Reviews                 int
 	SeenThisYear            []types.Bar
 	ShortestAndLongestMovie types.Movies
 	Stats                   types.Stats
@@ -77,6 +78,12 @@ templ Stats(props StatsProps) {
 								}) {
 									{ strconv.Itoa(props.WilhelmScreams) }
 								}
+							}
+							@c.DescriptionListItem(c.DescriptionListItemProps{
+								Detail:    "Reviews",
+								IsTabular: true,
+							}) {
+								{ strconv.Itoa(props.Reviews) }
 							}
 							if len(props.ShortestAndLongestMovie) == 2 {
 								@c.DescriptionListItem(c.DescriptionListItemProps{

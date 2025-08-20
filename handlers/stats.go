@@ -50,6 +50,7 @@ func GetStats(c *fiber.Ctx) error {
 	var awardWins types.AwardPersonStat
 	var awardNominations types.AwardPersonStat
 	var mostAwardedMovies []types.AwardMovieStat
+	var reviews int
 
 	userId := c.Locals("UserId").(string)
 	now := time.Now()
@@ -73,6 +74,7 @@ func GetStats(c *fiber.Ctx) error {
 		{executeQuery("get", &awardWins, "stats-most-award-wins", userId), "stats-most-award-wins"},
 		{executeQuery("get", &awardNominations, "stats-most-award-nominations", userId), "stats-most-award-nominations"},
 		{executeQuery("select", &mostAwardedMovies, "stats-top-awarded-movies", userId), "stats-top-awarded-movies"},
+		{executeQuery("get", &reviews, "stats-reviews", userId), "stats-reviews"},
 	}
 
 	errChan := make(chan error, len(queries))
@@ -181,6 +183,7 @@ func GetStats(c *fiber.Ctx) error {
 			MostWatchedMovies:       movies,
 			MoviesByYear:            moviesByYear,
 			Ratings:                 ratingsBars,
+			Reviews:                 reviews,
 			SeenThisYear:            seenThisYearByMonthBars,
 			Stats:                   stats,
 			TotalCast:               utils.Formatter().Sprintf("%d", totalCast),

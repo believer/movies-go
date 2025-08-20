@@ -325,3 +325,11 @@ WHERE
         FROM
             max_rating);
 
+-- name: stats-reviews
+SELECT
+    count(*)
+FROM
+    review
+WHERE
+    user_id = $1;
+
