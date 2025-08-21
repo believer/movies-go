@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	twmerge "github.com/Oudwins/tailwind-merge-go"
 	"net/url"
 	"path"
 	"regexp"
@@ -171,4 +172,8 @@ func (ni *NullInt64) UnmarshalJSON(b []byte) error {
 		ni.Valid = false
 	}
 	return nil
+}
+
+func TwMerge(classes ...string) string {
+	return twmerge.Merge(classes...)
 }

@@ -1,0 +1,18 @@
+package link
+
+type Props struct {
+	Href templ.SafeURL
+}
+
+templ Link(props ...Props) {
+	{{ var p Props }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<a
+		class="md:text-sm tabular-nums inline-flex items-center gap-1 border-b border-dashed border-content-secondary link-focus"
+		href={ p.Href }
+	>
+		{ children... }
+	</a>
+}

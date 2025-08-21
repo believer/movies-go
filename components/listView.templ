@@ -1,6 +1,10 @@
 package components
 
 import "believer/movies/types"
+import "believer/movies/components/empty-state"
+import "believer/movies/components/link"
+import "believer/movies/components/separator"
+import "believer/movies/components/list"
 
 type ListViewProps struct {
 	EmptyState string
@@ -9,19 +13,23 @@ type ListViewProps struct {
 	Movies     types.Movies
 }
 
-templ ListView(props ListViewProps) {
-	@Layout(LayoutProps{Title: props.Name}) {
-		@StandardBody(props.Name) {
-			if len(props.Movies) > 0 {
-				@Ol() {
-					for _, movie := range props.Movies {
+templ ListView(props ...ListViewProps) {
+	{{ var p ListViewProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	@Layout(LayoutProps{Title: p.Name}) {
+		@StandardBody(p.Name) {
+			if len(p.Movies) > 0 {
+				@list.Ol() {
+					for _, movie := range p.Movies {
 						@Li() {
-							@Link(LinkProps{Href: movie.LinkTo()}) {
+							@link.Link(link.Props{Href: movie.LinkTo()}) {
 								{ movie.Title }
 							}
-							@Divider()
-							<span class="flex items-center gap-x-2 whitespace-nowrap text-sm">
-								@SimpleLink(SimpleLinkProps{Href: movie.LinkToYear()}) {
+							@separator.Separator()
+							@list.Trailing() {
+								@link.Link(link.Props{Href: movie.LinkToYear()}) {
 									{ movie.ISOReleaseDate() }
 								}
 								@Seen(SeenProps{
@@ -30,12 +38,12 @@ templ ListView(props ListViewProps) {
 									ImdbId: movie.ImdbId,
 									ID:     movie.ID,
 								})
-							</span>
+							}
 						}
 					}
-					if props.NextPage != "" {
+					if p.NextPage != "" {
 						<li
-							hx-get={ props.NextPage }
+							hx-get={ p.NextPage }
 							hx-trigger="revealed"
 							hx-swap="outerHTML"
 							hx-select="li"
@@ -43,7 +51,9 @@ templ ListView(props ListViewProps) {
 					}
 				}
 			} else {
-				@EmptyState(props.EmptyState)
+				@emptystate.EmptyState() {
+					{ p.EmptyState }
+				}
 			}
 		}
 	}

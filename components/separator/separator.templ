@@ -1,0 +1,13 @@
+package separator
+
+import "believer/movies/utils"
+
+templ Separator() {
+	<hr
+		class={ utils.TwMerge(
+      "m-0 flex-1",
+      // Border
+      "border-dashed border-neutral-300 dark:border-neutral-700",
+    ) }
+	/>
+}

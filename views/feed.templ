@@ -2,6 +2,7 @@ package views
 
 import (
 	c "believer/movies/components"
+	"believer/movies/components/empty-state"
 	"believer/movies/types"
 	"fmt"
 	"strconv"
@@ -87,7 +88,9 @@ templ Feed(props FeedProps) {
 							}
 						</ol>
 					} else {
-						@c.EmptyState("No persons found")
+						@emptystate.EmptyState() {
+							No persons found
+						}
 					}
 				case "movie":
 					if len(props.Movies) > 0 {
@@ -174,7 +177,9 @@ end
 							}
 						</ol>
 					} else {
-						@c.EmptyState("No movies seen")
+						@emptystate.EmptyState() {
+							No movies seen
+						}
 					}
 			}
 		</div>

@@ -1,5 +1,7 @@
 package components
 
+import "believer/movies/components/empty-state"
+
 type BestOfTheYearProps struct {
 	Movies []ListItem
 	Year   string
@@ -14,7 +16,9 @@ templ BestOfTheYear(props BestOfTheYearProps) {
 		if len(props.Movies) > 0 {
 			@OrderedList(props.Movies, "movie")
 		} else {
-			@EmptyState("No movies seen")
+			@emptystate.EmptyState() {
+				No movies seen
+			}
 		}
 	}
 }

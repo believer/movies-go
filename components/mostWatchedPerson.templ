@@ -1,6 +1,7 @@
 package components
 
 import (
+	"believer/movies/components/empty-state"
 	"believer/movies/types"
 	"fmt"
 	"strconv"
@@ -40,7 +41,9 @@ templ HighestRating(props HighestRatingProps) {
 				Only rated movies included. Score is log-adjusted average rating.
 			</div>
 		} else {
-			@EmptyState("No movies seen")
+			@emptystate.EmptyState() {
+				No movies seen
+			}
 		}
 	}
 }
@@ -62,7 +65,9 @@ templ MostWatchedPerson(props MostWatchedPersonProps) {
 		if len(props.Data) > 0 {
 			@OrderedList(props.Data, "person")
 		} else {
-			@EmptyState("No movies seen")
+			@emptystate.EmptyState() {
+				No movies seen
+			}
 		}
 		<div class="text-xs text-right text-content-secondary">
 			{  props.Total } people total
@@ -84,7 +89,9 @@ templ MostWatchedGenres(props MostWatchedGenresProps) {
 		if len(props.Data) > 0 {
 			@OrderedList(props.Data, "genre")
 		} else {
-			@EmptyState("No movies seen")
+			@emptystate.EmptyState() {
+				No movies seen
+			}
 		}
 	}
 }
@@ -103,7 +110,9 @@ templ MostWatchedLanguages(props MostWatchedLanguagesProps) {
 		if len(props.Data) > 0 {
 			@OrderedList(props.Data, "language")
 		} else {
-			@EmptyState("No movies seen")
+			@emptystate.EmptyState() {
+				No movies seen
+			}
 		}
 	}
 }

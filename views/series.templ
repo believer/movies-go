@@ -2,8 +2,11 @@ package views
 
 import (
 	c "believer/movies/components"
+	"believer/movies/components/empty-state"
+	"believer/movies/components/link"
+	"believer/movies/components/list"
+	"believer/movies/components/separator"
 	"believer/movies/types"
-	"strconv"
 )
 
 type SeriesProps struct {
@@ -13,25 +16,17 @@ type SeriesProps struct {
 	Movies      []types.SeriesMovies
 }
 
-templ list(movies types.MoviesInSeries) {
-	@c.Ol() {
+templ seriesList(movies types.MoviesInSeries) {
+	@list.Ol() {
 		for _, movie := range movies {
-			<li
-				class={ "items-end justify-between gap-x-4 grid",
-          templ.KV("grid-cols-[1ch_auto_1fr_auto]", len(movies) < 10),
-          templ.KV("grid-cols-[2ch_auto_1fr_auto]", len(movies) >= 10) }
-			>
-				<div
-					class="text-right tabular-nums text-content-quarternary"
-				>
-					{ strconv.FormatInt(movie.NumberInSeries.Int64, 10) }
-				</div>
-				@c.Link(c.LinkProps{Href: movie.LinkTo(), Long: len(movie.Title) > 60}) {
+			@list.Li(list.LiProps{Items: len(movies)}) {
+				@list.Number(movie.NumberInSeries.Int64)
+				@link.Link(link.Props{Href: movie.LinkTo()}) {
 					{ movie.Title }
 				}
-				@c.Divider()
-				<span class="flex items-center gap-x-2 tabular-nums whitespace-nowrap text-sm">
-					@c.SimpleLink(c.SimpleLinkProps{Href: movie.LinkToYear()}) {
+				@separator.Separator()
+				@list.Trailing() {
+					@link.Link(link.Props{Href: movie.LinkToYear()}) {
 						{ movie.ISOReleaseDate() }
 					}
 					@Seen(SeenProps{
@@ -40,15 +35,15 @@ templ list(movies types.MoviesInSeries) {
 						ImdbId: movie.ImdbId,
 						ID:     movie.ID,
 					})
-				</span>
-			</li>
+				}
+			}
 		}
 	}
 }
 
 templ section(series types.SeriesMovies) {
 	<section class="flex flex-col gap-y-4">
-		@list(series.Movies)
+		@seriesList(series.Movies)
 		<div class="text-xs text-right text-content-secondary">
 			{ series.SeenInSeries() }
 		</div>
@@ -62,7 +57,7 @@ templ Series(props SeriesProps) {
 				<section class="flex flex-col gap-y-2">
 					for _, parent := range props.Series.ParentSeries {
 						<div>
-							@c.SimpleLink(c.SimpleLinkProps{Href: parent.LinkTo()}) {
+							@link.Link(link.Props{Href: parent.LinkTo()}) {
 								Go to { parent.Name } series
 							}
 						</div>
@@ -82,7 +77,9 @@ templ Series(props SeriesProps) {
 					}
 				}
 			} else {
-				@c.EmptyState("No movies in series")
+				@emptystate.EmptyState() {
+					No movies in series
+				}
 			}
 		}
 	}

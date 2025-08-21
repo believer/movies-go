@@ -1,0 +1,41 @@
+package list
+
+import "strconv"
+
+templ Ol() {
+	<ol class="flex flex-col gap-2 md:text-sm text-content-secondary">
+		{ children... }
+	</ol>
+}
+
+type LiProps struct {
+	Items int
+}
+
+templ Li(props ...LiProps) {
+	{{ var p LiProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<li
+		class={ "items-end justify-between gap-x-4 grid",
+          templ.KV("grid-cols-[1ch_auto_1fr_auto]", p.Items < 10),
+          templ.KV("grid-cols-[2ch_auto_1fr_auto]", p.Items >= 10) }
+	>
+		{ children... }
+	</li>
+}
+
+templ Number(i int64) {
+	<div
+		class="text-right tabular-nums text-content-quarternary"
+	>
+		{ strconv.FormatInt(i, 10) }
+	</div>
+}
+
+templ Trailing() {
+	<span class="flex items-center gap-x-2 whitespace-nowrap text-sm">
+		{ children... }
+	</span>
+}

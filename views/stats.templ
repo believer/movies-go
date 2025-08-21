@@ -2,6 +2,7 @@ package views
 
 import (
 	c "believer/movies/components"
+	"believer/movies/components/empty-state"
 	"believer/movies/types"
 	"believer/movies/utils"
 	"fmt"
@@ -193,7 +194,9 @@ templ Stats(props StatsProps) {
 								}
 							</ol>
 						} else {
-							@c.EmptyState("No movies seen")
+							@emptystate.EmptyState() {
+								No movies seen
+							}
 						}
 					}
 				</div>
@@ -202,7 +205,9 @@ templ Stats(props StatsProps) {
 						if len(props.MostWatchedMovies) > 0 {
 							@c.OrderedList(props.MostWatchedMovies, "movie")
 						} else {
-							@c.EmptyState("No movies seen")
+							@emptystate.EmptyState() {
+								No movies seen
+							}
 						}
 					}
 					@c.MostWatchedPerson(c.MostWatchedPersonProps{

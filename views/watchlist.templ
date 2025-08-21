@@ -2,6 +2,7 @@ package views
 
 import (
 	c "believer/movies/components"
+	"believer/movies/components/empty-state"
 	"believer/movies/types"
 	"fmt"
 )
@@ -68,7 +69,9 @@ templ Watchlist(props WatchlistProps) {
 			if len(props.Movies) > 0 {
 				@WatchlistList(props.Movies, "Movies", "/watchlist/movies", "Date added")
 			} else {
-				@c.EmptyState("Watchlist empty")
+				@emptystate.EmptyState() {
+					Watchlist empty
+				}
 			}
 			if len(props.UnreleasedMovies) > 0 {
 				@WatchlistList(props.UnreleasedMovies, "Unreleased movies", "/watchlist/unreleased-movies", "Release date")
