@@ -26,22 +26,22 @@ func InitializeConnection() error {
 	log.Println("Connected to database")
 
 	files := []string{
-		"./db/awardQueries.sql",
-		"./db/genreQueries.sql",
-		"./db/languageQueries.sql",
-		"./db/movieQueries.sql",
-		"./db/queries.sql",
-		"./db/ratingQueries.sql",
-		"./db/seriesQueries.sql",
-		"./db/statsQueries.sql",
-		"./db/watchlistQueries.sql",
+		"awardQueries",
+		"genreQueries",
+		"languageQueries",
+		"movieQueries",
+		"queries",
+		"ratingQueries",
+		"seriesQueries",
+		"statsQueries",
+		"watchlistQueries",
 	}
 
 	var queries []*dotsql.DotSql
 
 	// Load all query files
 	for _, file := range files {
-		q, err := dotsql.LoadFromFile(file)
+		q, err := dotsql.LoadFromFile("./db/" + file + ".sql")
 
 		if err != nil {
 			return err

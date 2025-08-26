@@ -76,17 +76,35 @@ func Add(id string) {
 			for _, n := range nominees {
 				var person types.Person
 
-				err = tx.Get(&person, `SELECT p."name", p.id FROM movie m
-    INNER JOIN movie_person mp ON mp.movie_id = m.id
-    INNER JOIN person p ON p.id = mp.person_id
-  WHERE m.imdb_id = $1
-  AND p."name" ILIKE '%' || $2 || '%'`, imdbId, n)
+				err = tx.Get(&person, `
+					SELECT
+						p."name",
+						p.id
+					FROM
+						movie m
+						INNER JOIN movie_person mp ON mp.movie_id = m.id
+						INNER JOIN person p ON p.id = mp.person_id
+					WHERE
+						m.imdb_id = $1
+						AND p."name" ILIKE '%' || $2 || '%'
+					`, imdbId, n)
 
 				if err != nil {
 					continue
 				}
 
-				_, err = tx.Exec(`INSERT INTO award (name, imdb_id, winner, year, person, person_id) VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT (imdb_id, name, year, person, detail) DO UPDATE SET winner = excluded.winner,name = excluded.name, person_id = excluded.person_id`, category, imdbId, winner, year, n, person.ID)
+				_, err = tx.Exec(`
+					INSERT INTO
+						award (name, imdb_id, winner, YEAR, person, person_id)
+					VALUES
+						($1, $2, $3, $4, $5, $6)
+					ON CONFLICT (imdb_id, name, YEAR, person, detail) DO
+					UPDATE
+					SET
+						winner = excluded.winner,
+						name = excluded.name,
+						person_id = excluded.person_id
+				`, category, imdbId, winner, year, n, person.ID)
 
 				if err != nil {
 					fmt.Printf("Person Err %s %s %t %s %s %d\n", category, imdbId, winner, year, n, person.ID)
@@ -96,7 +114,16 @@ func Add(id string) {
 				fmt.Printf("Person %s\n", n)
 			}
 		case "Music (Original Song)":
-			_, err = tx.Exec(`INSERT INTO award (name, imdb_id, winner, year, detail) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (imdb_id, name, year, person, detail) DO UPDATE SET winner = excluded.winner`, category, imdbId, winner, year, detail)
+			_, err = tx.Exec(`
+				INSERT INTO
+					award (name, imdb_id, winner, YEAR, detail)
+				VALUES
+					($1, $2, $3, $4, $5)
+				ON CONFLICT (imdb_id, name, YEAR, person, detail) DO
+				UPDATE
+				SET
+					winner = excluded.winner
+			`, category, imdbId, winner, year, detail)
 
 			if err != nil {
 				fmt.Printf("Music Err %s %s %t %s %s\n", category, imdbId, winner, year, detail)
@@ -105,7 +132,16 @@ func Add(id string) {
 
 			fmt.Printf("Music %s\n", detail)
 		default:
-			_, err = tx.Exec(`INSERT INTO award (name, imdb_id, winner, year) VALUES ($1, $2, $3, $4) ON CONFLICT (imdb_id, name, year, person, detail) DO UPDATE SET winner = excluded.winner`, category, imdbId, winner, year)
+			_, err = tx.Exec(`
+				INSERT INTO
+					award (name, imdb_id, winner, YEAR)
+				VALUES
+					($1, $2, $3, $4)
+				ON CONFLICT (imdb_id, name, YEAR, person, detail) DO
+				UPDATE
+				SET
+					winner = excluded.winner
+			`, category, imdbId, winner, year)
 
 			if err != nil {
 				fmt.Printf("Other Err %s %s %t %s\n", category, imdbId, winner, year)
