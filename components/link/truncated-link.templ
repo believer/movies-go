@@ -1,0 +1,32 @@
+package link
+
+type TruncatedLinkProps struct {
+	AriaLabel   string
+	Href        templ.SafeURL
+	Hyperscript string
+	Long        bool
+	ToRoot      bool
+}
+
+templ TruncatedLink(props ...TruncatedLinkProps) {
+	{{ var p TruncatedLinkProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<a
+		if p.AriaLabel != "" {
+			aria-label={ p.AriaLabel }
+		}
+		class={ "truncate border-b border-dashed border-content-secondary link-focus", templ.KV("flex-1 basis-3/5", p.Long) }
+		if p.ToRoot {
+			href="/"
+		} else {
+			href={ p.Href }
+			if p.Hyperscript != "" {
+				_={ p.Hyperscript }
+			}
+		}
+	>
+		{ children... }
+	</a>
+}

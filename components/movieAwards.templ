@@ -1,6 +1,8 @@
 package components
 
 import (
+	"believer/movies/components/link"
+	"believer/movies/components/separator"
 	"believer/movies/types"
 	"believer/movies/utils"
 	"fmt"
@@ -70,48 +72,49 @@ templ MovieAwards(props MovieAwardsProps) {
 	@awardSection(props) {
 		<ul class="flex flex-col gap-2">
 			for _, award := range props.Awards {
-				<li class="col-span-2 flex items-baseline justify-between gap-x-4">
-					<div>
-						{ award.Category }{ " " }
-						<div class="inline-flex">
-							if len(award.Nominees) > 0 {
-								<span>
-									(
-								</span>
-								for i, n := range award.Nominees {
-									if n.ID != 0 {
-										<a
-											class="border-b border-dashed border-neutral-500 focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600 whitespace-nowrap"
-											href={ n.LinkTo() }
-										>
-											{ n.Name }
-										</a>
-									} else {
+				<li>
+					<div class="flex items-baseline justify-between gap-x-4">
+						<div>
+							{ award.Category }{ " " }
+						</div>
+						@Divider()
+						<span>
+							if award.Winner {
+								Won
+							} else {
+								Nominated
+							}
+						</span>
+					</div>
+					if len(award.Nominees) > 0 {
+						<div class="inline-flex text-xs truncate max-w-full">
+							<span>
+								(
+							</span>
+							for i, n := range award.Nominees {
+								if n.ID != 0 {
+									@link.TruncatedLink(link.TruncatedLinkProps{Href: n.LinkTo()}) {
 										{ n.Name }
 									}
-									if i < len(award.Nominees) - 1 {
-										<span class="mr-1">
-											{ ", " }
-										</span>
-									}
+								} else {
+									{ n.Name }
 								}
-								<span>
-									)
-								</span>
+								if i < len(award.Nominees) - 1 {
+									<span class="mr-1">
+										{ ", " }
+									</span>
+								}
 							}
-							if award.Detail.Valid {
-								({ award.Detail.String })
-							}
+							<span>
+								)
+							</span>
 						</div>
-					</div>
-					@Divider()
-					<span>
-						if award.Winner {
-							Won
-						} else {
-							Nominated
-						}
-					</span>
+					}
+					if award.Detail.Valid {
+						<div class="inline-flex text-xs truncate max-w-full">
+							({ award.Detail.String })
+						</div>
+					}
 				</li>
 			}
 		</ul>
@@ -178,32 +181,26 @@ templ PersonAwards(props PersonAwardsProps) {
 					<h3 class="font-bold text-xs">{ category }</h3>
 					<ul class="flex flex-col gap-y-2">
 						for _, award := range awards {
-							<li class="col-span-2 flex items-end justify-between gap-x-4">
-								<span class="flex gap-x-2">
-									if award.Title.Valid {
-										<a
-											class="border-b border-dashed border-neutral-500 focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600 whitespace-nowrap"
-											href={ award.LinkToMovie() }
-										>
-											{ award.Title.String }
-										</a>
+							<li class="flex items-end justify-between gap-x-4">
+								if award.Title.Valid {
+									@link.TruncatedLink(link.TruncatedLinkProps{Href: award.LinkToMovie()}) {
+										{ award.Title.String }
 									}
-									<a
-										class="border-b border-dashed border-neutral-500 focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600 whitespace-nowrap"
-										href={ award.LinkToYear() }
-									>
-										({ award.Year })
-									</a>
-									if award.Detail.Valid {
-										({ award.Detail.String })
-									}
-								</span>
-								@Divider()
-								<span>
+								}
+								if award.Detail.Valid {
+									({ award.Detail.String })
+								}
+								@separator.Separator()
+								<span class="items-end">
 									if award.Winner {
 										Won
 									} else {
 										Nominated
+									}
+								</span>
+								<span class="flex items-center gap-x-2 whitespace-nowrap">
+									@link.Link(link.Props{Href: award.LinkToYear()}) {
+										{ award.Year }
 									}
 								</span>
 							</li>

@@ -7,3 +7,6 @@ tmp
 *.gz
 main
 *.test
+
+# To enable intellisense
+tailwind.config.js
