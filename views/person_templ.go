@@ -172,6 +172,7 @@ func credit(title string, data types.PersonMovies) templ.Component {
 
 type PersonProps struct {
 	Awards       map[string][]types.Award
+	AwardsOrder  []string
 	Person       types.Person
 	TotalCredits int
 	Won          int
@@ -229,7 +230,7 @@ func Person(props PersonProps) templ.Component {
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(props.TotalCredits))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/person.templ`, Line: 52, Col: 38}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/person.templ`, Line: 53, Col: 38}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -296,8 +297,9 @@ func Person(props PersonProps) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				templ_7745c5c3_Err = c.PersonAwards(c.PersonAwardsProps{
-					Awards: props.Awards,
-					Won:    props.Won,
+					Awards:      props.Awards,
+					AwardsOrder: props.AwardsOrder,
+					Won:         props.Won,
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err

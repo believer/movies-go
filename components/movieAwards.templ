@@ -143,8 +143,9 @@ templ MovieAwards(props MovieAwardsProps) {
 }
 
 type PersonAwardsProps struct {
-	Awards map[string][]types.Award
-	Won    int
+	Awards      map[string][]types.Award
+	AwardsOrder []string
+	Won         int
 }
 
 func (p PersonAwardsProps) Subtitle() string {
@@ -176,7 +177,9 @@ func (p PersonAwardsProps) Href() templ.SafeURL {
 templ PersonAwards(props PersonAwardsProps) {
 	@awardSection(props) {
 		<section class="flex flex-col gap-y-6">
-			for category, awards := range props.Awards {
+			for _, category := range props.AwardsOrder {
+				{{ var awards []types.Award }}
+				{{ awards = props.Awards[category] }}
 				<section class="flex flex-col gap-y-4">
 					<h3 class="font-bold text-xs">{ category }</h3>
 					<ul class="flex flex-col gap-y-2">

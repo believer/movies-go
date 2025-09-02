@@ -6,6 +6,7 @@ import (
 	"believer/movies/utils"
 	"believer/movies/views"
 	"database/sql"
+	"sort"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -59,8 +60,17 @@ func GetPersonByID(c *fiber.Ctx) error {
 		groupedAwards[award.Category] = append(groupedAwards[award.Category], award)
 	}
 
+	// Awards map is unsorted, create a sort order
+	awardsOrder := make([]string, 0, len(groupedAwards))
+	for k := range groupedAwards {
+		awardsOrder = append(awardsOrder, k)
+	}
+
+	sort.Strings(awardsOrder)
+
 	return utils.Render(c, views.Person(views.PersonProps{
 		Awards:       groupedAwards,
+		AwardsOrder:  awardsOrder,
 		Person:       person,
 		TotalCredits: totalCredits,
 		Won:          won,
