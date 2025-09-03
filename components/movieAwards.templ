@@ -77,7 +77,7 @@ templ MovieAwards(props MovieAwardsProps) {
 						<div>
 							{ award.Category }{ " " }
 						</div>
-						@Divider()
+						@separator.Separator()
 						<span>
 							if award.Winner {
 								Won
@@ -118,7 +118,6 @@ templ MovieAwards(props MovieAwardsProps) {
 				</li>
 			}
 		</ul>
-		@Divider()
 		<div class="flex flex-col gap-y-1 text-xs">
 			<div class="flex gap-x-1">
 				<span>

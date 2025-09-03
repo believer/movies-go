@@ -10,7 +10,21 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import "believer/movies/utils"
 
-func Separator() templ.Component {
+type Decoration string
+
+const (
+	DecorationDashed Decoration = "dashed"
+	DecorationDotted Decoration = "dotted"
+	DecorationSolid  Decoration = "solid"
+)
+
+type Props struct {
+	Class string
+	// Style of border. Defaults to "dashed"
+	Decoration Decoration
+}
+
+func Separator(props ...Props) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -31,10 +45,17 @@ func Separator() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		var p Props
+		if len(props) > 0 {
+			p = props[0]
+		}
 		var templ_7745c5c3_Var2 = []any{utils.TwMerge(
 			"m-0 flex-1",
 			// Border
-			"border-dashed border-neutral-300 dark:border-neutral-700",
+			"border-neutral-300 dark:border-neutral-700",
+			decorationClasses(p.Decoration),
+			// Additional styles
+			p.Class,
 		)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
@@ -59,6 +80,19 @@ func Separator() templ.Component {
 		}
 		return nil
 	})
+}
+
+func decorationClasses(decoration Decoration) string {
+	switch decoration {
+	case DecorationDashed:
+		return "border-dashed"
+	case DecorationDotted:
+		return "border-dotted"
+	case DecorationSolid:
+		return "border-solid"
+	default:
+		return "border-dashed"
+	}
 }
 
 var _ = templruntime.GeneratedTemplate

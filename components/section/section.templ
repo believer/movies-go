@@ -1,0 +1,36 @@
+package section
+
+import "strconv"
+import "believer/movies/components/separator"
+
+type Props struct {
+	Action        templ.Component
+	Title         string
+	NumberOfItems int
+}
+
+templ title(p Props) {
+	<h2 class="font-medium text-content-primary">
+		<span>
+			{ p.Title }
+			if p.NumberOfItems > 0 {
+				<span class="font-regular text-xs text-content-secondary">
+					({ strconv.Itoa(p.NumberOfItems) })
+				</span>
+			}
+		</span>
+	</h2>
+}
+
+templ Section(p Props) {
+	<section class="flex flex-col gap-4 md:text-sm text-content-secondary">
+		<div class="flex items-center gap-x-4">
+			@title(p)
+			@separator.Separator(separator.Props{Decoration: separator.DecorationSolid})
+			if p.Action != nil {
+				@p.Action
+			}
+		</div>
+		{ children... }
+	</section>
+}

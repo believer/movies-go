@@ -2,12 +2,46 @@ package separator
 
 import "believer/movies/utils"
 
-templ Separator() {
+type Decoration string
+
+const (
+	DecorationDashed Decoration = "dashed"
+	DecorationDotted Decoration = "dotted"
+	DecorationSolid  Decoration = "solid"
+)
+
+type Props struct {
+	Class string
+	// Style of border. Defaults to "dashed"
+	Decoration Decoration
+}
+
+templ Separator(props ...Props) {
+	{{ var p Props }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
 	<hr
 		class={ utils.TwMerge(
       "m-0 flex-1",
       // Border
-      "border-dashed border-neutral-300 dark:border-neutral-700",
+      "border-neutral-300 dark:border-neutral-700",
+      decorationClasses(p.Decoration),
+      // Additional styles
+      p.Class,
     ) }
 	/>
+}
+
+func decorationClasses(decoration Decoration) string {
+	switch decoration {
+	case DecorationDashed:
+		return "border-dashed"
+	case DecorationDotted:
+		return "border-dotted"
+	case DecorationSolid:
+		return "border-solid"
+	default:
+		return "border-dashed"
+	}
 }

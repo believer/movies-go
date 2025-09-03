@@ -3,14 +3,14 @@ package components
 import "believer/movies/types"
 import "believer/movies/components/empty-state"
 
-templ section() {
+templ graphSection() {
 	<section class="flex flex-col gap-4">
 		{ children... }
 	</section>
 }
 
 templ Graph(bars []types.Bar, title string) {
-	@section() {
+	@graphSection() {
 		@SectionTitle(title)
 		if len(bars) > 0 {
 			@Bars(bars)
@@ -31,7 +31,7 @@ type GraphWithYearProps struct {
 }
 
 templ GraphWithYear(props GraphWithYearProps) {
-	@section() {
+	@graphSection() {
 		@SectionTitleWithDropdown(props.Title) {
 			@Dropdown(DropdownProps{
 				Name:    "year",

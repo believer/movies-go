@@ -3,6 +3,7 @@ package views
 import (
 	c "believer/movies/components"
 	"believer/movies/components/empty-state"
+	"believer/movies/components/separator"
 	"believer/movies/types"
 	"believer/movies/utils"
 	"fmt"
@@ -183,7 +184,11 @@ templ Stats(props StatsProps) {
 										>
 											{ year.Label }
 										</a>
-										@c.DividerHighlight(props.BestYear == year.Label)
+										if props.BestYear == year.Label {
+											@separator.Separator(separator.Props{Class: "border-yellow-800 dark:border-yellow-100"})
+										} else {
+											@separator.Separator()
+										}
 										<span
 											class={ "tabular-nums text-sm relative top-1",
                     templ.KV("text-content-secondary", props.BestYear != year.Label) }

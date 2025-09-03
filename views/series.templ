@@ -41,7 +41,7 @@ templ seriesList(movies types.MoviesInSeries) {
 	}
 }
 
-templ section(series types.SeriesMovies) {
+templ seriesSection(series types.SeriesMovies) {
 	<section class="flex flex-col gap-y-4">
 		@seriesList(series.Movies)
 		<div class="text-xs text-right text-content-secondary">
@@ -67,10 +67,10 @@ templ Series(props SeriesProps) {
 			if props.TotalMovies > 0 {
 				for _, series := range props.Movies {
 					if len(props.Movies) == 1 {
-						@section(series)
+						@seriesSection(series)
 					} else if len(series.Movies) > 0 {
 						@c.LinkedSection(series.Name, series.LinkTo(), len(series.Movies)) {
-							@section(series)
+							@seriesSection(series)
 						}
 					} else if series.Name != props.Series.Name {
 						@c.LinkedSectionTitle(series.Name, series.LinkTo())

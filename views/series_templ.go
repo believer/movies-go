@@ -192,7 +192,7 @@ func seriesList(movies types.MoviesInSeries) templ.Component {
 	})
 }
 
-func section(series types.SeriesMovies) templ.Component {
+func seriesSection(series types.SeriesMovies) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -349,7 +349,7 @@ func Series(props SeriesProps) templ.Component {
 				if props.TotalMovies > 0 {
 					for _, series := range props.Movies {
 						if len(props.Movies) == 1 {
-							templ_7745c5c3_Err = section(series).Render(ctx, templ_7745c5c3_Buffer)
+							templ_7745c5c3_Err = seriesSection(series).Render(ctx, templ_7745c5c3_Buffer)
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
 							}
@@ -366,7 +366,7 @@ func Series(props SeriesProps) templ.Component {
 									}()
 								}
 								ctx = templ.InitializeContext(ctx)
-								templ_7745c5c3_Err = section(series).Render(ctx, templ_7745c5c3_Buffer)
+								templ_7745c5c3_Err = seriesSection(series).Render(ctx, templ_7745c5c3_Buffer)
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
 								}

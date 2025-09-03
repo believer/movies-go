@@ -3,6 +3,8 @@ package views
 import (
 	c "believer/movies/components"
 	"believer/movies/components/empty-state"
+	"believer/movies/components/section"
+	"believer/movies/components/separator"
 	"believer/movies/types"
 	"fmt"
 )
@@ -22,14 +24,18 @@ templ sortWatchlist(route string, currentOrder string) {
 }
 
 templ WatchlistList(movies types.Movies, title string, route string, currentOrder string) {
-	@c.SectionWithAction(title, len(movies), sortWatchlist(route, currentOrder)) {
+	@section.Section(section.Props{
+		Action:        sortWatchlist(route, currentOrder),
+		NumberOfItems: len(movies),
+		Title:         title,
+	}) {
 		<ol class="flex flex-col gap-2 md:text-sm text-content-secondary">
 			for _, movie := range movies {
 				<li class="flex items-end justify-between gap-4">
 					@c.Link(c.LinkProps{Href: movie.LinkTo()}) {
 						{ movie.Title }
 					}
-					@c.Divider()
+					@separator.Separator()
 					<span class="flex items-center gap-x-2 relative top-1">
 						<span class="tabular-nums whitespace-nowrap">
 							if currentOrder == "Date added" {

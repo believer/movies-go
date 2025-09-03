@@ -2,6 +2,7 @@ package movie
 
 import (
 	c "believer/movies/components"
+	"believer/movies/components/separator"
 	"fmt"
 	"strconv"
 	"time"
@@ -58,7 +59,7 @@ templ Watched(props WatchedProps) {
 							</div>
 						</div>
 						@c.IsAuthenticated() {
-							@c.Divider()
+							@separator.Separator()
 							<div class="flex gap-4">
 								<a
 									class="text-content-secondary transition-colors link-focus"

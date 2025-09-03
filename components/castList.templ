@@ -1,6 +1,9 @@
 package components
 
 import (
+	"believer/movies/components/link"
+	"believer/movies/components/section"
+	"believer/movies/components/separator"
 	"believer/movies/utils"
 	"fmt"
 )
@@ -21,36 +24,20 @@ type CastDTO struct {
 }
 
 templ CastList(castOrCrew []CastDTO, hasCharacters bool) {
-	<div
-		class="flex flex-col gap-8 text-neutral-500 dark:text-neutral-400 md:text-sm"
-	>
+	<div class="flex flex-col gap-8 text-content-secondary md:text-sm">
 		for _, job := range castOrCrew {
-			@Section(job.Job, 0, 0) {
-				<ul class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+			@section.Section(section.Props{Title: job.Job}) {
+				<ul class="flex flex-col gap-y-2">
 					for _, person := range job.People {
-						if hasCharacters {
-							<li class="col-span-2 flex items-end justify-between gap-4">
-								<a
-									class="border-b border-dashed border-content-secondary link-focus whitespace-nowrap"
-									href={ person.LinkTo() }
-								>
-									{ person.Name }
-								</a>
-								if person.Character != "" {
-									@Divider()
-								}
+						<li class="flex items-end gap-x-4">
+							@link.Link(link.Props{Href: person.LinkTo(), Class: "whitespace-nowrap"}) {
+								{ person.Name }
+							}
+							if person.Character != "" {
+								@separator.Separator()
 								<div class="text-sm truncate relative top-1">{ person.Character }</div>
-							</li>
-						} else {
-							<li>
-								<a
-									class="border-b border-dashed border-content-secondary focus-visible:rounded-xs focus-visible:outline-1 focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600"
-									href={ person.LinkTo() }
-								>
-									{ person.Name }
-								</a>
-							</li>
-						}
+							}
+						</li>
 					}
 				</ul>
 			}

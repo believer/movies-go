@@ -2,22 +2,24 @@ package views
 
 import (
 	c "believer/movies/components"
+	"believer/movies/components/section"
+	"believer/movies/components/separator"
 	"believer/movies/types"
 	"strconv"
 )
 
 templ credit(title string, data types.PersonMovies) {
 	if len(data) > 0 {
-		@c.Section(title, len(data), 0) {
+		@section.Section(section.Props{Title: title, NumberOfItems: len(data)}) {
 			<ol class="flex flex-col gap-y-2 md:gap-y-3">
 				for _, movie := range data {
 					<li>
-						<div class="flex items-end justify-between gap-x-4">
+						<div class="flex items-end gap-x-4">
 							@c.Link(c.LinkProps{Href: movie.LinkTo(), Long: len(movie.Title) > 60}) {
 								{ movie.Title }
 							}
-							@c.Divider()
-							<span class="flex items-center gap-x-2 whitespace-nowrap">
+							@separator.Separator()
+							<span class="flex items-center gap-x-2">
 								@c.SimpleLink(c.SimpleLinkProps{Href: movie.LinkToYear()}) {
 									{ movie.ReleaseYear() }
 								}

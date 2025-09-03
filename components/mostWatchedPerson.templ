@@ -2,6 +2,7 @@ package components
 
 import (
 	"believer/movies/components/empty-state"
+	"believer/movies/components/separator"
 	"believer/movies/types"
 	"fmt"
 	"strconv"
@@ -29,7 +30,7 @@ templ HighestRating(props HighestRatingProps) {
 						@Link(LinkProps{Href: item.LinkTo()}) {
 							{ item.Name }
 						}
-						@Divider()
+						@separator.Separator()
 						<span class="tabular-nums text-sm text-neutral-500 dark:text-neutral-400 relative top-1">
 							<span class="text-xs text-neutral-400 dark:text-neutral-600">({ strconv.Itoa(item.Appearances) } movies)</span>
 							{ item.Rank() }
