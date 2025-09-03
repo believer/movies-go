@@ -2,6 +2,8 @@ package movie
 
 import (
 	c "believer/movies/components"
+	"believer/movies/components/icon"
+	"believer/movies/components/section"
 	"believer/movies/components/separator"
 	"fmt"
 	"strconv"
@@ -37,7 +39,11 @@ templ addWatch(id string, isUnseen bool) {
 }
 
 templ Watched(props WatchedProps) {
-	@c.SectionWithAction("Watched", len(props.WatchedAt), addWatch(props.ID, props.IsUnseen)) {
+	@section.Section(section.Props{
+		Title:         "Watched",
+		NumberOfItems: len(props.WatchedAt),
+		Action:        addWatch(props.ID, props.IsUnseen),
+	}) {
 		if len(props.WatchedAt) > 0 {
 			<ol class="flex flex-col gap-2">
 				for i, w := range props.WatchedAt {
@@ -89,7 +95,7 @@ templ Watched(props WatchedProps) {
 				>In watchlist</a>
 				@c.IsAuthenticated() {
 					<a href={ templ.URL(fmt.Sprintf("/movie/new?imdbId=%s&id=%s", props.ImdbId, props.ID)) } class="text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors" title="Add watch">
-						@c.IconEye()
+						@icon.Icon(icon.Props{Name: icon.Eye})
 					</a>
 				}
 			</div>

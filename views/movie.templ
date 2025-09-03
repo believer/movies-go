@@ -2,6 +2,8 @@ package views
 
 import (
 	c "believer/movies/components"
+	"believer/movies/components/icon"
+	"believer/movies/components/section"
 	"believer/movies/types"
 	"fmt"
 	"strconv"
@@ -26,7 +28,7 @@ templ Movie(props MovieProps) {
 				<p class="text-content-secondary">{ props.Movie.Overview }</p>
 			}
 			@c.Review(props.Review)
-			@c.Section("Metadata", 0, 0) {
+			@section.Section(section.Props{Title: "Metadata"}) {
 				@c.DescriptionList() {
 					if props.Movie.Tagline != "" {
 						@c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Tagline"}) {
@@ -66,7 +68,7 @@ templ Movie(props MovieProps) {
 								<span class="border-b border-dashed border-content-secondary">
 									{ props.Movie.ImdbId }
 								</span>
-								@c.IconExternalLink()
+								@icon.Icon(icon.Props{Name: icon.ExternalLink})
 							</a>
 						}
 					}

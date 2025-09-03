@@ -1,6 +1,7 @@
 package components
 
 import "fmt"
+import "believer/movies/components/icon"
 
 type SeenProps struct {
 	ImdbId string
@@ -11,7 +12,7 @@ type SeenProps struct {
 
 templ SeenToggle() {
 	<span class="text-neutral-300 dark:text-neutral-700" slot="button">
-		@IconCheck()
+		@icon.Icon(icon.Props{Name: icon.Check})
 	</span>
 }
 
@@ -29,7 +30,7 @@ templ AddWatch(id int, imdbId string) {
 
 templ UnseenToggle() {
 	<span class="text-neutral-700 dark:text-neutral-300">
-		@IconTimes()
+		@icon.Icon(icon.Props{Name: icon.Times})
 	</span>
 }
 

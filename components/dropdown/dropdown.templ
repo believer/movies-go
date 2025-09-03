@@ -1,13 +1,13 @@
-package components
+package dropdown
 
-type DropdownProps struct {
+type Props struct {
 	Name    string
 	Route   string
 	Options []string
 	Value   string
 }
 
-templ Dropdown(props DropdownProps) {
+templ Dropdown(props Props) {
 	<select class="appearance-none border border-neutral-300 dark:border-neutral-700 rounded-sm text-xs px-2 py-1 bg-transparent focus:outline-dashed focus:outline-1 focus:outline-offset-2 focus:outline-neutral-300 dark:focus:outline-neutral-700 text-center [text-align-last:center]" hx-target="closest section" hx-get={ props.Route } name={ props.Name } value={ props.Value } hx-swap="outerHTML">
 		for _, option := range props.Options {
 			<option

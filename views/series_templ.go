@@ -13,6 +13,7 @@ import (
 	"believer/movies/components/empty-state"
 	"believer/movies/components/link"
 	"believer/movies/components/list"
+	"believer/movies/components/section"
 	"believer/movies/components/separator"
 	"believer/movies/types"
 )
@@ -93,7 +94,7 @@ func seriesList(movies types.MoviesInSeries) templ.Component {
 						var templ_7745c5c3_Var5 string
 						templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(movie.Title)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/series.templ`, Line: 25, Col: 18}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/series.templ`, Line: 26, Col: 18}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 						if templ_7745c5c3_Err != nil {
@@ -144,7 +145,7 @@ func seriesList(movies types.MoviesInSeries) templ.Component {
 							var templ_7745c5c3_Var8 string
 							templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(movie.ISOReleaseDate())
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/series.templ`, Line: 30, Col: 30}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/series.templ`, Line: 31, Col: 30}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 							if templ_7745c5c3_Err != nil {
@@ -228,7 +229,7 @@ func seriesSection(series types.SeriesMovies) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(series.SeenInSeries())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/series.templ`, Line: 48, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/series.templ`, Line: 49, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -316,7 +317,7 @@ func Series(props SeriesProps) templ.Component {
 							var templ_7745c5c3_Var15 string
 							templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(parent.Name)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/series.templ`, Line: 61, Col: 27}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/series.templ`, Line: 62, Col: 27}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 							if templ_7745c5c3_Err != nil {
@@ -372,12 +373,16 @@ func Series(props SeriesProps) templ.Component {
 								}
 								return nil
 							})
-							templ_7745c5c3_Err = c.LinkedSection(series.Name, series.LinkTo(), len(series.Movies)).Render(templ.WithChildren(ctx, templ_7745c5c3_Var16), templ_7745c5c3_Buffer)
+							templ_7745c5c3_Err = section.Section(section.Props{
+								Title:         series.Name,
+								Href:          series.LinkTo(),
+								NumberOfItems: len(series.Movies),
+							}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var16), templ_7745c5c3_Buffer)
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
 							}
 						} else if series.Name != props.Series.Name {
-							templ_7745c5c3_Err = c.LinkedSectionTitle(series.Name, series.LinkTo()).Render(ctx, templ_7745c5c3_Buffer)
+							templ_7745c5c3_Err = section.Section(section.Props{Title: series.Name, Href: series.LinkTo()}).Render(ctx, templ_7745c5c3_Buffer)
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
 							}

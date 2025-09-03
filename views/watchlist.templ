@@ -2,7 +2,9 @@ package views
 
 import (
 	c "believer/movies/components"
+	"believer/movies/components/dropdown"
 	"believer/movies/components/empty-state"
+	"believer/movies/components/icon"
 	"believer/movies/components/section"
 	"believer/movies/components/separator"
 	"believer/movies/types"
@@ -15,7 +17,7 @@ type WatchlistProps struct {
 }
 
 templ sortWatchlist(route string, currentOrder string) {
-	@c.Dropdown(c.DropdownProps{
+	@dropdown.Dropdown(dropdown.Props{
 		Name:    "sortOrder",
 		Route:   route,
 		Options: []string{"Date added", "Release date"},
@@ -50,7 +52,7 @@ templ WatchlistList(movies types.Movies, title string, route string, currentOrde
 						</span>
 						@c.IsAuthenticated() {
 							<a href={ movie.LinkToWatchlistAdd() } class="text-content-secondary hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors" title="Add watch">
-								@c.IconEye()
+								@icon.Icon(icon.Props{Name: icon.Eye})
 							</a>
 							<button
 								class="cursor-pointer text-content-quarternary hover:text-neutral-700 hover:dark:text-neutral-300 transition-colors"

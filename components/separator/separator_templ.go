@@ -52,7 +52,7 @@ func Separator(props ...Props) templ.Component {
 		var templ_7745c5c3_Var2 = []any{utils.TwMerge(
 			"m-0 flex-1",
 			// Border
-			"border-neutral-300 dark:border-neutral-700",
+			"border-content-quarternary",
 			decorationClasses(p.Decoration),
 			// Additional styles
 			p.Class,

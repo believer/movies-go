@@ -10,6 +10,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import "believer/movies/types"
 import "believer/movies/components/separator"
+import "believer/movies/components/section"
 
 type AwardsPageProps struct {
 	GroupedAwards []types.GlobalAward
@@ -86,7 +87,7 @@ func AwardsPage(props AwardsPageProps) templ.Component {
 							var templ_7745c5c3_Var5 string
 							templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(award.Category)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/awards.templ`, Line: 20, Col: 25}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/awards.templ`, Line: 24, Col: 25}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 							if templ_7745c5c3_Err != nil {
@@ -95,7 +96,7 @@ func AwardsPage(props AwardsPageProps) templ.Component {
 							var templ_7745c5c3_Var6 string
 							templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(" ")
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/awards.templ`, Line: 20, Col: 32}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/awards.templ`, Line: 24, Col: 32}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 							if templ_7745c5c3_Err != nil {
@@ -113,7 +114,7 @@ func AwardsPage(props AwardsPageProps) templ.Component {
 								var templ_7745c5c3_Var7 templ.SafeURL
 								templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinURLErrs(award.LinkToPerson())
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/awards.templ`, Line: 28, Col: 39}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/awards.templ`, Line: 32, Col: 39}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 								if templ_7745c5c3_Err != nil {
@@ -126,7 +127,7 @@ func AwardsPage(props AwardsPageProps) templ.Component {
 								var templ_7745c5c3_Var8 string
 								templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(award.Person.String)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/awards.templ`, Line: 30, Col: 33}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/awards.templ`, Line: 34, Col: 33}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 								if templ_7745c5c3_Err != nil {
@@ -145,7 +146,7 @@ func AwardsPage(props AwardsPageProps) templ.Component {
 										var templ_7745c5c3_Var9 templ.SafeURL
 										templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinURLErrs(n.LinkTo())
 										if templ_7745c5c3_Err != nil {
-											return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/awards.templ`, Line: 36, Col: 31}
+											return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/awards.templ`, Line: 40, Col: 31}
 										}
 										_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 										if templ_7745c5c3_Err != nil {
@@ -158,7 +159,7 @@ func AwardsPage(props AwardsPageProps) templ.Component {
 										var templ_7745c5c3_Var10 string
 										templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(n.Name)
 										if templ_7745c5c3_Err != nil {
-											return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/awards.templ`, Line: 38, Col: 22}
+											return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/awards.templ`, Line: 42, Col: 22}
 										}
 										_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 										if templ_7745c5c3_Err != nil {
@@ -172,7 +173,7 @@ func AwardsPage(props AwardsPageProps) templ.Component {
 										var templ_7745c5c3_Var11 string
 										templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(n.Name)
 										if templ_7745c5c3_Err != nil {
-											return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/awards.templ`, Line: 41, Col: 21}
+											return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/awards.templ`, Line: 45, Col: 21}
 										}
 										_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 										if templ_7745c5c3_Err != nil {
@@ -191,7 +192,7 @@ func AwardsPage(props AwardsPageProps) templ.Component {
 										var templ_7745c5c3_Var12 string
 										templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(", ")
 										if templ_7745c5c3_Err != nil {
-											return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/awards.templ`, Line: 45, Col: 20}
+											return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/awards.templ`, Line: 49, Col: 20}
 										}
 										_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 										if templ_7745c5c3_Err != nil {
@@ -216,7 +217,7 @@ func AwardsPage(props AwardsPageProps) templ.Component {
 								var templ_7745c5c3_Var13 string
 								templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(award.Detail.String)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/awards.templ`, Line: 54, Col: 33}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/awards.templ`, Line: 58, Col: 33}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 								if templ_7745c5c3_Err != nil {
@@ -261,7 +262,10 @@ func AwardsPage(props AwardsPageProps) templ.Component {
 						}
 						return nil
 					})
-					templ_7745c5c3_Err = LinkedSection(group.Title, group.LinkToMovie(), 0).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = section.Section(section.Props{
+						Title: group.Title,
+						Href:  group.LinkToMovie(),
+					}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

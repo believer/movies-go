@@ -2,17 +2,32 @@ package section
 
 import "strconv"
 import "believer/movies/components/separator"
+import "believer/movies/components/link"
+import "believer/movies/utils"
 
 type Props struct {
 	Action        templ.Component
+	Href          templ.SafeURL
+	Subtitle      string
 	Title         string
 	NumberOfItems int
 }
 
 templ title(p Props) {
 	<h2 class="font-medium text-content-primary">
-		<span>
-			{ p.Title }
+		<span class="flex items-center gap-x-2">
+			if p.Href != "" {
+				@link.Link(link.Props{Href: p.Href}) {
+					{ p.Title }
+				}
+			} else {
+				{ p.Title }
+			}
+			if p.Subtitle != "" {
+				<span class="font-regular text-xs text-content-secondary">
+					({ p.Subtitle })
+				</span>
+			}
 			if p.NumberOfItems > 0 {
 				<span class="font-regular text-xs text-content-secondary">
 					({ strconv.Itoa(p.NumberOfItems) })
@@ -24,7 +39,12 @@ templ title(p Props) {
 
 templ Section(p Props) {
 	<section class="flex flex-col gap-4 md:text-sm text-content-secondary">
-		<div class="flex items-center gap-x-4">
+		<div
+			class={ utils.TwMerge(
+        "flex items-center",
+        utils.IfElse(p.Subtitle == "", "gap-x-4", "gap-x-2"),
+      ) }
+		>
 			@title(p)
 			@separator.Separator(separator.Props{Decoration: separator.DecorationSolid})
 			if p.Action != nil {

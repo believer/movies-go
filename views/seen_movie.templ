@@ -2,6 +2,7 @@ package views
 
 import (
 	c "believer/movies/components"
+	"believer/movies/components/icon"
 	"fmt"
 )
 
@@ -14,7 +15,7 @@ type SeenProps struct {
 
 templ SeenToggle() {
 	<span class="text-content-quarternary" slot="button">
-		@c.IconCheck()
+		@icon.Icon(icon.Props{Name: icon.Check})
 	</span>
 }
 
@@ -32,7 +33,7 @@ templ AddWatch(id int, imdbId string) {
 
 templ UnseenToggle() {
 	<span class="text-content-primary">
-		@c.IconTimes()
+		@icon.Icon(icon.Props{Name: icon.Times})
 	</span>
 }
 

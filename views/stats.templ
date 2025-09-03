@@ -3,6 +3,7 @@ package views
 import (
 	c "believer/movies/components"
 	"believer/movies/components/empty-state"
+	"believer/movies/components/section"
 	"believer/movies/components/separator"
 	"believer/movies/types"
 	"believer/movies/utils"
@@ -53,7 +54,7 @@ templ Stats(props StatsProps) {
 			</nav>
 			<div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
 				<div class="flex flex-col gap-y-8">
-					@c.Section("Stats", 0, 0) {
+					@section.Section(section.Props{Title: "Stats"}) {
 						@c.DescriptionList() {
 							@c.DescriptionListItem(c.DescriptionListItemProps{
 								Detail:    "Unique movies seen",
@@ -111,7 +112,7 @@ templ Stats(props StatsProps) {
 							}
 						}
 					}
-					@c.Section("Academy Awards", 0, 0) {
+					@section.Section(section.Props{Title: "Academy Awards"}) {
 						@c.DescriptionList() {
 							@c.DescriptionListItem(c.DescriptionListItemProps{
 								Detail:    "Most awarded person",
@@ -170,7 +171,7 @@ templ Stats(props StatsProps) {
 						hx-trigger="load"
 						hx-swap="outerHTML"
 					></section>
-					@c.Section("Movies by year", 0, 0) {
+					@section.Section(section.Props{Title: "Movies by year"}) {
 						if len(props.MoviesByYear) > 0 {
 							<ol class="flex flex-col gap-2">
 								for _, year := range props.MoviesByYear {
@@ -206,7 +207,7 @@ templ Stats(props StatsProps) {
 					}
 				</div>
 				<div class="flex flex-col gap-y-8">
-					@c.Section("Most watched movies", 0, 0) {
+					@section.Section(section.Props{Title: "Most watched movies"}) {
 						if len(props.MostWatchedMovies) > 0 {
 							@c.OrderedList(props.MostWatchedMovies, "movie")
 						} else {

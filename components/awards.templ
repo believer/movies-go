@@ -2,6 +2,7 @@ package components
 
 import "believer/movies/types"
 import "believer/movies/components/separator"
+import "believer/movies/components/section"
 
 type AwardsPageProps struct {
 	GroupedAwards []types.GlobalAward
@@ -12,7 +13,10 @@ templ AwardsPage(props AwardsPageProps) {
 	@Layout(LayoutProps{Title: props.Name}) {
 		@StandardBody(props.Name) {
 			for _, group := range props.GroupedAwards {
-				@LinkedSection(group.Title, group.LinkToMovie(), 0) {
+				@section.Section(section.Props{
+					Title: group.Title,
+					Href:  group.LinkToMovie(),
+				}) {
 					<ul class="flex flex-col gap-2">
 						for _, award := range group.Awards {
 							<li class="col-span-2 flex items-baseline justify-between gap-x-4">

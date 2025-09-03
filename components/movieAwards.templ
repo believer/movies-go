@@ -2,6 +2,7 @@ package components
 
 import (
 	"believer/movies/components/link"
+	"believer/movies/components/section"
 	"believer/movies/components/separator"
 	"believer/movies/types"
 	"believer/movies/utils"
@@ -18,7 +19,7 @@ type SectionProps interface {
 
 templ awardSection(props SectionProps) {
 	if props.NumberOfAwards() > 0 {
-		@SectionNew(SectionTitleProps{
+		@section.Section(section.Props{
 			Href:     props.Href(),
 			Title:    props.Title(),
 			Subtitle: props.Subtitle(),

@@ -1,6 +1,8 @@
 package components
 
 import "believer/movies/components/empty-state"
+import "believer/movies/components/section"
+import "believer/movies/components/dropdown"
 
 type BestOfTheYearProps struct {
 	Movies []ListItem
@@ -9,10 +11,15 @@ type BestOfTheYearProps struct {
 }
 
 templ BestOfTheYear(props BestOfTheYearProps) {
-	@Section("", 0, 0) {
-		@SectionTitleWithDropdown("Best of the Year") {
-			@Dropdown(DropdownProps{Route: "/stats/best-of-the-year", Name: "year", Options: props.Years, Value: props.Year})
-		}
+	@section.Section(section.Props{
+		Title: "Best of the Year",
+		Action: dropdown.Dropdown(dropdown.Props{
+			Route:   "/stats/best-of-the-year",
+			Name:    "year",
+			Options: props.Years,
+			Value:   props.Year,
+		}),
+	}) {
 		if len(props.Movies) > 0 {
 			@OrderedList(props.Movies, "movie")
 		} else {

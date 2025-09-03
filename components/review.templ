@@ -2,15 +2,16 @@ package components
 
 import "believer/movies/types"
 import "fmt"
+import "believer/movies/components/section"
 
 templ Review(props types.Review) {
 	if (props.Private == false && props.Content != "") {
-		@Section("Review", 0, 0) {
+		@section.Section(section.Props{Title: "Review"}) {
 			@ReviewContent(props)
 		}
 	} else if (props.Private == true && props.Content != "") {
 		if ctx.Value("IsAuthenticated").(bool) {
-			@Section("Review", 0, 0) {
+			@section.Section(section.Props{Title: "Review"}) {
 				@ReviewContent(props)
 			}
 		}

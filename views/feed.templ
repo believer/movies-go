@@ -3,6 +3,7 @@ package views
 import (
 	c "believer/movies/components"
 	"believer/movies/components/empty-state"
+	"believer/movies/components/icon"
 	"believer/movies/types"
 	"fmt"
 	"strconv"
@@ -34,7 +35,7 @@ templ Feed(props FeedProps) {
 						class="fixed bottom-8 right-8 z-20 text-neutral-900 dark:text-neutral-100 bg-neutral-200 dark:bg-neutral-700 w-14 h-14 shadow-lg flex justify-center items-center rounded-full dark:sm:shadow-transparent dark:sm:bg-transparent sm:shadow-transparent sm:bg-transparent sm:bottom-0 sm:right-0 sm:w-auto sm:h-auto sm:relative link-focus"
 						href="/movie/new"
 					>
-						@c.IconPlus()
+						@icon.Icon(icon.Props{Name: icon.Plus})
 					</a>
 					<a
 						class="truncate border-b border-dashed border-content-secondary link-focus"

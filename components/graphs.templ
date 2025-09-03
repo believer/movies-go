@@ -2,16 +2,11 @@ package components
 
 import "believer/movies/types"
 import "believer/movies/components/empty-state"
-
-templ graphSection() {
-	<section class="flex flex-col gap-4">
-		{ children... }
-	</section>
-}
+import "believer/movies/components/dropdown"
+import "believer/movies/components/section"
 
 templ Graph(bars []types.Bar, title string) {
-	@graphSection() {
-		@SectionTitle(title)
+	@section.Section(section.Props{Title: title}) {
 		if len(bars) > 0 {
 			@Bars(bars)
 		} else {
@@ -31,15 +26,15 @@ type GraphWithYearProps struct {
 }
 
 templ GraphWithYear(props GraphWithYearProps) {
-	@graphSection() {
-		@SectionTitleWithDropdown(props.Title) {
-			@Dropdown(DropdownProps{
-				Name:    "year",
-				Route:   props.Route,
-				Options: props.Years,
-				Value:   props.SelectedYear,
-			})
-		}
+	@section.Section(section.Props{
+		Title: props.Title,
+		Action: dropdown.Dropdown(dropdown.Props{
+			Name:    "year",
+			Route:   props.Route,
+			Options: props.Years,
+			Value:   props.SelectedYear,
+		}),
+	}) {
 		if len(props.Bars) > 0 {
 			@Bars(props.Bars)
 		} else {

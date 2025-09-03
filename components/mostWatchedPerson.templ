@@ -1,7 +1,9 @@
 package components
 
 import (
+	"believer/movies/components/dropdown"
 	"believer/movies/components/empty-state"
+	"believer/movies/components/section"
 	"believer/movies/components/separator"
 	"believer/movies/types"
 	"fmt"
@@ -16,10 +18,15 @@ type HighestRatingProps struct {
 }
 
 templ HighestRating(props HighestRatingProps) {
-	@Section("", 0, 0) {
-		@SectionTitleWithDropdown(props.Title) {
-			@Dropdown(DropdownProps{Route: "/stats/highest-ranked-person", Name: "job", Options: props.Jobs, Value: props.Job})
-		}
+	@section.Section(section.Props{
+		Title: props.Title,
+		Action: dropdown.Dropdown(dropdown.Props{
+			Route:   "/stats/highest-ranked-person",
+			Name:    "job",
+			Options: props.Jobs,
+			Value:   props.Job,
+		}),
+	}) {
 		if len(props.Data) > 0 {
 			<ol class="flex flex-col gap-2">
 				for i, item := range props.Data {
@@ -59,10 +66,15 @@ type MostWatchedPersonProps struct {
 }
 
 templ MostWatchedPerson(props MostWatchedPersonProps) {
-	@Section("", 0, 0) {
-		@SectionTitleWithDropdown(props.Title) {
-			@Dropdown(DropdownProps{Route: fmt.Sprintf("/stats/most-watched-person/%s", props.Job), Name: "year", Options: props.Years, Value: props.Year})
-		}
+	@section.Section(section.Props{
+		Title: props.Title,
+		Action: dropdown.Dropdown(dropdown.Props{
+			Route:   fmt.Sprintf("/stats/most-watched-person/%s", props.Job),
+			Name:    "year",
+			Options: props.Years,
+			Value:   props.Year,
+		}),
+	}) {
 		if len(props.Data) > 0 {
 			@OrderedList(props.Data, "person")
 		} else {
@@ -71,7 +83,7 @@ templ MostWatchedPerson(props MostWatchedPersonProps) {
 			}
 		}
 		<div class="text-xs text-right text-content-secondary">
-			{  props.Total } people total
+			{ props.Total } people total
 		</div>
 	}
 }
@@ -83,10 +95,15 @@ type MostWatchedGenresProps struct {
 }
 
 templ MostWatchedGenres(props MostWatchedGenresProps) {
-	@Section("", 0, 0) {
-		@SectionTitleWithDropdown("Genre") {
-			@Dropdown(DropdownProps{Route: "/stats/genres", Name: "year", Options: props.Years, Value: props.Year})
-		}
+	@section.Section(section.Props{
+		Title: "Genre",
+		Action: dropdown.Dropdown(dropdown.Props{
+			Route:   "/stats/genres",
+			Name:    "year",
+			Options: props.Years,
+			Value:   props.Year,
+		}),
+	}) {
 		if len(props.Data) > 0 {
 			@OrderedList(props.Data, "genre")
 		} else {
@@ -104,10 +121,15 @@ type MostWatchedLanguagesProps struct {
 }
 
 templ MostWatchedLanguages(props MostWatchedLanguagesProps) {
-	@Section("", 0, 0) {
-		@SectionTitleWithDropdown("Language") {
-			@Dropdown(DropdownProps{Route: "/stats/languages", Name: "year", Options: props.Years, Value: props.Year})
-		}
+	@section.Section(section.Props{
+		Title: "Language",
+		Action: dropdown.Dropdown(dropdown.Props{
+			Route:   "/stats/languages",
+			Name:    "year",
+			Options: props.Years,
+			Value:   props.Year,
+		}),
+	}) {
 		if len(props.Data) > 0 {
 			@OrderedList(props.Data, "language")
 		} else {
