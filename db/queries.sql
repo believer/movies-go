@@ -8,12 +8,12 @@ SELECT
     ELSE
         INITCAP(mp.job::text)
     END AS job,
-    ARRAY_AGG(p.name ORDER BY num_movies DESC, p.popularity DESC) AS people_names,
-    ARRAY_AGG(p.id ORDER BY num_movies DESC, p.popularity DESC) AS people_ids,
+    ARRAY_AGG(p.name ORDER BY num_movies DESC, p.popularity DESC, p.name ASC) AS people_names,
+    ARRAY_AGG(p.id ORDER BY num_movies DESC, p.popularity DESC, p.name ASC) AS people_ids,
     CASE mp.job
     WHEN 'cast' THEN
         ARRAY_AGG(COALESCE(mp.character, '')
-        ORDER BY num_movies DESC, p.popularity DESC)
+        ORDER BY num_movies DESC, p.popularity DESC, p.name ASC)
     ELSE
         ARRAY[]::text[]
     END AS characters
