@@ -2,6 +2,7 @@ package views
 
 import (
 	c "believer/movies/components"
+	"believer/movies/components/input"
 	"believer/movies/types"
 )
 
@@ -75,7 +76,14 @@ templ NewMovie(props NewMovieProps) {
 				></div>
 				@c.Help("For example, https://www.imdb.com/title/tt0111161/, or just tt0111161.")
 			</div>
-			@c.NumberInput(c.NumberInputProps{Name: "rating", Label: "Rating", HelpText: "A value between 0 and 10", Min: 0, Max: 10, Required: true})
+			@input.Number(input.NumberProps{
+				Name:     "rating",
+				Label:    "Rating",
+				HelpText: "A value between 0 and 10",
+				Min:      0,
+				Max:      10,
+				Required: true,
+			})
 			if !props.InWatchlist {
 				<div class="flex gap-x-2 items-center">
 					<input type="checkbox" name="watchlist" id="watchlist" class="rounded-sm accent-neutral-700 border border-neutral-700 bg-neutral-800 focus:outline-dashed focus:outline-offset-2 focus:outline-neutral-500" _="on click if me.checked remove @required from #rating otherwise add @required='' to #rating"/>
@@ -120,7 +128,12 @@ templ NewMovie(props NewMovieProps) {
 						<div class="text-xs text-content-secondary hidden" id="series_name"></div>
 						<div hx-get="/movie/new/series" hx-swap="outerHTML" hx-trigger="load"></div>
 					</div>
-					@c.NumberInput(c.NumberInputProps{Name: "number_in_series", Label: "Number in series", Min: 0, Max: 1000})
+					@input.Number(input.NumberProps{
+						Name:  "number_in_series",
+						Label: "Number in series",
+						Min:   0,
+						Max:   1000,
+					})
 					<div class="flex gap-x-2 items-center">
 						<input type="checkbox" name="wilhelm_scream" id="wilhelm_scream" class="rounded-sm accent-neutral-700 border border-neutral-700 bg-neutral-800 focus:outline-dashed focus:outline-offset-2 focus:outline-neutral-500"/>
 						@c.Label("wilhelm_scream", "Wilhelm scream")

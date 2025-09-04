@@ -1,0 +1,55 @@
+package input
+
+import "strconv"
+
+type NumberProps struct {
+	Name     string
+	Label    string
+	HelpText string
+	Min      int
+	Max      int
+	Required bool
+	Value    int
+}
+
+var inputClass = "w-full rounded-sm border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-hidden focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500 appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+
+templ Label(name string, label string) {
+	if label != "" {
+		<label
+			for={ name }
+			class="text-sm font-semibold text-neutral-500 dark:text-neutral-400 group-has-required:after:content-['*'] after:text-neutral-400 dark:after:text-neutral-500"
+		>
+			{ label }
+		</label>
+	}
+}
+
+templ Help(text string) {
+	<div class="text-xs text-neutral-500 dark:text-neutral-400">
+		{ text }
+	</div>
+}
+
+templ Number(props NumberProps) {
+	<div class="relative flex flex-col gap-2 group">
+		@Label(props.Name, props.Label)
+		<input
+			if props.Required {
+				required
+			}
+			type="number"
+			name={ props.Name }
+			id={ props.Name }
+			class={ inputClass }
+			min={ strconv.Itoa(props.Min) }
+			max={ strconv.Itoa(props.Max) }
+			if props.Value > 0 {
+				value={ props.Value }
+			}
+		/>
+		if props.HelpText != "" {
+			@Help(props.HelpText)
+		}
+	</div>
+}

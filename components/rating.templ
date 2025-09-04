@@ -1,6 +1,7 @@
 package components
 
 import (
+	"believer/movies/components/input"
 	"fmt"
 	"strconv"
 	"time"
@@ -63,7 +64,7 @@ templ EditRating(props EditRatingProps) {
 		hx-on::before-cleanup-element="document.body.dispatchEvent(new Event('update-rating'))"
 		class="flex flex-row gap-x-4"
 	>
-		@NumberInput(NumberInputProps{
+		@input.Number(input.NumberProps{
 			Name:     "rating",
 			Min:      0,
 			Max:      10,
@@ -107,7 +108,7 @@ templ AddRatingForm(props AddRatingProps) {
 			class="flex flex-row gap-x-4"
 		>
 			<div class="flex-1">
-				@NumberInput(NumberInputProps{
+				@input.Number(input.NumberProps{
 					Name:     "rating",
 					Min:      0,
 					Max:      10,

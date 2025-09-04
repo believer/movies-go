@@ -10,6 +10,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	c "believer/movies/components"
+	"believer/movies/components/input"
 	"believer/movies/types"
 )
 
@@ -90,7 +91,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(props.Movie.Title)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/newMovie.templ`, Line: 28, Col: 39}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/newMovie.templ`, Line: 29, Col: 39}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -142,7 +143,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(props.ImdbID)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/newMovie.templ`, Line: 68, Col: 26}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/newMovie.templ`, Line: 69, Col: 26}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -165,7 +166,14 @@ func NewMovie(props NewMovieProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = c.NumberInput(c.NumberInputProps{Name: "rating", Label: "Rating", HelpText: "A value between 0 and 10", Min: 0, Max: 10, Required: true}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = input.Number(input.NumberProps{
+				Name:     "rating",
+				Label:    "Rating",
+				HelpText: "A value between 0 and 10",
+				Min:      0,
+				Max:      10,
+				Required: true,
+			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -219,7 +227,12 @@ func NewMovie(props NewMovieProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = c.NumberInput(c.NumberInputProps{Name: "number_in_series", Label: "Number in series", Min: 0, Max: 1000}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = input.Number(input.NumberProps{
+				Name:  "number_in_series",
+				Label: "Number in series",
+				Min:   0,
+				Max:   1000,
+			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
