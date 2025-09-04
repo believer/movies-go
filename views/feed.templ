@@ -4,10 +4,10 @@ import (
 	c "believer/movies/components"
 	"believer/movies/components/empty-state"
 	"believer/movies/components/icon"
+	"believer/movies/components/link"
 	"believer/movies/types"
 	"fmt"
 	"strconv"
-	"believer/movies/components/link"
 )
 
 type FeedProps struct {
@@ -39,10 +39,12 @@ templ Feed(props FeedProps) {
 						@icon.Icon(icon.Props{Name: icon.Plus})
 					</a>
 					<a
-						class="truncate border-b border-dashed border-content-secondary link-focus"
+						class="md:text-sm truncate border-b border-dashed border-content-secondary link-focus"
 						href="/logout"
 						hx-post="/logout"
-					>Logout</a>
+					>
+						Logout
+					</a>
 				</div>
 			} else {
 				<div class="md:absolute right-8 top-10 flex gap-4">
