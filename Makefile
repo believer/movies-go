@@ -20,3 +20,6 @@ build-prod:
 	@templ generate
 	@./hasher.sh
 	@go build -v -o /run-app .
+
+test:
+	@go test ./...
