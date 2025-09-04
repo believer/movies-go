@@ -5,6 +5,7 @@ import (
 	"believer/movies/components/dropdown"
 	"believer/movies/components/empty-state"
 	"believer/movies/components/icon"
+	"believer/movies/components/link"
 	"believer/movies/components/section"
 	"believer/movies/components/separator"
 	"believer/movies/types"
@@ -34,18 +35,18 @@ templ WatchlistList(movies types.Movies, title string, route string, currentOrde
 		<ol class="flex flex-col gap-2 md:text-sm text-content-secondary">
 			for _, movie := range movies {
 				<li class="flex items-end justify-between gap-4">
-					@c.Link(c.LinkProps{Href: movie.LinkTo()}) {
+					@link.Link(link.Props{Href: movie.LinkTo()}) {
 						{ movie.Title }
 					}
 					@separator.Separator()
 					<span class="flex items-center gap-x-2 relative top-1">
 						<span class="tabular-nums whitespace-nowrap">
 							if currentOrder == "Date added" {
-								@c.SimpleLink(c.SimpleLinkProps{Href: movie.LinkToCreatedYear()}) {
+								@link.Link(link.Props{Href: movie.LinkToCreatedYear()}) {
 									{ movie.ISOCreatedDate() }
 								}
 							} else if currentOrder == "Release date" {
-								@c.SimpleLink(c.SimpleLinkProps{Href: movie.LinkToCreatedYear()}) {
+								@link.Link(link.Props{Href: movie.LinkToCreatedYear()}) {
 									{ movie.ISOReleaseDate() }
 								}
 							}

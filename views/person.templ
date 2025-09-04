@@ -2,6 +2,7 @@ package views
 
 import (
 	c "believer/movies/components"
+	"believer/movies/components/link"
 	"believer/movies/components/section"
 	"believer/movies/components/separator"
 	"believer/movies/types"
@@ -15,15 +16,15 @@ templ credit(title string, data types.PersonMovies) {
 				for _, movie := range data {
 					<li>
 						<div class="flex items-end gap-x-4">
-							@c.Link(c.LinkProps{Href: movie.LinkTo(), Long: len(movie.Title) > 60}) {
+							@link.Link(link.Props{Href: movie.LinkTo(), Long: len(movie.Title) > 60}) {
 								{ movie.Title }
 							}
 							@separator.Separator()
 							<span class="flex items-center gap-x-2">
-								@c.SimpleLink(c.SimpleLinkProps{Href: movie.LinkToYear()}) {
+								@link.Link(link.Props{Href: movie.LinkToYear()}) {
 									{ movie.ReleaseYear() }
 								}
-								@Seen(SeenProps{
+								@c.Seen(c.SeenProps{
 									Title: title,
 									Seen:  movie.Seen,
 									ID:    movie.ID,

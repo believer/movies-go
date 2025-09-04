@@ -3,6 +3,7 @@ package components
 import (
 	"believer/movies/components/dropdown"
 	"believer/movies/components/empty-state"
+	"believer/movies/components/link"
 	"believer/movies/components/section"
 	"believer/movies/components/separator"
 	"believer/movies/types"
@@ -34,7 +35,7 @@ templ HighestRating(props HighestRatingProps) {
 						<div class="text-right tabular-nums w-[2ch] text-neutral-400 dark:text-neutral-600">
 							{ strconv.Itoa(i+1) }
 						</div>
-						@Link(LinkProps{Href: item.LinkTo()}) {
+						@link.Link(link.Props{Href: item.LinkTo()}) {
 							{ item.Name }
 						}
 						@separator.Separator()

@@ -1,5 +1,7 @@
 package views
 
+import "believer/movies/components/input"
+
 import c "believer/movies/components"
 
 templ Login() {
@@ -10,8 +12,8 @@ templ Login() {
 			hx-swap="outerHTML"
 			hx-replace-url="/"
 		>
-			@c.TextInput(c.TextInputProps{Name: "username", Label: "Username"})
-			@c.PasswordInput("password", "Password", "")
+			@input.Text(input.TextProps{Name: "username", Label: "Username"})
+			@input.Password(input.PasswordProps{Name: "password", Label: "Password"})
 			<footer class="flex flex-col gap-4">
 				<div id="error" class="empty:hidden text-rose-700 dark:text-rose-400 border border-dashed border-rose-700 dark:border-rose-400 p-4 rounded-sm"></div>
 				<button

@@ -1,6 +1,7 @@
 package components
 
 import (
+	"believer/movies/components/link"
 	"believer/movies/components/separator"
 	"believer/movies/utils"
 	"fmt"
@@ -47,19 +48,19 @@ templ OrderedList(data []ListItem, listType string) {
 					{ strconv.Itoa(i+1) }
 				</div>
 				if listType == "movie" {
-					@Link(LinkProps{Href: item.LinkToMovie()}) {
+					@link.Link(link.Props{Href: item.LinkToMovie()}) {
 						{ item.Name }
 					}
 				} else if listType == "person" {
-					@Link(LinkProps{Href: item.LinkToPerson()}) {
+					@link.Link(link.Props{Href: item.LinkToPerson()}) {
 						{ item.Name }
 					}
 				} else if listType == "genre" {
-					@Link(LinkProps{Href: item.LinkToGenre()}) {
+					@link.Link(link.Props{Href: item.LinkToGenre()}) {
 						{ item.Name }
 					}
 				} else if listType == "language" {
-					@Link(LinkProps{Href: item.LinkToLanguage()}) {
+					@link.Link(link.Props{Href: item.LinkToLanguage()}) {
 						{ item.Name }
 					}
 				}

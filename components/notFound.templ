@@ -1,5 +1,7 @@
 package components
 
+import "believer/movies/components/link"
+
 templ NotFound() {
 	@Layout(LayoutProps{Title: "Not found"}) {
 		<div class="flex items-center justify-center h-dvh">
@@ -7,7 +9,7 @@ templ NotFound() {
 				<h1 class="text-xl font-bold">
 					Not found
 				</h1>
-				@Link(LinkProps{ToRoot: true}) {
+				@link.Link(link.Props{ToRoot: true}) {
 					Go back home
 				}
 			</div>

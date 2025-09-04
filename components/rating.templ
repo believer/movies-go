@@ -2,6 +2,7 @@ package components
 
 import (
 	"believer/movies/components/input"
+	"believer/movies/components/link"
 	"fmt"
 	"strconv"
 	"time"
@@ -21,7 +22,7 @@ templ Rating(props RatingProps) {
 
 templ GetRating(props RatingProps) {
 	<div class="flex flex-row gap-x-4" id="rating-value">
-		@SimpleLink(SimpleLinkProps{Href: templ.SafeURL(fmt.Sprintf("/rating/%d", props.Rating))}) {
+		@link.Link(link.Props{Href: templ.SafeURL(fmt.Sprintf("/rating/%d", props.Rating))}) {
 			<time
 				title={ props.RatedAt.Format("2006-01-02 15:04") }
 				datetime={ props.RatedAt.Format("2006-01-02T15:04:05Z") }

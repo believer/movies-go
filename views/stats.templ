@@ -3,6 +3,7 @@ package views
 import (
 	c "believer/movies/components"
 	"believer/movies/components/empty-state"
+	"believer/movies/components/link"
 	"believer/movies/components/section"
 	"believer/movies/components/separator"
 	"believer/movies/types"
@@ -47,7 +48,7 @@ templ Stats(props StatsProps) {
 		<div class="mx-auto flex max-w-xl lg:max-w-5xl flex-col gap-y-8 px-5 pb-8 pt-8 lg:pt-12">
 			<nav>
 				<div class="left-5 top-5 md:absolute">
-					@c.Link(c.LinkProps{Href: "/"}) {
+					@link.Link(link.Props{Href: "/"}) {
 						Home
 					}
 				</div>
@@ -92,7 +93,7 @@ templ Stats(props StatsProps) {
 								@c.DescriptionListItem(c.DescriptionListItemProps{
 									Detail: "Shortest movie",
 								}) {
-									@c.Link(c.LinkProps{Href: templ.URL(fmt.Sprintf("/movie/%d", props.ShortestAndLongestMovie[0].ID))}) {
+									@link.Link(link.Props{Href: templ.URL(fmt.Sprintf("/movie/%d", props.ShortestAndLongestMovie[0].ID))}) {
 										{ props.ShortestAndLongestMovie[0].Title }
 									}
 									<span class="text-xs">
@@ -102,7 +103,7 @@ templ Stats(props StatsProps) {
 								@c.DescriptionListItem(c.DescriptionListItemProps{
 									Detail: "Longest movie",
 								}) {
-									@c.Link(c.LinkProps{Href: templ.URL(fmt.Sprintf("/movie/%d", props.ShortestAndLongestMovie[1].ID))}) {
+									@link.Link(link.Props{Href: templ.URL(fmt.Sprintf("/movie/%d", props.ShortestAndLongestMovie[1].ID))}) {
 										{ props.ShortestAndLongestMovie[1].Title }
 									}
 									<span class="text-xs">
@@ -118,7 +119,7 @@ templ Stats(props StatsProps) {
 								Detail:    "Most awarded person",
 								IsTabular: true,
 							}) {
-								@c.Link(c.LinkProps{Href: props.AwardWins.LinkTo()}) {
+								@link.Link(link.Props{Href: props.AwardWins.LinkTo()}) {
 									{ props.AwardWins.Name }
 								}
 								({ strconv.Itoa( props.AwardWins.Count ) })
@@ -127,7 +128,7 @@ templ Stats(props StatsProps) {
 								Detail:    "Most nominations",
 								IsTabular: true,
 							}) {
-								@c.Link(c.LinkProps{Href: props.AwardNominations.LinkTo()}) {
+								@link.Link(link.Props{Href: props.AwardNominations.LinkTo()}) {
 									{ props.AwardNominations.Name }
 								}
 								({ strconv.Itoa( props.AwardNominations.Count ) })
@@ -140,7 +141,7 @@ templ Stats(props StatsProps) {
 									@c.Ol() {
 										for _, m := range props.MostAwardedMovies {
 											<div class="flex items-center gap-x-1">
-												@c.Link(c.LinkProps{Href: m.LinkTo()}) {
+												@link.Link(link.Props{Href: m.LinkTo()}) {
 													{ m.Title }
 												}
 											</div>

@@ -1,4 +1,4 @@
-package components
+package link
 
 import (
 	"context"
@@ -24,7 +24,7 @@ func TestLink(t *testing.T) {
 	ctx := templ.WithChildren(context.Background(), children)
 
 	go func() {
-		_ = Link(LinkProps{
+		_ = Link(Props{
 			Href: templ.SafeURL(href),
 		}).Render(ctx, w)
 		_ = w.Close()
@@ -65,7 +65,7 @@ func TestLinkWithHyperscript(t *testing.T) {
 	ctx := templ.WithChildren(context.Background(), children)
 
 	go func() {
-		_ = Link(LinkProps{
+		_ = Link(Props{
 			Href:        templ.SafeURL(href),
 			Hyperscript: hyperscript,
 		}).Render(ctx, w)

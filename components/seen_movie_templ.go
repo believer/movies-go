@@ -10,6 +10,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import "fmt"
 import "believer/movies/components/icon"
+import "believer/movies/components/popover"
 
 type SeenProps struct {
 	ImdbId string
@@ -95,7 +96,7 @@ func AddWatch(id int, imdbId string) templ.Component {
 			var templ_7745c5c3_Var4 templ.SafeURL
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(fmt.Sprintf("/movie/new?imdbId=%s&id=%d", imdbId, id)))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/seen_movie.templ`, Line: 22, Col: 74}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/seen_movie.templ`, Line: 23, Col: 74}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -248,20 +249,20 @@ func Seen(props SeenProps) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		if props.Seen {
-			templ_7745c5c3_Err = Popover(
-				fmt.Sprintf("--anchor-%s-%d", props.Title, props.ID),
-				SeenContent(props.ID, props.ImdbId),
-				SeenToggle(),
-			).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = popover.Popover(popover.Props{
+				AnchorName: fmt.Sprintf("--anchor-%s-%d", props.Title, props.ID),
+				Content:    SeenContent(props.ID, props.ImdbId),
+				Toggle:     SeenToggle(),
+			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = Popover(
-				fmt.Sprintf("--anchor-%s-%d", props.Title, props.ID),
-				UnseenContent(props.ID, props.ImdbId),
-				UnseenToggle(),
-			).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = popover.Popover(popover.Props{
+				AnchorName: fmt.Sprintf("--anchor-%s-%d", props.Title, props.ID),
+				Content:    UnseenContent(props.ID, props.ImdbId),
+				Toggle:     UnseenToggle(),
+			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

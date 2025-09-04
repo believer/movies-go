@@ -10,6 +10,8 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	c "believer/movies/components"
+	"believer/movies/components/input"
+	"believer/movies/components/link"
 	"fmt"
 )
 
@@ -59,7 +61,7 @@ func UpdateWatched(props UpdateWatchedProps) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/movie/%s/seen/%s/edit", props.MovieId, props.SeenId))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/updateWatched.templ`, Line: 17, Col: 78}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/updateWatched.templ`, Line: 19, Col: 78}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -87,7 +89,7 @@ func UpdateWatched(props UpdateWatchedProps) templ.Component {
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = c.Link(c.LinkProps{Href: "/"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = link.Link(link.Props{Href: "/"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -95,7 +97,12 @@ func UpdateWatched(props UpdateWatchedProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = c.DateTimeInput("watched_at", "Watched at", "Defaults to current time if left empty. Time zone is UTC.", props.Time).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = input.DateTime(input.DateTimeProps{
+				Name:     "watched_at",
+				Label:    "Watched at",
+				HelpText: "Defaults to current time if left empty. Time zone is UTC.",
+				Value:    props.Time,
+			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

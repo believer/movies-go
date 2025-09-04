@@ -2,6 +2,8 @@ package views
 
 import (
 	c "believer/movies/components"
+	"believer/movies/components/input"
+	"believer/movies/components/link"
 	"fmt"
 )
 
@@ -19,11 +21,16 @@ templ UpdateWatched(props UpdateWatchedProps) {
 			class="mx-auto flex max-w-xl flex-col gap-y-6 px-4 py-8"
 		>
 			<div>
-				@c.Link(c.LinkProps{Href: "/"}) {
+				@link.Link(link.Props{Href: "/"}) {
 					Back
 				}
 			</div>
-			@c.DateTimeInput("watched_at", "Watched at", "Defaults to current time if left empty. Time zone is UTC.", props.Time)
+			@input.DateTime(input.DateTimeProps{
+				Name:     "watched_at",
+				Label:    "Watched at",
+				HelpText: "Defaults to current time if left empty. Time zone is UTC.",
+				Value:    props.Time,
+			})
 			<footer class="flex flex-col gap-y-4">
 				<div id="error" class="empty:hidden text-rose-700 dark:text-rose-400 border border-dashed border-rose-700 dark:border-rose-400 p-4 rounded-sm"></div>
 				<button

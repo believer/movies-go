@@ -31,6 +31,63 @@ templ Help(text string) {
 	</div>
 }
 
+/* Text
+ * =========================================================== */
+
+type TextProps struct {
+	Name     string
+	Label    string
+	HelpText string
+	Value    string
+}
+
+templ Text(props TextProps) {
+	<div class="relative flex flex-col gap-2">
+		@Label(props.Name, props.Label)
+		<input
+			required
+			type="text"
+			name={ props.Name }
+			id={ props.Name }
+			class={ inputClass }
+			if props.Value != "" {
+				value={ props.Value }
+			}
+		/>
+		if props.HelpText != "" {
+			@Help(props.HelpText)
+		}
+	</div>
+}
+
+/* Password
+ * =========================================================== */
+
+type PasswordProps struct {
+	Name     string
+	Label    string
+	HelpText string
+}
+
+templ Password(props PasswordProps) {
+	<div class="relative flex flex-col gap-2">
+		@Label(props.Name, props.Label)
+		<input
+			required
+			type="password"
+			name={ props.Name }
+			id={ props.Name }
+			class={ inputClass }
+		/>
+		if props.HelpText != "" {
+			@Help(props.HelpText)
+		}
+	</div>
+}
+
+/* Number
+ * =========================================================== */
+
 templ Number(props NumberProps) {
 	<div class="relative flex flex-col gap-2 group">
 		@Label(props.Name, props.Label)
@@ -47,6 +104,32 @@ templ Number(props NumberProps) {
 			if props.Value > 0 {
 				value={ props.Value }
 			}
+		/>
+		if props.HelpText != "" {
+			@Help(props.HelpText)
+		}
+	</div>
+}
+
+/* DateTime
+ * =========================================================== */
+
+type DateTimeProps struct {
+	Name     string
+	Label    string
+	HelpText string
+	Value    string
+}
+
+templ DateTime(props DateTimeProps) {
+	<div class="relative flex flex-col gap-2">
+		@Label(props.Name, props.Label)
+		<input
+			type="datetime-local"
+			name={ props.Name }
+			id={ props.Name }
+			class={ inputClass, "h-11 dark:[color-scheme:dark]" }
+			value={ props.Value }
 		/>
 		if props.HelpText != "" {
 			@Help(props.HelpText)

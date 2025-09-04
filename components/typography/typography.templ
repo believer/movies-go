@@ -1,0 +1,28 @@
+package typography
+
+import "believer/movies/components/link"
+
+type Props struct {
+	ToRoot bool
+}
+
+templ H1(props ...Props) {
+	{{ var p Props }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<header class="flex gap-x-2 items-baseline text-xl font-semibold">
+		@link.Link(link.Props{
+			AriaLabel:   "Back",
+			Href:        "#",
+			Hyperscript: "on click go back",
+			ToRoot:      p.ToRoot,
+		}) {
+			..
+		}
+		<span class="font-regular text-neutral-400">/</span>
+		<h1>
+			{ children... }
+		</h1>
+	</header>
+}

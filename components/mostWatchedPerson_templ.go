@@ -11,6 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"believer/movies/components/dropdown"
 	"believer/movies/components/empty-state"
+	"believer/movies/components/link"
 	"believer/movies/components/section"
 	"believer/movies/components/separator"
 	"believer/movies/types"
@@ -71,7 +72,7 @@ func HighestRating(props HighestRatingProps) templ.Component {
 					var templ_7745c5c3_Var3 string
 					templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(i + 1))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/mostWatchedPerson.templ`, Line: 35, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/mostWatchedPerson.templ`, Line: 36, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 					if templ_7745c5c3_Err != nil {
@@ -96,7 +97,7 @@ func HighestRating(props HighestRatingProps) templ.Component {
 						var templ_7745c5c3_Var5 string
 						templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(item.Name)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/mostWatchedPerson.templ`, Line: 38, Col: 18}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/mostWatchedPerson.templ`, Line: 39, Col: 18}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 						if templ_7745c5c3_Err != nil {
@@ -104,7 +105,7 @@ func HighestRating(props HighestRatingProps) templ.Component {
 						}
 						return nil
 					})
-					templ_7745c5c3_Err = Link(LinkProps{Href: item.LinkTo()}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = link.Link(link.Props{Href: item.LinkTo()}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -119,7 +120,7 @@ func HighestRating(props HighestRatingProps) templ.Component {
 					var templ_7745c5c3_Var6 string
 					templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(item.Appearances))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/mostWatchedPerson.templ`, Line: 42, Col: 101}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/mostWatchedPerson.templ`, Line: 43, Col: 101}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 					if templ_7745c5c3_Err != nil {
@@ -132,7 +133,7 @@ func HighestRating(props HighestRatingProps) templ.Component {
 					var templ_7745c5c3_Var7 string
 					templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(item.Rank())
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/mostWatchedPerson.templ`, Line: 43, Col: 20}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/mostWatchedPerson.templ`, Line: 44, Col: 20}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 					if templ_7745c5c3_Err != nil {
@@ -267,7 +268,7 @@ func MostWatchedPerson(props MostWatchedPersonProps) templ.Component {
 			var templ_7745c5c3_Var12 string
 			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(props.Total)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/mostWatchedPerson.templ`, Line: 86, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/mostWatchedPerson.templ`, Line: 87, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {

@@ -3,15 +3,46 @@ package link
 import "believer/movies/utils"
 
 type Props struct {
-	Class string
-	Href  templ.SafeURL
+	AriaLabel   string
+	Class       string
+	Href        templ.SafeURL
+	Hyperscript string
+	Long        bool
+	ToRoot      bool
 }
 
 templ Link(p Props) {
 	<a
-		class={ utils.TwMerge("md:text-sm tabular-nums inline-flex items-center gap-1 border-b border-dashed border-content-secondary link-focus", p.Class) }
-		href={ p.Href }
+		if p.AriaLabel != "" {
+			aria-label={ p.AriaLabel }
+		}
+		class={ utils.TwMerge(
+  "md:text-sm tabular-nums inline-flex items-center gap-1 link-focus",
+  // Border
+  "border-b border-dashed border-content-secondary",
+  // Long links
+  utils.If(p.Long, "flex-1 basis-3/5"),
+  p.Class,
+  ) }
+		if p.ToRoot {
+			href="/"
+		} else {
+			href={ p.Href }
+			if p.Hyperscript != "" {
+				_={ p.Hyperscript }
+			}
+		}
 	>
 		{ children... }
 	</a>
+}
+
+templ Home() {
+	<nav>
+		<div class="left-5 top-5 md:absolute">
+			@Link(Props{Href: "/"}) {
+				Home
+			}
+		</div>
+	</nav>
 }

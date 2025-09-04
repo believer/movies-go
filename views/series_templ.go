@@ -161,7 +161,7 @@ func seriesList(movies types.MoviesInSeries) templ.Component {
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
-						templ_7745c5c3_Err = Seen(SeenProps{
+						templ_7745c5c3_Err = c.Seen(c.SeenProps{
 							Title:  "genre",
 							Seen:   movie.Seen,
 							ImdbId: movie.ImdbId,

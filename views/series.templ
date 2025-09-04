@@ -30,7 +30,7 @@ templ seriesList(movies types.MoviesInSeries) {
 					@link.Link(link.Props{Href: movie.LinkToYear()}) {
 						{ movie.ISOReleaseDate() }
 					}
-					@Seen(SeenProps{
+					@c.Seen(c.SeenProps{
 						Title:  "genre",
 						Seen:   movie.Seen,
 						ImdbId: movie.ImdbId,

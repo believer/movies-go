@@ -1,5 +1,8 @@
 package components
 
+import "believer/movies/components/link"
+import "believer/movies/components/typography"
+
 type LayoutProps struct {
 	Title       string
 	Description string
@@ -63,8 +66,10 @@ templ Layout(props LayoutProps) {
 
 templ StandardBody(title string) {
 	<section class="mx-auto flex max-w-xl flex-col gap-y-8 px-5 pt-8 pb-[calc(env(safe-area-inset-bottom)+32px)]">
-		@LinkHome()
-		@H1(title, false)
+		@link.Home()
+		@typography.H1() {
+			{ title }
+		}
 		{ children... }
 	</section>
 }

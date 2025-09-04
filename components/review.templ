@@ -3,6 +3,7 @@ package components
 import "believer/movies/types"
 import "fmt"
 import "believer/movies/components/section"
+import "believer/movies/components/input"
 
 templ Review(props types.Review) {
 	if (props.Private == false && props.Content != "") {
@@ -51,7 +52,7 @@ templ EditReview(props types.Review) {
 					checked="true"
 				}
 			/>
-			@Label("review_private", "Review is private")
+			@input.Label("review_private", "Review is private")
 		</div>
 		<footer>
 			<button

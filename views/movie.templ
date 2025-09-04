@@ -3,6 +3,7 @@ package views
 import (
 	c "believer/movies/components"
 	"believer/movies/components/icon"
+	"believer/movies/components/link"
 	"believer/movies/components/section"
 	"believer/movies/types"
 	"fmt"
@@ -41,7 +42,7 @@ templ Movie(props MovieProps) {
 						}
 					}
 					@c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Release date"}) {
-						@c.SimpleLink(c.SimpleLinkProps{Href: props.Movie.LinkToYear()}) {
+						@link.Link(link.Props{Href: props.Movie.LinkToYear()}) {
 							{ props.Movie.ISOReleaseDate() }
 						}
 					}
@@ -52,7 +53,7 @@ templ Movie(props MovieProps) {
 					}
 					if props.Movie.Series.Valid && props.Movie.NumberInSeries.Valid {
 						@c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Series"}) {
-							@c.SimpleLink(c.SimpleLinkProps{Href: props.Movie.LinkToSeries()}) {
+							@link.Link(link.Props{Href: props.Movie.LinkToSeries()}) {
 								{ props.Movie.Series.String } #{ strconv.FormatInt( props.Movie.NumberInSeries.Int64, 10 ) }
 							}
 						}

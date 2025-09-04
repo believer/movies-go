@@ -3,6 +3,7 @@ package views
 import (
 	c "believer/movies/components"
 	"believer/movies/components/input"
+	"believer/movies/components/link"
 	"believer/movies/types"
 )
 
@@ -20,7 +21,7 @@ templ NewMovie(props NewMovieProps) {
 			class="mx-auto flex max-w-xl flex-col gap-y-6 px-4 py-8"
 		>
 			<div>
-				@c.Link(c.LinkProps{Href: "/"}) {
+				@link.Link(link.Props{Href: "/"}) {
 					Back
 				}
 			</div>
@@ -31,7 +32,7 @@ templ NewMovie(props NewMovieProps) {
 			}
 			if props.ImdbID == "" {
 				<div class="flex flex-col gap-2 relative">
-					@c.Label("search", "Search")
+					@input.Label("search", "Search")
 					<input
 						type="text"
 						hx-get="/movie/search"
@@ -51,9 +52,9 @@ templ NewMovie(props NewMovieProps) {
 			}
 			<div class="flex flex-col gap-2">
 				if props.ImdbID != "" {
-					@c.Label("imdb_id", "IMDb ID")
+					@input.Label("imdb_id", "IMDb ID")
 				} else {
-					@c.Label("imdb_id", "IMDb ID or TMDB ID")
+					@input.Label("imdb_id", "IMDb ID or TMDB ID")
 				}
 				<input
 					required
@@ -74,7 +75,7 @@ templ NewMovie(props NewMovieProps) {
 					id="movie-exists"
 					class="text-xs empty:hidden lg:absolute lg:-right-52 lg:top-6 lg:w-48 lg:rounded-sm lg:p-2 lg:outline-dashed lg:outline-offset-4 lg:outline-neutral-500"
 				></div>
-				@c.Help("For example, https://www.imdb.com/title/tt0111161/, or just tt0111161.")
+				@input.Help("For example, https://www.imdb.com/title/tt0111161/, or just tt0111161.")
 			</div>
 			@input.Number(input.NumberProps{
 				Name:     "rating",
@@ -87,23 +88,27 @@ templ NewMovie(props NewMovieProps) {
 			if !props.InWatchlist {
 				<div class="flex gap-x-2 items-center">
 					<input type="checkbox" name="watchlist" id="watchlist" class="rounded-sm accent-neutral-700 border border-neutral-700 bg-neutral-800 focus:outline-dashed focus:outline-offset-2 focus:outline-neutral-500" _="on click if me.checked remove @required from #rating otherwise add @required='' to #rating"/>
-					@c.Label("watchlist", "Add to watchlist")
+					@input.Label("watchlist", "Add to watchlist")
 				</div>
 			}
 			<div class="flex flex-col gap-2 group">
-				@c.Label("review", "Review")
+				@input.Label("review", "Review")
 				<textarea name="review" id="review" class="w-full h-40 rounded-sm border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-hidden focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500 block"></textarea>
 				<div class="flex gap-x-2 items-center">
 					<input type="checkbox" name="review_private" id="review_private" class="rounded-sm accent-neutral-700 border border-neutral-700 bg-neutral-800 focus:outline-dashed focus:outline-offset-2 focus:outline-neutral-500"/>
-					@c.Label("review_private", "Review is private")
+					@input.Label("review_private", "Review is private")
 				</div>
 			</div>
 			<details>
 				<summary class="cursor-pointer">Additional fields</summary>
 				<div class="mt-4 flex flex-col gap-y-6">
-					@c.DateTimeInput("watched_at", "Watched at", "Defaults to current time if left empty.", "")
+					@input.DateTime(input.DateTimeProps{
+						Name:     "watched_at",
+						Label:    "Watched at",
+						HelpText: "Defaults to current time if left empty.",
+					})
 					<div class="flex flex-col gap-2">
-						@c.Label("series", "Series")
+						@input.Label("series", "Series")
 						<input
 							type="text"
 							name="series"
@@ -136,7 +141,7 @@ templ NewMovie(props NewMovieProps) {
 					})
 					<div class="flex gap-x-2 items-center">
 						<input type="checkbox" name="wilhelm_scream" id="wilhelm_scream" class="rounded-sm accent-neutral-700 border border-neutral-700 bg-neutral-800 focus:outline-dashed focus:outline-offset-2 focus:outline-neutral-500"/>
-						@c.Label("wilhelm_scream", "Wilhelm scream")
+						@input.Label("wilhelm_scream", "Wilhelm scream")
 					</div>
 				</div>
 			</details>

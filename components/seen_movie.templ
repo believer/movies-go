@@ -2,6 +2,7 @@ package components
 
 import "fmt"
 import "believer/movies/components/icon"
+import "believer/movies/components/popover"
 
 type SeenProps struct {
 	ImdbId string
@@ -50,16 +51,16 @@ templ UnseenContent(id int, imdbId string) {
 
 templ Seen(props SeenProps) {
 	if props.Seen {
-		@Popover(
-			fmt.Sprintf("--anchor-%s-%d", props.Title, props.ID),
-			SeenContent(props.ID, props.ImdbId),
-			SeenToggle(),
-		)
+		@popover.Popover(popover.Props{
+			AnchorName: fmt.Sprintf("--anchor-%s-%d", props.Title, props.ID),
+			Content:    SeenContent(props.ID, props.ImdbId),
+			Toggle:     SeenToggle(),
+		})
 	} else {
-		@Popover(
-			fmt.Sprintf("--anchor-%s-%d", props.Title, props.ID),
-			UnseenContent(props.ID, props.ImdbId),
-			UnseenToggle(),
-		)
+		@popover.Popover(popover.Props{
+			AnchorName: fmt.Sprintf("--anchor-%s-%d", props.Title, props.ID),
+			Content:    UnseenContent(props.ID, props.ImdbId),
+			Toggle:     UnseenToggle(),
+		})
 	}
 }

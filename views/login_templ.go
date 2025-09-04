@@ -8,6 +8,8 @@ package views
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+import "believer/movies/components/input"
+
 import c "believer/movies/components"
 
 func Login() templ.Component {
@@ -47,11 +49,11 @@ func Login() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = c.TextInput(c.TextInputProps{Name: "username", Label: "Username"}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = input.Text(input.TextProps{Name: "username", Label: "Username"}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = c.PasswordInput("password", "Password", "").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = input.Password(input.PasswordProps{Name: "password", Label: "Password"}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
