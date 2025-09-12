@@ -56,7 +56,7 @@ WHERE
 
 -- name: insert-movie
 INSERT INTO movie (title, runtime, release_date, imdb_id, overview, poster, tagline, wilhelm)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    VALUES ($1, $2, NULLIF ($3, '')::date, $4, $5, $6, $7, $8)
 ON CONFLICT (imdb_id)
     DO UPDATE SET
         title = excluded.title,

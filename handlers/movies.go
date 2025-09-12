@@ -617,19 +617,20 @@ func PostMovieNew(c *fiber.Ctx) error {
 
 		job := *crew.Job
 
-		if job == "Screenplay" || job == "Writer" || job == "Novel" {
+		switch job {
+		case "Screenplay", "Writer", "Novel":
 			job = "writer"
-		} else if job == "Original Music Composer" {
+		case "Original Music Composer":
 			job = "composer"
-		} else if job == "Producer" || job == "Associate Producer" || job == "Executive Producer" {
+		case "Producer", "Associate Producer", "Executive Producer":
 			job = "producer"
-		} else if job == "Director" {
+		case "Director":
 			job = "director"
-		} else if job == "Director of Photography" {
+		case "Director of Photography":
 			job = "cinematographer"
-		} else if job == "Editor" {
+		case "Editor":
 			job = "editor"
-		} else {
+		default:
 			continue
 		}
 
@@ -1105,4 +1106,318 @@ func UpdateMovieReview(c *fiber.Ctx) error {
 	}
 
 	return utils.Render(c, components.ReviewContent(review))
+}
+
+func UpdateMovieByID(c *fiber.Ctx) error {
+	isAuth := utils.IsAuthenticated(c)
+
+	if !isAuth {
+		return c.SendStatus(fiber.StatusUnauthorized)
+	}
+
+	userId := c.Locals("UserId").(string)
+
+	if userId != "1" {
+		return c.SendStatus(fiber.StatusUnauthorized)
+	}
+
+	id, err := c.ParamsInt("id")
+
+	if err != nil {
+		return err
+	}
+
+	imdbId := ""
+
+	err = db.Client.Get(&imdbId, "SELECT imdb_id FROM movie WHERE id = $1", id)
+
+	if err != nil {
+		return err
+	}
+
+	movie := tmdbFetchMovie(imdbId)
+	movieCast := tmdbFetchMovieCredits(imdbId)
+
+	tx := db.Client.MustBegin()
+
+	fmt.Println(
+		id,
+		movie.Title,
+		movie.Runtime,
+		movie.ReleaseDate,
+		movie.ImdbId,
+		movie.Overview,
+		movie.Poster,
+		movie.Tagline,
+	)
+
+	// Insert movie information
+	_, err = tx.Exec(`
+		UPDATE
+				movie
+		SET
+				title = $2,
+				runtime = $3,
+				release_date = NULLIF($4, '')::date,
+				imdb_id = $5,
+				overview = $6,
+				poster = $7,
+				tagline = $8,
+				updated_at = NOW()
+		WHERE
+				id = $1;
+	`,
+		id,
+		movie.Title,
+		movie.Runtime,
+		movie.ReleaseDate,
+		movie.ImdbId,
+		movie.Overview,
+		movie.Poster,
+		movie.Tagline,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	log.Println("Movie updated")
+
+	// Insert languages
+	type Language struct {
+		ISO639      string `db:"iso_639_1"`
+		EnglishName string `db:"english_name"`
+		Name        string `db:"name"`
+		MovieId     int    `db:"movie_id"`
+	}
+
+	languages := make([]Language, len(movie.SpokenLanguages))
+
+	for i, l := range movie.SpokenLanguages {
+		languages[i] = Language{
+			ISO639:      l.ISO639,
+			Name:        l.Name,
+			EnglishName: l.EnglishName,
+			MovieId:     id,
+		}
+	}
+
+	if len(languages) > 0 {
+		if _, err := tx.NamedExec(
+			`INSERT INTO language (name, english_name, iso_639_1) 
+     VALUES (:name, :english_name, :iso_639_1) 
+     ON CONFLICT DO NOTHING`, languages,
+		); err != nil {
+			return err
+		}
+
+		if _, err := tx.NamedExec(
+			`INSERT INTO movie_language (movie_id, language_id) 
+     VALUES (:movie_id, (SELECT id FROM language WHERE name = :name)) 
+     ON CONFLICT DO NOTHING`, languages,
+		); err != nil {
+			return err
+		}
+	}
+
+	// Insert genres
+	type Genre struct {
+		Name    string `db:"name"`
+		MovieId int    `db:"movie_id"`
+	}
+
+	genres := make([]Genre, len(movie.Genres))
+
+	for i, genre := range movie.Genres {
+		genres[i] = Genre{
+			Name:    genre.Name,
+			MovieId: id,
+		}
+	}
+
+	if len(genres) > 0 {
+		_, err = tx.NamedExec(`INSERT INTO genre (name) VALUES (:name) ON CONFLICT (name) DO NOTHING`, genres)
+
+		if err != nil {
+			return err
+		}
+
+		_, err = tx.NamedExec(`INSERT INTO movie_genre (movie_id, genre_id) VALUES (:movie_id, (SELECT id FROM genre WHERE name = :name)) ON CONFLICT DO NOTHING`, genres)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	log.Println("Genres updated")
+
+	var castStructs []NewPerson
+	var crewStructs []NewPerson
+
+	// Insert cast
+	for _, cast := range movieCast.Cast {
+		var pfp sql.NullString
+		var char sql.NullString
+
+		if cast.ProfilePath == nil {
+			pfp = sql.NullString{String: "", Valid: false}
+		} else {
+			pfp = sql.NullString{String: *cast.ProfilePath, Valid: true}
+		}
+
+		if cast.Character == nil {
+			char = sql.NullString{String: "", Valid: false}
+		} else {
+			char = sql.NullString{String: *cast.Character, Valid: true}
+		}
+
+		personIndex, exists := personExists(castStructs, cast.ID, "cast")
+
+		if exists {
+			castStructs[personIndex].Name = cast.Name
+			castStructs[personIndex].Popularity = cast.Popularity
+			castStructs[personIndex].Character = char
+			castStructs[personIndex].ProfilePicture = pfp
+
+			continue
+		}
+
+		castStructs = append(castStructs, NewPerson{
+			ID:             cast.ID,
+			Name:           cast.Name,
+			Popularity:     cast.Popularity,
+			Job:            sql.NullString{String: "cast", Valid: true},
+			Character:      char,
+			ProfilePicture: pfp,
+			MovieId:        id,
+		})
+	}
+
+	// Crew
+	for _, crew := range movieCast.Crew {
+		department := crew.Department
+
+		if department != "Directing" && department != "Writing" && department != "Production" && department != "Sound" && department != "Camera" && department != "Editing" {
+			continue
+		}
+
+		var pfp sql.NullString
+
+		if crew.ProfilePath == nil {
+			pfp = sql.NullString{String: "", Valid: false}
+		} else {
+			pfp = sql.NullString{String: *crew.ProfilePath, Valid: true}
+		}
+
+		if crew.Job == nil {
+			continue
+		}
+
+		job := *crew.Job
+
+		switch job {
+		case "Screenplay", "Writer", "Novel":
+			job = "writer"
+		case "Original Music Composer":
+			job = "composer"
+		case "Producer", "Associate Producer", "Executive Producer":
+			job = "producer"
+		case "Director":
+			job = "director"
+		case "Director of Photography":
+			job = "cinematographer"
+		case "Editor":
+			job = "editor"
+		default:
+			continue
+		}
+
+		jobStr := sql.NullString{String: job, Valid: true}
+		personIndex, exists := personExists(crewStructs, crew.Id, job)
+
+		if exists {
+			crewStructs[personIndex].Name = crew.Name
+			crewStructs[personIndex].Popularity = crew.Popularity
+			crewStructs[personIndex].ProfilePicture = pfp
+
+			continue
+		}
+
+		crewStructs = append(crewStructs, NewPerson{
+			ID:             crew.Id,
+			Name:           crew.Name,
+			Popularity:     crew.Popularity,
+			Job:            jobStr,
+			ProfilePicture: pfp,
+			MovieId:        id,
+		})
+	}
+
+	if len(castStructs) > 0 {
+		_, err = tx.NamedExec(`
+	INSERT INTO person (name, original_id, popularity, profile_picture)
+	VALUES (:name, :id, :popularity, :profile_picture)
+	ON CONFLICT DO NOTHING
+	`, castStructs)
+
+		if err != nil {
+			log.Println("Could not insert person")
+			return err
+		}
+
+		_, err = tx.NamedExec(`
+	INSERT INTO movie_person (movie_id, person_id, job, character)
+	    VALUES (:movie_id, (SELECT id FROM person WHERE original_id = :id), 'cast', :character)
+	ON CONFLICT (movie_id, person_id, job)
+	DO UPDATE SET character = excluded.character
+	`, castStructs)
+
+		if err != nil {
+			log.Println("Could not insert movie_person")
+			return err
+		}
+	}
+
+	log.Println("Cast updated")
+
+	if len(crewStructs) > 0 {
+		_, err = tx.NamedExec(`
+	INSERT INTO person (name, original_id, popularity, profile_picture)
+	VALUES (:name, :id, :popularity, :profile_picture)
+	ON CONFLICT DO NOTHING
+	`, crewStructs)
+
+		if err != nil {
+			log.Println("Could not insert crew")
+			return err
+		}
+
+		_, err = tx.NamedExec(`
+	INSERT INTO movie_person (movie_id, person_id, job)
+	   VALUES (:movie_id, (SELECT id FROM person WHERE original_id = :id), :job)
+	ON CONFLICT (movie_id, person_id, job)
+	DO UPDATE SET job = excluded.job
+	`, crewStructs)
+
+		if err != nil {
+			log.Println("Could not insert movie_person crew")
+			return err
+		}
+	}
+
+	log.Println("Crew updated")
+
+	err = tx.Commit()
+
+	if err != nil {
+		err = tx.Rollback()
+
+		return err
+	}
+
+	// Add awards
+	awards.Add(movie.ImdbId)
+
+	return c.SendStatus(fiber.StatusOK)
+
 }

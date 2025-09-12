@@ -38,9 +38,11 @@ func SetupRoutes(app *fiber.App) {
 	movieGroup.Get("/search", h.HandleSearch)
 	movieGroup.Get("/new", h.GetMovieNew)
 	movieGroup.Get("/new/series", h.GetMovieNewSeries)
+	// TODO: Should really be post to /movie
 	movieGroup.Post("/new", h.PostMovieNew)
 
 	movieGroup.Get("/:id", h.GetMovieByID)
+	movieGroup.Put("/:id", h.UpdateMovieByID)
 	movieGroup.Get("/:imdbId/awards", h.GetMovieAwards)
 	movieGroup.Get("/:id/cast", h.GetMovieCastByID)
 	movieGroup.Get("/:id/seen", h.GetMovieSeenByID)
