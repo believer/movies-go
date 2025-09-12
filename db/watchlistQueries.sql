@@ -38,6 +38,20 @@ ORDER BY
         m.release_date
     END ASC;
 
+-- name: watchlist-no-date
+SELECT
+    m.id,
+    m.title,
+    m.imdb_id,
+    m.release_date,
+    w.created_at
+FROM
+    watchlist w
+    INNER JOIN movie m ON m.id = w.movie_id
+WHERE
+    user_id = $1
+    AND m.release_date IS NULL;
+
 -- name: is-in-watchlist
 SELECT
     id

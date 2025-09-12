@@ -41,9 +41,11 @@ templ Movie(props MovieProps) {
 							{ props.Movie.OriginalTitle.String }
 						}
 					}
-					@c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Release date"}) {
-						@link.Link(link.Props{Href: props.Movie.LinkToYear()}) {
-							{ props.Movie.ISOReleaseDate() }
+					if props.Movie.ReleaseDate.Valid {
+						@c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Release date"}) {
+							@link.Link(link.Props{Href: props.Movie.LinkToYear()}) {
+								{ props.Movie.ISOReleaseDate() }
+							}
 						}
 					}
 					if props.Movie.Runtime != 0 {

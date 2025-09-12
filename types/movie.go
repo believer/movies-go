@@ -75,7 +75,7 @@ type Movie struct {
 	Poster         string          `db:"poster" json:"poster"`
 	Rating         sql.NullInt64   `db:"rating" json:"rating"`
 	RatedAt        sql.NullTime    `db:"rated_at" json:"ratedAt"`
-	ReleaseDate    time.Time       `db:"release_date" json:"releaseDate"`
+	ReleaseDate    sql.NullTime    `db:"release_date" json:"releaseDate"`
 	Runtime        int             `db:"runtime" json:"runtime"`
 	Seen           bool            `db:"seen" json:"seen"`
 	Series         sql.NullString  `db:"series" json:"series"`
@@ -94,7 +94,11 @@ func (m Movie) RuntimeFormatted() string {
 
 // The movie's release date formatted as ISO 8601 - YYYY-MM-DD
 func (m Movie) ISOReleaseDate() string {
-	return m.ReleaseDate.Format("2006-01-02")
+	if !m.ReleaseDate.Valid {
+		return ""
+	}
+
+	return m.ReleaseDate.Time.Format("2006-01-02")
 }
 
 func (m Movie) ISOCreatedDate() string {
@@ -102,7 +106,11 @@ func (m Movie) ISOCreatedDate() string {
 }
 
 func (m Movie) ReleaseDateOrCreatedAt() string {
-	if m.ReleaseDate.Year() == 1 {
+	if !m.ReleaseDate.Valid {
+		return ""
+	}
+
+	if m.ReleaseDate.Time.Year() == 1 {
 		return m.CreatedAt.Format("2006-01-02")
 	}
 
@@ -111,7 +119,11 @@ func (m Movie) ReleaseDateOrCreatedAt() string {
 
 // Release year
 func (m Movie) ReleaseYear() string {
-	return m.ReleaseDate.Format("2006")
+	if !m.ReleaseDate.Valid {
+		return ""
+	}
+
+	return m.ReleaseDate.Time.Format("2006")
 }
 
 // Link to the movie
@@ -120,7 +132,7 @@ func (m Movie) LinkTo() templ.SafeURL {
 }
 
 func (m Movie) LinkToReleaseYear() templ.SafeURL {
-	return templ.URL(fmt.Sprintf("/year/%s", m.ReleaseDate.Format("2006")))
+	return templ.URL(fmt.Sprintf("/year/%s", m.ReleaseDate.Time.Format("2006")))
 }
 
 func (m Movie) LinkToCreatedYear() templ.SafeURL {
@@ -129,7 +141,7 @@ func (m Movie) LinkToCreatedYear() templ.SafeURL {
 
 // Link to the movie's release year
 func (m Movie) LinkToYear() templ.SafeURL {
-	year := m.ReleaseDate
+	year := m.ReleaseDate.Time
 
 	if year.Year() == 1 {
 		year = m.CreatedAt

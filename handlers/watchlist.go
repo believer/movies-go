@@ -12,6 +12,7 @@ import (
 func GetWatchlist(c *fiber.Ctx) error {
 	var movies types.Movies
 	var unreleasedMovies types.Movies
+	var moviesWithoutReleaseDate types.Movies
 
 	userId := c.Locals("UserId")
 
@@ -27,9 +28,16 @@ func GetWatchlist(c *fiber.Ctx) error {
 		return err
 	}
 
+	err = db.Dot.Select(db.Client, &moviesWithoutReleaseDate, "watchlist-no-date", userId)
+
+	if err != nil {
+		return err
+	}
+
 	return utils.Render(c, views.Watchlist(views.WatchlistProps{
-		Movies:           movies,
-		UnreleasedMovies: unreleasedMovies,
+		Movies:                   movies,
+		UnreleasedMovies:         unreleasedMovies,
+		MoviesWithoutReleaseDate: moviesWithoutReleaseDate,
 	}))
 }
 
@@ -46,8 +54,12 @@ func GetWatchlistMovies(c *fiber.Ctx) error {
 	}
 
 	return utils.Render(c, views.WatchlistList(
-		movies, "Movies", "/watchlist/movies", sortOrder,
-	))
+		views.WatchlistListProps{
+			Movies: movies,
+			Title:  "Movies",
+			Action: views.SortWatchlist("/watchlist/movies", sortOrder),
+			Order:  sortOrder,
+		}))
 }
 
 func GetWatchlistUnreleasedMovies(c *fiber.Ctx) error {
@@ -63,8 +75,12 @@ func GetWatchlistUnreleasedMovies(c *fiber.Ctx) error {
 	}
 
 	return utils.Render(c, views.WatchlistList(
-		movies, "Movies", "/watchlist/unreleased-movies", sortOrder,
-	))
+		views.WatchlistListProps{
+			Movies: movies,
+			Title:  "Unreleased movies",
+			Action: views.SortWatchlist("/watchlist/unreleased-movies", sortOrder),
+			Order:  sortOrder,
+		}))
 }
 
 func DeleteFromWatchlist(c *fiber.Ctx) error {

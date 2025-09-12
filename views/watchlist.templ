@@ -13,11 +13,12 @@ import (
 )
 
 type WatchlistProps struct {
-	Movies           types.Movies
-	UnreleasedMovies types.Movies
+	Movies                   types.Movies
+	UnreleasedMovies         types.Movies
+	MoviesWithoutReleaseDate types.Movies
 }
 
-templ sortWatchlist(route string, currentOrder string) {
+templ SortWatchlist(route string, currentOrder string) {
 	@dropdown.Dropdown(dropdown.Props{
 		Name:    "sortOrder",
 		Route:   route,
@@ -26,35 +27,55 @@ templ sortWatchlist(route string, currentOrder string) {
 	})
 }
 
-templ WatchlistList(movies types.Movies, title string, route string, currentOrder string) {
+type ReleaseDate string
+
+const (
+	Released   ReleaseDate = "released"
+	Unreleased ReleaseDate = "unreleased"
+	NoDate     ReleaseDate = "nodate"
+)
+
+type WatchlistListProps struct {
+	Action      templ.Component
+	Movies      types.Movies
+	Order       string
+	ReleaseDate ReleaseDate
+	Title       string
+}
+
+templ WatchlistList(p WatchlistListProps) {
 	@section.Section(section.Props{
-		Action:        sortWatchlist(route, currentOrder),
-		NumberOfItems: len(movies),
-		Title:         title,
+		Action:        p.Action,
+		NumberOfItems: len(p.Movies),
+		Title:         p.Title,
 	}) {
 		<ol class="flex flex-col gap-2 md:text-sm text-content-secondary">
-			for _, movie := range movies {
+			for _, movie := range p.Movies {
 				<li class="flex items-end justify-between gap-4">
 					@link.Link(link.Props{Href: movie.LinkTo()}) {
 						{ movie.Title }
 					}
 					@separator.Separator()
 					<span class="flex items-center gap-x-2 relative top-1">
-						<span class="tabular-nums whitespace-nowrap">
-							if currentOrder == "Date added" {
-								@link.Link(link.Props{Href: movie.LinkToCreatedYear()}) {
-									{ movie.ISOCreatedDate() }
+						if p.Order != "" {
+							<span class="tabular-nums whitespace-nowrap">
+								if p.Order == "Date added" {
+									@link.Link(link.Props{Href: movie.LinkToCreatedYear()}) {
+										{ movie.ISOCreatedDate() }
+									}
+								} else if p.Order == "Release date" {
+									@link.Link(link.Props{Href: movie.LinkToCreatedYear()}) {
+										{ movie.ISOReleaseDate() }
+									}
 								}
-							} else if currentOrder == "Release date" {
-								@link.Link(link.Props{Href: movie.LinkToCreatedYear()}) {
-									{ movie.ISOReleaseDate() }
-								}
-							}
-						</span>
+							</span>
+						}
 						@c.IsAuthenticated() {
-							<a href={ movie.LinkToWatchlistAdd() } class="text-content-secondary hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors" title="Add watch">
-								@icon.Icon(icon.Props{Name: icon.Eye})
-							</a>
+							if p.ReleaseDate == Released {
+								<a href={ movie.LinkToWatchlistAdd() } class="text-content-secondary hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors" title="Add watch">
+									@icon.Icon(icon.Props{Name: icon.Eye})
+								</a>
+							}
 							<button
 								class="cursor-pointer text-content-quarternary hover:text-neutral-700 hover:dark:text-neutral-300 transition-colors"
 								hx-target="closest li"
@@ -76,14 +97,31 @@ templ Watchlist(props WatchlistProps) {
 	@c.Layout(c.LayoutProps{Title: "Watchlist"}) {
 		@c.StandardBody("Watchlist") {
 			if len(props.Movies) > 0 {
-				@WatchlistList(props.Movies, "Movies", "/watchlist/movies", "Date added")
+				@WatchlistList(WatchlistListProps{
+					Movies:      props.Movies,
+					Title:       "Movies",
+					Action:      SortWatchlist("/watchlist/movies", "Date added"),
+					Order:       "Date added",
+					ReleaseDate: Released,
+				})
 			} else {
 				@emptystate.EmptyState() {
 					Watchlist empty
 				}
 			}
 			if len(props.UnreleasedMovies) > 0 {
-				@WatchlistList(props.UnreleasedMovies, "Unreleased movies", "/watchlist/unreleased-movies", "Release date")
+				@WatchlistList(WatchlistListProps{
+					Movies: props.UnreleasedMovies,
+					Title:  "Unreleased movies",
+					Action: SortWatchlist("/watchlist/unreleased-movies", "Release date"),
+					Order:  "Release date",
+				})
+			}
+			if len(props.MoviesWithoutReleaseDate) > 0 {
+				@WatchlistList(WatchlistListProps{
+					Movies: props.MoviesWithoutReleaseDate,
+					Title:  "No release date",
+				})
 			}
 		}
 	}

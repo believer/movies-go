@@ -21,11 +21,12 @@ import (
 )
 
 type WatchlistProps struct {
-	Movies           types.Movies
-	UnreleasedMovies types.Movies
+	Movies                   types.Movies
+	UnreleasedMovies         types.Movies
+	MoviesWithoutReleaseDate types.Movies
 }
 
-func sortWatchlist(route string, currentOrder string) templ.Component {
+func SortWatchlist(route string, currentOrder string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -59,7 +60,23 @@ func sortWatchlist(route string, currentOrder string) templ.Component {
 	})
 }
 
-func WatchlistList(movies types.Movies, title string, route string, currentOrder string) templ.Component {
+type ReleaseDate string
+
+const (
+	Released   ReleaseDate = "released"
+	Unreleased ReleaseDate = "unreleased"
+	NoDate     ReleaseDate = "nodate"
+)
+
+type WatchlistListProps struct {
+	Action      templ.Component
+	Movies      types.Movies
+	Order       string
+	ReleaseDate ReleaseDate
+	Title       string
+}
+
+func WatchlistList(p WatchlistListProps) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -96,7 +113,7 @@ func WatchlistList(movies types.Movies, title string, route string, currentOrder
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			for _, movie := range movies {
+			for _, movie := range p.Movies {
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<li class=\"flex items-end justify-between gap-4\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -116,7 +133,7 @@ func WatchlistList(movies types.Movies, title string, route string, currentOrder
 					var templ_7745c5c3_Var5 string
 					templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(movie.Title)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/watchlist.templ`, Line: 39, Col: 19}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/watchlist.templ`, Line: 56, Col: 19}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 					if templ_7745c5c3_Err != nil {
@@ -132,70 +149,76 @@ func WatchlistList(movies types.Movies, title string, route string, currentOrder
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<span class=\"flex items-center gap-x-2 relative top-1\"><span class=\"tabular-nums whitespace-nowrap\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<span class=\"flex items-center gap-x-2 relative top-1\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				if currentOrder == "Date added" {
-					templ_7745c5c3_Var6 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-						templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-						templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-						if !templ_7745c5c3_IsBuffer {
-							defer func() {
-								templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-								if templ_7745c5c3_Err == nil {
-									templ_7745c5c3_Err = templ_7745c5c3_BufErr
-								}
-							}()
-						}
-						ctx = templ.InitializeContext(ctx)
-						var templ_7745c5c3_Var7 string
-						templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(movie.ISOCreatedDate())
-						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/watchlist.templ`, Line: 46, Col: 33}
-						}
-						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
-						if templ_7745c5c3_Err != nil {
-							return templ_7745c5c3_Err
-						}
-						return nil
-					})
-					templ_7745c5c3_Err = link.Link(link.Props{Href: movie.LinkToCreatedYear()}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
+				if p.Order != "" {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<span class=\"tabular-nums whitespace-nowrap\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-				} else if currentOrder == "Release date" {
-					templ_7745c5c3_Var8 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-						templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-						templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-						if !templ_7745c5c3_IsBuffer {
-							defer func() {
-								templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-								if templ_7745c5c3_Err == nil {
-									templ_7745c5c3_Err = templ_7745c5c3_BufErr
-								}
-							}()
-						}
-						ctx = templ.InitializeContext(ctx)
-						var templ_7745c5c3_Var9 string
-						templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(movie.ISOReleaseDate())
-						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/watchlist.templ`, Line: 50, Col: 33}
-						}
-						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+					if p.Order == "Date added" {
+						templ_7745c5c3_Var6 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+							templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+							templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+							if !templ_7745c5c3_IsBuffer {
+								defer func() {
+									templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+									if templ_7745c5c3_Err == nil {
+										templ_7745c5c3_Err = templ_7745c5c3_BufErr
+									}
+								}()
+							}
+							ctx = templ.InitializeContext(ctx)
+							var templ_7745c5c3_Var7 string
+							templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(movie.ISOCreatedDate())
+							if templ_7745c5c3_Err != nil {
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/watchlist.templ`, Line: 64, Col: 34}
+							}
+							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+							if templ_7745c5c3_Err != nil {
+								return templ_7745c5c3_Err
+							}
+							return nil
+						})
+						templ_7745c5c3_Err = link.Link(link.Props{Href: movie.LinkToCreatedYear()}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
-						return nil
-					})
-					templ_7745c5c3_Err = link.Link(link.Props{Href: movie.LinkToCreatedYear()}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
+					} else if p.Order == "Release date" {
+						templ_7745c5c3_Var8 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+							templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+							templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+							if !templ_7745c5c3_IsBuffer {
+								defer func() {
+									templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+									if templ_7745c5c3_Err == nil {
+										templ_7745c5c3_Err = templ_7745c5c3_BufErr
+									}
+								}()
+							}
+							ctx = templ.InitializeContext(ctx)
+							var templ_7745c5c3_Var9 string
+							templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(movie.ISOReleaseDate())
+							if templ_7745c5c3_Err != nil {
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/watchlist.templ`, Line: 68, Col: 34}
+							}
+							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+							if templ_7745c5c3_Err != nil {
+								return templ_7745c5c3_Err
+							}
+							return nil
+						})
+						templ_7745c5c3_Err = link.Link(link.Props{Href: movie.LinkToCreatedYear()}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
+						if templ_7745c5c3_Err != nil {
+							return templ_7745c5c3_Err
+						}
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</span>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</span>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
 				}
 				templ_7745c5c3_Var10 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 					templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -209,54 +232,60 @@ func WatchlistList(movies types.Movies, title string, route string, currentOrder
 						}()
 					}
 					ctx = templ.InitializeContext(ctx)
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<a href=\"")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
+					if p.ReleaseDate == Released {
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<a href=\"")
+						if templ_7745c5c3_Err != nil {
+							return templ_7745c5c3_Err
+						}
+						var templ_7745c5c3_Var11 templ.SafeURL
+						templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinURLErrs(movie.LinkToWatchlistAdd())
+						if templ_7745c5c3_Err != nil {
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/watchlist.templ`, Line: 75, Col: 44}
+						}
+						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+						if templ_7745c5c3_Err != nil {
+							return templ_7745c5c3_Err
+						}
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" class=\"text-content-secondary hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors\" title=\"Add watch\">")
+						if templ_7745c5c3_Err != nil {
+							return templ_7745c5c3_Err
+						}
+						templ_7745c5c3_Err = icon.Icon(icon.Props{Name: icon.Eye}).Render(ctx, templ_7745c5c3_Buffer)
+						if templ_7745c5c3_Err != nil {
+							return templ_7745c5c3_Err
+						}
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</a>")
+						if templ_7745c5c3_Err != nil {
+							return templ_7745c5c3_Err
+						}
 					}
-					var templ_7745c5c3_Var11 templ.SafeURL
-					templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinURLErrs(movie.LinkToWatchlistAdd())
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/watchlist.templ`, Line: 55, Col: 43}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" class=\"text-content-secondary hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors\" title=\"Add watch\">")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = icon.Icon(icon.Props{Name: icon.Eye}).Render(ctx, templ_7745c5c3_Buffer)
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</a> <button class=\"cursor-pointer text-content-quarternary hover:text-neutral-700 hover:dark:text-neutral-300 transition-colors\" hx-target=\"closest li\" hx-swap=\"outerHTML\" hx-delete=\"")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, " <button class=\"cursor-pointer text-content-quarternary hover:text-neutral-700 hover:dark:text-neutral-300 transition-colors\" hx-target=\"closest li\" hx-swap=\"outerHTML\" hx-delete=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var12 string
 					templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/watchlist/%d", movie.ID))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/watchlist.templ`, Line: 62, Col: 58}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/watchlist.templ`, Line: 83, Col: 58}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" hx-confirm=\"")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" hx-confirm=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var13 string
 					templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("Delete %s from watchlist?", movie.Title))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/watchlist.templ`, Line: 63, Col: 74}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/watchlist.templ`, Line: 84, Col: 74}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\">Delete</button>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\">Delete</button>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -266,21 +295,21 @@ func WatchlistList(movies types.Movies, title string, route string, currentOrder
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</span></li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</span></li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</ol>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</ol>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = section.Section(section.Props{
-			Action:        sortWatchlist(route, currentOrder),
-			NumberOfItems: len(movies),
-			Title:         title,
+			Action:        p.Action,
+			NumberOfItems: len(p.Movies),
+			Title:         p.Title,
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -335,7 +364,13 @@ func Watchlist(props WatchlistProps) templ.Component {
 				}
 				ctx = templ.InitializeContext(ctx)
 				if len(props.Movies) > 0 {
-					templ_7745c5c3_Err = WatchlistList(props.Movies, "Movies", "/watchlist/movies", "Date added").Render(ctx, templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = WatchlistList(WatchlistListProps{
+						Movies:      props.Movies,
+						Title:       "Movies",
+						Action:      SortWatchlist("/watchlist/movies", "Date added"),
+						Order:       "Date added",
+						ReleaseDate: Released,
+					}).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -352,7 +387,7 @@ func Watchlist(props WatchlistProps) templ.Component {
 							}()
 						}
 						ctx = templ.InitializeContext(ctx)
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "Watchlist empty")
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "Watchlist empty")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
@@ -363,12 +398,30 @@ func Watchlist(props WatchlistProps) templ.Component {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, " ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, " ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				if len(props.UnreleasedMovies) > 0 {
-					templ_7745c5c3_Err = WatchlistList(props.UnreleasedMovies, "Unreleased movies", "/watchlist/unreleased-movies", "Release date").Render(ctx, templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = WatchlistList(WatchlistListProps{
+						Movies: props.UnreleasedMovies,
+						Title:  "Unreleased movies",
+						Action: SortWatchlist("/watchlist/unreleased-movies", "Release date"),
+						Order:  "Release date",
+					}).Render(ctx, templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, " ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				if len(props.MoviesWithoutReleaseDate) > 0 {
+					templ_7745c5c3_Err = WatchlistList(WatchlistListProps{
+						Movies: props.MoviesWithoutReleaseDate,
+						Title:  "No release date",
+					}).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
