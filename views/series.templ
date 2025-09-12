@@ -45,8 +45,11 @@ templ seriesList(movies types.MoviesInSeries) {
 templ seriesSection(series types.SeriesMovies) {
 	<section class="flex flex-col gap-y-4">
 		@seriesList(series.Movies)
-		<div class="text-xs text-right text-content-secondary">
-			{ series.SeenInSeries() }
+		<div class="flex flex-col gap-y-1">
+			<div class="text-xs text-right text-content-secondary">
+				{ series.SeenInSeries() }
+				{ series.Runtime() }
+			</div>
 		</div>
 	</section>
 }

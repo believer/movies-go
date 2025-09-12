@@ -35,7 +35,7 @@ WITH RECURSIVE series_hierarchy AS (
 SELECT
     sh.series_id AS "id",
     sh.series_name AS "name",
-    ARRAY_TO_JSON(COALESCE(array_agg(json_build_object('id', m.id, 'title', m.title, 'releaseDate', to_char(m.release_date, 'YYYY-MM-DD"T"HH24:MI:SS"Z"'), 'numberInSeries', ms.number_in_series, 'seen', (s.id IS NOT NULL))
+    ARRAY_TO_JSON(COALESCE(array_agg(json_build_object('id', m.id, 'title', m.title, 'releaseDate', to_char(m.release_date, 'YYYY-MM-DD"T"HH24:MI:SS"Z"'), 'numberInSeries', ms.number_in_series, 'seen', (s.id IS NOT NULL), 'runtime', m.runtime)
             ORDER BY ms.number_in_series ASC) FILTER (WHERE m.id IS NOT NULL), '{}'::json[])) AS movies
 FROM
     series_hierarchy sh

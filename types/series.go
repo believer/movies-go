@@ -55,6 +55,28 @@ func (s SeriesMovies) LinkTo() templ.SafeURL {
 	return seriesLink(s.Name, s.ID)
 }
 
+func (s SeriesMovies) Runtime() string {
+	runtime := 0
+	totalRuntime := 0
+
+	for _, m := range s.Movies {
+		if m.Seen {
+			runtime += m.Runtime
+		}
+		totalRuntime += m.Runtime
+	}
+
+	if runtime == 0 {
+		return ""
+	}
+
+	if runtime == totalRuntime {
+		return fmt.Sprintf(" – %d min", totalRuntime)
+	}
+
+	return fmt.Sprintf(" – %d / %d min", runtime, totalRuntime)
+}
+
 func (s SeriesMovies) SeenInSeries() string {
 	return fmt.Sprintf("Seen %d of %d movies", s.Seen, len(s.Movies))
 }
