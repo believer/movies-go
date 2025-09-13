@@ -1,0 +1,25 @@
+package graph
+
+import "believer/movies/components/section"
+import "believer/movies/components/empty-state"
+
+type Props struct {
+	Bars  []Bar
+	Title string
+}
+
+templ Graph(p Props) {
+	@section.Section(section.Props{Title: p.Title}) {
+		@barsOrEmpty(p.Bars)
+	}
+}
+
+templ barsOrEmpty(bars []Bar) {
+	if len(bars) > 0 {
+		@Bars(bars)
+	} else {
+		@emptystate.EmptyState() {
+			No movies seen
+		}
+	}
+}

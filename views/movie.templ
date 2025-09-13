@@ -1,10 +1,14 @@
 package views
 
 import (
-	c "believer/movies/components"
 	"believer/movies/components/icon"
+	"believer/movies/components/layout"
 	"believer/movies/components/link"
+	"believer/movies/components/list"
+	"believer/movies/components/rating"
+	"believer/movies/components/review"
 	"believer/movies/components/section"
+	"believer/movies/components/seen"
 	"believer/movies/types"
 	"fmt"
 	"strconv"
@@ -23,120 +27,128 @@ type MovieProps struct {
 }
 
 templ Movie(props MovieProps) {
-	@c.Layout(c.LayoutProps{Title: props.Movie.Title, Description: props.Movie.Overview}) {
-		@c.StandardBody(props.Movie.Title) {
-			if props.Movie.Overview != "" {
-				<p class="text-content-secondary">{ props.Movie.Overview }</p>
-			}
-			@c.Review(props.Review)
-			@section.Section(section.Props{Title: "Metadata"}) {
-				@c.DescriptionList() {
-					if props.Movie.Tagline != "" {
-						@c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Tagline"}) {
-							{ props.Movie.Tagline }
-						}
-					}
-					if props.Movie.OriginalTitle.Valid && props.Movie.OriginalTitle.String != props.Movie.Title {
-						@c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Original title"}) {
-							{ props.Movie.OriginalTitle.String }
-						}
-					}
-					if props.Movie.ReleaseDate.Valid {
-						@c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Release date"}) {
-							@link.Link(link.Props{Href: props.Movie.LinkToYear()}) {
-								{ props.Movie.ISOReleaseDate() }
-							}
-						}
-					}
-					if props.Movie.Runtime != 0 {
-						@c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Runtime"}) {
-							{ props.Movie.RuntimeFormatted() }
-						}
-					}
-					if props.Movie.Series.Valid && props.Movie.NumberInSeries.Valid {
-						@c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Series"}) {
-							@link.Link(link.Props{Href: props.Movie.LinkToSeries()}) {
-								{ props.Movie.Series.String } #{ strconv.FormatInt( props.Movie.NumberInSeries.Int64, 10 ) }
-							}
-						}
-					}
-					if props.Movie.ImdbId != "tt0000000" {
-						@c.DescriptionListItem(c.DescriptionListItemProps{Detail: "IMDb"}) {
-							<a
-								href={ templ.URL(fmt.Sprintf("https://www.imdb.com/title/%s", props.Movie.ImdbId)) }
-								class="inline-flex items-center gap-1 link-focus"
-								target="_blank"
-								rel="noopener noreferrer"
-							>
-								<span class="border-b border-dashed border-content-secondary">
-									{ props.Movie.ImdbId }
-								</span>
-								@icon.Icon(icon.Props{Name: icon.ExternalLink})
-							</a>
-						}
-					}
-					if len(props.Movie.Genres) > 0 {
-						@c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Genres", IsTabular: false}) {
-							<div class="flex flex-wrap gap-2">
-								for _, genre := range props.Movie.Genres {
-									<a
-										class="inline-flex items-center gap-1 border-b border-dashed border-content-secondary link-focus"
-										href={ templ.URL(genre.LinkTo("genre")) }
-									>
-										{ genre.Name }
-									</a>
-								}
-							</div>
-						}
-					}
-					if len(props.Movie.Languages) > 0 {
-						@c.DescriptionListItem(c.DescriptionListItemProps{Detail: "Languages", IsTabular: false}) {
-							<div class="flex flex-wrap gap-2">
-								for _, language := range props.Movie.Languages {
-									<a
-										class="inline-flex items-center gap-1 border-b border-dashed border-content-secondary link-focus"
-										href={ templ.URL(language.LinkTo("language")) }
-									>
-										{ language.Name }
-									</a>
-								}
-							</div>
-						}
-					}
-					if !props.IsInWatchlist {
-						if props.Movie.Rating.Valid {
-							@c.Rating(c.RatingProps{
-								MovieId: props.Movie.ID,
-								Rating:  props.Movie.Rating.Int64,
-								RatedAt: props.Movie.RatedAt.Time,
-							})
-						} else {
-							@c.AddRating(c.AddRatingProps{
-								MovieId: props.Movie.ID,
-							})
-						}
-					}
-					@c.MovieOthersSeen(c.MovieOthersSeenProps{
-						ID:     props.Movie.ID,
-						Others: props.Others,
-					})
-				}
-			}
-			<div
-				hx-swap="outerHTML"
-				hx-get={ fmt.Sprintf("/movie/%d/seen?imdbId=%s", props.Movie.ID, props.Movie.ImdbId) }
-				hx-trigger="load"
-			></div>
-			<div
-				hx-get={ fmt.Sprintf("/movie/%d/cast", props.Movie.ID) }
-				hx-trigger="load"
-				hx-swap="outerHTML"
-			></div>
-			<div
-				hx-swap="outerHTML"
-				hx-get={ fmt.Sprintf("/movie/%s/awards", props.Movie.ImdbId) }
-				hx-trigger="load"
-			></div>
+	@layout.Layout(layout.Props{Title: props.Movie.Title, Description: props.Movie.Overview}) {
+		if props.Movie.Overview != "" {
+			<p class="text-content-secondary">{ props.Movie.Overview }</p>
 		}
+		@review.Review(props.Review)
+		@section.Section(section.Props{Title: "Metadata"}) {
+			@list.Dl() {
+				if props.Movie.Tagline != "" {
+					@list.DlItem(list.DlProps{Detail: "Tagline"}) {
+						{ props.Movie.Tagline }
+					}
+				}
+				if props.Movie.OriginalTitle.Valid && props.Movie.OriginalTitle.String != props.Movie.Title {
+					@list.DlItem(list.DlProps{Detail: "Original title"}) {
+						{ props.Movie.OriginalTitle.String }
+					}
+				}
+				if props.Movie.ReleaseDate.Valid {
+					@list.DlItem(list.DlProps{Detail: "Release date"}) {
+						@link.Link(link.Props{Href: props.Movie.LinkToYear()}) {
+							{ props.Movie.ISOReleaseDate() }
+						}
+					}
+				}
+				if props.Movie.Runtime != 0 {
+					@list.DlItem(list.DlProps{Detail: "Runtime"}) {
+						{ props.Movie.RuntimeFormatted() }
+					}
+				}
+				if props.Movie.Series.Valid && props.Movie.NumberInSeries.Valid {
+					@list.DlItem(list.DlProps{Detail: "Series"}) {
+						@link.Link(link.Props{Href: props.Movie.LinkToSeries()}) {
+							{ props.Movie.Series.String } #{ strconv.FormatInt( props.Movie.NumberInSeries.Int64, 10 ) }
+						}
+					}
+				}
+				if props.Movie.ImdbId != "tt0000000" {
+					@list.DlItem(list.DlProps{Detail: "IMDb"}) {
+						<a
+							href={ templ.URL(fmt.Sprintf("https://www.imdb.com/title/%s", props.Movie.ImdbId)) }
+							class="inline-flex items-center gap-1 link-focus"
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							<span class="border-b border-dashed border-content-secondary">
+								{ props.Movie.ImdbId }
+							</span>
+							@icon.Icon(icon.Props{Name: icon.ExternalLink})
+						</a>
+					}
+				}
+				if len(props.Movie.Genres) > 0 {
+					@list.DlItem(list.DlProps{Detail: "Genres", IsTabular: false}) {
+						<div class="flex flex-wrap gap-2">
+							for _, genre := range props.Movie.Genres {
+								<a
+									class="inline-flex items-center gap-1 border-b border-dashed border-content-secondary link-focus"
+									href={ templ.URL(genre.LinkTo("genre")) }
+								>
+									{ genre.Name }
+								</a>
+							}
+						</div>
+					}
+				}
+				if len(props.Movie.Languages) > 0 {
+					@list.DlItem(list.DlProps{Detail: "Languages", IsTabular: false}) {
+						<div class="flex flex-wrap gap-2">
+							for _, language := range props.Movie.Languages {
+								<a
+									class="inline-flex items-center gap-1 border-b border-dashed border-content-secondary link-focus"
+									href={ templ.URL(language.LinkTo("language")) }
+								>
+									{ language.Name }
+								</a>
+							}
+						</div>
+					}
+				}
+				if !props.IsInWatchlist {
+					if props.Movie.Rating.Valid {
+						@rating.Rating(rating.Props{
+							MovieId: props.Movie.ID,
+							Rating:  props.Movie.Rating.Int64,
+							RatedAt: props.Movie.RatedAt.Time,
+						})
+					} else {
+						@rating.AddRating(rating.AddRatingProps{
+							MovieId: props.Movie.ID,
+						})
+					}
+				}
+				@seen.MovieOthersSeen(seen.MovieOthersSeenProps{
+					ID:     props.Movie.ID,
+					Others: props.Others,
+				})
+			}
+		}
+		<div
+			hx-swap="outerHTML"
+			hx-get={ fmt.Sprintf("/movie/%d/seen?imdbId=%s", props.Movie.ID, props.Movie.ImdbId) }
+			hx-trigger="load"
+		></div>
+		<div
+			hx-get={ fmt.Sprintf("/movie/%d/cast", props.Movie.ID) }
+			hx-trigger="load"
+			hx-swap="outerHTML"
+		></div>
+		<div
+			hx-swap="outerHTML"
+			hx-get={ fmt.Sprintf("/movie/%s/awards", props.Movie.ImdbId) }
+			hx-trigger="load"
+		></div>
 	}
+}
+
+templ MovieExists(movie types.Movie) {
+	<strong>{ movie.Title }</strong> exists in your library. Would you like to
+	<a
+		href="#"
+		hx-post={ fmt.Sprintf("/movie/%d/seen", movie.ID) }
+		class="border-b border-dashed border-neutral-500 dark:border-neutral-400"
+	>add a new watch</a>
+	?
 }

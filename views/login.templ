@@ -1,11 +1,10 @@
 package views
 
 import "believer/movies/components/input"
-
-import c "believer/movies/components"
+import "believer/movies/components/layout"
 
 templ Login() {
-	@c.Layout(c.LayoutProps{Title: "Login"}) {
+	@layout.Html(layout.Props{Title: "Login"}) {
 		<form
 			class="mx-auto flex max-w-xl flex-col gap-6 px-4 py-8"
 			hx-post="/login"

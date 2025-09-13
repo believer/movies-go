@@ -1,10 +1,10 @@
 package app
 
 import (
-	"believer/movies/components"
 	"believer/movies/db"
 	"believer/movies/router"
 	"believer/movies/utils"
+	"believer/movies/views"
 	"fmt"
 	"log"
 	"os"
@@ -110,5 +110,5 @@ func SetupAndRunApp() error {
 
 func NotFoundMiddleware(c *fiber.Ctx) error {
 	c.Status(fiber.StatusNotFound)
-	return utils.Render(c, components.NotFound())
+	return utils.Render(c, views.NotFound())
 }

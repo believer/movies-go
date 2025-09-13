@@ -1,11 +1,12 @@
 package views
 
 import (
-	c "believer/movies/components"
 	"believer/movies/components/empty-state"
+	"believer/movies/components/layout"
 	"believer/movies/components/link"
 	"believer/movies/components/list"
 	"believer/movies/components/section"
+	"believer/movies/components/seen"
 	"believer/movies/components/separator"
 	"believer/movies/types"
 )
@@ -20,7 +21,7 @@ type SeriesProps struct {
 templ seriesList(movies types.MoviesInSeries) {
 	@list.Ol() {
 		for _, movie := range movies {
-			@list.Li(list.LiProps{Items: len(movies)}) {
+			@list.Li(list.LiProps{Items: len(movies), Style: list.Numbered}) {
 				@list.Number(movie.NumberInSeries.Int64)
 				@link.Link(link.Props{Href: movie.LinkTo()}) {
 					{ movie.Title }
@@ -30,7 +31,7 @@ templ seriesList(movies types.MoviesInSeries) {
 					@link.Link(link.Props{Href: movie.LinkToYear()}) {
 						{ movie.ISOReleaseDate() }
 					}
-					@c.Seen(c.SeenProps{
+					@seen.Seen(seen.Props{
 						Title:  "genre",
 						Seen:   movie.Seen,
 						ImdbId: movie.ImdbId,
@@ -55,39 +56,44 @@ templ seriesSection(series types.SeriesMovies) {
 }
 
 templ Series(props SeriesProps) {
-	@c.Layout(c.LayoutProps{Title: props.Series.Name}) {
-		@c.StandardBody(props.Series.Name) {
-			if len(props.Series.ParentSeries) > 0 {
-				<section class="flex flex-col gap-y-2">
-					for _, parent := range props.Series.ParentSeries {
-						<div>
-							@link.Link(link.Props{Href: parent.LinkTo()}) {
-								Go to { parent.Name } series
-							}
-						</div>
-					}
-				</section>
-			}
-			if props.TotalMovies > 0 {
-				for _, series := range props.Movies {
-					if len(props.Movies) == 1 {
-						@seriesSection(series)
-					} else if len(series.Movies) > 0 {
-						@section.Section(section.Props{
-							Title:         series.Name,
-							Href:          series.LinkTo(),
-							NumberOfItems: len(series.Movies),
-						}) {
-							@seriesSection(series)
+	@layout.Layout(layout.Props{Title: props.Series.Name}) {
+		// The series has a parent series
+		if len(props.Series.ParentSeries) > 0 {
+			<section class="flex flex-col gap-y-2">
+				for _, parent := range props.Series.ParentSeries {
+					<div>
+						@link.Link(link.Props{Href: parent.LinkTo()}) {
+							Go to { parent.Name } series
 						}
-					} else if series.Name != props.Series.Name {
-						@section.Section(section.Props{Title: series.Name, Href: series.LinkTo()})
+					</div>
+				}
+			</section>
+		}
+		if props.TotalMovies > 0 {
+			for _, series := range props.Movies {
+				if len(props.Movies) == 1 {
+					// A leaf node, the last series in a parent/child relationship
+					// Example: MCU: Phase Six
+					@seriesSection(series)
+				} else if len(series.Movies) > 0 {
+					// Sectioned content when inside a parent series
+					// Example: MCU: The Multiverse Saga
+					@section.Section(section.Props{
+						Title:         series.Name,
+						Href:          series.LinkTo(),
+						NumberOfItems: len(series.Movies),
+					}) {
+						@seriesSection(series)
 					}
+				} else if series.Name != props.Series.Name {
+					// Section without any movies, a parent series that only contains child series
+					// Example: MCU
+					@section.Section(section.Props{Title: series.Name, Href: series.LinkTo()})
 				}
-			} else {
-				@emptystate.EmptyState() {
-					No movies in series
-				}
+			}
+		} else {
+			@emptystate.EmptyState() {
+				No movies in series
 			}
 		}
 	}

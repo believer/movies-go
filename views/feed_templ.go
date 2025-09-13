@@ -9,9 +9,9 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	c "believer/movies/components"
 	"believer/movies/components/empty-state"
 	"believer/movies/components/icon"
+	"believer/movies/components/layout"
 	"believer/movies/components/link"
 	"believer/movies/types"
 	"fmt"
@@ -483,7 +483,7 @@ func Feed(props FeedProps) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = c.Layout(c.LayoutProps{}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = layout.Html().Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

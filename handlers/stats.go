@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"believer/movies/components"
+	"believer/movies/components/graph"
 	"believer/movies/db"
 	"believer/movies/types"
 	"believer/movies/utils"
@@ -45,8 +45,8 @@ func GetStats(c *fiber.Ctx) error {
 	var stats types.Stats
 	var shortestAndLongest types.Movies
 	var wilhelms []int
-	var movies, totals, cast []components.ListItem
-	var ratings, yearRatings, watchedByYear, seenThisYearByMonth, moviesByYear []types.GraphData
+	var movies, totals, cast []views.ListItem
+	var ratings, yearRatings, watchedByYear, seenThisYearByMonth, moviesByYear []graph.GraphData
 	var awardWins types.AwardPersonStat
 	var awardNominations types.AwardPersonStat
 	var mostAwardedMovies []types.AwardMovieStat
@@ -109,7 +109,7 @@ func GetStats(c *fiber.Ctx) error {
 
 	// Process all graph data in parallel
 	errChan = make(chan error, 5)
-	var ratingsBars, yearBars, watchedByYearBar, seenThisYearByMonthBars []types.Bar
+	var ratingsBars, yearBars, watchedByYearBar, seenThisYearByMonthBars []graph.Bar
 
 	wg.Add(4)
 
@@ -197,8 +197,8 @@ func GetStats(c *fiber.Ctx) error {
 }
 
 func GetMostWatchedByJob(c *fiber.Ctx) error {
-	var persons []components.ListItem
-	var totals []components.ListItem
+	var persons []views.ListItem
+	var totals []views.ListItem
 
 	job := c.Params("job")
 	year := c.Query("year", "All")
@@ -223,8 +223,8 @@ func GetMostWatchedByJob(c *fiber.Ctx) error {
 	if len(totals) > 0 {
 		totalJob = totals[0].Count
 	}
-	return utils.Render(c, components.MostWatchedPerson(
-		components.MostWatchedPersonProps{
+	return utils.Render(c, views.MostWatchedPerson(
+		views.MostWatchedPersonProps{
 			Data:  persons,
 			Job:   job,
 			Title: cases.Title(language.English).String(job),
@@ -249,8 +249,8 @@ func GetHighestRankedPersonByJob(c *fiber.Ctx) error {
 
 	jobs := []string{"Cast", "Composer", "Director", "Producer", "Writer"}
 
-	return utils.Render(c, components.HighestRating(
-		components.HighestRatingProps{
+	return utils.Render(c, views.HighestRating(
+		views.HighestRatingProps{
 			Data:  persons,
 			Job:   job,
 			Jobs:  jobs,
@@ -258,8 +258,8 @@ func GetHighestRankedPersonByJob(c *fiber.Ctx) error {
 		}))
 }
 
-func getGraphByYearWithQuery(query string, userId string, year string) ([]types.Bar, error) {
-	var data []types.GraphData
+func getGraphByYearWithQuery(query string, userId string, year string) ([]graph.Bar, error) {
+	var data []graph.GraphData
 
 	err := db.Dot.Select(db.Client, &data, query, userId, year)
 
@@ -280,15 +280,15 @@ func clamp(val, min, max int) int {
 	return val
 }
 
-func constructGraphFromData(data []types.GraphData) ([]types.Bar, error) {
-	var graphData []types.Bar
+func constructGraphFromData(data []graph.GraphData) ([]graph.Bar, error) {
+	var graphData []graph.Bar
 
 	graphHeight := 200
 	graphWidth := 536
 	maxCount := 0
 
 	if len(data) > 0 {
-		maxCount = slices.MaxFunc(data, func(a, b types.GraphData) int {
+		maxCount = slices.MaxFunc(data, func(a, b graph.GraphData) int {
 			return cmp.Compare(a.Value, b.Value)
 		}).Value
 	}
@@ -324,7 +324,7 @@ func constructGraphFromData(data []types.GraphData) ([]types.Bar, error) {
 		labelY := float64(barY) + float64(barHeight) + 20
 
 		// Add the data to the graphData slice
-		graphData = append(graphData, types.Bar{
+		graphData = append(graphData, graph.Bar{
 			Label:     row.Label,
 			Value:     row.Value,
 			BarHeight: barHeight,
@@ -363,10 +363,12 @@ func GetRatingsByYear(c *fiber.Ctx) error {
 		title = "Ratings this year"
 	}
 
-	return utils.Render(c, components.GraphWithYear(
-		components.GraphWithYearProps{
-			Bars:         yearRatings,
-			Title:        title,
+	return utils.Render(c, graph.WithYear(
+		graph.WithYearProps{
+			Props: graph.Props{
+				Bars:  yearRatings,
+				Title: title,
+			},
 			SelectedYear: year,
 			Years:        availableYears(),
 			Route:        "/stats/ratings",
@@ -395,10 +397,12 @@ func GetThisYearByMonth(c *fiber.Ctx) error {
 		title = "Seen this year by month"
 	}
 
-	return utils.Render(c, components.GraphWithYear(
-		components.GraphWithYearProps{
-			Bars:         yearRatings,
-			Title:        title,
+	return utils.Render(c, graph.WithYear(
+		graph.WithYearProps{
+			Props: graph.Props{
+				Bars:  yearRatings,
+				Title: title,
+			},
 			SelectedYear: year,
 			Years:        availableYears(),
 			Route:        "/stats/by-month",
@@ -432,7 +436,7 @@ func availableYears() []string {
 }
 
 func GetGenreStats(c *fiber.Ctx) error {
-	var genres []components.ListItem
+	var genres []views.ListItem
 
 	userId := c.Locals("UserId").(string)
 	year := c.Query("year", "All")
@@ -444,7 +448,7 @@ func GetGenreStats(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.Render(c, components.MostWatchedGenres(components.MostWatchedGenresProps{
+	return utils.Render(c, views.MostWatchedGenres(views.MostWatchedGenresProps{
 		Data:  genres,
 		Year:  year,
 		Years: years,
@@ -452,7 +456,7 @@ func GetGenreStats(c *fiber.Ctx) error {
 }
 
 func GetLanguageStats(c *fiber.Ctx) error {
-	var languages []components.ListItem
+	var languages []views.ListItem
 
 	userId := c.Locals("UserId").(string)
 	year := c.Query("year", "All")
@@ -464,7 +468,7 @@ func GetLanguageStats(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.Render(c, components.MostWatchedLanguages(components.MostWatchedLanguagesProps{
+	return utils.Render(c, views.MostWatchedLanguages(views.MostWatchedLanguagesProps{
 		Data:  languages,
 		Year:  year,
 		Years: years,
@@ -472,7 +476,7 @@ func GetLanguageStats(c *fiber.Ctx) error {
 }
 
 func GetBestOfTheYear(c *fiber.Ctx) error {
-	var movies []components.ListItem
+	var movies []views.ListItem
 
 	userId := c.Locals("UserId")
 	currentYear := time.Now().Format("2006")
@@ -485,7 +489,7 @@ func GetBestOfTheYear(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.Render(c, components.BestOfTheYear(components.BestOfTheYearProps{
+	return utils.Render(c, views.BestOfTheYear(views.BestOfTheYearProps{
 		Movies: movies,
 		Year:   year,
 		Years:  years,

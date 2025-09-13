@@ -1,9 +1,10 @@
 package views
 
 import (
-	c "believer/movies/components"
+	"believer/movies/components/layout"
 	"believer/movies/components/link"
 	"believer/movies/components/section"
+	"believer/movies/components/seen"
 	"believer/movies/components/separator"
 	"believer/movies/types"
 	"strconv"
@@ -24,7 +25,7 @@ templ credit(title string, data types.PersonMovies) {
 								@link.Link(link.Props{Href: movie.LinkToYear()}) {
 									{ movie.ReleaseYear() }
 								}
-								@c.Seen(c.SeenProps{
+								@seen.Seen(seen.Props{
 									Title: title,
 									Seen:  movie.Seen,
 									ID:    movie.ID,
@@ -50,23 +51,21 @@ type PersonProps struct {
 }
 
 templ Person(props PersonProps) {
-	@c.Layout(c.LayoutProps{Title: props.Person.Name}) {
-		@c.StandardBody(props.Person.Name) {
-			<div>
-				{ strconv.Itoa(props.TotalCredits) } credits
-			</div>
-			@credit("Cast", props.Person.Cast)
-			@credit("Director", props.Person.Director)
-			@credit("Writer", props.Person.Writer)
-			@credit("Producer", props.Person.Producer)
-			@credit("Composer", props.Person.Composer)
-			@credit("Director of Photography", props.Person.Cinematographer)
-			@credit("Editor", props.Person.Editor)
-			@c.PersonAwards(c.PersonAwardsProps{
-				Awards:      props.Awards,
-				AwardsOrder: props.AwardsOrder,
-				Won:         props.Won,
-			})
-		}
+	@layout.Layout(layout.Props{Title: props.Person.Name}) {
+		<div>
+			{ strconv.Itoa(props.TotalCredits) } credits
+		</div>
+		@credit("Cast", props.Person.Cast)
+		@credit("Director", props.Person.Director)
+		@credit("Writer", props.Person.Writer)
+		@credit("Producer", props.Person.Producer)
+		@credit("Composer", props.Person.Composer)
+		@credit("Director of Photography", props.Person.Cinematographer)
+		@credit("Editor", props.Person.Editor)
+		@PersonAwards(PersonAwardsProps{
+			Awards:      props.Awards,
+			AwardsOrder: props.AwardsOrder,
+			Won:         props.Won,
+		})
 	}
 }

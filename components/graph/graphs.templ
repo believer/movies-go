@@ -1,0 +1,25 @@
+package graph
+
+import "believer/movies/components/dropdown"
+import "believer/movies/components/section"
+
+type WithYearProps struct {
+	Props
+	Route        string
+	SelectedYear string
+	Years        []string
+}
+
+templ WithYear(p WithYearProps) {
+	@section.Section(section.Props{
+		Title: p.Title,
+		Action: dropdown.Dropdown(dropdown.Props{
+			Name:    "year",
+			Route:   p.Route,
+			Options: p.Years,
+			Value:   p.SelectedYear,
+		}),
+	}) {
+		@barsOrEmpty(p.Bars)
+	}
+}

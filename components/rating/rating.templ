@@ -1,0 +1,129 @@
+package rating
+
+import (
+	"believer/movies/components/auth"
+	"believer/movies/components/input"
+	"believer/movies/components/link"
+	"believer/movies/components/list"
+	"fmt"
+	"strconv"
+	"time"
+)
+
+type Props struct {
+	MovieId int
+	Rating  int64
+	RatedAt time.Time
+}
+
+templ Rating(props Props) {
+	@list.DlItem(list.DlProps{Detail: "My rating", ID: "rating"}) {
+		@GetRating(props)
+	}
+}
+
+templ GetRating(props Props) {
+	<div class="flex flex-row gap-x-4" id="rating-value">
+		@link.Link(link.Props{Href: templ.SafeURL(fmt.Sprintf("/rating/%d", props.Rating))}) {
+			<time
+				title={ props.RatedAt.Format("2006-01-02 15:04") }
+				datetime={ props.RatedAt.Format("2006-01-02T15:04:05Z") }
+			>
+				{ strconv.FormatInt(props.Rating, 10) }
+			</time>
+		}
+		@auth.IsAuthenticated() {
+			<button
+				hx-swap="outerHTML"
+				hx-target="#rating-value"
+				hx-get={ fmt.Sprintf("/movie/%d/rating?rating=%d", props.MovieId, props.Rating) }
+				class="cursor-pointer text-content-secondary transition-colors link-focus"
+			>
+				Edit
+			</button>
+			<button
+				hx-swap="outerHTML"
+				hx-target="#rating"
+				hx-delete={ fmt.Sprintf("/movie/%d/rating", props.MovieId) }
+				hx-confirm="Delete rating?"
+				hx-on::before-cleanup-element="document.body.dispatchEvent(new Event('update-rating'))"
+				class="cursor-pointer text-content-secondary transition-colors link-focus"
+			>
+				Delete
+			</button>
+		}
+	</div>
+}
+
+type EditRatingProps struct {
+	CurrentRating int
+	MovieId       int
+}
+
+templ EditRating(props EditRatingProps) {
+	<form
+		hx-put={ fmt.Sprintf("/movie/%d/rating", props.MovieId) }
+		hx-swap="outerHTML"
+		hx-on::before-cleanup-element="document.body.dispatchEvent(new Event('update-rating'))"
+		class="flex flex-row gap-x-4"
+	>
+		@input.Number(input.NumberProps{
+			Name:     "rating",
+			Min:      0,
+			Max:      10,
+			Required: true,
+			Value:    props.CurrentRating,
+		})
+		<button
+			class="cursor-pointer rounded-sm bg-background-secondary px-6 py-2 text-content-secondary link-focus"
+			type="submit"
+		>
+			Update rating
+		</button>
+	</form>
+}
+
+type AddRatingProps struct {
+	MovieId int
+}
+
+templ AddRating(props AddRatingProps) {
+	@auth.IsAuthenticated() {
+		@list.DlItem(list.DlProps{Detail: "My rating", ID: "rating"}) {
+			<button
+				hx-get={ fmt.Sprintf("/movie/%d/rating/edit", props.MovieId) }
+				hx-target="#rating"
+				hx-swap="outerHTML"
+				class="cursor-pointer text-content-secondary transition-colors link-focus"
+			>
+				Add rating
+			</button>
+		}
+	}
+}
+
+templ AddRatingForm(props AddRatingProps) {
+	@list.DlItem(list.DlProps{Detail: "My rating", ID: "rating"}) {
+		<form
+			hx-post={ fmt.Sprintf("/movie/%d/rating", props.MovieId) }
+			hx-swap="outerHTML"
+			hx-on::before-cleanup-element="document.body.dispatchEvent(new Event('update-rating'))"
+			class="flex flex-row gap-x-4"
+		>
+			<div class="flex-1">
+				@input.Number(input.NumberProps{
+					Name:     "rating",
+					Min:      0,
+					Max:      10,
+					Required: true,
+				})
+			</div>
+			<button
+				class="cursor-pointer rounded-sm bg-background-secondary px-6 py-2 text-content-secondary link-focus"
+				type="submit"
+			>
+				Save rating
+			</button>
+		</form>
+	}
+}

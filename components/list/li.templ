@@ -1,0 +1,41 @@
+package list
+
+type ListStyle string
+
+const (
+	Numbered ListStyle = "numbered"
+)
+
+type LiProps struct {
+	Class string
+	Items int
+	Style ListStyle
+}
+
+templ Li(props ...LiProps) {
+	{{ var p LiProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<li
+		class={
+			"items-end justify-between gap-x-4",
+			style(p.Style, p.Items),
+		}
+	>
+		{ children... }
+	</li>
+}
+
+func style(style ListStyle, items int) string {
+	switch style {
+	case Numbered:
+		if items >= 10 {
+			return "grid grid-cols-[2ch_auto_1fr_auto]"
+		} else {
+			return "grid grid-cols-[1ch_auto_1fr_auto]"
+		}
+	default:
+		return "flex"
+	}
+}

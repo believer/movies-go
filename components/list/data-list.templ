@@ -1,0 +1,9 @@
+package list
+
+templ DataList(options []DataListItem, id string) {
+	<datalist id={ id }>
+		for _, option := range options {
+			<option value={ option.Value } label={ option.Label }></option>
+		}
+	</datalist>
+}

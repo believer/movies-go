@@ -1,10 +1,10 @@
 package handlers
 
 import (
-	"believer/movies/components"
 	"believer/movies/db"
 	"believer/movies/types"
 	"believer/movies/utils"
+	"believer/movies/views"
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
@@ -37,7 +37,7 @@ func GetLanguage(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusOK)
 	}
 
-	return utils.Render(c, components.ListView(components.ListViewProps{
+	return utils.Render(c, views.ListView(views.ListViewProps{
 		EmptyState: "No movies for this language",
 		Name:       language.Name,
 		NextPage:   fmt.Sprintf("/language/%s?page=%d", id, page+1),

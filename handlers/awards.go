@@ -1,10 +1,10 @@
 package handlers
 
 import (
-	"believer/movies/components"
 	"believer/movies/db"
 	"believer/movies/types"
 	"believer/movies/utils"
+	"believer/movies/views"
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
@@ -40,7 +40,7 @@ func GetMoviesByNumberOfAwards(c *fiber.Ctx) error {
 		}
 	}
 
-	return utils.Render(c, components.ListView(components.ListViewProps{
+	return utils.Render(c, views.ListView(views.ListViewProps{
 		EmptyState: "No movies with this amount of Academy Awards",
 		Name:       name,
 		Movies:     movies,
@@ -58,7 +58,7 @@ func GetAwardsByYear(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.Render(c, components.AwardsPage(components.AwardsPageProps{
+	return utils.Render(c, views.AwardsPage(views.AwardsPageProps{
 		GroupedAwards: awards,
 		Name:          year,
 	}))

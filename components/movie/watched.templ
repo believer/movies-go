@@ -1,7 +1,7 @@
 package movie
 
 import (
-	c "believer/movies/components"
+	"believer/movies/components/auth"
 	"believer/movies/components/icon"
 	"believer/movies/components/section"
 	"believer/movies/components/separator"
@@ -25,7 +25,7 @@ type WatchedProps struct {
 }
 
 templ addWatch(id string, isUnseen bool) {
-	@c.IsAuthenticated() {
+	@auth.IsAuthenticated() {
 		if !isUnseen {
 			<a
 				href="#"
@@ -64,7 +64,7 @@ templ Watched(props WatchedProps) {
 								{ w.Date.Format("15:04") }
 							</div>
 						</div>
-						@c.IsAuthenticated() {
+						@auth.IsAuthenticated() {
 							@separator.Separator()
 							<div class="flex gap-4">
 								<a
@@ -93,7 +93,7 @@ templ Watched(props WatchedProps) {
 					class="border-b border-dashed border-neutral-500 focus:outline-hidden focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600"
 					href="/watchlist"
 				>In watchlist</a>
-				@c.IsAuthenticated() {
+				@auth.IsAuthenticated() {
 					<a href={ templ.URL(fmt.Sprintf("/movie/new?imdbId=%s&id=%s", props.ImdbId, props.ID)) } class="text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors" title="Add watch">
 						@icon.Icon(icon.Props{Name: icon.Eye})
 					</a>

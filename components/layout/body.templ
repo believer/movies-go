@@ -1,0 +1,18 @@
+package layout
+
+import "believer/movies/components/link"
+import "believer/movies/components/typography"
+
+type BodyProps struct {
+	Title string
+}
+
+templ Body(p BodyProps) {
+	<section class="mx-auto flex max-w-xl flex-col gap-y-8 px-5 pt-8 pb-[calc(env(safe-area-inset-bottom)+32px)]">
+		@link.Home()
+		@typography.H1() {
+			{ p.Title }
+		}
+		{ children... }
+	</section>
+}

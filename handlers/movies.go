@@ -1,8 +1,11 @@
 package handlers
 
 import (
-	"believer/movies/components"
+	"believer/movies/components/list"
 	"believer/movies/components/movie"
+	"believer/movies/components/rating"
+	"believer/movies/components/review"
+	"believer/movies/components/seen"
 	"believer/movies/db"
 	"believer/movies/types"
 	"believer/movies/utils"
@@ -37,7 +40,7 @@ func GetMovieByID(c *fiber.Ctx) error {
 	id, err := utils.SelfHealingUrl(movieId)
 
 	if err != nil {
-		return utils.Render(c, components.NotFound())
+		return utils.Render(c, views.NotFound())
 	}
 
 	err = db.Dot.Get(db.Client, &movie, "movie-by-id", id, userId)
@@ -45,12 +48,12 @@ func GetMovieByID(c *fiber.Ctx) error {
 	if err != nil {
 		// TODO: Handle this better
 		if err == sql.ErrNoRows {
-			return utils.Render(c, components.NotFound())
+			return utils.Render(c, views.NotFound())
 		}
 
 		if pgErr, ok := err.(*pq.Error); ok {
 			if strings.Contains(pgErr.Message, "is out of range for type integer") {
-				return utils.Render(c, components.NotFound())
+				return utils.Render(c, views.NotFound())
 			}
 		}
 
@@ -113,7 +116,7 @@ func GetMovieOthersSeenByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.Render(c, components.MovieOthersSeen(components.MovieOthersSeenProps{
+	return utils.Render(c, seen.MovieOthersSeen(seen.MovieOthersSeenProps{
 		ID:     idAsInt,
 		Others: others,
 	}))
@@ -126,10 +129,10 @@ type CastDB struct {
 	Characters pq.StringArray `db:"characters"`
 }
 
-func ZipCast(names []string, ids []int32, characters []string) []components.CastAndCrewDTO {
-	zipped := make([]components.CastAndCrewDTO, len(names))
+func ZipCast(names []string, ids []int32, characters []string) []views.CastAndCrewDTO {
+	zipped := make([]views.CastAndCrewDTO, len(names))
 	for i := range names {
-		zipped[i] = components.CastAndCrewDTO{
+		zipped[i] = views.CastAndCrewDTO{
 			Name:      names[i],
 			ID:        ids[i],
 			Character: characters[i],
@@ -147,7 +150,7 @@ func GetMovieCastByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	updatedCastOrCrew := make([]components.CastDTO, len(castOrCrew))
+	updatedCastOrCrew := make([]views.CastDTO, len(castOrCrew))
 	hasCharacters := false
 
 	for i, cast := range castOrCrew {
@@ -166,13 +169,13 @@ func GetMovieCastByID(c *fiber.Ctx) error {
 			characters = make([]string, len(cast.Names))
 		}
 
-		updatedCastOrCrew[i] = components.CastDTO{
+		updatedCastOrCrew[i] = views.CastDTO{
 			Job:    cast.Job,
 			People: ZipCast(cast.Names, cast.Ids, characters),
 		}
 	}
 
-	return utils.Render(c, components.CastList(updatedCastOrCrew, hasCharacters))
+	return utils.Render(c, views.CastList(updatedCastOrCrew, hasCharacters))
 }
 
 func GetMovieSeenByID(c *fiber.Ctx) error {
@@ -242,7 +245,7 @@ func GetMovieNew(c *fiber.Ctx) error {
 }
 
 func GetMovieNewSeries(c *fiber.Ctx) error {
-	var options []components.DataListItem
+	var options []list.DataListItem
 
 	err := db.Client.Select(&options, `SELECT id as "value", name FROM series ORDER BY name ASC`)
 
@@ -250,7 +253,7 @@ func GetMovieNewSeries(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.Render(c, components.DataList(options, "series_list"))
+	return utils.Render(c, list.DataList(options, "series_list"))
 }
 
 func tmdbFetchMovie(id string) types.MovieDetailsResponse {
@@ -740,7 +743,7 @@ func GetByImdbId(c *fiber.Ctx) error {
 		return c.SendString("")
 	}
 
-	return utils.Render(c, components.MovieExists(movie))
+	return utils.Render(c, views.MovieExists(movie))
 }
 
 func DeleteSeenMovie(c *fiber.Ctx) error {
@@ -884,7 +887,7 @@ func GetMoviesByYear(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.Render(c, components.ListView(components.ListViewProps{
+	return utils.Render(c, views.ListView(views.ListViewProps{
 		EmptyState: "No movies this year",
 		Movies:     movies,
 		Name:       year,
@@ -910,7 +913,7 @@ func DeleteRating(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.Render(c, components.AddRating(components.AddRatingProps{
+	return utils.Render(c, rating.AddRating(rating.AddRatingProps{
 		MovieId: movieId,
 	}))
 }
@@ -918,7 +921,7 @@ func DeleteRating(c *fiber.Ctx) error {
 func GetRating(c *fiber.Ctx) error {
 	isAuth := utils.IsAuthenticated(c)
 	movieId, err := c.ParamsInt("id")
-	rating := c.QueryInt("rating")
+	currentRating := c.QueryInt("rating")
 
 	if err != nil {
 		return err
@@ -928,8 +931,8 @@ func GetRating(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	return utils.Render(c, components.EditRating(components.EditRatingProps{
-		CurrentRating: rating,
+	return utils.Render(c, rating.EditRating(rating.EditRatingProps{
+		CurrentRating: currentRating,
 		MovieId:       movieId,
 	}))
 }
@@ -946,7 +949,7 @@ func GetEditRating(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	return utils.Render(c, components.AddRatingForm(components.AddRatingProps{
+	return utils.Render(c, rating.AddRatingForm(rating.AddRatingProps{
 		MovieId: movieId,
 	}))
 }
@@ -978,15 +981,15 @@ func PostRating(c *fiber.Ctx) error {
 		return err
 	}
 
-	rating, err := strconv.ParseInt(data.Rating, 10, 64)
+	movieRating, err := strconv.ParseInt(data.Rating, 10, 64)
 
 	if err != nil {
 		return err
 	}
 
-	return utils.Render(c, components.GetRating(components.RatingProps{
+	return utils.Render(c, rating.GetRating(rating.Props{
 		MovieId: movieId,
-		Rating:  rating,
+		Rating:  movieRating,
 		RatedAt: time.Now(),
 	}))
 }
@@ -1018,11 +1021,11 @@ func UpdateRating(c *fiber.Ctx) error {
 		return err
 	}
 
-	rating, _ := strconv.ParseInt(data.Rating, 10, 0)
+	movieRating, _ := strconv.ParseInt(data.Rating, 10, 0)
 
-	return utils.Render(c, components.GetRating(components.RatingProps{
+	return utils.Render(c, rating.GetRating(rating.Props{
 		MovieId: movieId,
-		Rating:  rating,
+		Rating:  movieRating,
 		RatedAt: time.Now(),
 	}))
 }
@@ -1049,7 +1052,7 @@ func GetMovieAwards(c *fiber.Ctx) error {
 		}
 	}
 
-	return utils.Render(c, components.MovieAwards(components.MovieAwardsProps{
+	return utils.Render(c, views.MovieAwards(views.MovieAwardsProps{
 		Awards: awards,
 		Year:   year,
 		Won:    won,
@@ -1057,7 +1060,7 @@ func GetMovieAwards(c *fiber.Ctx) error {
 }
 
 func EditMovieReview(c *fiber.Ctx) error {
-	var review types.Review
+	var reviewData types.Review
 	isAuth := utils.IsAuthenticated(c)
 
 	if !isAuth {
@@ -1065,17 +1068,17 @@ func EditMovieReview(c *fiber.Ctx) error {
 	}
 
 	id := c.Params("id")
-	err := db.Dot.Get(db.Client, &review, "review-by-id", id)
+	err := db.Dot.Get(db.Client, &reviewData, "review-by-id", id)
 
 	if err != nil {
 		return err
 	}
 
-	return utils.Render(c, components.EditReview(review))
+	return utils.Render(c, review.EditReview(reviewData))
 }
 
 func UpdateMovieReview(c *fiber.Ctx) error {
-	var review types.Review
+	var reviewData types.Review
 
 	id := c.Params("id")
 	isAuth := utils.IsAuthenticated(c)
@@ -1099,13 +1102,13 @@ func UpdateMovieReview(c *fiber.Ctx) error {
 		return err
 	}
 
-	err = db.Dot.Get(db.Client, &review, "review-by-id", id)
+	err = db.Dot.Get(db.Client, &reviewData, "review-by-id", id)
 
 	if err != nil {
 		return err
 	}
 
-	return utils.Render(c, components.ReviewContent(review))
+	return utils.Render(c, review.ReviewContent(reviewData))
 }
 
 func UpdateMovieByID(c *fiber.Ctx) error {

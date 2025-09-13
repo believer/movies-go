@@ -1,9 +1,9 @@
 package views
 
 import (
-	c "believer/movies/components"
 	"believer/movies/components/empty-state"
 	"believer/movies/components/icon"
+	"believer/movies/components/layout"
 	"believer/movies/components/link"
 	"believer/movies/types"
 	"fmt"
@@ -20,7 +20,7 @@ type FeedProps struct {
 }
 
 templ Feed(props FeedProps) {
-	@c.Layout(c.LayoutProps{}) {
+	@layout.Html() {
 		<nav class="flex items-center justify-between px-5 pt-5">
 			<div class="flex gap-x-4">
 				@link.Link(link.Props{Href: "/stats"}) {
