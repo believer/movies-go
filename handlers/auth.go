@@ -74,6 +74,7 @@ func Login(c *fiber.Ctx) error {
 		Value:    tokenString,
 		Expires:  time.Now().AddDate(0, 0, 30),
 		HTTPOnly: true,
+		Secure:   true,
 	})
 
 	return c.Redirect("/", 303)
