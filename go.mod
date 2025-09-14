@@ -10,19 +10,20 @@ require (
 )
 
 require (
+	github.com/Oudwins/tailwind-merge-go v0.2.1
 	github.com/PuerkitoBio/goquery v1.10.1
 	github.com/a-h/templ v0.3.943
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/qustavo/dotsql v1.2.0
-	golang.org/x/crypto v0.41.0
-	golang.org/x/text v0.28.0
+	golang.org/x/crypto v0.42.0
+	golang.org/x/text v0.29.0
 )
 
 require (
-	github.com/Oudwins/tailwind-merge-go v0.2.1 // indirect
 	github.com/andybalholm/cascadia v1.3.3 // indirect
-	github.com/davecgh/go-spew v1.1.1 // indirect
-	golang.org/x/net v0.43.0 // indirect
+	github.com/philhofer/fwd v1.2.0 // indirect
+	github.com/tinylib/msgp v1.4.0 // indirect
+	golang.org/x/net v0.44.0 // indirect
 )
 
 require (
@@ -35,8 +36,8 @@ require (
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/swithek/dotsqlx v1.2.0
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	github.com/valyala/fasthttp v1.65.0 // indirect
-	golang.org/x/sys v0.35.0 // indirect
+	github.com/valyala/fasthttp v1.66.0 // indirect
+	golang.org/x/sys v0.36.0 // indirect
 )
 
 replace github.com/swithek/dotsqlx => github.com/jellydator/dotsqlx v1.2.0

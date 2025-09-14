@@ -10,6 +10,7 @@ import (
 	"os"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/csrf"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/golang-jwt/jwt/v5"
@@ -47,6 +48,15 @@ func SetupAndRunApp() error {
 
 	// Logger middleware will log the HTTP requests.
 	app.Use(logger.New())
+
+	// Add CSRF token
+	app.Use(csrf.New(csrf.Config{
+		KeyLookup:      "cookie:csrf_",
+		CookieName:     "csrf_",
+		CookieSameSite: "Lax",
+		CookieSecure:   true,
+		CookieHTTPOnly: true,
+	}))
 
 	// Pass app environment to all views
 	app.Use(func(c *fiber.Ctx) error {
