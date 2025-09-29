@@ -13,6 +13,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/csrf"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/joho/godotenv"
 )
@@ -41,6 +42,7 @@ func SetupAndRunApp() error {
 	})
 
 	// Setup middleware
+	store := session.New()
 
 	// Recover middleware recovers from panics anywhere in
 	// the chain and handles the control to the centralized ErrorHandler.
@@ -56,6 +58,8 @@ func SetupAndRunApp() error {
 		CookieSameSite: "Lax",
 		CookieSecure:   true,
 		CookieHTTPOnly: true,
+		Session:        store,
+		SessionKey:     "fiber.csrf.token",
 	}))
 
 	// Pass app environment to all views
