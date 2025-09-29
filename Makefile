@@ -13,7 +13,7 @@ dev:
 		--cmd='go run .'
 
 css:
-	@sed -i "" "s/styles\(\.[a-z0-9]\{6\}\)\{0,1\}\.css/styles.css/g" ./components/layout/layout.templ
+	@sed -i "" "s/styles\(\.[a-z0-9]\{6\}\)\{0,1\}\.css/styles.css/g" ./components/layout/html.templ
 	@./scripts/tailwindcss -i styles.css -o public/styles.css --watch
 
 build-prod:
