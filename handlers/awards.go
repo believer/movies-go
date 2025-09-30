@@ -48,7 +48,7 @@ func GetMoviesByNumberOfAwards(c *fiber.Ctx) error {
 }
 
 func GetAwardsByYear(c *fiber.Ctx) error {
-	var awards []types.GlobalAward
+	var awards []types.AwardsByYear
 
 	year := c.Params("year")
 

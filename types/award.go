@@ -7,6 +7,18 @@ import (
 	"github.com/a-h/templ"
 )
 
+// Award sub structs
+// ======================================================
+
+type Nominees []Person
+
+func (u *Nominees) Scan(v any) error {
+	return utils.ScanJSON(v, u)
+}
+
+// Award
+// ======================================================
+
 type Award struct {
 	Category string           `db:"category" json:"category"`
 	Detail   utils.NullString `db:"detail" json:"detail"`
@@ -21,11 +33,7 @@ type Award struct {
 	Year     string           `db:"year"`
 }
 
-type Nominees []Person
-
-func (u *Nominees) Scan(v any) error {
-	return ScanEntity(v, u)
-}
+type Awards []Award
 
 func (a *Award) LinkToMovie() templ.SafeURL {
 	if a.Title.Valid {
@@ -47,6 +55,9 @@ func (a *Award) LinkToYear() templ.SafeURL {
 	return templ.SafeURL(fmt.Sprintf("/awards/year/%s", a.Year))
 }
 
+// Awards for person
+// ======================================================
+
 type AwardPersonStat struct {
 	Count int    `db:"count"`
 	ID    int    `db:"person_id"`
@@ -56,6 +67,9 @@ type AwardPersonStat struct {
 func (a AwardPersonStat) LinkTo() templ.SafeURL {
 	return templ.URL(fmt.Sprintf("/person/%s-%d", utils.Slugify(a.Name), a.ID))
 }
+
+// Awards for movie
+// ======================================================
 
 type AwardMovieStat struct {
 	Count int    `db:"award_count"`
@@ -67,6 +81,9 @@ func (a AwardMovieStat) LinkTo() templ.SafeURL {
 	return templ.URL(fmt.Sprintf("/movie/%s-%d", utils.Slugify(a.Title), a.ID))
 }
 
+// Awards for person
+// ======================================================
+
 type GroupedAward struct {
 	Name     string
 	Winner   bool
@@ -75,18 +92,15 @@ type GroupedAward struct {
 
 type GroupedAwards map[string]GroupedAward
 
-type GlobalAward struct {
-	MovieID int          `db:"movie_id"`
-	Title   string       `db:"title"`
-	Awards  GlobalAwards `db:"awards"`
+// Awards for person
+// ======================================================
+
+type AwardsByYear struct {
+	MovieID int    `db:"movie_id"`
+	Title   string `db:"title"`
+	Awards  Awards `db:"awards"`
 }
 
-type GlobalAwards []Award
-
-func (u *GlobalAwards) Scan(v any) error {
-	return utils.ScanJSON(v, u)
-}
-
-func (g *GlobalAward) LinkToMovie() templ.SafeURL {
+func (g *AwardsByYear) LinkToMovie() templ.SafeURL {
 	return templ.URL(fmt.Sprintf("/movie/%s-%d", utils.Slugify(g.Title), g.MovieID))
 }

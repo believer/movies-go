@@ -14,7 +14,7 @@ import "believer/movies/components/section"
 import "believer/movies/components/layout"
 
 type AwardsPageProps struct {
-	GroupedAwards []types.GlobalAward
+	GroupedAwards []types.AwardsByYear
 	Name          string
 }
 
