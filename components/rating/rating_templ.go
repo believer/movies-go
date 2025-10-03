@@ -182,7 +182,7 @@ func GetRating(props Props) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" class=\"cursor-pointer text-content-secondary transition-colors link-focus\">Edit</button> <button hx-swap=\"outerHTML\" hx-target=\"#rating\" hx-delete=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" class=\"cursor-pointer text-content-secondary transition-colors focus\">Edit</button> <button hx-swap=\"outerHTML\" hx-target=\"#rating\" hx-delete=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -195,7 +195,7 @@ func GetRating(props Props) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" hx-confirm=\"Delete rating?\" hx-on::before-cleanup-element=\"document.body.dispatchEvent(new Event('update-rating'))\" class=\"cursor-pointer text-content-secondary transition-colors link-focus\">Delete</button>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" hx-confirm=\"Delete rating?\" hx-on::before-cleanup-element=\"document.body.dispatchEvent(new Event('update-rating'))\" class=\"cursor-pointer text-content-secondary transition-colors focus\">Delete</button>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -266,7 +266,7 @@ func EditRating(props EditRatingProps) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<button class=\"cursor-pointer rounded-sm bg-background-secondary px-6 py-2 text-content-secondary link-focus\" type=\"submit\">Update rating</button></form>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<button class=\"cursor-pointer rounded-sm bg-background-secondary px-6 py-2 text-content-secondary focus\" type=\"submit\">Update rating</button></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -336,7 +336,7 @@ func AddRating(props AddRatingProps) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\" hx-target=\"#rating\" hx-swap=\"outerHTML\" class=\"cursor-pointer text-content-secondary transition-colors link-focus\">Add rating</button>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\" hx-target=\"#rating\" hx-swap=\"outerHTML\" class=\"cursor-pointer text-content-secondary transition-colors focus\">Add rating</button>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -415,7 +415,7 @@ func AddRatingForm(props AddRatingProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div><button class=\"cursor-pointer rounded-sm bg-background-secondary px-6 py-2 text-content-secondary link-focus\" type=\"submit\">Save rating</button></form>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div><button class=\"cursor-pointer rounded-sm bg-background-secondary px-6 py-2 text-content-secondary focus\" type=\"submit\">Save rating</button></form>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

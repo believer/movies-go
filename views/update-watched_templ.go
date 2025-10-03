@@ -106,7 +106,7 @@ func UpdateWatched(props UpdateWatchedProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<footer class=\"flex flex-col gap-y-4\"><div id=\"error\" class=\"empty:hidden text-rose-700 dark:text-rose-400 border border-dashed border-rose-700 dark:border-rose-400 p-4 rounded-sm\"></div><button class=\"rounded-sm bg-neutral-200 px-6 py-2 text-content-primary dark:bg-neutral-700 link-focus\" type=\"submit\">Add</button><div id=\"sending\" class=\"htmx-indicator\">Sending...</div></footer></form>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<footer class=\"flex flex-col gap-y-4\"><div id=\"error\" class=\"empty:hidden text-rose-700 dark:text-rose-400 border border-dashed border-rose-700 dark:border-rose-400 p-4 rounded-sm\"></div><button class=\"rounded-sm bg-neutral-200 px-6 py-2 text-content-primary dark:bg-neutral-700 focus\" type=\"submit\">Add</button><div id=\"sending\" class=\"htmx-indicator\">Sending...</div></footer></form>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

@@ -9,9 +9,10 @@ const (
 )
 
 type LiProps struct {
-	Class string
-	Items int
-	Style ListStyle
+	Class    string
+	Items    int
+	Style    ListStyle
+	DataType string
 }
 
 templ Li(props ...LiProps) {
@@ -19,7 +20,15 @@ templ Li(props ...LiProps) {
 	if len(props) > 0 {
 		{{ p = props[0] }}
 	}
-	<li class={ "list__item", style(p.Style, p.Items) } style={ templ.SafeCSS(fmt.Sprintf("--list-style: %s", p.Style)) }>
+	<li
+		class={ "list__item", style(p.Style, p.Items) }
+		if p.Style != "" {
+			style={ templ.SafeCSS(fmt.Sprintf("--list-style: %s", p.Style)) }
+		}
+		if p.DataType != "" {
+			data-type={ p.DataType }
+		}
+	>
 		{ children... }
 	</li>
 }

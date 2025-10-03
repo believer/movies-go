@@ -25,7 +25,8 @@ templ ReviewContent(props types.Review) {
 		if ctx.Value("IsAuthenticated").(bool) {
 			<footer>
 				<a
-					class="cursor-pointer md:text-sm tabular-nums inline-flex items-center gap-1 border-b border-dashed border-content-secondary link-focus"
+					class="cursor-pointer md:text-sm tabular-nums inline-flex items-center gap-1 border-b border-dashed border-content-secondary focus"
+					href="#"
 					hx-get={ props.Edit() }
 					hx-target="#review-content"
 					hx-swap="outerHTML"
@@ -56,7 +57,7 @@ templ EditReview(props types.Review) {
 		</div>
 		<footer>
 			<button
-				class="cursor-pointer rounded-sm bg-background-secondary px-6 py-2 text-content-secondary link-focus"
+				class="cursor-pointer rounded-sm bg-background-secondary px-6 py-2 text-content-secondary focus"
 				type="submit"
 			>
 				Update review

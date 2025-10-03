@@ -30,7 +30,7 @@ templ addWatch(id string, isUnseen bool) {
 			<a
 				href="#"
 				hx-post={ fmt.Sprintf("/movie/%s/seen", id) }
-				class="truncate border-b border-dashed border-content-secondary link-focus"
+				class="truncate border-b border-dashed border-content-secondary focus"
 			>
 				Add new watch
 			</a>
@@ -68,13 +68,13 @@ templ Watched(props WatchedProps) {
 							@separator.Separator()
 							<div class="flex gap-4">
 								<a
-									class="text-content-secondary transition-colors link-focus"
+									class="text-content-secondary transition-colors focus"
 									href={ templ.SafeURL(fmt.Sprintf("/movie/%s/seen/%d/edit", props.ID, w.ID)) }
 								>
 									Edit
 								</a>
 								<button
-									class="cursor-pointer text-content-secondary transition-colors link-focus"
+									class="cursor-pointer text-content-secondary transition-colors focus"
 									hx-confirm="Delete this watch date?"
 									hx-delete={ fmt.Sprintf("/movie/%s/seen/%d", props.ID, w.ID) }
 									hx-swap="outerHTML"

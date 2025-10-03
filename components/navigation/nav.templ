@@ -1,0 +1,11 @@
+package navigation
+
+import "believer/movies/components/link"
+
+templ Home() {
+	<div class="home">
+		@link.Link(link.Props{Href: "/"}) {
+			Home
+		}
+	</div>
+}

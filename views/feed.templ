@@ -5,6 +5,8 @@ import (
 	"believer/movies/components/icon"
 	"believer/movies/components/layout"
 	"believer/movies/components/link"
+	"believer/movies/components/list"
+	"believer/movies/components/separator"
 	"believer/movies/types"
 	"fmt"
 	"strconv"
@@ -32,26 +34,20 @@ templ Feed(props FeedProps) {
 			</div>
 			if props.IsAdmin {
 				<div class="flex gap-4 items-center">
-					<a
-						class="fixed bottom-8 right-8 z-20 text-neutral-900 dark:text-neutral-100 bg-neutral-200 dark:bg-neutral-700 w-14 h-14 shadow-lg flex justify-center items-center rounded-full dark:sm:shadow-transparent dark:sm:bg-transparent sm:shadow-transparent sm:bg-transparent sm:bottom-0 sm:right-0 sm:w-auto sm:h-auto sm:relative link-focus"
-						href="/movie/new"
-					>
+					@link.Link(link.Props{
+						Class: "link--new",
+						Href:  templ.SafeURL("/movie/new"),
+					}) {
 						@icon.Icon(icon.Props{Name: icon.Plus})
-					</a>
-					<a
-						class="md:text-sm truncate border-b border-dashed border-content-secondary link-focus"
-						href="/logout"
-						hx-post="/logout"
-					>
+					}
+					@link.Link(link.Props{Href: "/logout", Hx: "hx-post=/logout"}) {
 						Logout
-					</a>
-				</div>
-			} else {
-				<div class="md:absolute right-8 top-10 flex gap-4">
-					@link.Link(link.Props{Href: "/login"}) {
-						Login
 					}
 				</div>
+			} else {
+				@link.Link(link.Props{Href: "/login"}) {
+					Login
+				}
 			}
 		</nav>
 		<div class="mx-auto flex max-w-xl flex-col gap-12 px-5 pt-5 md:pt-0">
@@ -74,21 +70,19 @@ templ Feed(props FeedProps) {
 			switch props.QueryType {
 				case "person":
 					if len(props.Persons) > 0 {
-						<ol class="flex flex-col gap-y-4 text-sm">
+						<ol class="feed-list feed-list--person">
 							for _, person := range props.Persons {
-								<li data-type="list-item">
-									<a
-										href={ person.LinkTo() }
-										class="flex justify-between items-center gap-x-4 rounded-sm link-focus"
-									>
-										<h2 class="truncate text-base font-medium">
-											{ person.Name }
-										</h2>
-										<div class="text-xs text-content-secondary">
-											{ strconv.Itoa(person.NumberOfMovies) } movies
-										</div>
-									</a>
-								</li>
+								@list.Li(list.LiProps{
+									DataType: "list-item",
+								}) {
+									@link.Link(link.Props{Href: person.LinkTo()}) {
+										{ person.Name }
+									}
+									@separator.Separator()
+									<div class="text-xs text-content-secondary">
+										{ strconv.Itoa(person.NumberOfMovies) } movies
+									</div>
+								}
 							}
 						</ol>
 					} else {
@@ -100,7 +94,7 @@ templ Feed(props FeedProps) {
 					if len(props.Movies) > 0 {
 						// Using space-y-6 instead of flex based setup removes the initial
 						// flash when the layout is calculated
-						<ol class="relative space-y-6 text-sm">
+						<ol class="feed-list">
 							for _, movie := range props.Movies {
 								<li
 									data-type="list-item"
@@ -116,7 +110,7 @@ init if my @data-year is not really equal to @data-year of previous <li/> then
     put my @data-year into its @id
     put it before me
   then
-    make an <a.year/>
+    make an <a.year.focus/>
     put the @data-year into its textContent
     put `/year/${dataYear}` into its href
     put it into the previous <li/>
@@ -142,7 +136,7 @@ end
 								>
 									<a
 										href={ movie.LinkTo() }
-										class="flex flex-col gap-4 rounded-sm link-focus"
+										class="flex flex-col gap-4 rounded-sm focus"
 									>
 										<header class="flex flex-col gap-1">
 											<h2 class="truncate text-base font-medium">
@@ -163,7 +157,7 @@ end
 											</div>
 										</header>
 										if movie.Overview != "" {
-											<p class="line-clamp-3 text-content-secondary">
+											<p class="feed-list__overview">
 												{ movie.Overview }
 											</p>
 										}

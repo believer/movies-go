@@ -98,29 +98,72 @@
 
 /* Component styles */
 @layer components {
-	.link-focus {
-		@apply focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-3 focus-visible:outline-content-secondary;
-	}
-
 	.year {
-		@apply block text-3xl lg:text-7xl font-mono text-transparent lg:absolute lg:-top-4 -left-52 [-webkit-text-stroke-color:rgba(163_163_163/1)] dark:[-webkit-text-stroke-color:rgba(82_82_82/1)] z-20 bg-white dark:bg-neutral-900 py-2 lg:py-4 focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-3 focus-visible:outline-content-secondary;
-
 		-webkit-text-stroke-width: 2px;
+		-webkit-text-stroke-color: light-dark(
+			rgba(163 163 163 / 1),
+			rgba(82 82 82 / 1)
+		);
+		display: block;
+		left: -13rem;
+		z-index: 20;
+		padding-block: var(--spacing-2);
+		font-family:
+			Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+		font-size: var(--text-3xl);
+		line-height: 2.25rem;
+		color: transparent;
+		background-color: var(--color-background-primary);
+
+		@media (min-width: 1024px) {
+			font-size: 4.5rem;
+			line-height: 1;
+			padding-block: var(--spacing-4);
+			position: absolute;
+			top: -1rem;
+		}
 	}
 }
 
 /* These handle positioning when the element sticks,
 * .year and .month are use to align with the list items */
 .year-indicator {
-	@apply sticky top-0 lg:top-4 z-20 my-0;
+	margin-block: 0;
+	position: sticky;
+	top: 0;
+	z-index: 20;
+
+	@media (width >= 1024px) {
+		top: var(--spacing-4);
+	}
 }
 
 .month-indicator {
-	@apply sticky top-12 lg:top-24 z-10 my-0;
+	margin-block: 0;
+	position: sticky;
+	top: 48px;
+	z-index: 10;
+
+	@media (width >= 1024px) {
+		top: 96px;
+	}
 }
 
 .month {
-	@apply text-lg lg:text-xl lg:absolute lg:-top-1 -left-49 z-10 bg-white dark:bg-neutral-900 py-1 lg:w-40 lg:text-right text-neutral-400 dark:text-neutral-700;
+	background-color: var(--color-background-primary);
+	color: var(--color-content-tertiary);
+	font-size: var(--text-lg);
+	padding-block: var(--spacing-1);
+	z-index: 10;
+
+	@media (width >= 1024px) {
+		font-size: var(--text-xl);
+		left: -196px;
+		position: absolute;
+		text-align: right;
+		top: -4px;
+		width: 160px;
+	}
 }
 
 /* Scroll driven animation to fade in date indicators
@@ -205,17 +248,17 @@
 	display: flex;
 	flex-direction: column;
 	row-gap: var(--spacing-2);
+}
 
-	.list__item {
-		align-items: flex-end;
-		column-gap: var(--spacing-4);
-		justify-content: space-between;
+.list__item {
+	align-items: flex-end;
+	column-gap: var(--spacing-4);
+	justify-content: space-between;
 
-		/* TODO: Use sibling-count() or something to set grid styling together
+	/* TODO: Use sibling-count() or something to set grid styling together
      * with conditional display styling */
 
-		/* display: if(style(--list-style: none): flex; else: grid;); */
-	}
+	/* display: if(style(--list-style: none): flex; else: grid;); */
 }
 
 .description-list {
@@ -278,6 +321,61 @@
 	display: inline-flex;
 	font-variant-numeric: tabular-nums;
 	gap: var(--spacing-1);
+	transition: border-color 150ms ease-in;
+
+	&:hover {
+		border-color: var(--color-content-secondary);
+	}
+
+	&.link--new {
+		--size: 48px;
+
+		border-bottom: 0;
+		border-radius: var(--spacing-max);
+		padding: 4px;
+		position: relative;
+
+		&:before {
+			--size: 40px;
+
+			border-radius: var(--spacing-max);
+			content: "";
+			height: var(--size);
+			left: 50%;
+			position: absolute;
+			top: 50%;
+			transition:
+				background-color 200ms ease-in-out,
+				scale 150ms ease-in;
+			transform: translateX(-50%) translateY(-50%);
+			transform-origin: top left;
+			scale: 0.8;
+			width: var(--size);
+			z-index: -1;
+
+			@media (width <= 480px) {
+				display: none;
+			}
+		}
+
+		&:hover:before {
+			background-color: var(--color-background-secondary);
+			scale: 1;
+		}
+
+		@media (width <= 480px) {
+			align-items: center;
+			justify-content: center;
+			background-color: var(--color-background-secondary);
+			bottom: var(--spacing-8);
+			display: flex;
+			position: fixed;
+			right: var(--spacing-8);
+			width: var(--size);
+			height: var(--size);
+			z-index: 10;
+		}
+	}
 
 	&.link--highlight {
 		color: var(--color-content-highlight);
@@ -293,6 +391,44 @@
 
 	&.separator--highlight {
 		border-color: var(--color-content-highlight);
+	}
+}
+
+/* Navigation */
+
+nav {
+	.home {
+		left: var(--spacing-5);
+		top: var(--spacing-5);
+
+		@media (width > 480px) {
+			position: absolute;
+		}
+	}
+}
+
+/* Feed */
+
+.feed-list {
+	position: relative;
+	font-size: var(--text-sm);
+
+	:where(& > :not(:last-child)) {
+		margin-block-end: var(--spacing-6);
+	}
+
+	&.feed-list--person {
+		:where(& > :not(:last-child)) {
+			margin-block-end: var(--spacing-4);
+		}
+	}
+
+	.feed-list__overview {
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 3;
+		color: var(--color-content-secondary);
+		display: -webkit-box;
+		overflow: hidden;
 	}
 }
 

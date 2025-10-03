@@ -67,7 +67,7 @@ templ Movie(props MovieProps) {
 					@list.DlItem(list.DlProps{Detail: "IMDb"}) {
 						<a
 							href={ templ.URL(fmt.Sprintf("https://www.imdb.com/title/%s", props.Movie.ImdbId)) }
-							class="inline-flex items-center gap-1 link-focus"
+							class="inline-flex items-center gap-1 focus"
 							target="_blank"
 							rel="noopener noreferrer"
 						>
@@ -83,7 +83,7 @@ templ Movie(props MovieProps) {
 						<div class="flex flex-wrap gap-2">
 							for _, genre := range props.Movie.Genres {
 								<a
-									class="inline-flex items-center gap-1 border-b border-dashed border-content-secondary link-focus"
+									class="inline-flex items-center gap-1 border-b border-dashed border-content-secondary focus"
 									href={ templ.URL(genre.LinkTo("genre")) }
 								>
 									{ genre.Name }
@@ -97,7 +97,7 @@ templ Movie(props MovieProps) {
 						<div class="flex flex-wrap gap-2">
 							for _, language := range props.Movie.Languages {
 								<a
-									class="inline-flex items-center gap-1 border-b border-dashed border-content-secondary link-focus"
+									class="inline-flex items-center gap-1 border-b border-dashed border-content-secondary focus"
 									href={ templ.URL(language.LinkTo("language")) }
 								>
 									{ language.Name }

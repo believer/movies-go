@@ -362,7 +362,7 @@ func Movie(props MovieProps) templ.Component {
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
 							}
-							templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\" class=\"inline-flex items-center gap-1 link-focus\" target=\"_blank\" rel=\"noopener noreferrer\"><span class=\"border-b border-dashed border-content-secondary\">")
+							templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\" class=\"inline-flex items-center gap-1 focus\" target=\"_blank\" rel=\"noopener noreferrer\"><span class=\"border-b border-dashed border-content-secondary\">")
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
 							}
@@ -416,7 +416,7 @@ func Movie(props MovieProps) templ.Component {
 								return templ_7745c5c3_Err
 							}
 							for _, genre := range props.Movie.Genres {
-								templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<a class=\"inline-flex items-center gap-1 border-b border-dashed border-content-secondary link-focus\" href=\"")
+								templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<a class=\"inline-flex items-center gap-1 border-b border-dashed border-content-secondary focus\" href=\"")
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
 								}
@@ -480,7 +480,7 @@ func Movie(props MovieProps) templ.Component {
 								return templ_7745c5c3_Err
 							}
 							for _, language := range props.Movie.Languages {
-								templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<a class=\"inline-flex items-center gap-1 border-b border-dashed border-content-secondary link-focus\" href=\"")
+								templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<a class=\"inline-flex items-center gap-1 border-b border-dashed border-content-secondary focus\" href=\"")
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
 								}

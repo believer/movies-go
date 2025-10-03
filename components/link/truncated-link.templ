@@ -17,7 +17,7 @@ templ TruncatedLink(props ...TruncatedLinkProps) {
 		if p.AriaLabel != "" {
 			aria-label={ p.AriaLabel }
 		}
-		class={ "truncate border-b border-dashed border-content-secondary link-focus", templ.KV("flex-1 basis-3/5", p.Long) }
+		class={ "truncate border-b border-dashed border-content-secondary focus", templ.KV("flex-1 basis-3/5", p.Long) }
 		if p.ToRoot {
 			href="/"
 		} else {
