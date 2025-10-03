@@ -3,15 +3,13 @@ package list
 import "strconv"
 
 templ Ol() {
-	<ol class="flex flex-col gap-2">
+	<ol class="list">
 		{ children... }
 	</ol>
 }
 
 templ Number(i int64) {
-	<div
-		class="text-right tabular-nums text-content-tertiary"
-	>
+	<div class="text-right tabular-nums text-content-tertiary">
 		{ strconv.FormatInt(i, 10) }
 	</div>
 }

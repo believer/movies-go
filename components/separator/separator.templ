@@ -1,6 +1,6 @@
 package separator
 
-import "believer/movies/utils"
+import "fmt"
 
 type Decoration string
 
@@ -11,7 +11,7 @@ const (
 )
 
 type Props struct {
-	Class string
+	Highlight bool
 	// Style of border. Defaults to "dashed"
 	Decoration Decoration
 }
@@ -21,27 +21,11 @@ templ Separator(props ...Props) {
 	if len(props) > 0 {
 		{{ p = props[0] }}
 	}
-	<hr
-		class={ utils.TwMerge(
-      "m-0 flex-1",
-      // Border
-      "border-content-quarternary",
-      decorationClasses(p.Decoration),
-      // Additional styles
-      p.Class,
-    ) }
-	/>
-}
-
-func decorationClasses(decoration Decoration) string {
-	switch decoration {
-	case DecorationDashed:
-		return "border-dashed"
-	case DecorationDotted:
-		return "border-dotted"
-	case DecorationSolid:
-		return "border-solid"
-	default:
-		return "border-dashed"
+	if p.Decoration == "" {
+		{{ p.Decoration = DecorationDashed }}
 	}
+	<hr
+		class={ "separator", templ.KV("separator--highlight", p.Highlight) }
+		style={ templ.SafeCSS(fmt.Sprintf("--decoration: %s;", p.Decoration)) }
+	/>
 }

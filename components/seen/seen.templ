@@ -53,15 +53,13 @@ templ UnseenContent(id int, imdbId string) {
 templ Seen(props Props) {
 	if props.Seen {
 		@popover.Popover(popover.Props{
-			AnchorName: fmt.Sprintf("--anchor-%s-%d", props.Title, props.ID),
-			Content:    SeenContent(props.ID, props.ImdbId),
-			Toggle:     SeenToggle(),
+			Content: SeenContent(props.ID, props.ImdbId),
+			Toggle:  SeenToggle(),
 		})
 	} else {
 		@popover.Popover(popover.Props{
-			AnchorName: fmt.Sprintf("--anchor-%s-%d", props.Title, props.ID),
-			Content:    UnseenContent(props.ID, props.ImdbId),
-			Toggle:     UnseenToggle(),
+			Content: UnseenContent(props.ID, props.ImdbId),
+			Toggle:  UnseenToggle(),
 		})
 	}
 }

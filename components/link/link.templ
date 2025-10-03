@@ -16,10 +16,7 @@ templ Link(p Props) {
 		if p.AriaLabel != "" {
 			aria-label={ p.AriaLabel }
 		}
-		class={ utils.TwMerge(
-  "md:text-sm tabular-nums inline-flex items-center gap-1 link-focus",
-  // Border
-  "border-b border-dashed border-content-secondary",
+		class={ "link focus", utils.TwMerge(
   // Long links
   utils.If(p.Long, "flex-1 basis-3/5"),
   p.Class,

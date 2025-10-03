@@ -14,36 +14,34 @@ type Props struct {
 }
 
 templ title(p Props) {
-	<h2 class="font-medium text-content-primary">
-		<span class="flex items-center gap-x-2">
-			if p.Href != "" {
-				@link.Link(link.Props{Href: p.Href}) {
-					{ p.Title }
-				}
-			} else {
+	<h2>
+		if p.Href != "" {
+			@link.Link(link.Props{Href: p.Href}) {
 				{ p.Title }
 			}
-			if p.Subtitle != "" {
-				<span class="font-regular text-xs text-content-secondary">
-					({ p.Subtitle })
-				</span>
-			}
-			if p.NumberOfItems > 0 {
-				<span class="font-regular text-xs text-content-secondary">
-					({ strconv.Itoa(p.NumberOfItems) })
-				</span>
-			}
-		</span>
+		} else {
+			{ p.Title }
+		}
+		if p.Subtitle != "" {
+			<span class="section__subtitle">
+				({ p.Subtitle })
+			</span>
+		}
+		if p.NumberOfItems > 0 {
+			<span class="section__subtitle">
+				({ strconv.Itoa(p.NumberOfItems) })
+			</span>
+		}
 	</h2>
 }
 
 templ Section(p Props) {
-	<section class="flex flex-col gap-4 md:text-sm text-content-secondary">
+	<section class="section">
 		<div
-			class={ utils.TwMerge(
-        "flex items-center",
-        utils.IfElse(p.Subtitle == "", "gap-x-4", "gap-x-2"),
-      ) }
+			class={
+				"section__title",
+				utils.IfElse(p.Subtitle == "", "gap-x-4", "gap-x-2"),
+			}
 		>
 			@title(p)
 			@separator.Separator(separator.Props{Decoration: separator.DecorationSolid})

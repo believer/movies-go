@@ -1,5 +1,7 @@
 package list
 
+import "fmt"
+
 type ListStyle string
 
 const (
@@ -17,12 +19,7 @@ templ Li(props ...LiProps) {
 	if len(props) > 0 {
 		{{ p = props[0] }}
 	}
-	<li
-		class={
-			"items-end justify-between gap-x-4",
-			style(p.Style, p.Items),
-		}
-	>
+	<li class={ "list__item", style(p.Style, p.Items) } style={ templ.SafeCSS(fmt.Sprintf("--list-style: %s", p.Style)) }>
 		{ children... }
 	</li>
 }

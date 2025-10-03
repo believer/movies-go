@@ -1,50 +1,126 @@
 @import "tailwindcss";
 
 @theme inline {
-  /* Background */
-  --color-background-primary: light-dark(var(--color-white), var(--color-neutral-900));
-  --color-background-secondary: light-dark(var(--color-neutral-200), var(--color-neutral-800));
+	/* Background */
+	--color-background-primary: light-dark(
+		var(--color-white),
+		var(--color-neutral-900)
+	);
+	--color-background-secondary: light-dark(
+		var(--color-neutral-200),
+		var(--color-neutral-800)
+	);
 
-  /* Border */
-  --color-border-primary: light-dark(var(--color-neutral-300), var(--color-neutral-700));
+	/* Border */
+	--color-border-primary: light-dark(
+		var(--color-neutral-300),
+		var(--color-neutral-700)
+	);
+	--color-border-highlight: light-dark(
+		var(--color-yellow-800),
+		var(--color-yellow-100)
+	);
 
-  /* Content */
-  --color-content-primary: light-dark(var(--color-neutral-700), var(--color-neutral-300));
-  --color-content-secondary: light-dark(var(--color-neutral-500), var(--color-neutral-400));
-  --color-content-tertiary: light-dark(var(--color-neutral-400), var(--color-neutral-600));
-  --color-content-quarternary: light-dark(var(--color-neutral-300), var(--color-neutral-700));
+	/* Content */
+	--color-content-primary: light-dark(
+		var(--color-neutral-700),
+		var(--color-neutral-300)
+	);
+	--color-content-secondary: light-dark(
+		var(--color-neutral-500),
+		var(--color-neutral-400)
+	);
+	--color-content-tertiary: light-dark(
+		var(--color-neutral-400),
+		var(--color-neutral-600)
+	);
+	--color-content-quarternary: light-dark(
+		var(--color-neutral-300),
+		var(--color-neutral-700)
+	);
 }
 
 :root {
-  /* Enable light and dark mode colors */
-  color-scheme: light dark;
+	/* Enable light and dark mode colors */
+	color-scheme: light dark;
+
+	--spacing-1: 4px;
+	--spacing-2: 8px;
+	--spacing-3: 12px;
+	--spacing-4: 16px;
+	--spacing-5: 20px;
+	--spacing-6: 24px;
+	--spacing-7: 28px;
+	--spacing-8: 32px;
+	--spacing-max: calc(infinity * 1px);
+
+	--text-xs: 0.75rem;
+	--text-sm: 0.875rem;
+
+	/* Background */
+	--color-background-primary: light-dark(
+		var(--color-white),
+		var(--color-neutral-900)
+	);
+	--color-background-secondary: light-dark(
+		var(--color-neutral-200),
+		var(--color-neutral-800)
+	);
+
+	/* Border */
+	--color-border-primary: light-dark(
+		var(--color-neutral-300),
+		var(--color-neutral-700)
+	);
+
+	/* Content */
+	--color-content-primary: light-dark(
+		var(--color-neutral-700),
+		var(--color-neutral-300)
+	);
+	--color-content-secondary: light-dark(
+		var(--color-neutral-500),
+		var(--color-neutral-400)
+	);
+	--color-content-tertiary: light-dark(
+		var(--color-neutral-400),
+		var(--color-neutral-600)
+	);
+	--color-content-quarternary: light-dark(
+		var(--color-neutral-300),
+		var(--color-neutral-700)
+	);
+	--color-content-highlight: light-dark(
+		var(--color-yellow-800),
+		var(--color-yellow-200)
+	);
 }
 
 /* Component styles */
 @layer components {
-  .link-focus {
-    @apply focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-3 focus-visible:outline-content-secondary;
-  }
+	.link-focus {
+		@apply focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-3 focus-visible:outline-content-secondary;
+	}
 
-  .year {
-    @apply block text-3xl lg:text-7xl font-mono text-transparent lg:absolute lg:-top-4 -left-52 [-webkit-text-stroke-color:rgba(163_163_163/1)] dark:[-webkit-text-stroke-color:rgba(82_82_82/1)] z-20 bg-white dark:bg-neutral-900 py-2 lg:py-4 focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-3 focus-visible:outline-content-secondary;
+	.year {
+		@apply block text-3xl lg:text-7xl font-mono text-transparent lg:absolute lg:-top-4 -left-52 [-webkit-text-stroke-color:rgba(163_163_163/1)] dark:[-webkit-text-stroke-color:rgba(82_82_82/1)] z-20 bg-white dark:bg-neutral-900 py-2 lg:py-4 focus-visible:outline-1 focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-3 focus-visible:outline-content-secondary;
 
-    -webkit-text-stroke-width: 2px;
-  }
+		-webkit-text-stroke-width: 2px;
+	}
 }
 
 /* These handle positioning when the element sticks,
 * .year and .month are use to align with the list items */
 .year-indicator {
-  @apply sticky top-0 lg:top-4 z-20 my-0;
+	@apply sticky top-0 lg:top-4 z-20 my-0;
 }
 
 .month-indicator {
-  @apply sticky top-12 lg:top-24 z-10 my-0;
+	@apply sticky top-12 lg:top-24 z-10 my-0;
 }
 
 .month {
-  @apply text-lg lg:text-xl lg:absolute lg:-top-1 -left-49 z-10 bg-white dark:bg-neutral-900 py-1 lg:w-40 lg:text-right text-neutral-400 dark:text-neutral-700;
+	@apply text-lg lg:text-xl lg:absolute lg:-top-1 -left-49 z-10 bg-white dark:bg-neutral-900 py-1 lg:w-40 lg:text-right text-neutral-400 dark:text-neutral-700;
 }
 
 /* Scroll driven animation to fade in date indicators
@@ -52,60 +128,188 @@
 * animation needed to be before animation-timeline.
 * */
 @media (prefers-reduced-motion: no-preference) and (min-width: 1024px) {
-  @supports (animation-range: 0 50vh) {
+	@supports (animation-range: 0 50vh) {
+		.year,
+		.month {
+			opacity: 0;
+			transform: translateY(50px);
+			animation: fade-in linear forwards;
+			animation-timeline: view();
+			/* Start at 0px (when it comes into view), end at half the screen height */
+			animation-range: 0 50vh;
+		}
 
-    .year,
-    .month {
-      opacity: 0;
-      transform: translateY(50px);
-      animation: fade-in linear forwards;
-      animation-timeline: view();
-      /* Start at 0px (when it comes into view), end at half the screen height */
-      animation-range: 0 50vh;
-    }
-
-    @keyframes fade-in {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-  }
+		@keyframes fade-in {
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+	}
 }
 
-@supports (anchor-name: --myanchor) {
-  [popover] {
-    @apply m-1 border-none hidden opacity-0;
+/**
+ * Components
+ * ============================================================ */
 
-    transition: opacity 500ms, display 500ms allow-discrete, overlay 500ms allow-discrete;
-
-    &:popover-open {
-      @apply block opacity-100;
-
-      @starting-style {
-        opacity: 0;
-      }
-    }
-  }
+.focus:focus-visible {
+	border-radius: 1px;
+	outline: 1px dashed var(--color-content-secondary);
+	outline-offset: var(--spacing-1);
 }
 
-/* TODO: Remove once Safari and Firefox supports it */
-@supports not (anchor-name: --myanchor) {
-  [popovertarget] {
-    pointer-events: none;
-  }
+/* Popover */
+
+.popover {
+	background-color: var(--color-background-secondary);
+	border-radius: var(--spacing-1);
+	color: var(--color-content-primary);
+	font-size: var(--text-xs);
+	margin: 4px;
+	opacity: 0;
+	padding: var(--spacing-2);
+	position-area: top;
+	position-try: flip-block;
+	transition:
+		opacity 500ms,
+		translate 400ms,
+		display 500ms allow-discrete,
+		overlay 500ms allow-discrete;
+
+	&:popover-open {
+		opacity: 100;
+		translate: 0;
+
+		@starting-style {
+			opacity: 0;
+			translate: 0 10px;
+		}
+	}
 }
 
-/* htmx loading indicators */
+.popover-button {
+	/* Used for round focus styling */
+	border-radius: var(--spacing-max);
+	cursor: pointer;
+}
+
+/* List */
+
+@property --list-style {
+	syntax: "numbered | none";
+	inherits: false;
+	initial-value: none;
+}
+
+.list {
+	display: flex;
+	flex-direction: column;
+	row-gap: var(--spacing-2);
+
+	.list__item {
+		align-items: flex-end;
+		column-gap: var(--spacing-4);
+		justify-content: space-between;
+
+		/* TODO: Use sibling-count() or something to set grid styling together
+     * with conditional display styling */
+
+		/* display: if(style(--list-style: none): flex; else: grid;); */
+	}
+}
+
+.description-list {
+	display: grid;
+	column-gap: var(--spacing-6);
+	grid-template-columns: max-content 1fr;
+	row-gap: var(--spacing-2);
+
+	@container (width <= 400px) {
+		display: block;
+	}
+
+	.dd {
+		font-weight: 600;
+	}
+
+	.dt--tabular {
+		font-variant-numeric: tabular-nums;
+		overflow: hidden;
+	}
+}
+
+/* Section */
+
+.section {
+	/** TODO: Not set color this high up? */
+	color: var(--color-content-secondary);
+	container-type: inline-size;
+	display: flex;
+	flex-direction: column;
+	font-size: var(--text-sm);
+	row-gap: var(--spacing-4);
+
+	.section__title {
+		align-items: center;
+		color: var(--color-content-primary);
+		display: flex;
+		font-weight: 500;
+
+		h2 {
+			align-items: center;
+			column-gap: var(--spacing-2);
+			display: flex;
+		}
+	}
+
+	.section__subtitle {
+		color: var(--color-content-secondary);
+		font-size: var(--text-xs);
+		font-weight: 400;
+	}
+}
+
+/* Link */
+
+.link {
+	align-items: center;
+	border-bottom: 1px dashed;
+	border-color: inherit;
+	display: inline-flex;
+	font-variant-numeric: tabular-nums;
+	gap: var(--spacing-1);
+
+	&.link--highlight {
+		color: var(--color-content-highlight);
+	}
+}
+
+/* Separator */
+
+.separator {
+	border-color: var(--color-content-quarternary);
+	border-style: var(--decoration);
+	flex: 1;
+
+	&.separator--highlight {
+		border-color: var(--color-content-highlight);
+	}
+}
+
+/**
+ * HTMX
+ * ============================================================
+ */
+
 .htmx-indicator {
-  opacity: 0;
-  transition: opacity 500ms ease-in;
+	opacity: 0;
+	transition: opacity 500ms ease-in;
 }
 
 .htmx-request .htmx-indicator {
-  opacity: 1;
+	opacity: 1;
 }
 
 .htmx-request.htmx-indicator {
-  opacity: 1;
+	opacity: 1;
 }

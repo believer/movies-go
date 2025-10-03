@@ -1,19 +1,19 @@
 package list
 
 templ dd(text string) {
-	<dd class="font-semibold">
+	<dd class="dd">
 		{ text }
 	</dd>
 }
 
 templ dt(isTabular bool) {
-	<dt class={ templ.KV("tabular-nums overflow-hidden", isTabular) }>
+	<dt class={ templ.KV("dt--tabular", isTabular) }>
 		{ children... }
 	</dt>
 }
 
 templ Dl() {
-	<dl class="grid sm:grid-cols-[max-content_1fr] gap-x-6 gap-y-2">
+	<dl class="description-list">
 		{ children... }
 	</dl>
 }

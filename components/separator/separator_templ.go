@@ -8,7 +8,7 @@ package separator
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "believer/movies/utils"
+import "fmt"
 
 type Decoration string
 
@@ -19,7 +19,7 @@ const (
 )
 
 type Props struct {
-	Class string
+	Highlight bool
 	// Style of border. Defaults to "dashed"
 	Decoration Decoration
 }
@@ -49,14 +49,10 @@ func Separator(props ...Props) templ.Component {
 		if len(props) > 0 {
 			p = props[0]
 		}
-		var templ_7745c5c3_Var2 = []any{utils.TwMerge(
-			"m-0 flex-1",
-			// Border
-			"border-content-quarternary",
-			decorationClasses(p.Decoration),
-			// Additional styles
-			p.Class,
-		)}
+		if p.Decoration == "" {
+			p.Decoration = DecorationDashed
+		}
+		var templ_7745c5c3_Var2 = []any{"separator", templ.KV("separator--highlight", p.Highlight)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -74,25 +70,25 @@ func Separator(props ...Props) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" style=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var4 string
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues(templ.SafeCSS(fmt.Sprintf("--decoration: %s;", p.Decoration)))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/separator/separator.templ`, Line: 29, Col: 71}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		return nil
 	})
-}
-
-func decorationClasses(decoration Decoration) string {
-	switch decoration {
-	case DecorationDashed:
-		return "border-dashed"
-	case DecorationDotted:
-		return "border-dotted"
-	case DecorationSolid:
-		return "border-solid"
-	default:
-		return "border-dashed"
-	}
 }
 
 var _ = templruntime.GeneratedTemplate

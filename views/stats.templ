@@ -118,8 +118,7 @@ templ Stats(props StatsProps) {
 					@section.Section(section.Props{Title: "Academy Awards"}) {
 						@list.Dl() {
 							@list.DlItem(list.DlProps{
-								Detail:    "Most awarded person",
-								IsTabular: true,
+								Detail: "Most awarded person",
 							}) {
 								@link.Link(link.Props{Href: props.AwardWins.LinkTo()}) {
 									{ props.AwardWins.Name }
@@ -127,8 +126,7 @@ templ Stats(props StatsProps) {
 								({ strconv.Itoa( props.AwardWins.Count ) })
 							}
 							@list.DlItem(list.DlProps{
-								Detail:    "Most nominations",
-								IsTabular: true,
+								Detail: "Most nominations",
 							}) {
 								@link.Link(link.Props{Href: props.AwardNominations.LinkTo()}) {
 									{ props.AwardNominations.Name }
@@ -137,8 +135,7 @@ templ Stats(props StatsProps) {
 							}
 							if len(props.MostAwardedMovies) > 0 {
 								@list.DlItem(list.DlProps{
-									Detail:    fmt.Sprintf("Most wins (%d)", props.MostAwardedMovies[0].Count),
-									IsTabular: true,
+									Detail: fmt.Sprintf("Most wins (%d)", props.MostAwardedMovies[0].Count),
 								}) {
 									@list.Ol() {
 										for _, m := range props.MostAwardedMovies {
@@ -186,26 +183,23 @@ templ Stats(props StatsProps) {
 					></section>
 					@section.Section(section.Props{Title: "Movies by year"}) {
 						if len(props.MoviesByYear) > 0 {
-							<ol class="flex flex-col gap-2">
+							<ol class="list">
 								for _, year := range props.MoviesByYear {
-									<li
-										class={ "flex items-end justify-between gap-4",
-                  templ.KV("text-yellow-800 dark:text-yellow-200", props.BestYear == year.Label ) }
-									>
+									<li class="flex items-end justify-between gap-4">
 										<a
-											class="text-sm tabular-nums inline-flex items-center gap-1 focus:outline-hidden focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 border-b border-dashed border-neutral-500 dark:border-neutral-400"
+											class={ "link focus", templ.KV("link--highlight", props.BestYear == year.Label) }
 											href={ templ.URL(fmt.Sprintf("/year/%s", year.Label)) }
 										>
 											{ year.Label }
 										</a>
 										if props.BestYear == year.Label {
-											@separator.Separator(separator.Props{Class: "border-yellow-800 dark:border-yellow-100"})
+											@separator.Separator(separator.Props{Highlight: true})
 										} else {
 											@separator.Separator()
 										}
 										<span
-											class={ "tabular-nums text-sm relative top-1",
-                    templ.KV("text-content-secondary", props.BestYear != year.Label) }
+											class="tabular-nums text-sm relative top-1"
+											style={ templ.KV(templ.SafeCSS("color: var(--color-content-highlight)"), props.BestYear == year.Label) }
 										>
 											{ strconv.Itoa(year.Value) }
 										</span>

@@ -1,27 +1,20 @@
 package popover
 
-css anchor(name string) {
-	anchor-name: { name };
-}
-
-css anchorPosition(name string) {
-	position: absolute;
-	position-anchor: { name };
-	position-area: top;
-	position-try-fallbacks: flip-block;
-}
+import "sync/atomic"
 
 type Props struct {
-	AnchorName string
-	Content    templ.Component
-	Toggle     templ.Component
+	Content templ.Component
+	Toggle  templ.Component
 }
 
+var counter uint64
+
 templ Popover(props Props) {
-	<button popovertarget={ props.AnchorName } class={ anchor(props.AnchorName),"focus-visible:outline-dashed focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-600 rounded-full" }>
+	{{ var id = atomic.AddUint64(&counter, 1) }}
+	<button popovertarget={ id } class="popover-button focus">
 		@props.Toggle
 	</button>
-	<div id={ props.AnchorName } popover class={ "text-xs shadow-md text-neutral-700 bg-neutral-200 dark:text-neutral-300 dark:bg-neutral-800 p-2 rounded-sm", anchorPosition(props.AnchorName) }>
+	<div id={ id } popover class="popover">
 		@props.Content
 	</div>
 }
