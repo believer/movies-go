@@ -96,6 +96,26 @@
 	);
 }
 
+@layer base, components;
+
+@layer base {
+	body {
+		background-color: var(--color-background-primary);
+		color: var(--color-content-primary);
+	}
+
+	.layout {
+		margin-inline: auto;
+		display: flex;
+		flex-direction: column;
+		max-width: 36rem;
+		row-gap: var(--spacing-8);
+		padding-block: var(--spacing-5);
+		padding-top: var(--spacing-5);
+		padding-bottom: calc(env(safe-area-inset-bottom) + 32px);
+	}
+}
+
 /* Component styles */
 @layer components {
 	.year {
@@ -305,6 +325,7 @@
 		align-items: center;
 		color: var(--color-content-primary);
 		display: flex;
+		column-gap: var(--gap, var(--spacing-4));
 		font-weight: 500;
 
 		h2 {
@@ -337,7 +358,7 @@
 	}
 
 	&.link--new {
-		--size: 48px;
+		--size: 56px;
 
 		border-bottom: 0;
 		border-radius: var(--spacing-max);
@@ -438,6 +459,70 @@ nav {
 		color: var(--color-content-secondary);
 		display: -webkit-box;
 		overflow: hidden;
+	}
+}
+
+/* Dropdown */
+
+.dropdown {
+	appearance: none;
+	border: 1px solid var(--color-border-primary);
+	border-radius: var(--spacing-1);
+	font-size: var(--text-xs);
+	text-align: center;
+	padding-block: var(--spacing-1);
+	padding-inline: var(--spacing-2);
+}
+
+/* Empty state */
+
+.empty-state {
+	border-radius: var(--spacing-1);
+	border: 1px dashed var(--color-border-primary);
+	color: var(--color-content-secondary);
+	list-style: none;
+	padding-block: var(--spacing-8);
+	padding-inline: var(--spacing-5);
+	text-align: center;
+}
+
+/* Empty state */
+
+.input-wrap {
+	display: flex;
+	flex-direction: column;
+	row-gap: var(--spacing-2);
+
+	&:has(*:required) .input-label::after {
+		color: var(--color-content-tertiary);
+		content: "*";
+		margin-inline-start: calc(var(--spacing-1) / 2);
+	}
+}
+
+.input-label {
+	color: var(--color-content-secondary);
+	font-size: var(--text-sm);
+	font-weight: 600;
+}
+
+.input-help {
+	color: var(--color-content-secondary);
+	font-size: var(--text-xs);
+}
+
+.input {
+	border: 1px solid var(--color-border-primary);
+	border-radius: var(--spacing-1);
+	width: 100%;
+	padding-inline: var(--spacing-4);
+	padding-block: var(--spacing-2);
+}
+
+.input--number {
+	/* Hide up/down arrows inside number input */
+	&::-webkit-inner-spin-button {
+		appearance: none;
 	}
 }
 

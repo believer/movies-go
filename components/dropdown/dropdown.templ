@@ -8,7 +8,14 @@ type Props struct {
 }
 
 templ Dropdown(props Props) {
-	<select class="appearance-none border border-neutral-300 dark:border-neutral-700 rounded-sm text-xs px-2 py-1 bg-transparent focus:outline-dashed focus:outline-1 focus:outline-offset-2 focus:outline-neutral-300 dark:focus:outline-neutral-700 text-center [text-align-last:center]" hx-target="closest section" hx-get={ props.Route } name={ props.Name } value={ props.Value } hx-swap="outerHTML">
+	<select
+		class="dropdown focus"
+		name={ props.Name }
+		value={ props.Value }
+		hx-get={ props.Route }
+		hx-swap="outerHTML"
+		hx-target="closest section"
+	>
 		for _, option := range props.Options {
 			<option
 				value={ option }

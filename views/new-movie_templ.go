@@ -112,7 +112,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<input type=\"text\" hx-get=\"/movie/search\" hx-trigger=\"keyup changed delay:500ms\" hx-target=\"#search-results\" hx-validate=\"true\" minlength=\"3\" name=\"search\" id=\"search\" class=\"w-full rounded-sm border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-hidden focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500\"><div id=\"search-results\" class=\"text-xs empty:hidden rounded-sm p-2 outline-dashed outline-1 outline-neutral-400 dark:outline-neutral-500\"></div></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<input type=\"text\" hx-get=\"/movie/search\" hx-trigger=\"keyup changed delay:500ms\" hx-target=\"#search-results\" hx-validate=\"true\" minlength=\"3\" name=\"search\" id=\"search\" class=\"input focus\"><div id=\"search-results\" class=\"text-xs empty:hidden rounded-sm p-2 outline-dashed outline-1 outline-neutral-400 dark:outline-neutral-500\"></div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -132,7 +132,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<input required type=\"text\" hx-get=\"/movie/imdb\" hx-trigger=\"blur-sm changed\" hx-target=\"#movie-exists\" hx-validate=\"true\" name=\"imdb_id\" id=\"imdb_id\" class=\"w-full rounded-sm border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-hidden focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<input required type=\"text\" hx-get=\"/movie/imdb\" hx-trigger=\"blur-sm changed\" hx-target=\"#movie-exists\" hx-validate=\"true\" name=\"imdb_id\" id=\"imdb_id\" class=\"input focus\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -179,7 +179,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			if !props.InWatchlist {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div class=\"flex gap-x-2 items-center\"><input type=\"checkbox\" name=\"watchlist\" id=\"watchlist\" class=\"rounded-sm accent-neutral-700 border border-neutral-700 bg-neutral-800 focus:outline-dashed focus:outline-offset-2 focus:outline-neutral-500\" _=\"on click if me.checked remove @required from #rating otherwise add @required='' to #rating\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div class=\"flex gap-x-2 items-center\"><input type=\"checkbox\" name=\"watchlist\" id=\"watchlist\" class=\"rounded-sm accent-neutral-700 border border-neutral-700 bg-neutral-800 focus\" _=\"on click if me.checked remove @required from #rating otherwise add @required='' to #rating\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -200,7 +200,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<textarea name=\"review\" id=\"review\" class=\"w-full h-40 rounded-sm border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-hidden focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500 block\"></textarea><div class=\"flex gap-x-2 items-center\"><input type=\"checkbox\" name=\"review_private\" id=\"review_private\" class=\"rounded-sm accent-neutral-700 border border-neutral-700 bg-neutral-800 focus:outline-dashed focus:outline-offset-2 focus:outline-neutral-500\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<textarea name=\"review\" id=\"review\" class=\"w-full h-40 rounded-sm border border-neutral-400 bg-transparent px-4 py-2 dark:border-neutral-700 block focus\"></textarea><div class=\"flex gap-x-2 items-center\"><input type=\"checkbox\" name=\"review_private\" id=\"review_private\" class=\"rounded-sm accent-neutral-700 border border-neutral-700 bg-neutral-800 focus\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -208,7 +208,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div></div><details><summary class=\"cursor-pointer\">Additional fields</summary><div class=\"mt-4 flex flex-col gap-y-6\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div></div><details><summary class=\"cursor-pointer focus\">Additional fields</summary><div class=\"mt-4 flex flex-col gap-y-6\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -228,7 +228,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<input type=\"text\" name=\"series\" id=\"series\" list=\"series_list\" class=\"w-full rounded-sm border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-hidden focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500\" _=\"on keyup\n                if my.value is not empty\n                  add @required='' to #number_in_series\n                otherwise\n                  remove @required from #number_in_series\n              end\n              on change\n                if my.value is not empty\n                  put <datalist>option[value='${my.value}']/>'s @label into #series_name\n                  remove .hidden from #series_name \n                otherwise\n                  set #series_name's innerText to '' \n                  add .hidden to #series_name\n                \"><div class=\"text-xs text-content-secondary hidden\" id=\"series_name\"></div><div hx-get=\"/movie/new/series\" hx-swap=\"outerHTML\" hx-trigger=\"load\"></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<input type=\"text\" name=\"series\" id=\"series\" list=\"series_list\" class=\"w-full rounded-sm border border-neutral-400 bg-transparent px-4 py-2 dark:border-neutral-700 focus\" _=\"on keyup\n                if my.value is not empty\n                  add @required='' to #number_in_series\n                otherwise\n                  remove @required from #number_in_series\n              end\n              on change\n                if my.value is not empty\n                  put <datalist>option[value='${my.value}']/>'s @label into #series_name\n                  remove .hidden from #series_name \n                otherwise\n                  set #series_name's innerText to '' \n                  add .hidden to #series_name\n                \"><div class=\"text-xs text-content-secondary hidden\" id=\"series_name\"></div><div hx-get=\"/movie/new/series\" hx-swap=\"outerHTML\" hx-trigger=\"load\"></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -241,7 +241,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<div class=\"flex gap-x-2 items-center\"><input type=\"checkbox\" name=\"wilhelm_scream\" id=\"wilhelm_scream\" class=\"rounded-sm accent-neutral-700 border border-neutral-700 bg-neutral-800 focus:outline-dashed focus:outline-offset-2 focus:outline-neutral-500\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<div class=\"flex gap-x-2 items-center\"><input type=\"checkbox\" name=\"wilhelm_scream\" id=\"wilhelm_scream\" class=\"rounded-sm border border-neutral-700 bg-neutral-800 focus\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

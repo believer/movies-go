@@ -42,7 +42,7 @@ templ NewMovie(props NewMovieProps) {
 						minlength="3"
 						name="search"
 						id="search"
-						class="w-full rounded-sm border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-hidden focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500"
+						class="input focus"
 					/>
 					<div
 						id="search-results"
@@ -65,7 +65,7 @@ templ NewMovie(props NewMovieProps) {
 					hx-validate="true"
 					name="imdb_id"
 					id="imdb_id"
-					class="w-full rounded-sm border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-hidden focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500"
+					class="input focus"
 					if props.ImdbID != "" {
 						value={ props.ImdbID }
 						readonly
@@ -87,20 +87,20 @@ templ NewMovie(props NewMovieProps) {
 			})
 			if !props.InWatchlist {
 				<div class="flex gap-x-2 items-center">
-					<input type="checkbox" name="watchlist" id="watchlist" class="rounded-sm accent-neutral-700 border border-neutral-700 bg-neutral-800 focus:outline-dashed focus:outline-offset-2 focus:outline-neutral-500" _="on click if me.checked remove @required from #rating otherwise add @required='' to #rating"/>
+					<input type="checkbox" name="watchlist" id="watchlist" class="rounded-sm accent-neutral-700 border border-neutral-700 bg-neutral-800 focus" _="on click if me.checked remove @required from #rating otherwise add @required='' to #rating"/>
 					@input.Label("watchlist", "Add to watchlist")
 				</div>
 			}
 			<div class="flex flex-col gap-2 group">
 				@input.Label("review", "Review")
-				<textarea name="review" id="review" class="w-full h-40 rounded-sm border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-hidden focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500 block"></textarea>
+				<textarea name="review" id="review" class="w-full h-40 rounded-sm border border-neutral-400 bg-transparent px-4 py-2 dark:border-neutral-700 block focus"></textarea>
 				<div class="flex gap-x-2 items-center">
-					<input type="checkbox" name="review_private" id="review_private" class="rounded-sm accent-neutral-700 border border-neutral-700 bg-neutral-800 focus:outline-dashed focus:outline-offset-2 focus:outline-neutral-500"/>
+					<input type="checkbox" name="review_private" id="review_private" class="rounded-sm accent-neutral-700 border border-neutral-700 bg-neutral-800 focus"/>
 					@input.Label("review_private", "Review is private")
 				</div>
 			</div>
 			<details>
-				<summary class="cursor-pointer">Additional fields</summary>
+				<summary class="cursor-pointer focus">Additional fields</summary>
 				<div class="mt-4 flex flex-col gap-y-6">
 					@input.DateTime(input.DateTimeProps{
 						Name:     "watched_at",
@@ -114,7 +114,7 @@ templ NewMovie(props NewMovieProps) {
 							name="series"
 							id="series"
 							list="series_list"
-							class="w-full rounded-sm border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-hidden focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500"
+							class="w-full rounded-sm border border-neutral-400 bg-transparent px-4 py-2 dark:border-neutral-700 focus"
 							_="on keyup
                 if my.value is not empty
                   add @required='' to #number_in_series
@@ -140,7 +140,7 @@ templ NewMovie(props NewMovieProps) {
 						Max:   1000,
 					})
 					<div class="flex gap-x-2 items-center">
-						<input type="checkbox" name="wilhelm_scream" id="wilhelm_scream" class="rounded-sm accent-neutral-700 border border-neutral-700 bg-neutral-800 focus:outline-dashed focus:outline-offset-2 focus:outline-neutral-500"/>
+						<input type="checkbox" name="wilhelm_scream" id="wilhelm_scream" class="rounded-sm border border-neutral-700 bg-neutral-800 focus"/>
 						@input.Label("wilhelm_scream", "Wilhelm scream")
 					</div>
 				</div>

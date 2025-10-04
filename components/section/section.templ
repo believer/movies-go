@@ -3,7 +3,8 @@ package section
 import "strconv"
 import "believer/movies/components/separator"
 import "believer/movies/components/link"
-import "believer/movies/utils"
+
+import "fmt"
 
 type Props struct {
 	Action        templ.Component
@@ -38,9 +39,9 @@ templ title(p Props) {
 templ Section(p Props) {
 	<section class="section">
 		<div
-			class={
-				"section__title",
-				utils.IfElse(p.Subtitle == "", "gap-x-4", "gap-x-2"),
+			class="section__title"
+			if p.Subtitle != "" {
+				style={ templ.SafeCSS(fmt.Sprintf("--gap: var(--spacing-2)")) }
 			}
 		>
 			@title(p)
