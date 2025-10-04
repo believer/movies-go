@@ -22,7 +22,6 @@ templ seriesList(movies types.MoviesInSeries) {
 	@list.Ol() {
 		for _, movie := range movies {
 			@list.Li(list.LiProps{Items: len(movies), Style: list.Numbered}) {
-				@list.Number(movie.NumberInSeries.Int64)
 				@link.Link(link.Props{Href: movie.LinkTo()}) {
 					{ movie.Title }
 				}

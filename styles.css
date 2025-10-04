@@ -269,6 +269,7 @@
 }
 
 .list {
+	counter-reset: count;
 	display: flex;
 	flex-direction: column;
 	row-gap: var(--spacing-2);
@@ -277,12 +278,35 @@
 .list__item {
 	align-items: flex-end;
 	column-gap: var(--spacing-4);
+	counter-increment: count;
 	justify-content: space-between;
+	list-style: initial;
+
+	&::before {
+		color: var(--color-content-tertiary);
+		content: counter(count);
+		font-variant-numeric: tabular-nums;
+		text-align: right;
+	}
 
 	/* TODO: Use sibling-count() or something to set grid styling together
      * with conditional display styling */
 
 	/* display: if(style(--list-style: none): flex; else: grid;); */
+}
+
+.list-item__number {
+	color: var(--color-content-tertiary);
+	font-variant-numeric: tabular-nums;
+	text-align: right;
+}
+
+.list-item__trailing {
+	display: flex;
+	align-items: center;
+	column-gap: var(--spacing-2);
+	white-space: nowrap;
+	font-size: var(--text-sm);
 }
 
 .description-list {
@@ -562,6 +586,39 @@ nav {
 	/* Hide up/down arrows inside number input */
 	&::-webkit-inner-spin-button {
 		appearance: none;
+	}
+}
+
+/* Views */
+
+.stats {
+	display: flex;
+	flex-direction: column;
+	margin-inline: auto;
+	max-width: 36rem;
+	row-gap: var(--spacing-8);
+	padding-inline: var(--spacing-5);
+	padding-block: var(--spacing-8);
+
+	@media (width >= 1024px) {
+		max-width: 64rem;
+		padding-top: 48px;
+	}
+
+	.stats__content {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 40px;
+
+		@media (width >= 1024px) {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	.stats__column {
+		display: flex;
+		flex-direction: column;
+		row-gap: var(--spacing-8);
 	}
 }
 

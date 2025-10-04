@@ -47,9 +47,8 @@ templ listLink(href templ.SafeURL) {
 
 templ NumberedList(data []ListItem, listType string) {
 	@list.Ol() {
-		for i, item := range data {
+		for _, item := range data {
 			@list.Li(list.LiProps{Items: len(data), Style: list.Numbered}) {
-				@list.Number(int64(i + 1))
 				switch listType {
 					case "movie":
 						@listLink(item.LinkToMovie()) {

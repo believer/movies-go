@@ -48,12 +48,12 @@ type StatsProps struct {
 
 templ Stats(props StatsProps) {
 	@layout.Html(layout.Props{Title: "Stats"}) {
-		<div class="mx-auto flex max-w-xl lg:max-w-5xl flex-col gap-y-8 px-5 pb-8 pt-8 lg:pt-12">
+		<div class="stats">
 			<nav>
 				@navigation.Home()
 			</nav>
-			<div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
-				<div class="flex flex-col gap-y-8">
+			<div class="stats__content">
+				<div class="stats__column">
 					@section.Section(section.Props{Title: "Stats"}) {
 						@list.Dl() {
 							@list.DlItem(list.DlProps{
@@ -136,7 +136,7 @@ templ Stats(props StatsProps) {
 								}) {
 									@list.Ol() {
 										for _, m := range props.MostAwardedMovies {
-											<div class="flex items-center gap-x-1">
+											<div class="flex">
 												@link.Link(link.Props{Href: m.LinkTo()}) {
 													{ m.Title }
 												}
@@ -210,7 +210,7 @@ templ Stats(props StatsProps) {
 						}
 					}
 				</div>
-				<div class="flex flex-col gap-y-8">
+				<div class="stats__column">
 					@section.Section(section.Props{Title: "Most watched movies"}) {
 						if len(props.MostWatchedMovies) > 0 {
 							@NumberedList(props.MostWatchedMovies, "movie")
