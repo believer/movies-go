@@ -10,6 +10,7 @@ type Props struct {
 	Hyperscript string
 	Long        bool
 	ToRoot      bool
+	IsExternal  bool
 }
 
 templ Link(p Props) {
@@ -27,6 +28,10 @@ templ Link(p Props) {
 			if p.Hyperscript != "" {
 				_={ p.Hyperscript }
 			}
+		}
+		if p.IsExternal {
+			target="_blank"
+			rel="noopener noreferrer"
 		}
 	>
 		{ children... }

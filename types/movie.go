@@ -14,8 +14,8 @@ type Entity struct {
 	ID   int    `db:"id" json:"id"`
 }
 
-func (e Entity) LinkTo(prefix string) string {
-	return fmt.Sprintf("/%s/%s-%d", prefix, utils.Slugify(e.Name), e.ID)
+func (e Entity) LinkTo(prefix string) templ.SafeURL {
+	return templ.SafeURL(fmt.Sprintf("/%s/%s-%d", prefix, utils.Slugify(e.Name), e.ID))
 }
 
 // Movie sub structs

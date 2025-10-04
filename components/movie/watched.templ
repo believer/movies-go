@@ -30,7 +30,7 @@ templ addWatch(id string, isUnseen bool) {
 			<a
 				href="#"
 				hx-post={ fmt.Sprintf("/movie/%s/seen", id) }
-				class="truncate border-b border-dashed border-content-secondary focus"
+				class="link focus"
 			>
 				Add new watch
 			</a>

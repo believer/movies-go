@@ -7,7 +7,7 @@ templ dd(text string) {
 }
 
 templ dt(isTabular bool) {
-	<dt class={ templ.KV("dt--tabular", isTabular) }>
+	<dt class={ "dt", templ.KV("dt--tabular", isTabular) }>
 		{ children... }
 	</dt>
 }
