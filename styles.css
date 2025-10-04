@@ -269,6 +269,15 @@
 
 	@container (width <= 400px) {
 		display: block;
+
+		dt:nth-child(even) {
+			margin-bottom: var(--spacing-2);
+			margin-top: calc(var(--spacing-1) / 2);
+		}
+
+		:last-child > dt {
+			margin-bottom: 0;
+		}
 	}
 
 	.dd {
