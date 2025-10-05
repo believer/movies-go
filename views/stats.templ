@@ -196,7 +196,7 @@ templ Stats(props StatsProps) {
 										}
 										<span
 											class="tabular-nums text-sm relative top-1"
-											style={ templ.KV(templ.SafeCSS("color: var(--color-content-highlight)"), props.BestYear == year.Label) }
+											style={ templ.KV("color: var(--color-content-highlight)", props.BestYear == year.Label) }
 										>
 											{ strconv.Itoa(year.Value) }
 										</span>

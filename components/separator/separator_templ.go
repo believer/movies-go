@@ -8,8 +8,6 @@ package separator
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "fmt"
-
 type Decoration string
 
 const (
@@ -75,9 +73,11 @@ func Separator(props ...Props) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues(templ.SafeCSS(fmt.Sprintf("--decoration: %s;", p.Decoration)))
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues(map[string]string{
+			"--decoration": string(p.Decoration),
+		})
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/separator/separator.templ`, Line: 29, Col: 71}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/separator/separator.templ`, Line: 29, Col: 5}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {

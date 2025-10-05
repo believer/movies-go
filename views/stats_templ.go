@@ -852,9 +852,9 @@ func Stats(props StatsProps) templ.Component {
 							return templ_7745c5c3_Err
 						}
 						var templ_7745c5c3_Var44 string
-						templ_7745c5c3_Var44, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues(templ.KV(templ.SafeCSS("color: var(--color-content-highlight)"), props.BestYear == year.Label))
+						templ_7745c5c3_Var44, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues(templ.KV("color: var(--color-content-highlight)", props.BestYear == year.Label))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 199, Col: 113}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 199, Col: 98}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var44))
 						if templ_7745c5c3_Err != nil {

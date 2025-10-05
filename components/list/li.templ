@@ -1,7 +1,5 @@
 package list
 
-import "fmt"
-
 type ListStyle string
 
 const (
@@ -23,7 +21,9 @@ templ Li(props ...LiProps) {
 	<li
 		class={ "list__item", style(p.Style, p.Items) }
 		if p.Style != "" {
-			style={ templ.SafeCSS(fmt.Sprintf("--list-style: %s", p.Style)) }
+			style={ map[string]string{
+        "--list-style": string(p.Style),
+      } }
 		}
 		if p.DataType != "" {
 			data-type={ p.DataType }

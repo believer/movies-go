@@ -8,8 +8,6 @@ package list
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "fmt"
-
 type ListStyle string
 
 const (
@@ -76,9 +74,11 @@ func Li(props ...LiProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
-			templ_7745c5c3_Var4, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues(templ.SafeCSS(fmt.Sprintf("--list-style: %s", p.Style)))
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues(map[string]string{
+				"--list-style": string(p.Style),
+			})
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/list/li.templ`, Line: 26, Col: 66}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/list/li.templ`, Line: 26, Col: 7}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {

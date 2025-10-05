@@ -1,7 +1,5 @@
 package separator
 
-import "fmt"
-
 type Decoration string
 
 const (
@@ -26,6 +24,8 @@ templ Separator(props ...Props) {
 	}
 	<hr
 		class={ "separator", templ.KV("separator--highlight", p.Highlight) }
-		style={ templ.SafeCSS(fmt.Sprintf("--decoration: %s;", p.Decoration)) }
+		style={ map[string]string{
+      "--decoration": string(p.Decoration),
+    } }
 	/>
 }
