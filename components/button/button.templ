@@ -1,0 +1,34 @@
+package button
+
+type ButtonType string
+
+const (
+	TypeSubmit ButtonType = "submit"
+	TypeButton ButtonType = "button"
+)
+
+type Props struct {
+	Type ButtonType
+}
+
+templ Button(props ...Props) {
+	{{ var p Props }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<button
+		class="button focus"
+		if p.Type == TypeSubmit {
+			type="submit"
+		} else {
+			type="button"
+		}
+	>
+		<div class="button__state">
+			<div class="button__content">
+				{ children... }
+			</div>
+			<div class="button__loading">Sending...</div>
+		</div>
+	</button>
+}

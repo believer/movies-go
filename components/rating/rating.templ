@@ -2,6 +2,7 @@ package rating
 
 import (
 	"believer/movies/components/auth"
+	"believer/movies/components/button"
 	"believer/movies/components/input"
 	"believer/movies/components/link"
 	"believer/movies/components/list"
@@ -23,7 +24,7 @@ templ Rating(props Props) {
 }
 
 templ GetRating(props Props) {
-	<div class="flex flex-row gap-x-4" id="rating-value">
+	<div class="rating" id="rating-value">
 		@link.Link(link.Props{Href: templ.SafeURL(fmt.Sprintf("/rating/%d", props.Rating))}) {
 			<time
 				title={ props.RatedAt.Format("2006-01-02 15:04") }
@@ -65,7 +66,7 @@ templ EditRating(props EditRatingProps) {
 		hx-put={ fmt.Sprintf("/movie/%d/rating", props.MovieId) }
 		hx-swap="outerHTML"
 		hx-on::before-cleanup-element="document.body.dispatchEvent(new Event('update-rating'))"
-		class="flex flex-row gap-x-4"
+		class="rating"
 	>
 		@input.Number(input.NumberProps{
 			Name:     "rating",
@@ -74,12 +75,9 @@ templ EditRating(props EditRatingProps) {
 			Required: true,
 			Value:    props.CurrentRating,
 		})
-		<button
-			class="cursor-pointer rounded-sm bg-background-secondary px-6 py-2 text-content-secondary focus"
-			type="submit"
-		>
+		@button.Button(button.Props{Type: button.TypeSubmit}) {
 			Update rating
-		</button>
+		}
 	</form>
 }
 
@@ -108,7 +106,7 @@ templ AddRatingForm(props AddRatingProps) {
 			hx-post={ fmt.Sprintf("/movie/%d/rating", props.MovieId) }
 			hx-swap="outerHTML"
 			hx-on::before-cleanup-element="document.body.dispatchEvent(new Event('update-rating'))"
-			class="flex flex-row gap-x-4"
+			class="rating"
 		>
 			<div class="flex-1">
 				@input.Number(input.NumberProps{
@@ -118,12 +116,9 @@ templ AddRatingForm(props AddRatingProps) {
 					Required: true,
 				})
 			</div>
-			<button
-				class="cursor-pointer rounded-sm bg-background-secondary px-6 py-2 text-content-secondary focus"
-				type="submit"
-			>
+			@button.Button(button.Props{Type: button.TypeSubmit}) {
 				Save rating
-			</button>
+			}
 		</form>
 	}
 }

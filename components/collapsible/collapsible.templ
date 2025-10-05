@@ -1,0 +1,14 @@
+package collapsible
+
+type Props struct {
+	Title string
+}
+
+templ Collapsible(p Props) {
+	<details class="collapsible">
+		<summary class="focus">{ p.Title }</summary>
+		<div class="collapsible__content">
+			{ children... }
+		</div>
+	</details>
+}

@@ -1,0 +1,28 @@
+package checkbox
+
+import "believer/movies/components/input"
+
+type Props struct {
+	Checked     bool
+	Name        string
+	Label       string
+	Hyperscript string
+}
+
+templ Checkbox(p Props) {
+	<div class="checkbox">
+		<input
+			type="checkbox"
+			name={ p.Name }
+			id={ p.Name }
+			class="focus"
+			if p.Checked {
+				checked="true"
+			}
+			if p.Hyperscript != "" {
+				_={ p.Hyperscript }
+			}
+		/>
+		@input.Label(p.Name, p.Label)
+	</div>
+}

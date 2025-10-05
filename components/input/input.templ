@@ -30,28 +30,40 @@ templ Help(text string) {
  * =========================================================== */
 
 type TextProps struct {
-	Name     string
-	Label    string
-	HelpText string
-	Value    string
+	Hyperscript string
+	Name        string
+	Label       string
+	List        string
+	HelpText    string
+	Value       string
+	Required    bool
 }
 
-templ Text(props TextProps) {
+templ Text(p TextProps) {
 	<div class="input-wrap">
-		@Label(props.Name, props.Label)
+		@Label(p.Name, p.Label)
 		<input
-			required
 			type="text"
-			name={ props.Name }
-			id={ props.Name }
+			name={ p.Name }
+			id={ p.Name }
 			class="input focus"
-			if props.Value != "" {
-				value={ props.Value }
+			if p.Required {
+				required
+			}
+			if p.Value != "" {
+				value={ p.Value }
+			}
+			if p.Hyperscript != "" {
+				_={ p.Hyperscript }
+			}
+			if p.List != "" {
+				list={ p.List }
 			}
 		/>
-		if props.HelpText != "" {
-			@Help(props.HelpText)
+		if p.HelpText != "" {
+			@Help(p.HelpText)
 		}
+		{ children... }
 	</div>
 }
 
@@ -62,20 +74,23 @@ type PasswordProps struct {
 	Name     string
 	Label    string
 	HelpText string
+	Required bool
 }
 
-templ Password(props PasswordProps) {
+templ Password(p PasswordProps) {
 	<div class="input-wrap">
-		@Label(props.Name, props.Label)
+		@Label(p.Name, p.Label)
 		<input
-			required
 			type="password"
-			name={ props.Name }
-			id={ props.Name }
+			name={ p.Name }
+			id={ p.Name }
 			class="input focus"
+			if p.Required {
+				required
+			}
 		/>
-		if props.HelpText != "" {
-			@Help(props.HelpText)
+		if p.HelpText != "" {
+			@Help(p.HelpText)
 		}
 	</div>
 }

@@ -1,6 +1,7 @@
 package views
 
 import (
+	"believer/movies/components/button"
 	"believer/movies/components/input"
 	"believer/movies/components/layout"
 	"believer/movies/components/link"
@@ -17,29 +18,25 @@ templ UpdateWatched(props UpdateWatchedProps) {
 	@layout.Html(layout.Props{Title: "Update watch"}) {
 		<form
 			hx-put={ fmt.Sprintf("/movie/%s/seen/%s/edit", props.MovieId, props.SeenId) }
-			hx-indicator="#sending"
-			class="mx-auto flex max-w-xl flex-col gap-y-6 px-4 py-8"
+			hx-indicator="button[type='submit']"
+			class="form"
 		>
-			<div>
+			<header>
 				@link.Link(link.Props{Href: "/"}) {
 					Back
 				}
-			</div>
+			</header>
 			@input.DateTime(input.DateTimeProps{
 				Name:     "watched_at",
 				Label:    "Watched at",
 				HelpText: "Defaults to current time if left empty. Time zone is UTC.",
 				Value:    props.Time,
 			})
-			<footer class="flex flex-col gap-y-4">
-				<div id="error" class="empty:hidden text-rose-700 dark:text-rose-400 border border-dashed border-rose-700 dark:border-rose-400 p-4 rounded-sm"></div>
-				<button
-					class="rounded-sm bg-neutral-200 px-6 py-2 text-content-primary dark:bg-neutral-700 focus"
-					type="submit"
-				>
-					Add
-				</button>
-				<div id="sending" class="htmx-indicator">Sending...</div>
+			<footer>
+				<div id="error" class="form__error"></div>
+				@button.Button(button.Props{Type: button.TypeSubmit}) {
+					Update watch
+				}
 			</footer>
 		</form>
 	}

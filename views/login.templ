@@ -2,25 +2,18 @@ package views
 
 import "believer/movies/components/input"
 import "believer/movies/components/layout"
+import "believer/movies/components/button"
 
 templ Login() {
 	@layout.Html(layout.Props{Title: "Login"}) {
-		<form
-			class="mx-auto flex max-w-xl flex-col gap-6 px-4 py-8"
-			hx-post="/login"
-			hx-swap="outerHTML"
-			hx-replace-url="/"
-		>
+		<form class="form" hx-post="/login" hx-swap="outerHTML" hx-replace-url="/">
 			@input.Text(input.TextProps{Name: "username", Label: "Username"})
 			@input.Password(input.PasswordProps{Name: "password", Label: "Password"})
-			<footer class="flex flex-col gap-4">
-				<div id="error" class="empty:hidden text-rose-700 dark:text-rose-400 border border-dashed border-rose-700 dark:border-rose-400 p-4 rounded-sm"></div>
-				<button
-					class="rounded-sm bg-neutral-200 px-6 py-2 text-content-primary dark:bg-neutral-700"
-					type="submit"
-				>
+			<footer>
+				<div id="error" class="form__error"></div>
+				@button.Button(button.Props{Type: button.TypeSubmit}) {
 					Login
-				</button>
+				}
 			</footer>
 		</form>
 	}
