@@ -42,8 +42,6 @@
 
 :root {
 	/* Enable light and dark mode colors */
-	color-scheme: light dark;
-
 	--spacing-1: 4px;
 	--spacing-2: 8px;
 	--spacing-3: 12px;
@@ -98,53 +96,56 @@
 		var(--color-yellow-800),
 		var(--color-yellow-200)
 	);
+
+	/* Enable light and dark mode colors */
+	color-scheme: light dark;
 }
 
 @layer base, components;
 
 @layer base {
 	body {
-		background-color: var(--color-background-primary);
 		color: var(--color-content-primary);
+		background-color: var(--color-background-primary);
 	}
 
 	.layout {
-		margin-inline: auto;
 		display: flex;
 		flex-direction: column;
-		max-width: 36rem;
 		row-gap: var(--spacing-8);
+		max-width: 36rem;
 		padding-block: var(--spacing-5);
 		padding-top: var(--spacing-5);
 		padding-bottom: calc(env(safe-area-inset-bottom) + 32px);
+		margin-inline: auto;
 	}
 }
 
 /* Component styles */
 @layer components {
 	.year {
-		-webkit-text-stroke-width: 2px;
-		-webkit-text-stroke-color: light-dark(
-			rgba(163 163 163 / 1),
-			rgba(82 82 82 / 1)
-		);
-		display: block;
 		left: -13rem;
 		z-index: 20;
+		display: block;
 		padding-block: var(--spacing-2);
 		font-family:
 			Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 		font-size: var(--text-3xl);
 		line-height: 2.25rem;
 		color: transparent;
+		-webkit-text-stroke-width: 2px;
+		-webkit-text-stroke-color: light-dark(
+			rgba(163 163 163 / 1),
+			rgba(82 82 82 / 1)
+		);
 		background-color: var(--color-background-primary);
 
 		@media (min-width: 1024px) {
-			font-size: 4.5rem;
-			line-height: 1;
-			padding-block: var(--spacing-4);
 			position: absolute;
 			top: -1rem;
+			padding-block: var(--spacing-4);
+			font-size: 4.5rem;
+			line-height: 1;
 		}
 	}
 }
@@ -152,10 +153,10 @@
 /* These handle positioning when the element sticks,
 * .year and .month are use to align with the list items */
 .year-indicator {
-	margin-block: 0;
 	position: sticky;
 	top: 0;
 	z-index: 20;
+	margin-block: 0;
 
 	@media (width >= 1024px) {
 		top: var(--spacing-4);
@@ -163,10 +164,10 @@
 }
 
 .month-indicator {
-	margin-block: 0;
 	position: sticky;
 	top: 48px;
 	z-index: 10;
+	margin-block: 0;
 
 	@media (width >= 1024px) {
 		top: 96px;
@@ -174,19 +175,19 @@
 }
 
 .month {
-	background-color: var(--color-background-primary);
-	color: var(--color-content-tertiary);
-	font-size: var(--text-lg);
-	padding-block: var(--spacing-1);
 	z-index: 10;
+	padding-block: var(--spacing-1);
+	font-size: var(--text-lg);
+	color: var(--color-content-tertiary);
+	background-color: var(--color-background-primary);
 
 	@media (width >= 1024px) {
-		font-size: var(--text-xl);
-		left: -196px;
 		position: absolute;
-		text-align: right;
 		top: -4px;
+		left: -196px;
 		width: 160px;
+		font-size: var(--text-xl);
+		text-align: right;
 	}
 }
 
@@ -220,9 +221,9 @@
  * ============================================================ */
 
 .focus:focus-visible {
-	border-radius: 1px;
 	outline: 1px dashed var(--color-content-secondary);
 	outline-offset: var(--spacing-1);
+	border-radius: 1px;
 }
 
 /* Popover */
@@ -256,8 +257,9 @@
 
 .popover-button {
 	/* Used for round focus styling */
-	border-radius: var(--spacing-max);
 	cursor: pointer;
+	/* Used for round focus styling */
+	border-radius: var(--spacing-max);
 }
 
 /* List */
@@ -269,24 +271,24 @@
 }
 
 .list {
-	counter-reset: count;
 	display: flex;
 	flex-direction: column;
 	row-gap: var(--spacing-2);
+	counter-reset: count;
 }
 
 .list__item {
-	align-items: flex-end;
 	column-gap: var(--spacing-4);
-	counter-increment: count;
+	align-items: flex-end;
 	justify-content: space-between;
 	list-style: initial;
+	counter-increment: count;
 
 	&::before {
-		color: var(--color-content-tertiary);
-		content: counter(count);
 		font-variant-numeric: tabular-nums;
+		color: var(--color-content-tertiary);
 		text-align: right;
+		content: counter(count);
 	}
 
 	/* TODO: Use sibling-count() or something to set grid styling together
@@ -296,31 +298,31 @@
 }
 
 .list-item__number {
-	color: var(--color-content-tertiary);
 	font-variant-numeric: tabular-nums;
+	color: var(--color-content-tertiary);
 	text-align: right;
 }
 
 .list-item__trailing {
 	display: flex;
-	align-items: center;
 	column-gap: var(--spacing-2);
-	white-space: nowrap;
+	align-items: center;
 	font-size: var(--text-sm);
+	white-space: nowrap;
 }
 
 .description-list {
 	display: grid;
-	column-gap: var(--spacing-6);
 	grid-template-columns: max-content 1fr;
 	row-gap: var(--spacing-2);
+	column-gap: var(--spacing-6);
 
 	@container (width <= 400px) {
 		display: block;
 
 		dt:nth-child(even) {
-			margin-bottom: var(--spacing-2);
 			margin-top: calc(var(--spacing-1) / 2);
+			margin-bottom: var(--spacing-2);
 		}
 
 		:last-child > dt {
@@ -333,14 +335,14 @@
 	}
 
 	.dt {
-		align-items: center;
 		display: flex;
 		flex-wrap: wrap;
 		gap: var(--spacing-2);
+		align-items: center;
 
 		.dt--tabular {
-			font-variant-numeric: tabular-nums;
 			overflow: hidden;
+			font-variant-numeric: tabular-nums;
 		}
 	}
 }
@@ -357,37 +359,37 @@
 	row-gap: var(--spacing-4);
 
 	.section__title {
-		align-items: center;
-		color: var(--color-content-primary);
 		display: flex;
 		column-gap: var(--gap, var(--spacing-4));
+		align-items: center;
 		font-weight: 500;
+		color: var(--color-content-primary);
 
 		h2 {
-			align-items: center;
-			column-gap: var(--spacing-2);
 			display: flex;
+			column-gap: var(--spacing-2);
+			align-items: center;
 		}
 	}
 
 	.section__subtitle {
-		color: var(--color-content-secondary);
 		font-size: var(--text-xs);
 		font-weight: 400;
+		color: var(--color-content-secondary);
 	}
 }
 
 /* Link */
 
 .link {
-	align-items: center;
-	border-bottom: 1px dashed;
-	border-color: inherit;
-	color: var(--color-content-primary);
 	display: inline-flex;
+	gap: var(--spacing-1);
+	align-items: center;
 	font-size: var(--text-sm);
 	font-variant-numeric: tabular-nums;
-	gap: var(--spacing-1);
+	color: var(--color-content-primary);
+	border-color: inherit;
+	border-bottom: 1px dashed;
 	transition: border-color 150ms ease-in;
 
 	&:hover {
@@ -395,28 +397,28 @@
 	}
 
 	&.link--new {
+		position: relative;
+		padding: 4px;
 		border-bottom: 0;
 		border-radius: var(--spacing-max);
-		padding: 4px;
-		position: relative;
 
 		&:before {
 			--size: 40px;
-
-			border-radius: var(--spacing-max);
-			content: "";
-			height: var(--size);
-			left: 50%;
 			position: absolute;
 			top: 50%;
-			transition:
-				background-color 200ms ease-in-out,
-				scale 150ms ease-in;
+			left: 50%;
+			z-index: -1;
+			width: var(--size);
+			height: var(--size);
+			content: "";
+
+			border-radius: var(--spacing-max);
 			transform: translateX(-50%) translateY(-50%);
 			transform-origin: top left;
 			scale: 0.8;
-			width: var(--size);
-			z-index: -1;
+			transition:
+				background-color 200ms ease-in-out,
+				scale 150ms ease-in;
 
 			@media (width <= 480px) {
 				display: none;
@@ -436,17 +438,17 @@
 
 		@media (width <= 480px) {
 			--size: 56px;
+			position: fixed;
+			right: var(--spacing-8);
+			bottom: var(--spacing-8);
+			z-index: 10;
+			display: flex;
 
 			align-items: center;
 			justify-content: center;
-			background-color: var(--color-background-secondary);
-			bottom: var(--spacing-8);
-			display: flex;
-			position: fixed;
-			right: var(--spacing-8);
 			width: var(--size);
 			height: var(--size);
-			z-index: 10;
+			background-color: var(--color-background-secondary);
 		}
 	}
 
@@ -464,8 +466,8 @@
 		}
 
 		> span {
-			border-bottom: 1px dashed;
 			border-color: inherit;
+			border-bottom: 1px dashed;
 			transition: border-color 150ms ease-in;
 		}
 	}
@@ -474,9 +476,9 @@
 /* Separator */
 
 .separator {
+	flex: 1;
 	border-color: var(--color-content-quarternary);
 	border-style: var(--decoration);
-	flex: 1;
 
 	&.separator--highlight {
 		border-color: var(--color-content-highlight);
@@ -491,8 +493,8 @@ nav {
 	}
 
 	.home {
-		left: var(--spacing-5);
 		top: var(--spacing-5);
+		left: var(--spacing-5);
 
 		@media (width > 480px) {
 			position: absolute;
@@ -517,36 +519,36 @@ nav {
 	}
 
 	.feed-list__overview {
+		display: -webkit-box;
 		-webkit-box-orient: vertical;
+		overflow: hidden;
 		-webkit-line-clamp: 3;
 		color: var(--color-content-secondary);
-		display: -webkit-box;
-		overflow: hidden;
 	}
 }
 
 /* Dropdown */
 
 .dropdown {
+	padding-block: var(--spacing-1);
+	padding-inline: var(--spacing-2);
+	font-size: var(--text-xs);
+	text-align: center;
 	appearance: none;
 	border: 1px solid var(--color-border-primary);
 	border-radius: var(--spacing-1);
-	font-size: var(--text-xs);
-	text-align: center;
-	padding-block: var(--spacing-1);
-	padding-inline: var(--spacing-2);
 }
 
 /* Empty state */
 
 .empty-state {
-	border-radius: var(--spacing-1);
-	border: 1px dashed var(--color-border-primary);
-	color: var(--color-content-secondary);
-	list-style: none;
 	padding-block: var(--spacing-8);
 	padding-inline: var(--spacing-5);
+	color: var(--color-content-secondary);
 	text-align: center;
+	list-style: none;
+	border: 1px dashed var(--color-border-primary);
+	border-radius: var(--spacing-1);
 }
 
 /* Empty state */
@@ -557,29 +559,29 @@ nav {
 	row-gap: var(--spacing-2);
 
 	&:has(*:required) .input-label::after {
+		margin-inline-start: calc(var(--spacing-1) / 2);
 		color: var(--color-content-tertiary);
 		content: "*";
-		margin-inline-start: calc(var(--spacing-1) / 2);
 	}
 }
 
 .input-label {
-	color: var(--color-content-secondary);
 	font-size: var(--text-sm);
 	font-weight: 600;
+	color: var(--color-content-secondary);
 }
 
 .input-help {
-	color: var(--color-content-secondary);
 	font-size: var(--text-xs);
+	color: var(--color-content-secondary);
 }
 
 .input {
+	width: 100%;
+	padding-block: var(--spacing-2);
+	padding-inline: var(--spacing-4);
 	border: 1px solid var(--color-border-primary);
 	border-radius: var(--spacing-1);
-	width: 100%;
-	padding-inline: var(--spacing-4);
-	padding-block: var(--spacing-2);
 }
 
 .input--number {
@@ -594,11 +596,11 @@ nav {
 .stats {
 	display: flex;
 	flex-direction: column;
-	margin-inline: auto;
-	max-width: 36rem;
 	row-gap: var(--spacing-8);
-	padding-inline: var(--spacing-5);
+	max-width: 36rem;
 	padding-block: var(--spacing-8);
+	padding-inline: var(--spacing-5);
+	margin-inline: auto;
 
 	@media (width >= 1024px) {
 		max-width: 64rem;
