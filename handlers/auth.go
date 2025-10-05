@@ -60,13 +60,9 @@ func Login(c *fiber.Ctx) error {
 	tokenString, err := token.SignedString([]byte(os.Getenv("ADMIN_SECRET")))
 
 	if err != nil {
-		err := c.SendStatus(401)
-
-		if err != nil {
-			return err
-		}
-
-		return c.SendString("Server error")
+		c.Set("HX-Retarget", "#error")
+		c.Set("HX-Reswap", "innerHTML")
+		return c.Status(fiber.StatusUnauthorized).SendString("Something went wrong")
 	}
 
 	c.Cookie(&fiber.Cookie{

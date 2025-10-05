@@ -6,6 +6,7 @@ import "believer/movies/components/section"
 
 import "believer/movies/components/button"
 import "believer/movies/components/checkbox"
+import "believer/movies/components/textarea"
 
 templ Review(props types.Review) {
 	if (props.Private == false && props.Content != "") {
@@ -42,14 +43,16 @@ templ ReviewContent(props types.Review) {
 
 templ EditReview(props types.Review) {
 	<form class="flex flex-col gap-y-4" hx-post={ fmt.Sprintf("/review/%d/update", props.ID) } hx-swap="outerHTML">
-		<textarea name="review" id="review" class="w-full h-40 rounded-sm border border-neutral-400 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white focus:outline-hidden focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:focus:ring-neutral-500 block">
-			{ props.Content }
-		</textarea>
-		@checkbox.Checkbox(checkbox.Props{
-			Name:    "review_private",
-			Label:   "Review is private",
-			Checked: props.Private,
-		})
+		@textarea.Textarea(textarea.Props{
+			Name:  "review",
+			Label: "Review",
+		}) {
+			@checkbox.Checkbox(checkbox.Props{
+				Name:    "review_private",
+				Label:   "Review is private",
+				Checked: props.Private,
+			})
+		}
 		<footer>
 			@button.Button(button.Props{Type: button.TypeSubmit}) {
 				Update review

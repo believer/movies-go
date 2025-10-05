@@ -2,6 +2,7 @@ package views
 
 import (
 	"believer/movies/components/auth"
+	"believer/movies/components/button"
 	"believer/movies/components/dropdown"
 	"believer/movies/components/empty-state"
 	"believer/movies/components/icon"
@@ -73,19 +74,22 @@ templ WatchlistList(p WatchlistListProps) {
 						}
 						@auth.IsAuthenticated() {
 							if p.ReleaseDate == Released {
-								<a href={ movie.LinkToWatchlistAdd() } class="text-content-secondary hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors" title="Add watch">
+								<a href={ movie.LinkToWatchlistAdd() } class="text-content-secondary hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors focus" title="Add watch">
 									@icon.Icon(icon.Props{Name: icon.Eye})
 								</a>
 							}
-							<button
-								class="cursor-pointer text-content-quarternary hover:text-neutral-700 hover:dark:text-neutral-300 transition-colors"
-								hx-target="closest li"
-								hx-swap="outerHTML"
-								hx-delete={ fmt.Sprintf("/watchlist/%d", movie.ID) }
-								hx-confirm={ fmt.Sprintf("Delete %s from watchlist?", movie.Title) }
-							>
+							@button.Button(button.Props{
+								Rank: button.Secondary,
+								Type: button.TypeButton,
+								Attrs: templ.Attributes{
+									"hx-target":  "closest li",
+									"hx-swap":    "outerHTML",
+									"hx-delete":  fmt.Sprintf("/watchlist/%d", movie.ID),
+									"hx-confirm": fmt.Sprintf("Delete %s from watchlist?", movie.Title),
+								},
+							}) {
 								Delete
-							</button>
+							}
 						}
 					</span>
 				</li>

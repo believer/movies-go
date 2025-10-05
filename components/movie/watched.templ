@@ -2,11 +2,11 @@ package movie
 
 import (
 	"believer/movies/components/auth"
+	"believer/movies/components/button"
 	"believer/movies/components/icon"
 	"believer/movies/components/section"
 	"believer/movies/components/separator"
 	"fmt"
-	"strconv"
 	"time"
 )
 
@@ -45,43 +45,41 @@ templ Watched(props WatchedProps) {
 		Action:        addWatch(props.ID, props.IsUnseen),
 	}) {
 		if len(props.WatchedAt) > 0 {
-			<ol class="flex flex-col gap-2">
-				for i, w := range props.WatchedAt {
+			<ol class="flex flex-col gap-2 list">
+				for _, w := range props.WatchedAt {
 					<li
-						class={ "flex gap-x-4 tabular-nums items-baseline",
-            templ.KV("justify-between", ctx.Value("IsAuthenticated")),
-            templ.KV("grid-cols-[1ch_auto_1fr_auto]", len(props.WatchedAt) < 10),
-            templ.KV("grid-cols-[2ch_auto_1fr_auto]", len(props.WatchedAt) >= 10) }
+						class={ "list__item list__item--baseline",
+            templ.KV("grid grid-cols-[1ch_auto_1fr_auto]", len(props.WatchedAt) < 10),
+            templ.KV("grid grid-cols-[2ch_auto_1fr_auto]", len(props.WatchedAt) >= 10) }
 					>
-						<div class="text-right tabular-nums text-content-tertiary">
-							{ strconv.Itoa(len(props.WatchedAt) - i) }
-						</div>
 						<div>
-							<div>
-								{ w.Date.Format("Monday, January 02, 2006") }
+							<div class="text-content-primary">
+								{ w.Date.Format(" January 02, 2006") }
 							</div>
-							<div class="text-content-secondary text-sm">
-								{ w.Date.Format("15:04") }
+							<div class="text-content-secondary text-xs">
+								{ w.Date.Format("15:04 (Monday)") }
 							</div>
 						</div>
 						@auth.IsAuthenticated() {
 							@separator.Separator()
 							<div class="flex gap-4">
 								<a
-									class="text-content-secondary transition-colors focus"
+									class="button button--secondary focus"
 									href={ templ.SafeURL(fmt.Sprintf("/movie/%s/seen/%d/edit", props.ID, w.ID)) }
 								>
 									Edit
 								</a>
-								<button
-									class="cursor-pointer text-content-secondary transition-colors focus"
-									hx-confirm="Delete this watch date?"
-									hx-delete={ fmt.Sprintf("/movie/%s/seen/%d", props.ID, w.ID) }
-									hx-swap="outerHTML"
-									hx-target="closest section"
-								>
+								@button.Button(button.Props{
+									Rank: button.Secondary,
+									Attrs: templ.Attributes{
+										"hx-confirm": "Delete this watch date?",
+										"hx-delete":  fmt.Sprintf("/movie/%s/seen/%d", props.ID, w.ID),
+										"hx-swap":    "outerHTML",
+										"hx-target":  "closest section",
+									},
+								}) {
 									Delete
-								</button>
+								}
 							</div>
 						}
 					</li>

@@ -7,6 +7,7 @@ import (
 	"believer/movies/components/input"
 	"believer/movies/components/layout"
 	"believer/movies/components/link"
+	"believer/movies/components/textarea"
 	"believer/movies/types"
 )
 
@@ -95,14 +96,15 @@ templ NewMovie(props NewMovieProps) {
 					Hyperscript: "on click if me.checked remove @required from #rating otherwise add @required='' to #rating",
 				})
 			}
-			<div class="flex flex-col gap-2 group">
-				@input.Label("review", "Review")
-				<textarea name="review" id="review" class="w-full h-40 rounded-sm border border-neutral-400 bg-transparent px-4 py-2 dark:border-neutral-700 block focus"></textarea>
+			@textarea.Textarea(textarea.Props{
+				Name:  "review",
+				Label: "Review",
+			}) {
 				@checkbox.Checkbox(checkbox.Props{
 					Name:  "review_private",
 					Label: "Review is private",
 				})
-			</div>
+			}
 			@collapsible.Collapsible(collapsible.Props{
 				Title: "Additional fields",
 			}) {
@@ -119,18 +121,19 @@ templ NewMovie(props NewMovieProps) {
 							List:  "series_list",
 							Hyperscript: `
                 on keyup
-                if my.value is not empty
-                add @required='' to #number_in_series
-                otherwise
-                remove @required from #number_in_series
+                  if my.value is not empty
+                    add @required='' to #number_in_series
+                  otherwise
+                    remove @required from #number_in_series
                 end
                 on change
-                if my.value is not empty
-                put <datalist>option[value='${my.value}']/>'s @label into #series_name
-                remove .hidden from #series_name 
+                  if my.value is not empty
+                    put <datalist>option[value='${my.value}']/>'s @label into #series_name
+                    remove .hidden from #series_name 
                 otherwise
-                set #series_name's innerText to '' 
-                add .hidden to #series_name
+                  set #series_name's innerText to '' 
+                  add .hidden to #series_name
+                end
                 `,
 						}) {
 							<div class="text-xs text-content-secondary hidden" id="series_name"></div>

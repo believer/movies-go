@@ -1,14 +1,20 @@
 package button
 
 type ButtonType string
+type Rank string
 
 const (
+	Primary   Rank = "primary"
+	Secondary Rank = "secondary"
+
 	TypeSubmit ButtonType = "submit"
 	TypeButton ButtonType = "button"
 )
 
 type Props struct {
-	Type ButtonType
+	Rank  Rank
+	Type  ButtonType
+	Attrs templ.Attributes
 }
 
 templ Button(props ...Props) {
@@ -17,12 +23,13 @@ templ Button(props ...Props) {
 		{{ p = props[0] }}
 	}
 	<button
-		class="button focus"
+		class={ "button focus", templ.KV("button--secondary", p.Rank == Secondary) }
 		if p.Type == TypeSubmit {
 			type="submit"
 		} else {
 			type="button"
 		}
+		{ p.Attrs... }
 	>
 		<div class="button__state">
 			<div class="button__content">

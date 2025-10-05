@@ -1,7 +1,15 @@
 package list
 
-templ Ol() {
-	<ol class="list">
+type Props struct {
+	Class string
+}
+
+templ Ol(props ...Props) {
+	{{ var p Props }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<ol class={ "list",p.Class }>
 		{ children... }
 	</ol>
 }

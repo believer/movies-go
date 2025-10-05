@@ -1,0 +1,16 @@
+package textarea
+
+import "believer/movies/components/input"
+
+type Props struct {
+	Name  string
+	Label string
+}
+
+templ Textarea(p Props) {
+	<div class="input-wrap">
+		@input.Label(p.Name, p.Label)
+		<textarea name={ p.Name } id={ p.Name } class="textarea focus"></textarea>
+		{ children... }
+	</div>
+}
