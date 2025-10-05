@@ -114,7 +114,7 @@
 		flex-direction: column;
 		row-gap: var(--spacing-8);
 		max-width: 36rem;
-		padding-block: var(--spacing-5);
+		padding-inline: var(--spacing-5);
 		padding-top: var(--spacing-5);
 		padding-bottom: calc(env(safe-area-inset-bottom) + 32px);
 		margin-inline: auto;
