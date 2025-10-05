@@ -402,6 +402,7 @@
 /* Link */
 
 .link {
+  --size: 56px;
   display: inline-flex;
   gap: var(--spacing-1);
   align-items: center;
@@ -417,13 +418,13 @@
   }
 
   &.link--new {
+    --size: 40px;
     position: relative;
     padding: 4px;
     border-bottom: 0;
     border-radius: var(--spacing-max);
 
     &:before {
-      --size: 40px;
       position: absolute;
       top: 50%;
       left: 50%;
@@ -433,12 +434,11 @@
       content: "";
 
       border-radius: var(--spacing-max);
-      transform: translateX(-50%) translateY(-50%);
+      transform: translateX(-50%) translateY(-50%) scale(0.8);
       transform-origin: top left;
-      scale: 0.8;
       transition:
         background-color 200ms ease-in-out,
-        scale 150ms ease-in;
+        transform 150ms ease-in;
 
       @media (width <= 480px) {
         display: none;
@@ -447,17 +447,16 @@
 
     &:hover:before {
       background-color: var(--color-background-secondary);
-      scale: 1;
+      transform: translateX(-50%) translateY(-50%) scale(1);
     }
 
     &:active,
     &:active:before {
       background-color: var(--color-background-tertiary);
-      scale: 1;
+      transform: translateX(-50%) translateY(-50%) scale(1);
     }
 
     @media (width <= 480px) {
-      --size: 56px;
       position: fixed;
       right: var(--spacing-8);
       bottom: var(--spacing-8);
