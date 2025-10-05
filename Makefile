@@ -8,6 +8,7 @@ build:
 
 dev:
 	@templ generate --watch \
+		--open-browser=false \
 		--proxy=http://localhost:8080 \
 		--watch-pattern='.+\.(css|go|sql|templ)$$' \
 		--cmd='go run .'
