@@ -435,7 +435,7 @@
 
       border-radius: var(--spacing-max);
       transform: translateX(-50%) translateY(-50%) scale(0.8);
-      transform-origin: top left;
+      transform-origin: center center;
       transition:
         background-color 200ms ease-in-out,
         transform 150ms ease-in;
