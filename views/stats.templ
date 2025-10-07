@@ -12,7 +12,6 @@ import (
 	"believer/movies/types"
 	"believer/movies/utils"
 	"fmt"
-	"strconv"
 )
 
 templ statsSection(job string) {
@@ -79,14 +78,14 @@ templ Stats(props StatsProps) {
 									Detail:    "Wilhelm screams",
 									IsTabular: true,
 								}) {
-									{ strconv.Itoa(props.WilhelmScreams) }
+									{ props.WilhelmScreams }
 								}
 							}
 							@list.DlItem(list.DlProps{
 								Detail:    "Reviews",
 								IsTabular: true,
 							}) {
-								{ strconv.Itoa(props.Reviews) }
+								{ props.Reviews }
 							}
 							if len(props.ShortestAndLongestMovie) == 2 {
 								@list.DlItem(list.DlProps{
@@ -120,7 +119,7 @@ templ Stats(props StatsProps) {
 								@link.Link(link.Props{Href: props.AwardWins.LinkTo()}) {
 									{ props.AwardWins.Name }
 								}
-								({ strconv.Itoa( props.AwardWins.Count ) })
+								({  props.AwardWins.Count })
 							}
 							@list.DlItem(list.DlProps{
 								Detail: "Most nominations",
@@ -128,7 +127,7 @@ templ Stats(props StatsProps) {
 								@link.Link(link.Props{Href: props.AwardNominations.LinkTo()}) {
 									{ props.AwardNominations.Name }
 								}
-								({ strconv.Itoa( props.AwardNominations.Count ) })
+								({  props.AwardNominations.Count })
 							}
 							if len(props.MostAwardedMovies) > 0 {
 								@list.DlItem(list.DlProps{
@@ -198,7 +197,7 @@ templ Stats(props StatsProps) {
 											class="tabular-nums text-sm relative top-1"
 											style={ templ.KV("color: var(--color-content-highlight)", props.BestYear == year.Label) }
 										>
-											{ strconv.Itoa(year.Value) }
+											{ year.Value }
 										</span>
 									</li>
 								}

@@ -7,7 +7,6 @@ import (
 	"believer/movies/components/seen"
 	"believer/movies/components/separator"
 	"believer/movies/types"
-	"strconv"
 )
 
 templ credit(title string, data types.PersonMovies) {
@@ -53,7 +52,7 @@ type PersonProps struct {
 templ Person(props PersonProps) {
 	@layout.Layout(layout.Props{Title: props.Person.Name}) {
 		<div>
-			{ strconv.Itoa(props.TotalCredits) } credits
+			{ props.TotalCredits } credits
 		</div>
 		@credit("Cast", props.Person.Cast)
 		@credit("Director", props.Person.Director)

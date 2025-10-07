@@ -7,7 +7,6 @@ import (
 	"believer/movies/components/link"
 	"believer/movies/components/list"
 	"fmt"
-	"strconv"
 	"time"
 )
 
@@ -30,7 +29,7 @@ templ GetRating(props Props) {
 				title={ props.RatedAt.Format("2006-01-02 15:04") }
 				datetime={ props.RatedAt.Format("2006-01-02T15:04:05Z") }
 			>
-				{ strconv.FormatInt(props.Rating, 10) }
+				{ props.Rating }
 			</time>
 		}
 		@auth.IsAuthenticated() {

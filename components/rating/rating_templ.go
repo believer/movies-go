@@ -15,7 +15,6 @@ import (
 	"believer/movies/components/link"
 	"believer/movies/components/list"
 	"fmt"
-	"strconv"
 	"time"
 )
 
@@ -116,7 +115,7 @@ func GetRating(props Props) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(props.RatedAt.Format("2006-01-02 15:04"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/rating/rating.templ`, Line: 30, Col: 52}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/rating/rating.templ`, Line: 29, Col: 52}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -129,7 +128,7 @@ func GetRating(props Props) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(props.RatedAt.Format("2006-01-02T15:04:05Z"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/rating/rating.templ`, Line: 31, Col: 59}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/rating/rating.templ`, Line: 30, Col: 59}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -140,9 +139,9 @@ func GetRating(props Props) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var7 string
-			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatInt(props.Rating, 10))
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(props.Rating)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/rating/rating.templ`, Line: 33, Col: 41}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/rating/rating.templ`, Line: 32, Col: 18}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -281,7 +280,7 @@ func EditRating(props EditRatingProps) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/movie/%d/rating", props.MovieId))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/rating/rating.templ`, Line: 70, Col: 57}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/rating/rating.templ`, Line: 69, Col: 57}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -387,7 +386,7 @@ func AddRating(props AddRatingProps) templ.Component {
 				var templ_7745c5c3_Var17 string
 				templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/movie/%d/rating/edit", props.MovieId))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/rating/rating.templ`, Line: 96, Col: 64}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/rating/rating.templ`, Line: 95, Col: 64}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 				if templ_7745c5c3_Err != nil {
@@ -453,7 +452,7 @@ func AddRatingForm(props AddRatingProps) templ.Component {
 			var templ_7745c5c3_Var20 string
 			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/movie/%d/rating", props.MovieId))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/rating/rating.templ`, Line: 110, Col: 59}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/rating/rating.templ`, Line: 109, Col: 59}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 			if templ_7745c5c3_Err != nil {

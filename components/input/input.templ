@@ -1,7 +1,5 @@
 package input
 
-import "strconv"
-
 type NumberProps struct {
 	Name     string
 	Label    string
@@ -109,8 +107,8 @@ templ Number(props NumberProps) {
 			name={ props.Name }
 			id={ props.Name }
 			class="input input--number focus"
-			min={ strconv.Itoa(props.Min) }
-			max={ strconv.Itoa(props.Max) }
+			min={ props.Min }
+			max={ props.Max }
 			if props.Value > 0 {
 				value={ props.Value }
 			}

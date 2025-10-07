@@ -1,9 +1,6 @@
 package views
 
-import (
-	"believer/movies/types"
-	"strconv"
-)
+import "believer/movies/types"
 
 templ MovieSearch(movies []types.SearchResult) {
 	if len(movies) > 0 {
@@ -12,7 +9,7 @@ templ MovieSearch(movies []types.SearchResult) {
 				<li>
 					<a
 						_="on click set the (value of #imdb_id) to @data-id then remove closest <ul/> then set the (value of #search) to ''"
-						data-id={ strconv.Itoa(movie.Id) }
+						data-id={ movie.Id }
 						href="#"
 						class="new-movie-search__card focus"
 					>

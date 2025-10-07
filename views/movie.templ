@@ -11,7 +11,6 @@ import (
 	"believer/movies/components/seen"
 	"believer/movies/types"
 	"fmt"
-	"strconv"
 )
 
 // TODO: View transition of elements doesn't work because we can't have a
@@ -59,7 +58,7 @@ templ Movie(props MovieProps) {
 				if props.Movie.Series.Valid && props.Movie.NumberInSeries.Valid {
 					@list.DlItem(list.DlProps{Detail: "Series"}) {
 						@link.Link(link.Props{Href: props.Movie.LinkToSeries()}) {
-							{ props.Movie.Series.String } #{ strconv.FormatInt( props.Movie.NumberInSeries.Int64, 10 ) }
+							{ props.Movie.Series.String } #{  props.Movie.NumberInSeries.Int64 }
 						}
 					}
 				}

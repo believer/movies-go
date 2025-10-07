@@ -8,7 +8,6 @@ package section
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "strconv"
 import "believer/movies/components/separator"
 import "believer/movies/components/link"
 
@@ -61,7 +60,7 @@ func title(p Props) templ.Component {
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(p.Title)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/section/section.templ`, Line: 19, Col: 13}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/section/section.templ`, Line: 18, Col: 13}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
@@ -77,7 +76,7 @@ func title(p Props) templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(p.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/section/section.templ`, Line: 22, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/section/section.templ`, Line: 21, Col: 12}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -96,7 +95,7 @@ func title(p Props) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(p.Subtitle)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/section/section.templ`, Line: 26, Col: 17}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/section/section.templ`, Line: 25, Col: 17}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -113,9 +112,9 @@ func title(p Props) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var6 string
-			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(p.NumberOfItems))
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(p.NumberOfItems)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/section/section.templ`, Line: 31, Col: 36}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/section/section.templ`, Line: 30, Col: 22}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -169,7 +168,7 @@ func Section(p Props) templ.Component {
 				"--gap": "var(--spacing-2)",
 			})
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/section/section.templ`, Line: 44, Col: 9}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/section/section.templ`, Line: 43, Col: 9}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {

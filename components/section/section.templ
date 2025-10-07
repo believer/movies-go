@@ -1,6 +1,5 @@
 package section
 
-import "strconv"
 import "believer/movies/components/separator"
 import "believer/movies/components/link"
 
@@ -28,7 +27,7 @@ templ title(p Props) {
 		}
 		if p.NumberOfItems > 0 {
 			<span class="section__subtitle">
-				({ strconv.Itoa(p.NumberOfItems) })
+				({ p.NumberOfItems })
 			</span>
 		}
 	</h2>

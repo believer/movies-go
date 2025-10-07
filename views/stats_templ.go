@@ -20,7 +20,6 @@ import (
 	"believer/movies/types"
 	"believer/movies/utils"
 	"fmt"
-	"strconv"
 )
 
 func statsSection(job string) templ.Component {
@@ -51,7 +50,7 @@ func statsSection(job string) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/stats/most-watched-person/%s", job))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 20, Col: 60}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 19, Col: 60}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -172,7 +171,7 @@ func Stats(props StatsProps) templ.Component {
 						var templ_7745c5c3_Var8 string
 						templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(props.Stats.FormattedNumberOfMoviesSeen())
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 63, Col: 51}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 62, Col: 51}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 						if templ_7745c5c3_Err != nil {
@@ -206,7 +205,7 @@ func Stats(props StatsProps) templ.Component {
 						var templ_7745c5c3_Var10 string
 						templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(props.Stats.FormattedNumberOfMoviesSeenWithRewatches())
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 69, Col: 64}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 68, Col: 64}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 						if templ_7745c5c3_Err != nil {
@@ -240,7 +239,7 @@ func Stats(props StatsProps) templ.Component {
 						var templ_7745c5c3_Var12 string
 						templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(props.FormattedTotalRuntime)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 75, Col: 37}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 74, Col: 37}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 						if templ_7745c5c3_Err != nil {
@@ -273,9 +272,9 @@ func Stats(props StatsProps) templ.Component {
 							}
 							ctx = templ.InitializeContext(ctx)
 							var templ_7745c5c3_Var14 string
-							templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(props.WilhelmScreams))
+							templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(props.WilhelmScreams)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 82, Col: 45}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 81, Col: 31}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 							if templ_7745c5c3_Err != nil {
@@ -308,9 +307,9 @@ func Stats(props StatsProps) templ.Component {
 						}
 						ctx = templ.InitializeContext(ctx)
 						var templ_7745c5c3_Var16 string
-						templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(props.Reviews))
+						templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(props.Reviews)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 89, Col: 37}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 88, Col: 23}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 						if templ_7745c5c3_Err != nil {
@@ -357,7 +356,7 @@ func Stats(props StatsProps) templ.Component {
 								var templ_7745c5c3_Var19 string
 								templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(props.ShortestAndLongestMovie[0].Title)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 96, Col: 50}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 95, Col: 50}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 								if templ_7745c5c3_Err != nil {
@@ -376,7 +375,7 @@ func Stats(props StatsProps) templ.Component {
 							var templ_7745c5c3_Var20 string
 							templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(utils.FormatRuntime(props.ShortestAndLongestMovie[0].Runtime))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 99, Col: 74}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 98, Col: 74}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 							if templ_7745c5c3_Err != nil {
@@ -425,7 +424,7 @@ func Stats(props StatsProps) templ.Component {
 								var templ_7745c5c3_Var23 string
 								templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(props.ShortestAndLongestMovie[1].Title)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 106, Col: 50}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 105, Col: 50}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 								if templ_7745c5c3_Err != nil {
@@ -444,7 +443,7 @@ func Stats(props StatsProps) templ.Component {
 							var templ_7745c5c3_Var24 string
 							templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(utils.FormatRuntime(props.ShortestAndLongestMovie[1].Runtime))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 109, Col: 74}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 108, Col: 74}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 							if templ_7745c5c3_Err != nil {
@@ -526,7 +525,7 @@ func Stats(props StatsProps) templ.Component {
 							var templ_7745c5c3_Var29 string
 							templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(props.AwardWins.Name)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 121, Col: 31}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 120, Col: 31}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 							if templ_7745c5c3_Err != nil {
@@ -543,9 +542,9 @@ func Stats(props StatsProps) templ.Component {
 							return templ_7745c5c3_Err
 						}
 						var templ_7745c5c3_Var30 string
-						templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(props.AwardWins.Count))
+						templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(props.AwardWins.Count)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 123, Col: 48}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 122, Col: 33}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 						if templ_7745c5c3_Err != nil {
@@ -594,7 +593,7 @@ func Stats(props StatsProps) templ.Component {
 							var templ_7745c5c3_Var33 string
 							templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(props.AwardNominations.Name)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 129, Col: 38}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 128, Col: 38}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
 							if templ_7745c5c3_Err != nil {
@@ -611,9 +610,9 @@ func Stats(props StatsProps) templ.Component {
 							return templ_7745c5c3_Err
 						}
 						var templ_7745c5c3_Var34 string
-						templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(props.AwardNominations.Count))
+						templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs(props.AwardNominations.Count)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 131, Col: 55}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 130, Col: 40}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var34))
 						if templ_7745c5c3_Err != nil {
@@ -680,7 +679,7 @@ func Stats(props StatsProps) templ.Component {
 										var templ_7745c5c3_Var38 string
 										templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.JoinStringErrs(m.Title)
 										if templ_7745c5c3_Err != nil {
-											return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 141, Col: 22}
+											return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 140, Col: 22}
 										}
 										_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var38))
 										if templ_7745c5c3_Err != nil {
@@ -813,7 +812,7 @@ func Stats(props StatsProps) templ.Component {
 						var templ_7745c5c3_Var42 templ.SafeURL
 						templ_7745c5c3_Var42, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(fmt.Sprintf("/year/%s", year.Label)))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 188, Col: 64}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 187, Col: 64}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var42))
 						if templ_7745c5c3_Err != nil {
@@ -826,7 +825,7 @@ func Stats(props StatsProps) templ.Component {
 						var templ_7745c5c3_Var43 string
 						templ_7745c5c3_Var43, templ_7745c5c3_Err = templ.JoinStringErrs(year.Label)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 190, Col: 23}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 189, Col: 23}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var43))
 						if templ_7745c5c3_Err != nil {
@@ -854,7 +853,7 @@ func Stats(props StatsProps) templ.Component {
 						var templ_7745c5c3_Var44 string
 						templ_7745c5c3_Var44, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues(templ.KV("color: var(--color-content-highlight)", props.BestYear == year.Label))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 199, Col: 98}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 198, Col: 98}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var44))
 						if templ_7745c5c3_Err != nil {
@@ -865,9 +864,9 @@ func Stats(props StatsProps) templ.Component {
 							return templ_7745c5c3_Err
 						}
 						var templ_7745c5c3_Var45 string
-						templ_7745c5c3_Var45, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(year.Value))
+						templ_7745c5c3_Var45, templ_7745c5c3_Err = templ.JoinStringErrs(year.Value)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 201, Col: 37}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 200, Col: 23}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var45))
 						if templ_7745c5c3_Err != nil {

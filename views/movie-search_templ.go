@@ -8,10 +8,7 @@ package views
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import (
-	"believer/movies/types"
-	"strconv"
-)
+import "believer/movies/types"
 
 func MovieSearch(movies []types.SearchResult) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -45,9 +42,9 @@ func MovieSearch(movies []types.SearchResult) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var2 string
-				templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(movie.Id))
+				templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(movie.Id)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-search.templ`, Line: 15, Col: 38}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-search.templ`, Line: 12, Col: 24}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 				if templ_7745c5c3_Err != nil {
@@ -60,7 +57,7 @@ func MovieSearch(movies []types.SearchResult) templ.Component {
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(movie.Title)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-search.templ`, Line: 21, Col: 21}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-search.templ`, Line: 18, Col: 21}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
@@ -78,7 +75,7 @@ func MovieSearch(movies []types.SearchResult) templ.Component {
 					var templ_7745c5c3_Var4 string
 					templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(movie.ReleaseDate[:4])
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-search.templ`, Line: 24, Col: 34}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-search.templ`, Line: 21, Col: 34}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 					if templ_7745c5c3_Err != nil {
@@ -101,7 +98,7 @@ func MovieSearch(movies []types.SearchResult) templ.Component {
 					var templ_7745c5c3_Var5 string
 					templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(movie.Overview)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-search.templ`, Line: 30, Col: 47}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-search.templ`, Line: 27, Col: 47}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 					if templ_7745c5c3_Err != nil {
