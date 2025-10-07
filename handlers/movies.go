@@ -872,7 +872,7 @@ func HandleSearch(c *fiber.Ctx) error {
 
 	movies := tmdbSearchMovie(query)
 
-	return utils.Render(c, views.MovieSearch(movies.Results))
+	return utils.Render(c, views.MovieSearch(movies.Results[:5]))
 }
 
 func GetMoviesByYear(c *fiber.Ctx) error {

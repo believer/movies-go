@@ -333,10 +333,12 @@
 
 .link {
   --size: 56px;
+
   display: inline-flex;
   gap: var(--spacing-1);
   align-items: center;
-  font-size: var(--text-sm);
+  justify-items: flex-start;
+  font-size: var(--font-size, --text-sm);
   font-variant-numeric: tabular-nums;
   color: var(--color-content-primary);
   border-color: inherit;
@@ -349,6 +351,7 @@
 
   &.link--new {
     --size: 40px;
+
     position: relative;
     padding: 4px;
     border-bottom: 0;
@@ -646,6 +649,39 @@ nav {
   border-radius: var(--rounded-sm);
 }
 
+/* Graphs */
+
+.graph {
+  .bar {
+    fill: var(--color-background-secondary);
+    stroke: var(--color-content-tertiary);
+    transform: scaleY(1);
+    transform-origin: center 180px;
+    transition: transform 1s;
+    transition-delay: 200ms;
+
+    &.active {
+      fill: var(--color-background-tertiary);
+    }
+
+    @starting-style {
+      transform: scaleY(0);
+    }
+  }
+
+  .value {
+    font-size: var(--text-sm);
+    font-variant-numeric: tabular-nums;
+    opacity: 0;
+    fill: var(--color-content-secondary);
+    transition: opacity 150ms ease-in-out;
+
+    &.active {
+      opacity: 100;
+    }
+  }
+}
+
 /**
  * Views
  * ============================================================
@@ -806,4 +842,18 @@ nav {
   display: flex;
   flex-direction: row;
   column-gap: var(--spacing-4);
+}
+
+.new-movie-search__card {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--spacing-2);
+  padding: var(--spacing-2);
+  background-color: var(--color-background-primary);
+  border-radius: var(--rounded-sm);
+  transition: background-color 200ms ease-in-out;
+
+  &:hover {
+    background-color: var(--color-background-secondary);
+  }
 }
