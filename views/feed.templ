@@ -13,12 +13,14 @@ import (
 )
 
 type FeedProps struct {
-	IsAdmin   bool
-	Movies    types.Movies
-	Persons   types.Persons
-	NextPage  int
-	Query     string
-	QueryType string
+	GroupedMovies map[string]types.Movies
+	IsAdmin       bool
+	LastHeader    string
+	SortedKeys    []string
+	Persons       types.Persons
+	NextPage      int
+	Query         string
+	QueryType     string
 }
 
 templ Feed(props FeedProps) {
@@ -91,83 +93,65 @@ templ Feed(props FeedProps) {
 						}
 					}
 				case "movie":
-					if len(props.Movies) > 0 {
-						// Using space-y-6 instead of flex based setup removes the initial
-						// flash when the layout is calculated
+					if len(props.GroupedMovies) > 0 {
 						<ol class="feed-list">
-							for _, movie := range props.Movies {
-								<li
-									data-type="list-item"
-									data-movie={ strconv.Itoa(movie.ID) }
-									data-year={ movie.WatchedAt.Format("2006") }
-									data-month={ movie.WatchedAt.Format("January") }
-									_="
-init if my @data-year is not really equal to @data-year of previous <li/> then
-  set dataYear to my @data-year
-
-  if #{dataYear} does not exist then
-    make an <li.year-indicator/>
-    put my @data-year into its @id
-    put it before me
-  then
-    make an <a.year.focus/>
-    put the @data-year into its textContent
-    put `/year/${dataYear}` into its href
-    put it into the previous <li/>
-   end
- end
-
-init if my @data-month is not really equal to @data-month of previous <li/> then
-  set y to my @data-year
-  set m to my @data-month
-  set ym to `${y}-${m}`
-
-  if #{ym} does not exist then
-    make an <li.month-indicator/>
-    put `${ym}` into its @id
-    put it before me
-   then
-    make an <div.month/>
-    put the @data-month into its textContent
-    put it at the end of the previous <li/>
-  end
-end
-"
-								>
-									<a
-										href={ movie.LinkTo() }
-										class="flex flex-col gap-4 rounded-sm focus"
+							{{ var currentHeader = props.LastHeader }}
+							{{ var currentYear = currentHeader[:4] }}
+							for _, k := range props.SortedKeys {
+								{{ var year = k[:4] }}
+								{{ currentHeader = k }}
+								if currentYear != year {
+									<li class="feed-list__year-wrap">
+										<a class="feed-list__year focus" href={ templ.SafeURL(fmt.Sprintf("/year/%s", year)) }>
+											{ year }
+										</a>
+									</li>
+								}
+								if props.LastHeader != currentHeader {
+									<li class="feed-list__month-wrap">
+										<div class="feed-list__month">
+											{ currentHeader[8:] }
+										</div>
+									</li>
+								}
+								{{ currentYear = year }}
+								for _, movie := range props.GroupedMovies[k] {
+									<li
+										data-type="list-item"
+										data-movie={ strconv.Itoa(movie.ID) }
+										data-year={ movie.WatchedAt.Format("2006") }
+										data-month={ movie.WatchedAt.Format("January") }
 									>
-										<header class="flex flex-col gap-1">
-											<h2 class="truncate text-base font-medium">
-												{ movie.Title }
-											</h2>
-											<div class="text-xs text-content-secondary">
-												<time
-													title={ movie.WatchedAt.Format("2006-01-02 15:04") }
-													datetime={ movie.WatchedAt.Format("2006-01-02T15:04:05Z") }
-												>
-													{ movie.WatchedAt.Format("January 2 2006") }
-												</time>
-												if movie.Series.Valid && movie.NumberInSeries.Valid {
-													<span>
-														- { movie.Series.String } #{ strconv.FormatInt( movie.NumberInSeries.Int64, 10 ) }
-													</span>
-												}
-											</div>
-										</header>
-										if movie.Overview != "" {
-											<p class="feed-list__overview">
-												{ movie.Overview }
-											</p>
-										}
-									</a>
-								</li>
+										<a href={ movie.LinkTo() } class="feed-list__card focus">
+											<header>
+												<h2>{ movie.Title } </h2>
+												<div class="subtitle">
+													<time
+														title={ movie.WatchedAt.Format("2006-01-02 15:04") }
+														datetime={ movie.WatchedAt.Format("2006-01-02T15:04:05Z") }
+													>
+														{ movie.WatchedAt.Format("January 2 2006") }
+													</time>
+													if movie.Series.Valid && movie.NumberInSeries.Valid {
+														<span>
+															- { movie.Series.String } #{ strconv.FormatInt( movie.NumberInSeries.Int64, 10 ) }
+														</span>
+													}
+												</div>
+											</header>
+											if movie.Overview != "" {
+												<p class="feed-list__overview">
+													{ movie.Overview }
+												</p>
+											}
+										</a>
+									</li>
+								}
 							}
 							if props.Query == "" {
 								<li
 									data-type="list-item-pagination"
-									hx-get={ fmt.Sprintf("/?page=%d", props.NextPage) }
+									hx-get={ fmt.Sprintf("/?page=%d&last-header=%s", props.NextPage, currentHeader) }
 									hx-trigger="revealed"
 									hx-swap="outerHTML"
 									hx-select="li"

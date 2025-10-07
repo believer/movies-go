@@ -6,6 +6,7 @@ import (
 	"believer/movies/utils"
 	"believer/movies/views"
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
@@ -16,6 +17,7 @@ func GetFeed(c *fiber.Ctx) error {
 	var persons types.Persons
 
 	page := c.QueryInt("page", 1)
+	lastHeader := c.Query("last-header", "0000-00-January")
 	searchQuery := c.Query("search")
 	userId := c.Locals("UserId")
 	searchQueryType := "movie"
@@ -91,13 +93,32 @@ func GetFeed(c *fiber.Ctx) error {
 		return c.JSON(movies)
 	}
 
+	// Group movies for display by year and month
+	groupedMovies := make(map[string]types.Movies)
+
+	for _, m := range movies {
+		key := m.WatchedAt.Format("2006-01-January")
+		groupedMovies[key] = append(groupedMovies[key], m)
+	}
+
+	// Grouping is not sorted. Get and sort the keys in descending order
+	// and use the keys for presentation
+	keys := make([]string, 0, len(groupedMovies))
+	for k := range groupedMovies {
+		keys = append(keys, k)
+	}
+
+	sort.Sort(sort.Reverse(sort.StringSlice(keys)))
+
 	feed := views.Feed(views.FeedProps{
-		IsAdmin:   utils.IsAuthenticated(c),
-		Movies:    movies,
-		NextPage:  page + 1,
-		Persons:   persons,
-		Query:     searchQuery,
-		QueryType: searchQueryType,
+		IsAdmin:       utils.IsAuthenticated(c),
+		LastHeader:    lastHeader,
+		GroupedMovies: groupedMovies,
+		SortedKeys:    keys,
+		NextPage:      page + 1,
+		Persons:       persons,
+		Query:         searchQuery,
+		QueryType:     searchQueryType,
 	})
 
 	return utils.Render(c, feed)

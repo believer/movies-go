@@ -133,76 +133,6 @@
   }
 }
 
-/* Component styles */
-@layer components {
-  .year {
-    left: -13rem;
-    z-index: 20;
-    display: block;
-    padding-block: var(--spacing-2);
-    font-family:
-      Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    font-size: var(--text-3xl);
-    line-height: 2.25rem;
-    color: transparent;
-    -webkit-text-stroke-width: 2px;
-    -webkit-text-stroke-color: light-dark(
-      rgba(163 163 163 / 1),
-      rgba(82 82 82 / 1)
-    );
-    background-color: var(--color-background-primary);
-
-    @media (min-width: 1024px) {
-      position: absolute;
-      top: -1rem;
-      padding-block: var(--spacing-4);
-      font-size: 4.5rem;
-      line-height: 1;
-    }
-  }
-}
-
-/* These handle positioning when the element sticks,
-* .year and .month are use to align with the list items */
-.year-indicator {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  margin-block: 0;
-
-  @media (width >= 1024px) {
-    top: var(--spacing-4);
-  }
-}
-
-.month-indicator {
-  position: sticky;
-  top: 48px;
-  z-index: 10;
-  margin-block: 0;
-
-  @media (width >= 1024px) {
-    top: 96px;
-  }
-}
-
-.month {
-  z-index: 10;
-  padding-block: var(--spacing-1);
-  font-size: var(--text-lg);
-  color: var(--color-content-tertiary);
-  background-color: var(--color-background-primary);
-
-  @media (width >= 1024px) {
-    position: absolute;
-    top: -4px;
-    left: -196px;
-    width: 160px;
-    font-size: var(--text-xl);
-    text-align: right;
-  }
-}
-
 /* Scroll driven animation to fade in date indicators
 * Note that the order of the properties seems to be important here,
 * animation needed to be before animation-timeline.
@@ -453,7 +383,6 @@
     &:active,
     &:active:before {
       background-color: var(--color-background-tertiary);
-      transform: translateX(-50%) translateY(-50%) scale(1);
     }
 
     @media (width <= 480px) {
@@ -744,6 +673,101 @@ nav {
     overflow: hidden;
     -webkit-line-clamp: 3;
     color: var(--color-content-secondary);
+  }
+
+  /**
+   * These handle positioning when the element sticks,
+   * .year and .month are use to align with the list items
+   */
+  .feed-list__year-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    margin-block: 0;
+
+    @media (width >= 1024px) {
+      top: var(--spacing-4);
+    }
+  }
+
+  .feed-list__year {
+    left: -13rem;
+    z-index: 20;
+    display: block;
+    padding-block: var(--spacing-2);
+    font-family:
+      Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: var(--text-3xl);
+    line-height: 2.25rem;
+    color: transparent;
+    -webkit-text-stroke-width: 2px;
+    -webkit-text-stroke-color: light-dark(
+      rgba(163 163 163 / 1),
+      rgba(82 82 82 / 1)
+    );
+    background-color: var(--color-background-primary);
+
+    @media (min-width: 1024px) {
+      position: absolute;
+      top: -1rem;
+      padding-block: var(--spacing-4);
+      font-size: 4.5rem;
+      line-height: 1;
+    }
+  }
+
+  .feed-list__month-wrap {
+    position: sticky;
+    top: 48px;
+    z-index: 10;
+    margin-block: 0;
+
+    @media (width >= 1024px) {
+      top: 96px;
+    }
+  }
+
+  .feed-list__month {
+    z-index: 10;
+    padding-block: var(--spacing-1);
+    font-size: var(--text-lg);
+    color: var(--color-content-tertiary);
+    background-color: var(--color-background-primary);
+
+    @media (width >= 1024px) {
+      position: absolute;
+      top: -4px;
+      left: -196px;
+      width: 160px;
+      font-size: var(--text-xl);
+      text-align: right;
+    }
+  }
+
+  .feed-list__card {
+    display: flex;
+    flex-direction: column;
+    row-gap: var(--spacing-4);
+    border-radius: var(--rounded-sm);
+
+    header {
+      display: flex;
+      flex-direction: column;
+      row-gap: var(--spacing-1);
+
+      h2 {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 1rem;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+
+      .subtitle {
+        font-size: var(--text-xs);
+        color: var(--color-content-secondary);
+      }
+    }
   }
 }
 
