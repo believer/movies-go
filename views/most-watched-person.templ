@@ -10,7 +10,6 @@ import (
 	"believer/movies/types"
 	"believer/movies/utils"
 	"fmt"
-	"strconv"
 )
 
 type ListItem struct {
@@ -94,23 +93,23 @@ templ HighestRating(props HighestRatingProps) {
 		}),
 	}) {
 		if len(props.Data) > 0 {
-			<ol class="flex flex-col gap-2">
-				for i, item := range props.Data {
-					<li class="items-end justify-between gap-x-4 grid grid-cols-[2ch_auto_1fr_auto]">
-						<div class="text-right tabular-nums w-[2ch] text-neutral-400 dark:text-neutral-600">
-							{ strconv.Itoa(i+1) }
-						</div>
+			@list.Ol() {
+				for _, item := range props.Data {
+					@list.Li(list.LiProps{
+						Items: len(props.Data),
+						Style: list.Numbered,
+					}) {
 						@link.Link(link.Props{Href: item.LinkTo()}) {
 							{ item.Name }
 						}
 						@separator.Separator()
 						<span class="tabular-nums text-sm text-neutral-500 dark:text-neutral-400 relative top-1">
-							<span class="text-xs text-neutral-400 dark:text-neutral-600">({ strconv.Itoa(item.Appearances) } movies)</span>
+							<span class="text-xs text-neutral-400 dark:text-neutral-600">({ item.Appearances } movies)</span>
 							{ item.Rank() }
 						</span>
-					</li>
+					}
 				}
-			</ol>
+			}
 			<div class="text-xs text-right text-neutral-500 dark:text-neutral-400">
 				Only rated movies included. Score is log-adjusted average rating.
 			</div>
