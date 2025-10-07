@@ -9,7 +9,6 @@ import (
 	"believer/movies/components/separator"
 	"believer/movies/types"
 	"fmt"
-	"strconv"
 )
 
 type FeedProps struct {
@@ -55,16 +54,18 @@ templ Feed(props FeedProps) {
 		<div class="mx-auto flex max-w-xl flex-col gap-12 px-5 pt-5 md:pt-0">
 			<input
 				aria-label="Find a movie"
-				class="w-full rounded-full border border-neutral-300 bg-transparent px-4 py-2 ring-offset-2 ring-offset-white placeholder:text-neutral-400 focus:outline-hidden focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700 dark:ring-offset-neutral-900 dark:placeholder:text-neutral-600 dark:focus:ring-neutral-500"
+				class="input focus"
 				type="search"
 				name="search"
 				placeholder="Find a movie"
 				hx-get="/"
-				hx-select="li[data-type]"
+				hx-select="ol"
 				hx-trigger="keyup changed delay:500ms, search"
+				hx-swap="outerHTML"
 				hx-target="ol"
 				minlength="3"
 				hx-validate="true"
+				style="--border-radius: var(--spacing-max);"
 				value={ props.Query }
 			/>
 		</div>
@@ -76,13 +77,15 @@ templ Feed(props FeedProps) {
 							for _, person := range props.Persons {
 								@list.Li(list.LiProps{
 									DataType: "list-item",
+									Style:    list.Numbered,
+									Items:    len(props.Persons),
 								}) {
 									@link.Link(link.Props{Href: person.LinkTo()}) {
 										{ person.Name }
 									}
 									@separator.Separator()
 									<div class="text-xs text-content-secondary">
-										{ strconv.Itoa(person.NumberOfMovies) } movies
+										{ person.NumberOfMovies } movies
 									</div>
 								}
 							}
@@ -118,7 +121,7 @@ templ Feed(props FeedProps) {
 								for _, movie := range props.GroupedMovies[k] {
 									<li
 										data-type="list-item"
-										data-movie={ strconv.Itoa(movie.ID) }
+										data-movie={ movie.ID }
 										data-year={ movie.WatchedAt.Format("2006") }
 										data-month={ movie.WatchedAt.Format("January") }
 									>
@@ -134,7 +137,7 @@ templ Feed(props FeedProps) {
 													</time>
 													if movie.Series.Valid && movie.NumberInSeries.Valid {
 														<span>
-															- { movie.Series.String } #{ strconv.FormatInt( movie.NumberInSeries.Int64, 10 ) }
+															- { movie.Series.String } #{  movie.NumberInSeries.Int64 }
 														</span>
 													}
 												</div>
