@@ -4,6 +4,7 @@ import (
 	"believer/movies/components/auth"
 	"believer/movies/components/button"
 	"believer/movies/components/icon"
+	"believer/movies/components/list"
 	"believer/movies/components/section"
 	"believer/movies/components/separator"
 	"fmt"
@@ -45,18 +46,17 @@ templ Watched(props WatchedProps) {
 		Action:        addWatch(props.ID, props.IsUnseen),
 	}) {
 		if len(props.WatchedAt) > 0 {
-			<ol class="flex flex-col gap-2 list">
+			@list.Ol() {
 				for _, w := range props.WatchedAt {
-					<li
-						class={ "list__item list__item--baseline",
-            templ.KV("grid grid-cols-[1ch_auto_1fr_auto]", len(props.WatchedAt) < 10),
-            templ.KV("grid grid-cols-[2ch_auto_1fr_auto]", len(props.WatchedAt) >= 10) }
-					>
+					@list.Li(list.LiProps{
+						Class: "list__item--baseline",
+						Items: len(props.WatchedAt),
+					}) {
 						<div>
-							<div class="text-content-primary">
+							<div class="watched__primary">
 								{ w.Date.Format(" January 02, 2006") }
 							</div>
-							<div class="text-content-secondary text-xs">
+							<div class="watched__secondary">
 								{ w.Date.Format("15:04 (Monday)") }
 							</div>
 						</div>
@@ -82,26 +82,23 @@ templ Watched(props WatchedProps) {
 								}
 							</div>
 						}
-					</li>
+					}
 				}
-			</ol>
+			}
 		} else if props.InWatchlist {
-			<div class="flex gap-x-2 items-center">
-				<a
-					class="border-b border-dashed border-neutral-500 focus:outline-hidden focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600"
-					href="/watchlist"
-				>In watchlist</a>
+			<div class="watched__in-watchlist">
+				<a class="link focus" href="/watchlist">In watchlist</a>
 				@auth.IsAuthenticated() {
-					<a href={ templ.URL(fmt.Sprintf("/movie/new?imdbId=%s&id=%s", props.ImdbId, props.ID)) } class="text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors" title="Add watch">
+					<a href={ templ.URL(fmt.Sprintf("/movie/new?imdbId=%s&id=%s", props.ImdbId, props.ID)) } class="link focus link--no-border" title="Add watch">
 						@icon.Icon(icon.Props{Name: icon.Eye})
 					</a>
 				}
 			</div>
 		} else {
-			<div class="flex gap-x-2">
+			<div class="watched__in-watchlist">
 				<div>No watches</div>
 				<a
-					class="border-b border-dashed border-neutral-500 focus:outline-hidden focus-visible:rounded-xs focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-neutral-400 dark:border-neutral-400 dark:focus-visible:outline-neutral-600"
+					class="link focus"
 					href={ templ.URL(fmt.Sprintf("/movie/new?imdbId=%s&id=%s", props.ImdbId, props.ID)) }
 				>
 					Add watch

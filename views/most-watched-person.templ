@@ -103,14 +103,16 @@ templ HighestRating(props HighestRatingProps) {
 							{ item.Name }
 						}
 						@separator.Separator()
-						<span class="tabular-nums text-sm text-neutral-500 dark:text-neutral-400 relative top-1">
-							<span class="text-xs text-neutral-400 dark:text-neutral-600">({ item.Appearances } movies)</span>
-							{ item.Rank() }
+						<span class="highest-rating__rank">
+							<span class="highest-rating__movies">({ item.Appearances } movies)</span>
+							<span>
+								{ item.Rank() }
+							</span>
 						</span>
 					}
 				}
 			}
-			<div class="text-xs text-right text-neutral-500 dark:text-neutral-400">
+			<div class="highest-rating__note">
 				Only rated movies included. Score is log-adjusted average rating.
 			</div>
 		} else {

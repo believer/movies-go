@@ -4,6 +4,7 @@ type ListStyle string
 
 const (
 	Numbered ListStyle = "numbered"
+	Plain    ListStyle = "plain"
 )
 
 type LiProps struct {
@@ -19,29 +20,12 @@ templ Li(props ...LiProps) {
 		{{ p = props[0] }}
 	}
 	<li
-		class={ "list__item", style(p.Style, p.Items) }
-		if p.Style != "" {
-			style={ map[string]string{
-        "--list-style": string(p.Style),
-      } }
-		}
+		class={ "list__item",  p.Class, templ.KV("list__item--numbered", p.Style == Numbered) }
+		style={ templ.KV("--number-col: 2ch", p.Items >= 10 && p.Style == Numbered), }
 		if p.DataType != "" {
 			data-type={ p.DataType }
 		}
 	>
 		{ children... }
 	</li>
-}
-
-func style(style ListStyle, items int) string {
-	switch style {
-	case Numbered:
-		if items >= 10 {
-			return "grid grid-cols-[2ch_auto_1fr_auto]"
-		} else {
-			return "grid grid-cols-[1ch_auto_1fr_auto]"
-		}
-	default:
-		return "flex"
-	}
 }

@@ -24,8 +24,8 @@ type FeedProps struct {
 
 templ Feed(props FeedProps) {
 	@layout.Html() {
-		<nav class="flex items-center justify-between px-5 pt-5">
-			<div class="flex gap-x-4">
+		<nav class="feed-nav">
+			<div class="feed-nav__section">
 				@link.Link(link.Props{Href: "/stats"}) {
 					Stats
 				}
@@ -34,7 +34,7 @@ templ Feed(props FeedProps) {
 				}
 			</div>
 			if props.IsAdmin {
-				<div class="flex gap-4 items-center">
+				<div class="feed-nav__section">
 					@link.Link(link.Props{
 						Class: "link--new",
 						Href:  templ.SafeURL("/movie/new"),
@@ -51,7 +51,7 @@ templ Feed(props FeedProps) {
 				}
 			}
 		</nav>
-		<div class="mx-auto flex max-w-xl flex-col gap-12 px-5 pt-5 md:pt-0">
+		<div class="feed-search">
 			<input
 				aria-label="Find a movie"
 				class="input focus"
@@ -68,8 +68,6 @@ templ Feed(props FeedProps) {
 				style="--border-radius: var(--spacing-max);"
 				value={ props.Query }
 			/>
-		</div>
-		<div class="mx-auto max-w-xl px-5 py-8">
 			switch props.QueryType {
 				case "person":
 					if len(props.Persons) > 0 {

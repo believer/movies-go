@@ -11,7 +11,7 @@ templ H1(props ...Props) {
 	if len(props) > 0 {
 		{{ p = props[0] }}
 	}
-	<header class="flex gap-x-2 items-baseline text-xl font-semibold">
+	<header class="page-header">
 		@link.Link(link.Props{
 			AriaLabel:   "Back",
 			Href:        "#",
@@ -20,7 +20,7 @@ templ H1(props ...Props) {
 		}) {
 			..
 		}
-		<span class="font-regular text-neutral-400">/</span>
+		<span class="page-header__divider">/</span>
 		<h1>
 			{ children... }
 		</h1>

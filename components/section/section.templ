@@ -37,11 +37,7 @@ templ Section(p Props) {
 	<section class="section">
 		<div
 			class="section__title"
-			if p.Subtitle != "" {
-				style={ map[string]string{
-          "--gap": "var(--spacing-2)",
-        } }
-			}
+			style={ templ.KV("--gap: var(--spacing-2)", p.Subtitle != "") }
 		>
 			@title(p)
 			@separator.Separator(separator.Props{Decoration: separator.DecorationSolid})

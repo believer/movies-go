@@ -1,5 +1,23 @@
 :root {
-  /* Enable light and dark mode colors */
+  /* Colors */
+  --color-white: #fff;
+
+  --color-yellow-200: oklch(0.945 0.129 101.54);
+  --color-yellow-800: oklch(0.476 0.114 61.907);
+
+  --color-neutral-50: oklch(0.985 0 0);
+  --color-neutral-100: oklch(0.97 0 0);
+  --color-neutral-200: oklch(0.922 0 0);
+  --color-neutral-300: oklch(0.87 0 0);
+  --color-neutral-400: oklch(0.708 0 0);
+  --color-neutral-500: oklch(0.556 0 0);
+  --color-neutral-600: oklch(0.439 0 0);
+  --color-neutral-700: oklch(0.371 0 0);
+  --color-neutral-800: oklch(0.269 0 0);
+  --color-neutral-900: oklch(0.205 0 0);
+  --color-neutral-950: oklch(0.145 0 0);
+
+  /* Spacing */
   --spacing-1: 4px;
   --spacing-2: 8px;
   --spacing-3: 12px;
@@ -12,8 +30,14 @@
 
   --rounded-sm: 4px;
 
+  /* Font */
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
 
   /* Background */
   --color-background-primary: light-dark(
@@ -64,15 +88,74 @@
 @layer base, components;
 
 @layer base {
-  @media (prefers-reduced-motion: no-preference) {
-    html {
+  *,
+  :after,
+  :before,
+  ::backdrop {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    border: 0 solid;
+  }
+
+  ::placeholder {
+    color: color-mix(in oklch, currentColor 50%, transparent);
+  }
+
+  html {
+    font-family: ui-sans-serif, system-ui;
+    line-height: 1.5;
+
+    @media (prefers-reduced-motion: no-preference) {
       interpolate-size: allow-keywords;
     }
   }
 
   body {
+    margin: 0;
     color: var(--color-content-primary);
     background-color: var(--color-background-primary);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+    background-color: transparent;
+    border-radius: 0;
+  }
+
+  ol,
+  ul,
+  menu {
+    list-style: none;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: inherit;
+  }
+
+  svg {
+    display: block;
+  }
+
+  hr {
+    height: 0;
+    color: inherit;
+    border-top-width: 1px;
   }
 
   .layout {
@@ -84,6 +167,10 @@
     padding-top: var(--spacing-5);
     padding-bottom: calc(env(safe-area-inset-bottom) + 32px);
     margin-inline: auto;
+  }
+
+  .contents {
+    display: contents;
   }
 }
 
@@ -160,12 +247,6 @@
 
 /* List */
 
-@property --list-style {
-  syntax: "numbered | none";
-  inherits: false;
-  initial-value: none;
-}
-
 .list {
   display: flex;
   flex-direction: column;
@@ -178,23 +259,28 @@
 }
 
 .list__item {
+  display: flex;
   column-gap: var(--spacing-4);
   align-items: flex-end;
   justify-content: space-between;
   list-style: initial;
   counter-increment: count;
 
-  &::before {
-    font-variant-numeric: tabular-nums;
-    color: var(--color-content-tertiary);
-    text-align: right;
-    content: counter(count);
+  &.list__item--numbered {
+    display: grid;
+    grid-template-columns: var(--number-col, 1ch) auto 1fr auto;
+
+    &::before {
+      font-variant-numeric: tabular-nums;
+      color: var(--color-content-tertiary);
+      text-align: right;
+      content: counter(count);
+    }
+
+    /* TODO: Use sibling-count() or something to set grid styling together
+* with conditional display styling
+display: if(style(--list-style: none): flex; else: grid;); */
   }
-
-  /* TODO: Use sibling-count() or something to set grid styling together
-     * with conditional display styling */
-
-  /* display: if(style(--list-style: none): flex; else: grid;); */
 
   &.list__item--baseline {
     align-items: baseline;
@@ -286,8 +372,6 @@
 /* Link */
 
 .link {
-  --size: 56px;
-
   display: inline-flex;
   gap: var(--spacing-1);
   align-items: center;
@@ -295,6 +379,7 @@
   font-size: var(--font-size, var(--text-sm));
   font-variant-numeric: tabular-nums;
   color: var(--color-content-primary);
+  text-decoration: none;
   border-color: inherit;
   border-bottom: 1px dashed;
   transition: border-color 150ms ease-in;
@@ -343,6 +428,8 @@
     }
 
     @media (width <= 480px) {
+      --size: 56px;
+
       position: fixed;
       right: var(--spacing-8);
       bottom: var(--spacing-8);
@@ -359,6 +446,20 @@
 
   &.link--highlight {
     color: var(--color-content-highlight);
+  }
+
+  &.link--secondary {
+    font-size: inherit;
+    color: var(--color-content-secondary);
+  }
+
+  &.link--no-border {
+    border: 0;
+    transition: color 150ms ease-in;
+
+    &:hover {
+      color: var(--color-content-secondary);
+    }
   }
 
   &.link--imdb {
@@ -640,6 +741,31 @@ nav {
   }
 }
 
+/* Icon */
+
+.icon-4 {
+  width: var(--spacing-4);
+  height: var(--spacing-4);
+}
+.icon-6 {
+  width: var(--spacing-6);
+  height: var(--spacing-6);
+}
+
+/* Typography */
+
+.page-header {
+  display: flex;
+  column-gap: var(--spacing-2);
+  align-items: baseline;
+  font-size: var(--text-xl);
+  font-weight: 600;
+
+  .page-header__divider {
+    color: var(--color-content-secondary);
+  }
+}
+
 /**
  * Views
  * ============================================================
@@ -653,6 +779,26 @@ nav {
   justify-content: space-between;
   padding-inline: var(--spacing-5);
   padding-top: var(--spacing-5);
+
+  .feed-nav__section {
+    display: flex;
+    column-gap: var(--spacing-4);
+    align-items: center;
+  }
+}
+
+.feed-search {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--spacing-8);
+  max-width: 36rem;
+  padding-inline: var(--spacing-5);
+  padding-top: var(--spacing-5);
+  margin-inline: auto;
+
+  @media (width >= 768px) {
+    padding-top: 0;
+  }
 }
 
 .feed-list {
@@ -697,8 +843,6 @@ nav {
   }
 
   .feed-list__year {
-    left: -13rem;
-    z-index: 20;
     display: block;
     padding-block: var(--spacing-2);
     font-family:
@@ -716,6 +860,8 @@ nav {
     @media (min-width: 1024px) {
       position: absolute;
       top: -1rem;
+      left: -13rem;
+      z-index: 20;
       padding-block: var(--spacing-4);
       font-size: 4.5rem;
       line-height: 1;
@@ -734,7 +880,6 @@ nav {
   }
 
   .feed-list__month {
-    z-index: 10;
     padding-block: var(--spacing-1);
     font-size: var(--text-lg);
     color: var(--color-content-tertiary);
@@ -744,6 +889,7 @@ nav {
       position: absolute;
       top: -4px;
       left: -196px;
+      z-index: 10;
       width: 160px;
       font-size: var(--text-xl);
       text-align: right;
@@ -826,4 +972,110 @@ nav {
   &:hover {
     background-color: var(--color-background-secondary);
   }
+}
+
+.movie__overview {
+  color: var(--color-content-secondary);
+}
+
+.global-rating {
+  display: flex;
+  column-gap: var(--spacing-2);
+  align-items: center;
+
+  .global-rating__users {
+    font-size: var(--text-xs);
+    color: var(--color-content-secondary);
+  }
+}
+
+.movie {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--spacing-8);
+
+  .movie__list-item {
+    display: flex;
+    column-gap: var(--spacing-4);
+    align-items: flex-end;
+  }
+
+  .movie__character {
+    position: relative;
+    top: 1px;
+    line-height: 1;
+  }
+}
+
+.movie-awards__row {
+  display: flex;
+  column-gap: var(--spacing-4);
+  align-items: baseline;
+  justify-content: space-between;
+
+  > div:first-of-type {
+    color: var(--color-content-primary);
+  }
+}
+
+.movie-awards__detail {
+  display: inline-flex;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: var(--text-xs);
+  white-space: nowrap;
+
+  .comma {
+    margin-right: var(--spacing-4);
+  }
+}
+
+.movie-awards__meta {
+  display: flex;
+  column-gap: var(--spacing-1);
+}
+
+.watched__primary {
+  color: var(--color-content-primary);
+}
+
+.watched__secondary {
+  font-size: var(--text-xs);
+}
+
+.watched__in-watchlist {
+  display: flex;
+  column-gap: var(--spacing-2);
+  align-items: center;
+}
+
+.movies-by-year__value {
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.whitespace-nowrap {
+  white-space: nowrap;
+}
+
+.highest-rating__rank {
+  display: flex;
+  column-gap: var(--spacing-1);
+  align-items: baseline;
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  color: var(--color-content-secondary);
+}
+
+.highest-rating__movies {
+  font-size: var(--text-xs);
+  color: var(--color-content-tertiary);
+}
+
+.highest-rating__note {
+  font-size: var(--text-xs);
+  color: var(--color-content-secondary);
+  text-align: right;
 }

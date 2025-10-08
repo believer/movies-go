@@ -179,9 +179,9 @@ templ Stats(props StatsProps) {
 					></section>
 					@section.Section(section.Props{Title: "Movies by year"}) {
 						if len(props.MoviesByYear) > 0 {
-							<ol class="list">
+							@list.Ol() {
 								for _, year := range props.MoviesByYear {
-									<li class="flex items-end justify-between gap-4">
+									@list.Li() {
 										<a
 											class={ "link focus", templ.KV("link--highlight", props.BestYear == year.Label) }
 											href={ templ.URL(fmt.Sprintf("/year/%s", year.Label)) }
@@ -194,14 +194,14 @@ templ Stats(props StatsProps) {
 											@separator.Separator()
 										}
 										<span
-											class="tabular-nums text-sm relative top-1"
+											class="movies-by-year__value"
 											style={ templ.KV("color: var(--color-content-highlight)", props.BestYear == year.Label) }
 										>
 											{ year.Value }
 										</span>
-									</li>
+									}
 								}
-							</ol>
+							}
 						} else {
 							@emptystate.EmptyState() {
 								No movies seen

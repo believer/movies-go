@@ -15,9 +15,9 @@ type MovieOthersSeenProps struct {
 templ MovieOthersSeen(props MovieOthersSeenProps) {
 	if props.Others.Seen > 0 {
 		@list.DlItem(list.DlProps{Detail: "Global rating", IsTabular: true}) {
-			<div class="flex gap-x-2 items-center" hx-target="closest .contents" hx-get={ fmt.Sprintf("/movie/%d/seen/others", props.ID) } hx-trigger="update-rating from:body">
+			<div class="global-rating" hx-target="closest .contents" hx-get={ fmt.Sprintf("/movie/%d/seen/others", props.ID) } hx-trigger="update-rating from:body">
 				{ strconv.FormatFloat(props.Others.AverageRating, 'f', 1, 64) }
-				<span class="text-content-secondary text-xs">
+				<span class="global-rating__users">
 					({ props.Others.Seen } users)
 				</span>
 			</div>

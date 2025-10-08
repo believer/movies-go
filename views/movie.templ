@@ -28,7 +28,7 @@ type MovieProps struct {
 templ Movie(props MovieProps) {
 	@layout.Layout(layout.Props{Title: props.Movie.Title, Description: props.Movie.Overview}) {
 		if props.Movie.Overview != "" {
-			<p class="text-content-secondary">{ props.Movie.Overview }</p>
+			<p class="movie__overview">{ props.Movie.Overview }</p>
 		}
 		@review.Review(props.Review)
 		@section.Section(section.Props{Title: "Metadata"}) {

@@ -41,7 +41,7 @@ func TruncatedLink(props ...TruncatedLinkProps) templ.Component {
 		if len(props) > 0 {
 			p = props[0]
 		}
-		var templ_7745c5c3_Var2 = []any{"truncate border-b border-dashed border-content-secondary focus", templ.KV("flex-1 basis-3/5", p.Long)}
+		var templ_7745c5c3_Var2 = []any{"link link--secondary focus", templ.KV("flex-1 basis-3/5", p.Long)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
