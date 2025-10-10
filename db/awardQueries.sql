@@ -137,18 +137,49 @@ WHERE
             movie_awards);
 
 -- name: awards-by-year
+WITH nominees AS (
+    SELECT
+        a.imdb_id,
+        a.name AS category,
+        a.detail,
+        a.winner,
+        JSONB_AGG(
+            CASE WHEN person IS NOT NULL
+                AND person_id IS NOT NULL THEN
+                JSONB_BUILD_OBJECT('name', person, 'id', person_id)
+            WHEN person IS NOT NULL THEN
+                JSONB_BUILD_OBJECT('name', person)
+            ELSE
+                JSONB_BUILD_OBJECT('name', 'N/A')
+            END ORDER BY person) FILTER (WHERE person IS NOT NULL
+            OR person_id IS NOT NULL) AS nominees
+    FROM
+        award a
+    WHERE
+        a.year = $1
+    GROUP BY
+        a.imdb_id,
+        a.name,
+        a.detail,
+        a.winner
+),
+movie_awards AS (
+    SELECT
+        m.id AS movie_id,
+        m.title,
+        JSONB_AGG(JSONB_BUILD_OBJECT('winner', n.winner, 'category', n.category, 'detail', n.detail, 'nominees', COALESCE(n.nominees, '[]'::jsonb))
+        ORDER BY n.winner DESC, n.category ASC) AS awards
+    FROM
+        movie m
+        JOIN nominees n ON m.imdb_id = n.imdb_id
+    GROUP BY
+        m.id,
+        m.title
+)
 SELECT
-    m.id AS movie_id,
-    m.title,
-    COALESCE(JSONB_AGG(jsonb_build_object('person', a.person, 'person_id', a.person_id, 'winner', a.winner, 'category', a.name, 'detail', a.detail)
-        ORDER BY a.winner DESC, a.name ASC), '[]'::jsonb) AS awards
+    *
 FROM
-    award AS a
-    INNER JOIN movie AS m ON m.imdb_id = a.imdb_id
-WHERE
-    a.year = $1
-GROUP BY
-    m.id,
-    m.title
+    movie_awards
 ORDER BY
-    m.title ASC
+    title ASC;
+

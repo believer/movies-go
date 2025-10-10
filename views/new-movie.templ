@@ -35,26 +35,22 @@ templ NewMovie(props NewMovieProps) {
 				</div>
 			}
 			if props.ImdbID == "" {
-				<div class="input-wrap">
+				<div class="input">
 					@input.Label("search", "Search")
 					<input
 						type="text"
 						hx-get="/movie/search"
 						hx-trigger="keyup changed delay:500ms"
-						hx-target="#search-results"
+						hx-target="next .search-results"
 						hx-validate="true"
 						minlength="3"
 						name="search"
 						id="search"
-						class="input focus"
 					/>
-					<div
-						id="search-results"
-						class="text-xs empty:hidden rounded-sm p-2 outline-dashed outline-1 outline-neutral-400 dark:outline-neutral-500"
-					></div>
+					<div class="search-results"></div>
 				</div>
 			}
-			<div class="input-wrap">
+			<div class="input">
 				if props.ImdbID != "" {
 					@input.Label("imdb_id", "IMDb ID")
 				} else {
@@ -64,22 +60,18 @@ templ NewMovie(props NewMovieProps) {
 					required
 					type="text"
 					hx-get="/movie/imdb"
-					hx-trigger="blur-sm changed"
-					hx-target="#movie-exists"
+					hx-trigger="input changed"
+					hx-target="next .search-results"
 					hx-validate="true"
 					name="imdb_id"
 					id="imdb_id"
-					class="input focus"
 					if props.ImdbID != "" {
 						value={ props.ImdbID }
 						readonly
 					}
 				/>
-				<div
-					id="movie-exists"
-					class="text-xs empty:hidden lg:absolute lg:-right-52 lg:top-6 lg:w-48 lg:rounded-sm lg:p-2 lg:outline-dashed lg:outline-offset-4 lg:outline-neutral-500"
-				></div>
 				@input.Help("For example, https://www.imdb.com/title/tt0111161/, or just tt0111161.")
+				<div class="search-results"></div>
 			</div>
 			@input.Number(input.NumberProps{
 				Name:     "rating",
@@ -113,8 +105,8 @@ templ NewMovie(props NewMovieProps) {
 					Label:    "Watched at",
 					HelpText: "Defaults to current time if left empty.",
 				})
-				<div class="flex gap-x-4">
-					<div class="grow">
+				<div class="new-movie__series">
+					<div>
 						@input.Text(input.TextProps{
 							Name:  "series",
 							Label: "Series",
@@ -136,11 +128,11 @@ templ NewMovie(props NewMovieProps) {
                 end
                 `,
 						}) {
-							<div class="text-xs text-content-secondary hidden" id="series_name"></div>
+							<div class="new-movie__selected-series" id="series_name"></div>
 							<div hx-get="/movie/new/series" hx-swap="outerHTML" hx-trigger="load"></div>
 						}
 					</div>
-					<div class="grow">
+					<div>
 						@input.Number(input.NumberProps{
 							Name:  "number_in_series",
 							Label: "Number in series",

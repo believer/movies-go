@@ -1,12 +1,8 @@
 node_modules
 backup.sh
-tailwindcss
 .env
 .DS_Store
 tmp
 *.gz
 main
 *.test
-
-# To enable intellisense
-tailwind.config.js

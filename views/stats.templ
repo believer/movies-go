@@ -94,9 +94,7 @@ templ Stats(props StatsProps) {
 									@link.Link(link.Props{Href: templ.URL(fmt.Sprintf("/movie/%d", props.ShortestAndLongestMovie[0].ID))}) {
 										{ props.ShortestAndLongestMovie[0].Title }
 									}
-									<span class="text-xs">
-										({ utils.FormatRuntime(props.ShortestAndLongestMovie[0].Runtime) })
-									</span>
+									({ utils.FormatRuntime(props.ShortestAndLongestMovie[0].Runtime) })
 								}
 								@list.DlItem(list.DlProps{
 									Detail: "Longest movie",
@@ -104,9 +102,7 @@ templ Stats(props StatsProps) {
 									@link.Link(link.Props{Href: templ.URL(fmt.Sprintf("/movie/%d", props.ShortestAndLongestMovie[1].ID))}) {
 										{ props.ShortestAndLongestMovie[1].Title }
 									}
-									<span class="text-xs">
-										({ utils.FormatRuntime(props.ShortestAndLongestMovie[1].Runtime) })
-									</span>
+									({ utils.FormatRuntime(props.ShortestAndLongestMovie[1].Runtime) })
 								}
 							}
 						}
@@ -135,11 +131,11 @@ templ Stats(props StatsProps) {
 								}) {
 									@list.Ol() {
 										for _, m := range props.MostAwardedMovies {
-											<div class="flex">
+											@list.Li() {
 												@link.Link(link.Props{Href: m.LinkTo()}) {
 													{ m.Title }
 												}
-											</div>
+											}
 										}
 									}
 								}
@@ -194,7 +190,6 @@ templ Stats(props StatsProps) {
 											@separator.Separator()
 										}
 										<span
-											class="movies-by-year__value"
 											style={ templ.KV("color: var(--color-content-highlight)", props.BestYear == year.Label) }
 										>
 											{ year.Value }
@@ -212,7 +207,7 @@ templ Stats(props StatsProps) {
 				<div class="stats__column">
 					@section.Section(section.Props{Title: "Most watched movies"}) {
 						if len(props.MostWatchedMovies) > 0 {
-							@NumberedList(props.MostWatchedMovies, "movie")
+							@StatsList(props.MostWatchedMovies, "movie")
 						} else {
 							@emptystate.EmptyState() {
 								No movies seen

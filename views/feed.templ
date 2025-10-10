@@ -52,42 +52,41 @@ templ Feed(props FeedProps) {
 			}
 		</nav>
 		<div class="feed-search">
-			<input
-				aria-label="Find a movie"
-				class="input focus"
-				type="search"
-				name="search"
-				placeholder="Find a movie"
-				hx-get="/"
-				hx-select="ol"
-				hx-trigger="keyup changed delay:500ms, search"
-				hx-swap="outerHTML"
-				hx-target="ol"
-				minlength="3"
-				hx-validate="true"
-				style="--border-radius: var(--spacing-max);"
-				value={ props.Query }
-			/>
+			<div class="input">
+				<input
+					aria-label="Find a movie"
+					type="search"
+					name="search"
+					placeholder="Find a movie"
+					hx-get="/"
+					hx-select="ol"
+					hx-trigger="keyup changed delay:500ms, search"
+					hx-swap="outerHTML"
+					hx-target="ol"
+					minlength="3"
+					hx-validate="true"
+					style="--border-radius: var(--spacing-max);"
+					value={ props.Query }
+				/>
+			</div>
 			switch props.QueryType {
 				case "person":
 					if len(props.Persons) > 0 {
-						<ol class="feed-list feed-list--person">
+						@list.Ol() {
 							for _, person := range props.Persons {
-								@list.Li(list.LiProps{
-									DataType: "list-item",
-									Style:    list.Numbered,
-									Items:    len(props.Persons),
-								}) {
+								@list.Li() {
 									@link.Link(link.Props{Href: person.LinkTo()}) {
 										{ person.Name }
 									}
 									@separator.Separator()
-									<div class="text-xs text-content-secondary">
-										{ person.NumberOfMovies } movies
+									<div class="trailing">
+										<div class="secondary">
+											{ person.NumberOfMovies } movies
+										</div>
 									</div>
 								}
 							}
-						</ol>
+						}
 					} else {
 						@emptystate.EmptyState() {
 							No persons found
@@ -118,7 +117,6 @@ templ Feed(props FeedProps) {
 								{{ currentYear = year }}
 								for _, movie := range props.GroupedMovies[k] {
 									<li
-										data-type="list-item"
 										data-movie={ movie.ID }
 										data-year={ movie.WatchedAt.Format("2006") }
 										data-month={ movie.WatchedAt.Format("January") }
@@ -141,7 +139,7 @@ templ Feed(props FeedProps) {
 												</div>
 											</header>
 											if movie.Overview != "" {
-												<p class="feed-list__overview">
+												<p class="overview">
 													{ movie.Overview }
 												</p>
 											}
@@ -151,9 +149,8 @@ templ Feed(props FeedProps) {
 							}
 							if props.Query == "" {
 								<li
-									data-type="list-item-pagination"
 									hx-get={ fmt.Sprintf("/?page=%d&last-header=%s", props.NextPage, currentHeader) }
-									hx-trigger="revealed"
+									hx-trigger="intersect"
 									hx-swap="outerHTML"
 									hx-select="li"
 								></li>

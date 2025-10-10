@@ -11,7 +11,7 @@ var counter uint64
 
 templ Popover(props Props) {
 	{{ var id = atomic.AddUint64(&counter, 1) }}
-	<button popovertarget={ id } class="popover-button focus">
+	<button popovertarget={ id } class="popover-button">
 		@props.Toggle
 	</button>
 	<div id={ id } popover class="popover">

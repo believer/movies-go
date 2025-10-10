@@ -8,9 +8,9 @@ type Props struct {
 }
 
 templ Textarea(p Props) {
-	<div class="input-wrap">
+	<div class="input">
 		@input.Label(p.Name, p.Label)
-		<textarea name={ p.Name } id={ p.Name } class="textarea focus"></textarea>
+		<textarea name={ p.Name } id={ p.Name }></textarea>
 		{ children... }
 	</div>
 }

@@ -3,6 +3,7 @@ package views
 import (
 	"believer/movies/components/layout"
 	"believer/movies/components/link"
+	"believer/movies/components/list"
 	"believer/movies/components/section"
 	"believer/movies/components/seen"
 	"believer/movies/components/separator"
@@ -12,15 +13,15 @@ import (
 templ credit(title string, data types.PersonMovies) {
 	if len(data) > 0 {
 		@section.Section(section.Props{Title: title, NumberOfItems: len(data)}) {
-			<ol class="flex flex-col gap-y-2 md:gap-y-3">
+			@list.Ol() {
 				for _, movie := range data {
-					<li>
-						<div class="flex items-end gap-x-4">
-							@link.Link(link.Props{Href: movie.LinkTo(), Long: len(movie.Title) > 60}) {
+					@list.Li() {
+						<div class="row">
+							@link.Link(link.Props{Href: movie.LinkTo()}) {
 								{ movie.Title }
 							}
 							@separator.Separator()
-							<span class="flex items-center gap-x-2">
+							<span class="trailing">
 								@link.Link(link.Props{Href: movie.LinkToYear()}) {
 									{ movie.ReleaseYear() }
 								}
@@ -32,11 +33,11 @@ templ credit(title string, data types.PersonMovies) {
 							</span>
 						</div>
 						if movie.Character != "" {
-							<div class="text-xs truncate relative top-1 text-content-secondary">{ movie.Character }</div>
+							<div class="detail">{ movie.Character }</div>
 						}
-					</li>
+					}
 				}
-			</ol>
+			}
 		}
 	}
 }

@@ -12,14 +12,14 @@ type NumberProps struct {
 
 templ Label(name string, label string) {
 	if label != "" {
-		<label for={ name } class="input-label">
+		<label for={ name }>
 			{ label }
 		</label>
 	}
 }
 
 templ Help(text string) {
-	<div class="input-help">
+	<div class="help">
 		{ text }
 	</div>
 }
@@ -38,13 +38,12 @@ type TextProps struct {
 }
 
 templ Text(p TextProps) {
-	<div class="input-wrap">
+	<div class="input">
 		@Label(p.Name, p.Label)
 		<input
 			type="text"
 			name={ p.Name }
 			id={ p.Name }
-			class="input focus"
 			if p.Required {
 				required
 			}
@@ -76,13 +75,12 @@ type PasswordProps struct {
 }
 
 templ Password(p PasswordProps) {
-	<div class="input-wrap">
+	<div class="input">
 		@Label(p.Name, p.Label)
 		<input
 			type="password"
 			name={ p.Name }
 			id={ p.Name }
-			class="input focus"
 			if p.Required {
 				required
 			}
@@ -97,7 +95,7 @@ templ Password(p PasswordProps) {
  * =========================================================== */
 
 templ Number(props NumberProps) {
-	<div class="input-wrap">
+	<div class="input">
 		@Label(props.Name, props.Label)
 		<input
 			if props.Required {
@@ -106,7 +104,6 @@ templ Number(props NumberProps) {
 			type="number"
 			name={ props.Name }
 			id={ props.Name }
-			class="input input--number focus"
 			min={ props.Min }
 			max={ props.Max }
 			if props.Value > 0 {
@@ -130,13 +127,12 @@ type DateTimeProps struct {
 }
 
 templ DateTime(props DateTimeProps) {
-	<div class="input-wrap">
+	<div class="input">
 		@Label(props.Name, props.Label)
 		<input
 			type="datetime-local"
 			name={ props.Name }
 			id={ props.Name }
-			class="input focus"
 			value={ props.Value }
 		/>
 		if props.HelpText != "" {

@@ -2,6 +2,7 @@ package views
 
 import (
 	"believer/movies/components/link"
+	"believer/movies/components/list"
 	"believer/movies/components/section"
 	"believer/movies/components/separator"
 	"believer/movies/utils"
@@ -27,19 +28,19 @@ templ CastList(castOrCrew []CastDTO, hasCharacters bool) {
 	<div class="movie">
 		for _, job := range castOrCrew {
 			@section.Section(section.Props{Title: job.Job}) {
-				<ul class="list">
+				@list.Ol() {
 					for _, person := range job.People {
-						<li class="movie__list-item">
+						@list.Li(list.LiProps{Class: "wrapped"}) {
 							@link.Link(link.Props{Href: person.LinkTo(), Class: "whitespace-nowrap"}) {
 								{ person.Name }
 							}
 							if person.Character != "" {
 								@separator.Separator()
-								<div class="movie__character">{ person.Character }</div>
+								<div class="trailing">{ person.Character }</div>
 							}
-						</li>
+						}
 					}
-				</ul>
+				}
 			}
 		}
 	</div>

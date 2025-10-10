@@ -35,6 +35,10 @@ type Award struct {
 
 type Awards []Award
 
+func (u *Awards) Scan(v any) error {
+	return utils.ScanJSON(v, u)
+}
+
 func (a *Award) LinkToMovie() templ.SafeURL {
 	if a.Title.Valid {
 		return templ.SafeURL(fmt.Sprintf("/movie/%s-%d", utils.Slugify(a.Title.String), a.MovieID))
@@ -92,7 +96,7 @@ type GroupedAward struct {
 
 type GroupedAwards map[string]GroupedAward
 
-// Awards for person
+// Awards
 // ======================================================
 
 type AwardsByYear struct {

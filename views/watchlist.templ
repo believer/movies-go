@@ -8,6 +8,7 @@ import (
 	"believer/movies/components/icon"
 	"believer/movies/components/layout"
 	"believer/movies/components/link"
+	"believer/movies/components/list"
 	"believer/movies/components/section"
 	"believer/movies/components/separator"
 	"believer/movies/types"
@@ -51,32 +52,34 @@ templ WatchlistList(p WatchlistListProps) {
 		NumberOfItems: len(p.Movies),
 		Title:         p.Title,
 	}) {
-		<ol class="flex flex-col gap-2 md:text-sm text-content-secondary">
+		@list.Ol() {
 			for _, movie := range p.Movies {
-				<li class="flex items-end justify-between gap-4">
+				@list.Li() {
 					@link.Link(link.Props{Href: movie.LinkTo()}) {
 						{ movie.Title }
 					}
 					@separator.Separator()
-					<span class="flex items-center gap-x-2 relative top-1">
+					<div class="trailing">
 						if p.Order != "" {
-							<span class="tabular-nums whitespace-nowrap">
-								if p.Order == "Date added" {
-									@link.Link(link.Props{Href: movie.LinkToCreatedYear()}) {
-										{ movie.ISOCreatedDate() }
-									}
-								} else if p.Order == "Release date" {
-									@link.Link(link.Props{Href: movie.LinkToCreatedYear()}) {
-										{ movie.ISOReleaseDate() }
-									}
+							if p.Order == "Date added" {
+								@link.Link(link.Props{Href: movie.LinkToCreatedYear()}) {
+									{ movie.ISOCreatedDate() }
 								}
-							</span>
+							} else if p.Order == "Release date" {
+								@link.Link(link.Props{Href: movie.LinkToCreatedYear()}) {
+									{ movie.ISOReleaseDate() }
+								}
+							}
 						}
 						@auth.IsAuthenticated() {
 							if p.ReleaseDate == Released {
-								<a href={ movie.LinkToWatchlistAdd() } class="text-content-secondary hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors focus" title="Add watch">
+								@link.Link(link.Props{
+									AriaLabel: "Add watch",
+									Class:     "link--no-border",
+									Href:      movie.LinkToWatchlistAdd(),
+								}) {
 									@icon.Icon(icon.Props{Name: icon.Eye})
-								</a>
+								}
 							}
 							@button.Button(button.Props{
 								Rank: button.Secondary,
@@ -91,10 +94,10 @@ templ WatchlistList(p WatchlistListProps) {
 								Delete
 							}
 						}
-					</span>
-				</li>
+					</div>
+				}
 			}
-		</ol>
+		}
 	}
 }
 

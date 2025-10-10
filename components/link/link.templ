@@ -1,16 +1,15 @@
 package link
 
-import "believer/movies/utils"
-
 type Props struct {
 	AriaLabel   string
 	Class       string
 	Href        templ.SafeURL
 	Hx          string
 	Hyperscript string
-	Long        bool
 	ToRoot      bool
 	IsExternal  bool
+	Style       map[string]templ.SafeCSSProperty
+	Attrs       templ.Attributes
 }
 
 templ Link(p Props) {
@@ -18,8 +17,10 @@ templ Link(p Props) {
 		if p.AriaLabel != "" {
 			aria-label={ p.AriaLabel }
 		}
-		class={ "link focus", utils.TwMerge(
-  utils.If(p.Long, "flex-1 basis-3/5"), p.Class) }
+		class={ "link", p.Class }
+		if len(p.Style) > 0 {
+			style={ p.Style }
+		}
 		{ p.Hx }
 		if p.ToRoot {
 			href="/"
@@ -33,6 +34,7 @@ templ Link(p Props) {
 			target="_blank"
 			rel="noopener noreferrer"
 		}
+		{ p.Attrs... }
 	>
 		{ children... }
 	</a>

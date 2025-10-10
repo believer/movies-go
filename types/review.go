@@ -2,8 +2,6 @@ package types
 
 import (
 	"fmt"
-
-	"github.com/a-h/templ"
 )
 
 type Review struct {
@@ -12,6 +10,6 @@ type Review struct {
 	Private bool   `db:"private"`
 }
 
-func (r *Review) Edit() templ.SafeURL {
-	return templ.SafeURL(fmt.Sprintf("/review/%d/edit", r.ID))
+func (r *Review) Edit() string {
+	return fmt.Sprintf("/review/%d/edit", r.ID)
 }

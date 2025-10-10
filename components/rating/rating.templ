@@ -91,14 +91,16 @@ type AddRatingProps struct {
 templ AddRating(props AddRatingProps) {
 	@auth.IsAuthenticated() {
 		@list.DlItem(list.DlProps{Detail: "My rating", ID: "rating"}) {
-			<button
-				hx-get={ fmt.Sprintf("/movie/%d/rating/edit", props.MovieId) }
-				hx-target="#rating"
-				hx-swap="outerHTML"
-				class="cursor-pointer text-content-secondary transition-colors focus"
-			>
+			@button.Button(button.Props{
+				Rank: button.Secondary,
+				Attrs: templ.Attributes{
+					"hx-get":    fmt.Sprintf("/movie/%d/rating/edit", props.MovieId),
+					"hx-target": "#rating",
+					"hx-swap":   "outerHTML",
+				},
+			}) {
 				Add rating
-			</button>
+			}
 		}
 	}
 }
@@ -111,14 +113,12 @@ templ AddRatingForm(props AddRatingProps) {
 			hx-on::before-cleanup-element="document.body.dispatchEvent(new Event('update-rating'))"
 			class="rating"
 		>
-			<div class="flex-1">
-				@input.Number(input.NumberProps{
-					Name:     "rating",
-					Min:      0,
-					Max:      10,
-					Required: true,
-				})
-			</div>
+			@input.Number(input.NumberProps{
+				Name:     "rating",
+				Min:      0,
+				Max:      10,
+				Required: true,
+			})
 			@button.Button(button.Props{Type: button.TypeSubmit}) {
 				Save rating
 			}

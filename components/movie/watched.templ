@@ -31,7 +31,7 @@ templ addWatch(id string, isUnseen bool) {
 			<a
 				href="#"
 				hx-post={ fmt.Sprintf("/movie/%s/seen", id) }
-				class="link focus"
+				class="link"
 			>
 				Add new watch
 			</a>
@@ -62,9 +62,9 @@ templ Watched(props WatchedProps) {
 						</div>
 						@auth.IsAuthenticated() {
 							@separator.Separator()
-							<div class="flex gap-4">
+							<div class="trailing">
 								<a
-									class="button button--secondary focus"
+									class="button button--secondary"
 									href={ templ.SafeURL(fmt.Sprintf("/movie/%s/seen/%d/edit", props.ID, w.ID)) }
 								>
 									Edit
@@ -87,7 +87,7 @@ templ Watched(props WatchedProps) {
 			}
 		} else if props.InWatchlist {
 			<div class="watched__in-watchlist">
-				<a class="link focus" href="/watchlist">In watchlist</a>
+				<a class="link" href="/watchlist">In watchlist</a>
 				@auth.IsAuthenticated() {
 					<a href={ templ.URL(fmt.Sprintf("/movie/new?imdbId=%s&id=%s", props.ImdbId, props.ID)) } class="link focus link--no-border" title="Add watch">
 						@icon.Icon(icon.Props{Name: icon.Eye})

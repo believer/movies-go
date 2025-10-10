@@ -23,7 +23,7 @@ templ ListView(props ...ListViewProps) {
 	}
 	@layout.Layout(layout.Props{Title: p.Name}) {
 		if len(p.Movies) > 0 {
-			@list.Ol(list.Props{Class: "list--plain"}) {
+			@list.Ol() {
 				for _, movie := range p.Movies {
 					@list.Li() {
 						@link.Link(link.Props{Href: movie.LinkTo()}) {

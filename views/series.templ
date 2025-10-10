@@ -43,13 +43,11 @@ templ seriesList(movies types.MoviesInSeries) {
 }
 
 templ seriesSection(series types.SeriesMovies) {
-	<section class="flex flex-col gap-y-4">
+	<section class="section">
 		@seriesList(series.Movies)
-		<div class="flex flex-col gap-y-1">
-			<div class="text-xs text-right text-content-secondary">
-				{ series.SeenInSeries() }
-				{ series.Runtime() }
-			</div>
+		<div class="note">
+			{ series.SeenInSeries() }
+			{ series.Runtime() }
 		</div>
 	</section>
 }
@@ -58,7 +56,7 @@ templ Series(props SeriesProps) {
 	@layout.Layout(layout.Props{Title: props.Series.Name}) {
 		// The series has a parent series
 		if len(props.Series.ParentSeries) > 0 {
-			<section class="flex flex-col gap-y-2">
+			<section class="section" style="--gap: var(--spacing-2);">
 				for _, parent := range props.Series.ParentSeries {
 					<div>
 						@link.Link(link.Props{Href: parent.LinkTo()}) {

@@ -8,10 +8,9 @@ const (
 )
 
 type LiProps struct {
-	Class    string
-	Items    int
-	Style    ListStyle
-	DataType string
+	Class string
+	Items int
+	Style ListStyle
 }
 
 templ Li(props ...LiProps) {
@@ -20,10 +19,11 @@ templ Li(props ...LiProps) {
 		{{ p = props[0] }}
 	}
 	<li
-		class={ "list__item",  p.Class, templ.KV("list__item--numbered", p.Style == Numbered) }
-		style={ templ.KV("--number-col: 2ch", p.Items >= 10 && p.Style == Numbered), }
-		if p.DataType != "" {
-			data-type={ p.DataType }
+		if p.Class != "" || p.Style != "" {
+			class={ p.Class, templ.KV("numbered", p.Style == Numbered) }
+		}
+		if p.Style != "" {
+			style={ templ.KV("--number-col: 2ch", p.Items >= 10 && p.Style == Numbered), }
 		}
 	>
 		{ children... }

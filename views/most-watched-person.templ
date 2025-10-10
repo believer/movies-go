@@ -44,7 +44,7 @@ templ listLink(href templ.SafeURL) {
 	}
 }
 
-templ NumberedList(data []ListItem, listType string) {
+templ StatsList(data []ListItem, listType string) {
 	@list.Ol() {
 		for _, item := range data {
 			@list.Li(list.LiProps{Items: len(data), Style: list.Numbered}) {
@@ -67,7 +67,7 @@ templ NumberedList(data []ListItem, listType string) {
 						}
 				}
 				@separator.Separator()
-				<span class="tabular-nums text-sm text-content-secondary relative top-1">
+				<span>
 					{ item.FormattedCount() }
 				</span>
 			}
@@ -112,7 +112,7 @@ templ HighestRating(props HighestRatingProps) {
 					}
 				}
 			}
-			<div class="highest-rating__note">
+			<div class="note">
 				Only rated movies included. Score is log-adjusted average rating.
 			</div>
 		} else {
@@ -125,7 +125,7 @@ templ HighestRating(props HighestRatingProps) {
 
 templ listOrEmpty(items []ListItem, listType string) {
 	if len(items) > 0 {
-		@NumberedList(items, listType)
+		@StatsList(items, listType)
 	} else {
 		@emptystate.EmptyState() {
 			No movies seen
@@ -153,7 +153,7 @@ templ MostWatchedPerson(props MostWatchedPersonProps) {
 		}),
 	}) {
 		@listOrEmpty(props.Data, "person")
-		<div class="text-xs text-right text-content-secondary">
+		<div class="note">
 			{ props.Total } people total
 		</div>
 	}

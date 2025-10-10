@@ -2,6 +2,7 @@ package views
 
 import (
 	"believer/movies/components/link"
+	"believer/movies/components/list"
 	"believer/movies/components/section"
 	"believer/movies/components/separator"
 	"believer/movies/types"
@@ -23,6 +24,7 @@ templ awardSection(props SectionProps) {
 			Href:     props.Href(),
 			Title:    props.Title(),
 			Subtitle: props.Subtitle(),
+			Style:    "--gap: var(--spacing-6)",
 		}) {
 			{ children... }
 		}
@@ -71,12 +73,12 @@ func (p MovieAwardsProps) WinMsg() string {
 
 templ MovieAwards(props MovieAwardsProps) {
 	@awardSection(props) {
-		<ul class="list">
+		@list.Ol() {
 			for _, award := range props.Awards {
-				<li>
-					<div class="movie-awards__row">
+				@list.Li() {
+					<div class="row">
 						<div>
-							{ award.Category }{ " " }
+							{ award.Category }
 						</div>
 						@separator.Separator()
 						<span>
@@ -88,13 +90,16 @@ templ MovieAwards(props MovieAwardsProps) {
 						</span>
 					</div>
 					if len(award.Nominees) > 0 {
-						<div class="movie-awards__detail">
-							<span>
-								(
-							</span>
+						<div class="detail">
 							for i, n := range award.Nominees {
 								if n.ID != 0 {
-									@link.TruncatedLink(link.TruncatedLinkProps{Href: n.LinkTo()}) {
+									@link.Link(link.Props{
+										Href: n.LinkTo(),
+										Style: map[string]templ.SafeCSSProperty{
+											"--color":     "var(--color-content-secondary)",
+											"--font-size": "var(--text-xs)",
+										},
+									}) {
 										{ n.Name }
 									}
 								} else {
@@ -106,32 +111,29 @@ templ MovieAwards(props MovieAwardsProps) {
 									</span>
 								}
 							}
-							<span>
-								)
-							</span>
 						</div>
 					}
 					if award.Detail.Valid {
-						<div class="movie-awards__detail">
+						<div class="detail">
 							({ award.Detail.String })
 						</div>
 					}
-				</li>
+				}
 			}
-		</ul>
+		}
 		<div class="movie-awards__meta">
 			<span>
 				All movies with 
 			</span>
 			<a
-				class="link focus"
+				class="link"
 				href={ templ.SafeURL(fmt.Sprintf("/awards/%d?nominations=true", props.NumberOfAwards())) }
 			>{ props.NominationMsg() }</a>
 			if props.Won > 0 {
 				<span>or</span>
 				<div>
 					<a
-						class="link focus"
+						class="link"
 						href={ templ.SafeURL(fmt.Sprintf("/awards/%d", props.Won)) }
 					>{ props.WinMsg() }</a>
 				</div>
@@ -174,41 +176,39 @@ func (p PersonAwardsProps) Href() templ.SafeURL {
 
 templ PersonAwards(props PersonAwardsProps) {
 	@awardSection(props) {
-		<section class="flex flex-col gap-y-6">
-			for _, category := range props.AwardsOrder {
-				{{ var awards []types.Award }}
-				{{ awards = props.Awards[category] }}
-				<section class="flex flex-col gap-y-4">
-					<h3 class="font-bold text-xs">{ category }</h3>
-					<ul class="flex flex-col gap-y-2">
-						for _, award := range awards {
-							<li class="flex items-end justify-between gap-x-4">
-								if award.Title.Valid {
-									@link.TruncatedLink(link.TruncatedLinkProps{Href: award.LinkToMovie()}) {
-										{ award.Title.String }
-									}
+		for _, category := range props.AwardsOrder {
+			{{ var awards []types.Award }}
+			{{ awards = props.Awards[category] }}
+			<section class="section" style="--gap: var(--spacing-4); --trailing-gap: var(--spacing-4);">
+				<h3>{ category }</h3>
+				@list.Ol() {
+					for _, award := range awards {
+						@list.Li() {
+							if award.Title.Valid {
+								@link.Link(link.Props{Href: award.LinkToMovie()}) {
+									{ award.Title.String }
 								}
-								if award.Detail.Valid {
-									({ award.Detail.String })
-								}
-								@separator.Separator()
-								<span class="items-end">
+							}
+							if award.Detail.Valid {
+								({ award.Detail.String })
+							}
+							@separator.Separator()
+							<span class="trailing">
+								<span>
 									if award.Winner {
 										Won
 									} else {
 										Nominated
 									}
 								</span>
-								<span class="flex items-center gap-x-2 whitespace-nowrap">
-									@link.Link(link.Props{Href: award.LinkToYear()}) {
-										{ award.Year }
-									}
-								</span>
-							</li>
+								@link.Link(link.Props{Href: award.LinkToYear()}) {
+									{ award.Year }
+								}
+							</span>
 						}
-					</ul>
-				</section>
-			}
-		</section>
+					}
+				}
+			</section>
+		}
 	}
 }

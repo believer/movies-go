@@ -23,26 +23,27 @@ templ Review(props types.Review) {
 }
 
 templ ReviewContent(props types.Review) {
-	<div id="review-content" class="flex flex-col gap-y-4">
+	<div class="section">
 		{ props.Content }
 		if ctx.Value("IsAuthenticated").(bool) {
 			<footer>
-				<a
-					class="cursor-pointer md:text-sm tabular-nums inline-flex items-center gap-1 border-b border-dashed border-content-secondary focus"
-					href="#"
-					hx-get={ props.Edit() }
-					hx-target="#review-content"
-					hx-swap="outerHTML"
-				>
+				@button.Button(button.Props{
+					Rank: button.Secondary,
+					Attrs: templ.Attributes{
+						"hx-get":    props.Edit(),
+						"hx-target": "closest div",
+						"hx-swap":   "outerHTML",
+					},
+				}) {
 					Edit review
-				</a>
+				}
 			</footer>
 		}
 	</div>
 }
 
 templ EditReview(props types.Review) {
-	<form class="flex flex-col gap-y-4" hx-post={ fmt.Sprintf("/review/%d/update", props.ID) } hx-swap="outerHTML">
+	<form hx-post={ fmt.Sprintf("/review/%d/update", props.ID) } hx-swap="outerHTML">
 		@textarea.Textarea(textarea.Props{
 			Name:  "review",
 			Label: "Review",

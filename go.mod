@@ -10,7 +10,6 @@ require (
 )
 
 require (
-	github.com/Oudwins/tailwind-merge-go v0.2.1
 	github.com/PuerkitoBio/goquery v1.10.1
 	github.com/a-h/templ v0.3.943
 	github.com/golang-jwt/jwt/v5 v5.3.0

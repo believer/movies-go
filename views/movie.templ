@@ -132,11 +132,17 @@ templ Movie(props MovieProps) {
 }
 
 templ MovieExists(movie types.Movie) {
-	<strong>{ movie.Title }</strong> exists in your library. Would you like to
-	<a
-		href="#"
-		hx-post={ fmt.Sprintf("/movie/%d/seen", movie.ID) }
-		class="border-b border-dashed border-neutral-500 dark:border-neutral-400"
-	>add a new watch</a>
+	<strong>{ movie.Title }</strong> exists in your library. Would you like to 
+	@link.Link(link.Props{
+		Href: "#",
+		Attrs: templ.Attributes{
+			"hx-post": fmt.Sprintf("/movie/%d/seen", movie.ID),
+		},
+		Style: map[string]templ.SafeCSSProperty{
+			"--font-size": "var(--text-xs)",
+		}},
+	) {
+		add a new watch
+	}
 	?
 }

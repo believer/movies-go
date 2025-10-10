@@ -5,9 +5,9 @@ import "believer/movies/components/layout"
 
 templ NotFound() {
 	@layout.Html(layout.Props{Title: "Not found"}) {
-		<div class="flex items-center justify-center h-dvh">
-			<div class="text-center space-y-4">
-				<h1 class="text-xl font-bold">
+		<div class="not-found">
+			<div>
+				<h1>
 					Not found
 				</h1>
 				@link.Link(link.Props{ToRoot: true}) {

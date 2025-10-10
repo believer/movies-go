@@ -9,6 +9,7 @@ type Props struct {
 	Subtitle      string
 	Title         string
 	NumberOfItems int
+	Style         string
 }
 
 templ title(p Props) {
@@ -34,7 +35,12 @@ templ title(p Props) {
 }
 
 templ Section(p Props) {
-	<section class="section">
+	<section
+		class="section"
+		if p.Style != "" {
+			style={ p.Style }
+		}
+	>
 		<div
 			class="section__title"
 			style={ templ.KV("--gap: var(--spacing-2)", p.Subtitle != "") }
