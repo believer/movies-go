@@ -116,11 +116,7 @@ templ Feed(props FeedProps) {
 								}
 								{{ currentYear = year }}
 								for _, movie := range props.GroupedMovies[k] {
-									<li
-										data-movie={ movie.ID }
-										data-year={ movie.WatchedAt.Format("2006") }
-										data-month={ movie.WatchedAt.Format("January") }
-									>
+									<li>
 										<a href={ movie.LinkTo() } class="feed-list__card focus">
 											<header>
 												<h2>{ movie.Title } </h2>
