@@ -2,8 +2,8 @@
 all: build
 
 build:
-	@templ generate
 	@./hasher.sh
+	@templ generate
 	@go build -o main main.go
 
 dev:
