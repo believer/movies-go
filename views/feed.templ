@@ -39,7 +39,9 @@ templ Feed(props FeedProps) {
 						id="color-scheme"
 						_="
             on load
-              set my.value to localStorage.mode
+              if localStorage.mode is not null then
+                set my.value to localStorage.mode
+              end
             end
             on change
               set the *color-scheme of <html/> to my.value

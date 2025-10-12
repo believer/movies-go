@@ -50,7 +50,7 @@ templ Html(props ...Props) {
 			<script>
         const mode = localStorage.getItem("mode")
 
-        if (mode) {
+        if (mode !== null) {
           document.querySelector('html').style.setProperty("color-scheme", mode)
         }
       </script>
