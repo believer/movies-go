@@ -80,9 +80,6 @@
     var(--color-yellow-800),
     var(--color-yellow-200)
   );
-
-  /* Enable light and dark mode colors */
-  color-scheme: light dark;
 }
 
 @layer base, components;
@@ -105,6 +102,8 @@
   html {
     font-family: ui-sans-serif, system-ui;
     line-height: 1.5;
+    /* Enable light and dark mode colors */
+    color-scheme: light dark;
 
     @media (prefers-reduced-motion: no-preference) {
       interpolate-size: allow-keywords;

@@ -35,6 +35,22 @@ templ Feed(props FeedProps) {
 			</div>
 			if props.IsAdmin {
 				<div class="feed-nav__section">
+					<select
+						id="color-scheme"
+						_="
+            on load
+              set my.value to localStorage.mode
+            end
+            on change
+              set the *color-scheme of <html/> to my.value
+              set localStorage.mode to my.value then
+            end
+            "
+					>
+						<option value="light dark">Auto</option>
+						<option value="light">Light</option>
+						<option value="dark">Dark</option>
+					</select>
 					@link.Link(link.Props{
 						Class: "link--new",
 						Href:  templ.SafeURL("/movie/new"),
