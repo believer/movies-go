@@ -154,6 +154,10 @@
     border-top-width: 1px;
   }
 
+  button {
+    cursor: pointer;
+  }
+
   .layout {
     display: flex;
     flex-direction: column;
