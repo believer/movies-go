@@ -31,7 +31,7 @@ templ CastList(castOrCrew []CastDTO, hasCharacters bool) {
 				@list.Ol() {
 					for _, person := range job.People {
 						@list.Li(list.LiProps{Class: "wrapped"}) {
-							@link.Link(link.Props{Href: person.LinkTo(), Class: "whitespace-nowrap"}) {
+							@link.Link(link.Props{Href: person.LinkTo()}) {
 								{ person.Name }
 							}
 							if person.Character != "" {

@@ -75,7 +75,6 @@ templ WatchlistList(p WatchlistListProps) {
 							if p.ReleaseDate == Released {
 								@link.Link(link.Props{
 									AriaLabel: "Add watch",
-									Class:     "link--no-border",
 									Href:      movie.LinkToWatchlistAdd(),
 								}) {
 									@icon.Icon(icon.Props{Name: icon.Eye})

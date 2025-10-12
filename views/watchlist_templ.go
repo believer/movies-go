@@ -268,7 +268,6 @@ func WatchlistList(p WatchlistListProps) templ.Component {
 								})
 								templ_7745c5c3_Err = link.Link(link.Props{
 									AriaLabel: "Add watch",
-									Class:     "link--no-border",
 									Href:      movie.LinkToWatchlistAdd(),
 								}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var13), templ_7745c5c3_Buffer)
 								if templ_7745c5c3_Err != nil {

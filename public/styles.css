@@ -236,7 +236,6 @@
 }
 
 .popover-button {
-  /* Used for round focus styling */
   cursor: pointer;
   /* Used for round focus styling */
   border-radius: var(--spacing-max);
@@ -458,13 +457,15 @@ display: if(style(--list-style: none): flex; else: grid;); */
   font-size: var(--font-size, var(--text-sm));
   font-variant-numeric: tabular-nums;
   color: var(--color, var(--color-content-primary));
-  text-decoration: none;
-  border-color: inherit;
-  border-bottom: 1px dashed;
-  transition: border-color 150ms ease-in;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-style: dashed;
+  text-decoration-color: var(--color, var(--color-content-primary));
+  text-underline-offset: var(--spacing-1);
+  transition: text-decoration-color 150ms ease-in;
 
   &:hover {
-    border-color: var(--color-content-secondary);
+    text-decoration-color: var(--color-content-secondary);
   }
 
   &.link--new {
@@ -483,7 +484,6 @@ display: if(style(--list-style: none): flex; else: grid;); */
       width: var(--size);
       height: var(--size);
       content: "";
-
       border-radius: var(--spacing-max);
       transform: translateX(-50%) translateY(-50%) scale(0.8);
       transform-origin: center center;
@@ -514,7 +514,6 @@ display: if(style(--list-style: none): flex; else: grid;); */
       bottom: var(--spacing-8);
       z-index: 10;
       display: flex;
-
       align-items: center;
       justify-content: center;
       width: var(--size);
@@ -530,31 +529,6 @@ display: if(style(--list-style: none): flex; else: grid;); */
   &.link--secondary {
     font-size: inherit;
     color: var(--color-content-secondary);
-  }
-
-  &.link--no-border {
-    border: 0;
-    transition: color 150ms ease-in;
-
-    &:hover {
-      color: var(--color-content-secondary);
-    }
-  }
-
-  &.link--imdb {
-    border: 0;
-
-    &:hover {
-      > span {
-        border-color: var(--color-content-secondary);
-      }
-    }
-
-    > span {
-      border-color: inherit;
-      border-bottom: 1px dashed;
-      transition: border-color 150ms ease-in;
-    }
   }
 }
 
@@ -1106,10 +1080,6 @@ nav {
   display: flex;
   column-gap: var(--spacing-2);
   align-items: center;
-}
-
-.whitespace-nowrap {
-  white-space: nowrap;
 }
 
 .highest-rating__rank {
