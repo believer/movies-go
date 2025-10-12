@@ -5,6 +5,7 @@ import (
 	"believer/movies/components/layout"
 	"believer/movies/components/link"
 	"believer/movies/components/list"
+	"believer/movies/components/movie"
 	"believer/movies/components/rating"
 	"believer/movies/components/review"
 	"believer/movies/components/section"
@@ -21,7 +22,10 @@ type MovieProps struct {
 	Back          bool
 	IsInWatchlist bool
 	Movie         types.Movie
+	Cast          []CastDTO
+	HasCharacters bool
 	Others        types.OthersStats
+	WatchedAt     []movie.WatchedAt
 	Review        types.Review
 }
 
@@ -113,16 +117,14 @@ templ Movie(props MovieProps) {
 				})
 			}
 		}
-		<div
-			hx-swap="outerHTML"
-			hx-get={ fmt.Sprintf("/movie/%d/seen?imdbId=%s", props.Movie.ID, props.Movie.ImdbId) }
-			hx-trigger="load"
-		></div>
-		<div
-			hx-get={ fmt.Sprintf("/movie/%d/cast", props.Movie.ID) }
-			hx-trigger="load"
-			hx-swap="outerHTML"
-		></div>
+		@movie.Watched(movie.WatchedProps{
+			WatchedAt:   props.WatchedAt,
+			IsUnseen:    len(props.WatchedAt) == 0,
+			InWatchlist: props.IsInWatchlist,
+			ImdbId:      props.Movie.ImdbId,
+			ID:          props.Movie.ID,
+		})
+		@CastList(props.Cast, props.HasCharacters)
 		<div
 			hx-swap="outerHTML"
 			hx-get={ fmt.Sprintf("/movie/%s/awards", props.Movie.ImdbId) }

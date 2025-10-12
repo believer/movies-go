@@ -18,19 +18,18 @@ type WatchedAt struct {
 
 type WatchedProps struct {
 	WatchedAt   []WatchedAt
-	IsAdmin     bool
 	IsUnseen    bool
 	InWatchlist bool
 	ImdbId      string
-	ID          string
+	ID          int
 }
 
-templ addWatch(id string, isUnseen bool) {
+templ addWatch(id int, isUnseen bool) {
 	@auth.IsAuthenticated() {
 		if !isUnseen {
 			<a
 				href="#"
-				hx-post={ fmt.Sprintf("/movie/%s/seen", id) }
+				hx-post={ fmt.Sprintf("/movie/%d/seen", id) }
 				class="link"
 			>
 				Add new watch
@@ -65,7 +64,7 @@ templ Watched(props WatchedProps) {
 							<div class="trailing">
 								<a
 									class="button button--secondary"
-									href={ templ.SafeURL(fmt.Sprintf("/movie/%s/seen/%d/edit", props.ID, w.ID)) }
+									href={ templ.SafeURL(fmt.Sprintf("/movie/%d/seen/%d/edit", props.ID, w.ID)) }
 								>
 									Edit
 								</a>
@@ -73,7 +72,7 @@ templ Watched(props WatchedProps) {
 									Rank: button.Secondary,
 									Attrs: templ.Attributes{
 										"hx-confirm": "Delete this watch date?",
-										"hx-delete":  fmt.Sprintf("/movie/%s/seen/%d", props.ID, w.ID),
+										"hx-delete":  fmt.Sprintf("/movie/%d/seen/%d", props.ID, w.ID),
 										"hx-swap":    "outerHTML",
 										"hx-target":  "closest section",
 									},
@@ -89,7 +88,7 @@ templ Watched(props WatchedProps) {
 			<div class="watched__in-watchlist">
 				<a class="link" href="/watchlist">In watchlist</a>
 				@auth.IsAuthenticated() {
-					<a href={ templ.URL(fmt.Sprintf("/movie/new?imdbId=%s&id=%s", props.ImdbId, props.ID)) } class="link focus link--no-border" title="Add watch">
+					<a href={ templ.URL(fmt.Sprintf("/movie/new?imdbId=%s&id=%d", props.ImdbId, props.ID)) } class="link focus link--no-border" title="Add watch">
 						@icon.Icon(icon.Props{Name: icon.Eye})
 					</a>
 				}
@@ -97,12 +96,14 @@ templ Watched(props WatchedProps) {
 		} else {
 			<div class="watched__in-watchlist">
 				<div>No watches</div>
-				<a
-					class="link focus"
-					href={ templ.URL(fmt.Sprintf("/movie/new?imdbId=%s&id=%s", props.ImdbId, props.ID)) }
-				>
-					Add watch
-				</a>
+				@auth.IsAuthenticated() {
+					<a
+						class="link focus"
+						href={ templ.URL(fmt.Sprintf("/movie/new?imdbId=%s&id=%d", props.ImdbId, props.ID)) }
+					>
+						Add watch
+					</a>
+				}
 			</div>
 		}
 	}

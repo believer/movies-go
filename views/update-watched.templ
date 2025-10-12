@@ -9,7 +9,7 @@ import (
 )
 
 type UpdateWatchedProps struct {
-	MovieId string
+	MovieId int
 	SeenId  string
 	Time    string
 }
@@ -17,7 +17,7 @@ type UpdateWatchedProps struct {
 templ UpdateWatched(props UpdateWatchedProps) {
 	@layout.Html(layout.Props{Title: "Update watch"}) {
 		<form
-			hx-put={ fmt.Sprintf("/movie/%s/seen/%s/edit", props.MovieId, props.SeenId) }
+			hx-put={ fmt.Sprintf("/movie/%d/seen/%s/edit", props.MovieId, props.SeenId) }
 			hx-indicator="button[type='submit']"
 			class="form"
 		>

@@ -17,7 +17,7 @@ import (
 )
 
 type UpdateWatchedProps struct {
-	MovieId string
+	MovieId int
 	SeenId  string
 	Time    string
 }
@@ -60,7 +60,7 @@ func UpdateWatched(props UpdateWatchedProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/movie/%s/seen/%s/edit", props.MovieId, props.SeenId))
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/movie/%d/seen/%s/edit", props.MovieId, props.SeenId))
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/update-watched.templ`, Line: 20, Col: 78}
 			}

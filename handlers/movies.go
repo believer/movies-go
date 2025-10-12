@@ -28,6 +28,7 @@ import (
 )
 
 func GetMovieByID(c *fiber.Ctx) error {
+	var watchedAt []movie.WatchedAt
 	var movie types.Movie
 	var review types.Review
 	var isInWatchlist bool
@@ -38,6 +39,7 @@ func GetMovieByID(c *fiber.Ctx) error {
 	movieId := c.Params("id")
 	userId := c.Locals("UserId")
 	id, err := utils.SelfHealingUrl(movieId)
+	isAuth := utils.IsAuthenticated(c)
 
 	if err != nil {
 		return utils.Render(c, views.NotFound())
@@ -85,12 +87,27 @@ func GetMovieByID(c *fiber.Ctx) error {
 		return err
 	}
 
+	if isAuth {
+		err = db.Dot.Select(db.Client, &watchedAt, "seen-by-user-id", id, userId)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	cast, hasCharacters, err := getMovieCastByID(id)
+
+	fmt.Println(cast)
+
 	if c.Get("Accept") == "application/json" {
 		return c.JSON(movie)
 	}
 
 	return utils.Render(c, views.Movie(
 		views.MovieProps{
+			Cast:          cast,
+			HasCharacters: hasCharacters,
+			WatchedAt:     watchedAt,
 			IsInWatchlist: isInWatchlist,
 			Movie:         movie,
 			Others:        others,
@@ -141,13 +158,13 @@ func ZipCast(names []string, ids []int32, characters []string) []views.CastAndCr
 	return zipped
 }
 
-func GetMovieCastByID(c *fiber.Ctx) error {
+func getMovieCastByID(id string) ([]views.CastDTO, bool, error) {
 	var castOrCrew []CastDB
 
-	err := db.Dot.Select(db.Client, &castOrCrew, "cast-by-id", c.Params("id"))
+	err := db.Dot.Select(db.Client, &castOrCrew, "cast-by-id", id)
 
 	if err != nil {
-		return err
+		return nil, false, err
 	}
 
 	updatedCastOrCrew := make([]views.CastDTO, len(castOrCrew))
@@ -175,38 +192,7 @@ func GetMovieCastByID(c *fiber.Ctx) error {
 		}
 	}
 
-	return utils.Render(c, views.CastList(updatedCastOrCrew, hasCharacters))
-}
-
-func GetMovieSeenByID(c *fiber.Ctx) error {
-	var watchedAt []movie.WatchedAt
-	var watchlist types.Movies
-
-	isAuth := utils.IsAuthenticated(c)
-	id := c.Params("id")
-	imdbId := c.Query("imdbId")
-	userId := c.Locals("UserId")
-
-	err := db.Dot.Select(db.Client, &watchedAt, "seen-by-user-id", id, userId)
-
-	if err != nil {
-		return err
-	}
-
-	err = db.Dot.Select(db.Client, &watchlist, "is-in-watchlist", userId, id)
-
-	if err != nil {
-		return err
-	}
-
-	return utils.Render(c, movie.Watched(movie.WatchedProps{
-		WatchedAt:   watchedAt,
-		IsAdmin:     isAuth,
-		IsUnseen:    len(watchedAt) == 0,
-		InWatchlist: len(watchlist) > 0,
-		ImdbId:      imdbId,
-		ID:          id,
-	}))
+	return updatedCastOrCrew, hasCharacters, nil
 }
 
 // Render the add movie page
@@ -749,16 +735,20 @@ func GetByImdbId(c *fiber.Ctx) error {
 func DeleteSeenMovie(c *fiber.Ctx) error {
 	var watchedAt []movie.WatchedAt
 
-	movieId := c.Params("id")
+	movieId, err := c.ParamsInt("id")
 	seenId := c.Params("seenId")
 	userId := c.Locals("UserId")
 	isAuth := utils.IsAuthenticated(c)
+
+	if err != nil {
+		return err
+	}
 
 	if !isAuth {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	_, err := db.Client.Exec(`DELETE FROM seen WHERE id = $1`, seenId)
+	_, err = db.Client.Exec(`DELETE FROM seen WHERE id = $1`, seenId)
 
 	if err != nil {
 		return err
@@ -772,7 +762,6 @@ func DeleteSeenMovie(c *fiber.Ctx) error {
 
 	return utils.Render(c, movie.Watched(movie.WatchedProps{
 		WatchedAt: watchedAt,
-		IsAdmin:   isAuth,
 		ID:        movieId,
 	}))
 }
@@ -780,10 +769,14 @@ func DeleteSeenMovie(c *fiber.Ctx) error {
 func GetSeenMovie(c *fiber.Ctx) error {
 	var time string
 
-	movieId := c.Params("id")
+	movieId, err := c.ParamsInt("id")
 	seenId := c.Params("seenId")
 
-	err := db.Client.Get(&time, `SELECT TO_CHAR(date AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/Stockholm', 'YYYY-MM-DD"T"HH24:MI') as date FROM seen WHERE id = $1`, seenId)
+	if err != nil {
+		return err
+	}
+
+	err = db.Client.Get(&time, `SELECT TO_CHAR(date AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/Stockholm', 'YYYY-MM-DD"T"HH24:MI') as date FROM seen WHERE id = $1`, seenId)
 
 	if err != nil {
 		return err
@@ -797,9 +790,13 @@ func GetSeenMovie(c *fiber.Ctx) error {
 }
 
 func UpdateSeenMovie(c *fiber.Ctx) error {
-	movieId := c.Params("id")
+	movieId, err := c.ParamsInt("id")
 	seenId := c.Params("seenId")
 	isAuth := utils.IsAuthenticated(c)
+
+	if err != nil {
+		return err
+	}
 
 	if !isAuth {
 		return c.SendStatus(fiber.StatusUnauthorized)
@@ -834,7 +831,7 @@ func UpdateSeenMovie(c *fiber.Ctx) error {
 		return err
 	}
 
-	c.Set("HX-Redirect", fmt.Sprintf("/movie/%s", movieId))
+	c.Set("HX-Redirect", fmt.Sprintf("/movie/%d", movieId))
 
 	return c.SendStatus(fiber.StatusOK)
 }
