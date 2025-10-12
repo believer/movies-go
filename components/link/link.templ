@@ -1,7 +1,6 @@
 package link
 
 type Props struct {
-	AriaLabel   string
 	Class       string
 	Href        templ.SafeURL
 	Hx          string
@@ -14,9 +13,6 @@ type Props struct {
 
 templ Link(p Props) {
 	<a
-		if p.AriaLabel != "" {
-			aria-label={ p.AriaLabel }
-		}
 		class={ "link", p.Class }
 		if len(p.Style) > 0 {
 			style={ p.Style }

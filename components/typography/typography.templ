@@ -13,10 +13,12 @@ templ H1(props ...Props) {
 	}
 	<header class="page-header">
 		@link.Link(link.Props{
-			AriaLabel:   "Back",
 			Href:        "#",
 			Hyperscript: "on click go back",
 			ToRoot:      p.ToRoot,
+			Attrs: templ.Attributes{
+				"aria-label": "Back",
+			},
 		}) {
 			..
 		}

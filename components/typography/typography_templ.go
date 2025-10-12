@@ -62,10 +62,12 @@ func H1(props ...Props) templ.Component {
 			return nil
 		})
 		templ_7745c5c3_Err = link.Link(link.Props{
-			AriaLabel:   "Back",
 			Href:        "#",
 			Hyperscript: "on click go back",
 			ToRoot:      p.ToRoot,
+			Attrs: templ.Attributes{
+				"aria-label": "Back",
+			},
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
