@@ -263,6 +263,10 @@
     list-style: initial;
     counter-increment: count;
 
+    > .separator {
+      min-width: 40px;
+    }
+
     &.numbered {
       display: grid;
       grid-template-columns: var(--number-col, 1ch) auto 1fr auto;
