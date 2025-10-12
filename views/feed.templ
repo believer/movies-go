@@ -3,6 +3,7 @@ package views
 import (
 	"believer/movies/components/empty-state"
 	"believer/movies/components/icon"
+	"believer/movies/components/input"
 	"believer/movies/components/layout"
 	"believer/movies/components/link"
 	"believer/movies/components/list"
@@ -35,33 +36,44 @@ templ Feed(props FeedProps) {
 			</div>
 			if props.IsAdmin {
 				<div class="feed-nav__section">
-					<select
-						id="color-scheme"
-						_="
-            on load
-              if localStorage.mode is not null then
-                set my.value to localStorage.mode
-              end
-            end
-            on change
-              set the *color-scheme of <html/> to my.value
-              set localStorage.mode to my.value then
-            end
-            "
-					>
-						<option value="light dark">Auto</option>
-						<option value="light">Light</option>
-						<option value="dark">Dark</option>
-					</select>
 					@link.Link(link.Props{
 						Class: "link--new",
 						Href:  templ.SafeURL("/movie/new"),
 					}) {
 						@icon.Icon(icon.Props{Name: icon.Plus})
 					}
-					@link.Link(link.Props{Href: "/logout", Hx: "hx-post=/logout"}) {
-						Logout
-					}
+					<button popovertarget="settings">
+						@icon.Icon(icon.Props{Name: icon.Cog})
+					</button>
+					<div id="settings" popover class="settings">
+						<div>
+							<div class="input">
+								@input.Label("color-scheme", "Theme")
+								<select
+									class="dropdown"
+									id="color-scheme"
+									_="
+                  on load
+                  if localStorage.mode is not null then
+                  set my.value to localStorage.mode
+                  end
+                  end
+                  on change
+                  set the *color-scheme of <html/> to my.value
+                  set localStorage.mode to my.value then
+                  end
+                  "
+								>
+									<option value="light dark">Auto</option>
+									<option value="light">Light</option>
+									<option value="dark">Dark</option>
+								</select>
+							</div>
+							@link.Link(link.Props{Href: "/logout", Hx: "hx-post=/logout"}) {
+								Logout
+							}
+						</div>
+					</div>
 				</div>
 			} else {
 				@link.Link(link.Props{Href: "/login"}) {

@@ -224,7 +224,7 @@
     overlay 500ms allow-discrete;
 
   &:popover-open {
-    opacity: 100;
+    opacity: 1;
     translate: 0;
 
     @starting-style {
@@ -1139,5 +1139,45 @@ nav {
 
   &:empty {
     display: none;
+  }
+}
+
+.settings {
+  position-area: bottom left;
+  position-try: flip-block;
+  background-color: var(--color-background-secondary);
+  margin-top: var(--spacing-2);
+  padding: var(--spacing-4);
+  box-shadow: 4px 4px 4px hsl(0 0 0 / 0.05);
+  border-radius: var(--rounded-sm);
+  border: 1px solid var(--color-border-primary);
+  translate: 50% 0;
+  opacity: 1;
+  transition:
+    opacity 200ms,
+    translate 300ms,
+    overlay 300ms allow-discrete;
+
+  &:popover-open {
+    opacity: 1;
+    translate: 24px 0;
+
+    @starting-style {
+      opacity: 0;
+      translate: 24px calc(-1 * var(--spacing-2));
+    }
+  }
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    row-gap: var(--spacing-2);
+    align-items: flex-end;
+  }
+
+  .input {
+    flex-direction: row;
+    column-gap: var(--spacing-2);
+    align-items: center;
   }
 }
