@@ -1,0 +1,32 @@
+.popover {
+  background-color: var(--color-background-secondary);
+  border-radius: var(--spacing-1);
+  color: var(--color-content-primary);
+  font-size: var(--text-xs);
+  margin: var(--spacing-1);
+  opacity: 0;
+  padding: var(--spacing-3);
+  position-area: top;
+  position-try-fallbacks: flip-block;
+  position-visibility: anchors-visible;
+  text-align: left;
+  transition:
+    opacity 500ms,
+    translate 400ms;
+
+  &:popover-open {
+    opacity: 1;
+    translate: 0;
+
+    @starting-style {
+      opacity: 0;
+      translate: 0 10px;
+    }
+  }
+}
+
+.popover-button {
+  cursor: pointer;
+  /* Used for round focus styling */
+  border-radius: var(--spacing-max);
+}

@@ -210,41 +210,6 @@
   border-radius: var(--border-radius, 1px);
 }
 
-/* Popover */
-
-.popover {
-  background-color: var(--color-background-secondary);
-  border-radius: var(--spacing-1);
-  color: var(--color-content-primary);
-  font-size: var(--text-xs);
-  margin: var(--spacing-1);
-  opacity: 0;
-  padding: var(--spacing-3);
-  position-area: top;
-  position-try-fallbacks: flip-block;
-  position-visibility: anchors-visible;
-  text-align: left;
-  transition:
-    opacity 500ms,
-    translate 400ms;
-
-  &:popover-open {
-    opacity: 1;
-    translate: 0;
-
-    @starting-style {
-      opacity: 0;
-      translate: 0 10px;
-    }
-  }
-}
-
-.popover-button {
-  cursor: pointer;
-  /* Used for round focus styling */
-  border-radius: var(--spacing-max);
-}
-
 /* List */
 
 .list {
@@ -671,65 +636,6 @@ nav {
     flex-direction: column;
     row-gap: var(--spacing-6);
     margin-top: var(--spacing-4);
-  }
-}
-
-/* Button */
-
-.button {
-  color: var(--color-background-primary);
-  cursor: pointer;
-  background-color: var(--color-content-primary);
-  border-radius: var(--rounded-sm);
-
-  &:hover .button__state {
-    background-color: rgba(0, 0, 0, 0.1);
-  }
-
-  &:active .button__state {
-    background-color: rgba(0, 0, 0, 0.3);
-  }
-
-  &.button--secondary {
-    color: var(--color-content-secondary);
-    background-color: transparent;
-    transition: color 150ms ease-in-out;
-
-    .button__state {
-      padding: 0;
-    }
-
-    &:hover {
-      color: var(--color-content-primary);
-    }
-  }
-
-  &.htmx-request .button__content {
-    display: none;
-  }
-
-  &.htmx-request .button__loading {
-    display: block;
-    opacity: 1;
-
-    @starting-style {
-      opacity: 0;
-    }
-  }
-
-  .button__state {
-    display: flex;
-    column-gap: var(--spacing-2);
-    align-items: center;
-    justify-content: center;
-    padding-block: var(--spacing-2);
-    padding-inline: var(--spacing-6);
-    transition: background-color 150ms ease-in-out;
-  }
-
-  .button__loading {
-    display: none;
-    transition: opacity 300ms ease-in-out;
   }
 }
 
@@ -1185,3 +1091,94 @@ nav {
     align-items: center;
   }
 }
+
+/* START:GENERATED */
+.popover {
+  background-color: var(--color-background-secondary);
+  border-radius: var(--spacing-1);
+  color: var(--color-content-primary);
+  font-size: var(--text-xs);
+  margin: var(--spacing-1);
+  opacity: 0;
+  padding: var(--spacing-3);
+  position-area: top;
+  position-try-fallbacks: flip-block;
+  position-visibility: anchors-visible;
+  text-align: left;
+  transition:
+    opacity 500ms,
+    translate 400ms;
+
+  &:popover-open {
+    opacity: 1;
+    translate: 0;
+
+    @starting-style {
+      opacity: 0;
+      translate: 0 10px;
+    }
+  }
+}
+
+.popover-button {
+  cursor: pointer;
+  /* Used for round focus styling */
+  border-radius: var(--spacing-max);
+}
+.button {
+  color: var(--color-background-primary);
+  cursor: pointer;
+  background-color: var(--color-content-primary);
+  border-radius: var(--rounded-sm);
+
+  &:hover .button__state {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  &:active .button__state {
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+
+  &.button--secondary {
+    color: var(--color-content-secondary);
+    background-color: transparent;
+    transition: color 150ms ease-in-out;
+
+    .button__state {
+      padding: 0;
+    }
+
+    &:hover {
+      color: var(--color-content-primary);
+    }
+  }
+
+  &.htmx-request .button__content {
+    display: none;
+  }
+
+  &.htmx-request .button__loading {
+    display: block;
+    opacity: 1;
+
+    @starting-style {
+      opacity: 0;
+    }
+  }
+
+  .button__state {
+    display: flex;
+    column-gap: var(--spacing-2);
+    align-items: center;
+    justify-content: center;
+    padding-block: var(--spacing-2);
+    padding-inline: var(--spacing-6);
+    transition: background-color 150ms ease-in-out;
+  }
+
+  .button__loading {
+    display: none;
+    transition: opacity 300ms ease-in-out;
+  }
+}
+/* END:GENERATED */
