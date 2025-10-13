@@ -99,7 +99,8 @@
     color: color-mix(in oklch, currentColor 50%, transparent);
   }
 
-  html {
+  :where(html) {
+    scrollbar-gutter: stable;
     font-family: ui-sans-serif, system-ui;
     line-height: 1.5;
     /* Enable light and dark mode colors */
@@ -216,16 +217,16 @@
   border-radius: var(--spacing-1);
   color: var(--color-content-primary);
   font-size: var(--text-xs);
-  margin: 4px;
+  margin: var(--spacing-1);
   opacity: 0;
   padding: var(--spacing-3);
   position-area: top;
-  position-try: flip-block;
+  position-try-fallbacks: flip-block;
+  position-visibility: anchors-visible;
+  text-align: left;
   transition:
     opacity 500ms,
-    translate 400ms,
-    display 500ms allow-discrete,
-    overlay 500ms allow-discrete;
+    translate 400ms;
 
   &:popover-open {
     opacity: 1;
@@ -1159,8 +1160,7 @@ nav {
   opacity: 1;
   transition:
     opacity 200ms,
-    translate 300ms,
-    overlay 300ms allow-discrete;
+    translate 300ms;
 
   &:popover-open {
     opacity: 1;
