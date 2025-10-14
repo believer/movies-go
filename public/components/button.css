@@ -1,0 +1,56 @@
+.button {
+  color: var(--color-background-primary);
+  cursor: pointer;
+  background-color: var(--color-content-primary);
+  border-radius: var(--rounded-sm);
+
+  &:hover .button__state {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  &:active .button__state {
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+
+  &.button--secondary {
+    color: var(--color-content-secondary);
+    background-color: transparent;
+    transition: color 150ms ease-in-out;
+
+    .button__state {
+      padding: 0;
+    }
+
+    &:hover {
+      color: var(--color-content-primary);
+    }
+  }
+
+  &.htmx-request .button__content {
+    display: none;
+  }
+
+  &.htmx-request .button__loading {
+    display: block;
+    opacity: 1;
+
+    @starting-style {
+      opacity: 0;
+    }
+  }
+
+  .button__state {
+    display: flex;
+    column-gap: var(--spacing-2);
+    align-items: center;
+    justify-content: center;
+    padding-block: var(--spacing-2);
+    padding-inline: var(--spacing-6);
+    transition: background-color 150ms ease-in-out;
+  }
+
+  .button__loading {
+    display: none;
+    transition: opacity 300ms ease-in-out;
+  }
+}

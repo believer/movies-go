@@ -3,7 +3,8 @@
 # Build the application
 all: build
 
-CSS_SRC := $(shell find components -type f -name '*.css')
+CSS_SRC := $(shell find components -type f -name '*.css' | sort)
+BASENAMES := $(notdir $(CSS_SRC))
 TARGET := public/styles.css
 TMPDIR := tmp
 
@@ -13,13 +14,16 @@ build:
 	@go build -o main main.go
 
 dev:
-	# Generate combined CSS from component styles
+	@mkdir -p "./public/components/" && cp $(CSS_SRC) "./public/components/" 
 	@awk 'BEGIN {in_section=0} \
 	{ \
 		if ($$0 ~ /\/\* *START:GENERATED *\*\//) { \
 			in_section=1; \
 			print; \
-			system("cat $(CSS_SRC)"); \
+			n = split("$(BASENAMES)", files, " "); \
+			for (i = 1; i <= n; i++) { \
+				printf "@import \"components/%s\" layer(components);\n", files[i] \
+			} \
 			next \
 		} \
 		if ($$0 ~ /\/\* *END:GENERATED *\*\//) { \
@@ -31,9 +35,7 @@ dev:
 		print \
 	}' $(TARGET) > $(TARGET).new
 	@mv $(TARGET).new $(TARGET)
-	# Replace hashed CSS in layout for dev
 	@sed -i "" "s/styles\(\.[a-z0-9]\{6\}\)\{0,1\}\.css/styles.css/g" ./components/layout/html.templ
-	# Start templ generation in watch mode
 	@templ generate --watch \
 		--open-browser=false \
 		--proxy=http://localhost:8080 \
