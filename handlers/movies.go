@@ -97,8 +97,6 @@ func GetMovieByID(c *fiber.Ctx) error {
 
 	cast, hasCharacters, err := getMovieCastByID(id)
 
-	fmt.Println(cast)
-
 	if c.Get("Accept") == "application/json" {
 		return c.JSON(movie)
 	}
