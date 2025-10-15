@@ -85,23 +85,25 @@ templ Feed(props FeedProps) {
 			}
 		</nav>
 		<div class="feed-search">
-			<div class="input">
-				<input
-					aria-label="Find a movie"
-					type="search"
-					name="search"
-					placeholder="Find a movie"
-					hx-get="/"
-					hx-select="ol"
-					hx-trigger="keyup changed delay:500ms, search"
-					hx-swap="outerHTML"
-					hx-target="ol"
-					minlength="3"
-					hx-validate="true"
-					style="--border-radius: var(--spacing-max);"
-					value={ props.Query }
-				/>
-			</div>
+			<search>
+				<div class="input">
+					<input
+						aria-label="Find a movie, actor, director, producer, or composer"
+						type="search"
+						name="search"
+						placeholder="Find a movie"
+						hx-get="/"
+						hx-select="ol"
+						hx-trigger="keyup changed delay:500ms, search"
+						hx-swap="outerHTML"
+						hx-target="ol"
+						minlength="3"
+						hx-validate="true"
+						style="--border-radius: var(--spacing-max);"
+						value={ props.Query }
+					/>
+				</div>
+			</search>
 			switch props.QueryType {
 				case "person":
 					if len(props.Persons) > 0 {
