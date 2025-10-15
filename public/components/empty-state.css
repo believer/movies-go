@@ -1,0 +1,9 @@
+.empty-state {
+  padding-block: var(--spacing-8);
+  padding-inline: var(--spacing-5);
+  color: var(--color-content-secondary);
+  text-align: center;
+  list-style: none;
+  border: 1px dashed var(--color-border-primary);
+  border-radius: var(--spacing-1);
+}

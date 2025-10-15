@@ -1,0 +1,12 @@
+.collapsible {
+  summary {
+    cursor: pointer;
+  }
+
+  .collapsible__content {
+    display: flex;
+    flex-direction: column;
+    row-gap: var(--spacing-6);
+    margin-top: var(--spacing-4);
+  }
+}

@@ -1,0 +1,14 @@
+.unseen {
+  color: var(--color-content-primary);
+}
+
+.seen {
+  color: var(--color-content-tertiary);
+}
+
+.seen-popover {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--spacing-2);
+  font-size: var(--text-sm);
+}

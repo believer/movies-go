@@ -48,7 +48,6 @@ templ Watched(props WatchedProps) {
 			@list.Ol() {
 				for _, w := range props.WatchedAt {
 					@list.Li(list.LiProps{
-						Class: "list__item--baseline",
 						Items: len(props.WatchedAt),
 					}) {
 						<div>

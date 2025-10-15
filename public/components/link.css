@@ -1,0 +1,209 @@
+.link {
+  display: inline-flex;
+  gap: var(--spacing-1);
+  align-items: center;
+  justify-items: flex-start;
+  font-size: var(--font-size, var(--text-sm));
+  font-variant-numeric: tabular-nums;
+  color: var(--color, var(--color-content-primary));
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-style: dashed;
+  text-decoration-color: var(--color, var(--color-content-primary));
+  text-underline-offset: var(--spacing-1);
+  transition: text-decoration-color 150ms ease-in;
+
+  &:hover {
+    text-decoration-color: var(--color-content-secondary);
+  }
+
+  &.link--new {
+    --size: 40px;
+
+    position: relative;
+    padding: 4px;
+    border-bottom: 0;
+    border-radius: var(--spacing-max);
+
+    &:before {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      z-index: -1;
+      width: var(--size);
+      height: var(--size);
+      content: "";
+      border-radius: var(--spacing-max);
+      transform: translateX(-50%) translateY(-50%) scale(0.8);
+      transform-origin: center center;
+      transition:
+        background-color 200ms ease-in-out,
+        transform 1023ms
+        linear(
+          0,
+          -0.0111,
+          0.00912,
+          0.0409,
+          0.0857,
+          0.14,
+          0.202,
+          0.271,
+          0.34,
+          0.412,
+          0.486,
+          0.561,
+          0.636,
+          0.709,
+          0.78,
+          0.849,
+          0.913,
+          0.972,
+          1.03,
+          1.08,
+          1.12,
+          1.16,
+          1.19,
+          1.22,
+          1.24,
+          1.25,
+          1.26,
+          1.27,
+          1.27,
+          1.27,
+          1.26,
+          1.25,
+          1.24,
+          1.22,
+          1.2,
+          1.19,
+          1.17,
+          1.14,
+          1.12,
+          1.1,
+          1.08,
+          1.06,
+          1.04,
+          1.02,
+          1.01,
+          0.993,
+          0.979,
+          0.966,
+          0.956,
+          0.947,
+          0.939,
+          0.933,
+          0.929,
+          0.926,
+          0.924,
+          0.924,
+          0.925,
+          0.927,
+          0.93,
+          0.934,
+          0.938,
+          0.943,
+          0.948,
+          0.954,
+          0.959,
+          0.965,
+          0.971,
+          0.977,
+          0.982,
+          0.988,
+          0.993,
+          0.998,
+          1,
+          1.01,
+          1.01,
+          1.01,
+          1.01,
+          1.02,
+          1.02,
+          1.02,
+          1.02,
+          1.02,
+          1.02,
+          1.02,
+          1.02,
+          1.02,
+          1.02,
+          1.02,
+          1.02,
+          1.01,
+          1.01,
+          1.01,
+          1.01,
+          1.01,
+          1.01,
+          1,
+          1,
+          1,
+          1,
+          0.999,
+          0.998,
+          0.997,
+          0.997,
+          0.996,
+          0.995,
+          0.995,
+          0.994,
+          0.994,
+          0.994,
+          0.994,
+          0.994,
+          0.994,
+          0.995,
+          0.995,
+          0.995,
+          0.996,
+          0.996,
+          0.996,
+          0.997,
+          0.997,
+          0.998,
+          0.998,
+          0.999,
+          0.999,
+          1
+        );
+
+      @media (width <= 480px) {
+        display: none;
+      }
+    }
+
+    &:hover:before {
+      background-color: var(--color-background-secondary);
+      transform: translateX(-50%) translateY(-50%) scale(1);
+    }
+
+    &:active,
+    &:active:before {
+      background-color: var(--color-background-tertiary);
+    }
+
+    @media (width <= 480px) {
+      --size: 56px;
+
+      position: fixed;
+      right: var(--spacing-8);
+      bottom: var(--spacing-8);
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: var(--size);
+      height: var(--size);
+      background-color: var(--color-background-secondary);
+    }
+  }
+
+  &.link--highlight {
+    color: var(--color-content-highlight);
+  }
+
+  &.link--secondary {
+    font-size: inherit;
+    color: var(--color-content-secondary);
+  }
+}
