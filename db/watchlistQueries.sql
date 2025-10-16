@@ -52,12 +52,3 @@ WHERE
     user_id = $1
     AND m.release_date IS NULL;
 
--- name: is-in-watchlist
-SELECT
-    id
-FROM
-    watchlist
-WHERE
-    user_id = $1
-    AND movie_id = $2;
-

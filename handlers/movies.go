@@ -28,27 +28,16 @@ import (
 )
 
 func GetMovieByID(c *fiber.Ctx) error {
-	var watchedAt []movie.WatchedAt
-	var movie types.Movie
-	var review types.Review
-	var isInWatchlist bool
-	var others types.OthersStats
-
 	backParam := c.QueryBool("back", false)
-
-	movieId := c.Params("id")
-	userId := c.Locals("UserId")
-	id, err := utils.SelfHealingUrl(movieId)
-	isAuth := utils.IsAuthenticated(c)
+	movieQueries, err := db.MakeMovieQueries(c)
 
 	if err != nil {
-		return utils.Render(c, views.NotFound())
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
-	err = db.Dot.Get(db.Client, &movie, "movie-by-id", id, userId)
+	movie, err := movieQueries.GetByID()
 
 	if err != nil {
-		// TODO: Handle this better
 		if err == sql.ErrNoRows {
 			return utils.Render(c, views.NotFound())
 		}
@@ -62,40 +51,35 @@ func GetMovieByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	err = db.Dot.Get(db.Client, &review, "review-by-movie-id", id, userId)
+	review, err := movieQueries.ReviewByID()
 
-	if err != nil {
-		if err != sql.ErrNoRows {
-			return err
-		}
+	if err != nil && err != sql.ErrNoRows {
+		return err
 	}
 
-	err = db.Client.Get(
-		&isInWatchlist,
-		`select exists (select * from watchlist where movie_id = $1 and user_id = $2);`,
-		id,
-		userId,
-	)
+	isInWatchlist, err := movieQueries.IsWatchlisted()
 
 	if err != nil {
 		return err
 	}
 
-	err = db.Dot.Get(db.Client, &others, "others-ratings", id)
+	others, err := movieQueries.RatingsByOthers()
 
 	if err != nil {
 		return err
 	}
 
-	if isAuth {
-		err = db.Dot.Select(db.Client, &watchedAt, "seen-by-user-id", id, userId)
+	watchedAt, err := movieQueries.SeenByUser()
 
-		if err != nil {
-			return err
-		}
+	if err != nil {
+		return err
 	}
 
-	cast, hasCharacters, err := getMovieCastByID(id)
+	cast, hasCharacters, err := movieQueries.Cast()
+
+	if err != nil {
+		return err
+	}
 
 	if c.Get("Accept") == "application/json" {
 		return c.JSON(movie)
@@ -115,17 +99,19 @@ func GetMovieByID(c *fiber.Ctx) error {
 }
 
 func GetMovieOthersSeenByID(c *fiber.Ctx) error {
-	var others types.OthersStats
+	movieQueries, err := db.MakeMovieQueries(c)
 
-	movieId := c.Params("id")
-	id, _ := utils.SelfHealingUrl(movieId)
-	idAsInt, err := strconv.Atoi(id)
+	if err != nil {
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	idAsInt, err := strconv.Atoi(movieQueries.Id)
 
 	if err != nil {
 		return err
 	}
 
-	err = db.Dot.Get(db.Client, &others, "others-ratings", id)
+	others, err := movieQueries.RatingsByOthers()
 
 	if err != nil {
 		return err
@@ -137,93 +123,41 @@ func GetMovieOthersSeenByID(c *fiber.Ctx) error {
 	}))
 }
 
-type CastDB struct {
-	Job        string         `db:"job"`
-	Names      pq.StringArray `db:"people_names"`
-	Ids        pq.Int32Array  `db:"people_ids"`
-	Characters pq.StringArray `db:"characters"`
-}
-
-func ZipCast(names []string, ids []int32, characters []string) []views.CastAndCrewDTO {
-	zipped := make([]views.CastAndCrewDTO, len(names))
-	for i := range names {
-		zipped[i] = views.CastAndCrewDTO{
-			Name:      names[i],
-			ID:        ids[i],
-			Character: characters[i],
-		}
-	}
-	return zipped
-}
-
-func getMovieCastByID(id string) ([]views.CastDTO, bool, error) {
-	var castOrCrew []CastDB
-
-	err := db.Dot.Select(db.Client, &castOrCrew, "cast-by-id", id)
-
-	if err != nil {
-		return nil, false, err
-	}
-
-	updatedCastOrCrew := make([]views.CastDTO, len(castOrCrew))
-	hasCharacters := false
-
-	for i, cast := range castOrCrew {
-		characters := cast.Characters
-
-		if cast.Job == "Cast" {
-			for _, value := range characters {
-				if value != "" {
-					hasCharacters = true
-					break
-				}
-			}
-		}
-
-		if len(characters) == 0 {
-			characters = make([]string, len(cast.Names))
-		}
-
-		updatedCastOrCrew[i] = views.CastDTO{
-			Job:    cast.Job,
-			People: ZipCast(cast.Names, cast.Ids, characters),
-		}
-	}
-
-	return updatedCastOrCrew, hasCharacters, nil
-}
-
 // Render the add movie page
 func GetMovieNew(c *fiber.Ctx) error {
-	var watchlist types.Movies
 	var movie types.Movie
 
-	isAuth := utils.IsAuthenticated(c)
+	movieQueries, err := db.MakeMovieQueries(c)
 	id := c.QueryInt("id")
 	imdbId := c.Query("imdbId")
-	userId := c.Locals("UserId")
 
-	if !isAuth {
+	if !movieQueries.IsAuthenticated {
 		return c.Redirect("/")
 	}
 
-	if id != 0 {
-		err := db.Dot.Select(db.Client, &watchlist, "is-in-watchlist", userId, id)
+	if err != nil {
+		return utils.Render(c, views.NewMovie(views.NewMovieProps{
+			ImdbID:      imdbId,
+			InWatchlist: false,
+			Movie:       movie,
+		}))
+	}
 
-		if err != nil {
-			return err
-		}
+	isInWatchlist, err := movieQueries.IsWatchlisted()
 
-		err = db.Client.Get(&movie, `SELECT id, title FROM movie WHERE id = $1`, id)
+	if err != nil {
+		return err
+	}
 
-		if err != nil {
-			return err
-		}
+	err = db.Client.Get(&movie, `SELECT id, title FROM movie WHERE id = $1`, id)
+
+	if err != nil {
+		return err
 	}
 
 	return utils.Render(c, views.NewMovie(views.NewMovieProps{
 		ImdbID:      imdbId,
-		InWatchlist: len(watchlist) > 0,
+		InWatchlist: isInWatchlist,
 		Movie:       movie,
 	}))
 }
