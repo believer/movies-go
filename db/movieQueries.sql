@@ -55,8 +55,8 @@ WHERE
     id = $1;
 
 -- name: insert-movie
-INSERT INTO movie (title, runtime, release_date, imdb_id, overview, poster, tagline, wilhelm)
-    VALUES ($1, $2, NULLIF ($3, '')::date, $4, $5, $6, $7, $8)
+INSERT INTO movie (title, runtime, release_date, imdb_id, overview, poster, tagline, tmdb_id, wilhelm)
+    VALUES ($1, $2, NULLIF ($3, '')::date, $4, $5, $6, $7, $8, $9)
 ON CONFLICT (imdb_id)
     DO UPDATE SET
         title = excluded.title,
@@ -65,7 +65,8 @@ ON CONFLICT (imdb_id)
         imdb_id = excluded.imdb_id,
         overview = excluded.overview,
         poster = excluded.poster,
-        tagline = excluded.tagline
+        tagline = excluded.tagline,
+        tmdb_id = excluded.tmdb_id
     RETURNING
         id;
 

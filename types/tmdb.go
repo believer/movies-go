@@ -22,17 +22,31 @@ type TmdbLanguage struct {
 	Name        string `json:"name"`
 }
 
+type TmdbCompany struct {
+	ID            int    `json:"id"`
+	Name          string `json:"name"`
+	OriginCountry string `json:"origin_country"`
+}
+
+type TmdbCountry struct {
+	ID   string `json:"iso_3166_1"`
+	Name string `json:"name"`
+}
+
 // https://api.themoviedb.org/3/movie/{id}
 type MovieDetailsResponse struct {
-	Genres          []TmdbGenre    `json:"genres"`
-	ImdbId          string         `json:"imdb_id"`
-	Overview        string         `json:"overview"`
-	Poster          string         `json:"poster_path"`
-	ReleaseDate     string         `json:"release_date"`
-	Runtime         int            `json:"runtime"`
-	SpokenLanguages []TmdbLanguage `json:"spoken_languages"`
-	Tagline         string         `json:"tagline"`
-	Title           string         `json:"title"`
+	Genres              []TmdbGenre    `json:"genres"`
+	ImdbId              string         `json:"imdb_id"`
+	Overview            string         `json:"overview"`
+	Poster              string         `json:"poster_path"`
+	ProductionCompanies []TmdbCompany  `json:"production_companies"`
+	ProductionCountries []TmdbCountry  `json:"production_countries"`
+	ReleaseDate         string         `json:"release_date"`
+	Runtime             int            `json:"runtime"`
+	SpokenLanguages     []TmdbLanguage `json:"spoken_languages"`
+	Tagline             string         `json:"tagline"`
+	Title               string         `json:"title"`
+	TmdbId              int            `json:"id"`
 }
 
 type CastResult struct {
