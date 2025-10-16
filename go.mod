@@ -11,18 +11,19 @@ require (
 
 require (
 	github.com/PuerkitoBio/goquery v1.10.1
-	github.com/a-h/templ v0.3.943
+	github.com/a-h/templ v0.3.960
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/qustavo/dotsql v1.2.0
-	golang.org/x/crypto v0.42.0
-	golang.org/x/text v0.29.0
+	golang.org/x/crypto v0.43.0
+	golang.org/x/text v0.30.0
 )
 
 require (
 	github.com/andybalholm/cascadia v1.3.3 // indirect
+	github.com/clipperhouse/uax29/v2 v2.2.0 // indirect
 	github.com/philhofer/fwd v1.2.0 // indirect
 	github.com/tinylib/msgp v1.4.0 // indirect
-	golang.org/x/net v0.44.0 // indirect
+	golang.org/x/net v0.45.0 // indirect
 )
 
 require (
@@ -31,12 +32,11 @@ require (
 	github.com/klauspost/compress v1.18.0 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
-	github.com/mattn/go-runewidth v0.0.16 // indirect
-	github.com/rivo/uniseg v0.4.7 // indirect
+	github.com/mattn/go-runewidth v0.0.19 // indirect
 	github.com/swithek/dotsqlx v1.2.0
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	github.com/valyala/fasthttp v1.66.0 // indirect
-	golang.org/x/sys v0.36.0 // indirect
+	github.com/valyala/fasthttp v1.67.0 // indirect
+	golang.org/x/sys v0.37.0 // indirect
 )
 
 replace github.com/swithek/dotsqlx => github.com/jellydator/dotsqlx v1.2.0
