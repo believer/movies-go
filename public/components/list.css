@@ -1,6 +1,7 @@
 .list {
   container-type: inline-size;
   display: flex;
+  flex: 1;
   flex-direction: column;
   row-gap: var(--spacing-2);
   counter-reset: count;
