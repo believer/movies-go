@@ -43,7 +43,7 @@ templ ListView(props ...ListViewProps) {
 						}
 					}
 				}
-				if p.NextPage != "" {
+				if p.NextPage != "" && len(p.Movies) >= 50 {
 					<li
 						hx-get={ p.NextPage }
 						hx-trigger="revealed"

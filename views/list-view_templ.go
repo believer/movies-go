@@ -195,7 +195,7 @@ func ListView(props ...ListViewProps) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					if p.NextPage != "" {
+					if p.NextPage != "" && len(p.Movies) >= 50 {
 						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<li hx-get=\"")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err

@@ -42,33 +42,64 @@ func (u *MovieLanguages) Scan(v any) error {
 	return utils.ScanJSON(v, u)
 }
 
+// Production Companies
+type MovieProductionCompany struct{ Entity }
+
+func (mpc *MovieProductionCompany) LinkTo() templ.SafeURL {
+	return templ.SafeURL(fmt.Sprintf("/production-company/%s-%d", utils.Slugify(mpc.Name), mpc.ID))
+}
+
+type MovieProductionCompanies []MovieProductionCompany
+
+func (u *MovieProductionCompanies) Scan(v any) error {
+	return utils.ScanJSON(v, u)
+}
+
+// Production Countries
+type MovieProductionCountry struct {
+	Id   string `db:"id" json:"id"`
+	Name string `db:"name" json:"name"`
+}
+
+func (mpc *MovieProductionCountry) LinkTo() templ.SafeURL {
+	return templ.SafeURL(fmt.Sprintf("/production-country/%s-%s", utils.Slugify(mpc.Name), mpc.Id))
+}
+
+type MovieProductionCountries []MovieProductionCountry
+
+func (u *MovieProductionCountries) Scan(v any) error {
+	return utils.ScanJSON(v, u)
+}
+
 // Movie
 // ======================================================
 
 type Movie struct {
-	Cast           []CastAndCrew   `db:"cast" json:"cast"`
-	CreatedAt      time.Time       `db:"created_at" json:"createdAt"`
-	Genres         MovieGenres     `db:"genres" json:"genres"`
-	Languages      MovieLanguages  `db:"languages" json:"languages"`
-	ID             int             `db:"id" json:"id"`
-	ImdbId         string          `db:"imdb_id" json:"imdbId"`
-	ImdbRating     sql.NullFloat64 `db:"imdb_rating" json:"imdbRating"`
-	NumberInSeries utils.NullInt64 `db:"number_in_series" json:"numberInSeries"`
-	OriginalTitle  sql.NullString  `db:"original_title" json:"originaTitle"`
-	Overview       string          `db:"overview" json:"overview"`
-	Poster         string          `db:"poster" json:"poster"`
-	Rating         sql.NullInt64   `db:"rating" json:"rating"`
-	RatedAt        sql.NullTime    `db:"rated_at" json:"ratedAt"`
-	ReleaseDate    utils.NullTime  `db:"release_date" json:"releaseDate"`
-	Runtime        int             `db:"runtime" json:"runtime"`
-	Seen           bool            `db:"seen" json:"seen"`
-	Series         sql.NullString  `db:"series" json:"series"`
-	SeriesID       sql.NullInt64   `db:"series_id" json:"seriesId"`
-	Tagline        string          `db:"tagline" json:"tagline"`
-	Title          string          `db:"title" json:"title"`
-	UpdatedAt      time.Time       `db:"updated_at" json:"updatedAt"`
-	WatchedAt      time.Time       `db:"watched_at" json:"watchedAt"`
-	WilhelmScream  sql.NullBool    `db:"wilhelm" json:"wilhelm"`
+	Cast                []CastAndCrew            `db:"cast" json:"cast"`
+	CreatedAt           time.Time                `db:"created_at" json:"createdAt"`
+	Genres              MovieGenres              `db:"genres" json:"genres"`
+	ID                  int                      `db:"id" json:"id"`
+	ImdbId              string                   `db:"imdb_id" json:"imdbId"`
+	ImdbRating          sql.NullFloat64          `db:"imdb_rating" json:"imdbRating"`
+	Languages           MovieLanguages           `db:"languages" json:"languages"`
+	NumberInSeries      utils.NullInt64          `db:"number_in_series" json:"numberInSeries"`
+	OriginalTitle       sql.NullString           `db:"original_title" json:"originaTitle"`
+	Overview            string                   `db:"overview" json:"overview"`
+	Poster              string                   `db:"poster" json:"poster"`
+	ProductionCompanies MovieProductionCompanies `db:"production_companies"`
+	ProductionCountries MovieProductionCountries `db:"production_countries"`
+	RatedAt             sql.NullTime             `db:"rated_at" json:"ratedAt"`
+	Rating              sql.NullInt64            `db:"rating" json:"rating"`
+	ReleaseDate         utils.NullTime           `db:"release_date" json:"release_date"`
+	Runtime             int                      `db:"runtime" json:"runtime"`
+	Seen                bool                     `db:"seen" json:"seen"`
+	Series              sql.NullString           `db:"series" json:"series"`
+	SeriesID            sql.NullInt64            `db:"series_id" json:"seriesId"`
+	Tagline             string                   `db:"tagline" json:"tagline"`
+	Title               string                   `db:"title" json:"title"`
+	UpdatedAt           time.Time                `db:"updated_at" json:"updatedAt"`
+	WatchedAt           time.Time                `db:"watched_at" json:"watchedAt"`
+	WilhelmScream       sql.NullBool             `db:"wilhelm" json:"wilhelm"`
 }
 
 // Format runtime in hours and minutes from minutes
