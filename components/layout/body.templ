@@ -1,20 +1,18 @@
 package layout
 
 import "believer/movies/components/typography"
-import "believer/movies/components/navigation"
 
 type BodyProps struct {
 	Title string
 }
 
 templ Body(p BodyProps) {
-	<section class="layout">
-		<nav>
-			@navigation.Home()
-		</nav>
-		@typography.H1() {
-			{ p.Title }
-		}
-		{ children... }
-	</section>
+	<main>
+		<section class="layout">
+			@typography.H1() {
+				{ p.Title }
+			}
+			{ children... }
+		</section>
+	</main>
 }

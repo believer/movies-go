@@ -25,17 +25,17 @@ type FeedProps struct {
 
 templ Feed(props FeedProps) {
 	@layout.Html() {
-		<nav class="feed-nav">
-			<div class="feed-nav__section">
+		<nav>
+			<section>
 				@link.Link(link.Props{Href: "/stats"}) {
 					Stats
 				}
 				@link.Link(link.Props{Href: "/watchlist"}) {
 					Watchlist
 				}
-			</div>
+			</section>
 			if props.IsAdmin {
-				<div class="feed-nav__section">
+				<section>
 					@link.Link(link.Props{
 						Class: "link--new",
 						Href:  templ.SafeURL("/movie/new"),
@@ -77,7 +77,7 @@ templ Feed(props FeedProps) {
 							}
 						</div>
 					</div>
-				</div>
+				</section>
 			} else {
 				@link.Link(link.Props{Href: "/login"}) {
 					Login

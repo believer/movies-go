@@ -117,9 +117,13 @@
     row-gap: var(--spacing-8);
     max-width: 36rem;
     padding-inline: var(--spacing-5);
-    padding-top: var(--spacing-5);
+    padding-top: var(--spacing-2);
     padding-bottom: calc(env(safe-area-inset-bottom) + 32px);
     margin-inline: auto;
+
+    @media (width <= 480px) {
+      padding-top: var(--spacing-8);
+    }
   }
 
   .contents {
@@ -158,17 +162,20 @@
 
 @layer components {
   nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-inline: var(--spacing-5);
+    padding-top: var(--spacing-5);
+
     .link {
       font-size: 1rem;
     }
 
-    .home {
-      top: var(--spacing-5);
-      left: var(--spacing-5);
-
-      @media (width > 480px) {
-        position: absolute;
-      }
+    section {
+      display: flex;
+      column-gap: var(--spacing-4);
+      align-items: center;
     }
   }
 
@@ -210,20 +217,6 @@
  */
 
 @layer views {
-  .feed-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-inline: var(--spacing-5);
-    padding-top: var(--spacing-5);
-
-    .feed-nav__section {
-      display: flex;
-      column-gap: var(--spacing-4);
-      align-items: center;
-    }
-  }
-
   .overview {
     display: -webkit-box;
     -webkit-box-orient: vertical;
