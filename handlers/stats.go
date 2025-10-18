@@ -45,7 +45,7 @@ func GetStats(c *fiber.Ctx) error {
 	var stats types.Stats
 	var shortestAndLongest types.Movies
 	var wilhelms []int
-	var movies, totals, cast []views.ListItem
+	var movies, totals, cast []types.ListItem
 	var ratings, yearRatings, watchedByYear, seenThisYearByMonth, moviesByYear []graph.GraphData
 	var awardWins types.AwardPersonStat
 	var awardNominations types.AwardPersonStat
@@ -197,8 +197,8 @@ func GetStats(c *fiber.Ctx) error {
 }
 
 func GetMostWatchedByJob(c *fiber.Ctx) error {
-	var persons []views.ListItem
-	var totals []views.ListItem
+	var persons []types.ListItem
+	var totals []types.ListItem
 
 	job := c.Params("job")
 	year := c.Query("year", "All")
@@ -436,7 +436,7 @@ func availableYears() []string {
 }
 
 func GetGenreStats(c *fiber.Ctx) error {
-	var genres []views.ListItem
+	var genres []types.ListItem
 
 	userId := c.Locals("UserId").(string)
 	year := c.Query("year", "All")
@@ -448,15 +448,18 @@ func GetGenreStats(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.Render(c, views.MostWatchedGenres(views.MostWatchedGenresProps{
+	return utils.Render(c, views.StatsSection(views.StatsSectionProps{
 		Data:  genres,
+		Title: "Genre",
+		Route: "/stats/genres",
+		Root:  "genre",
 		Year:  year,
 		Years: years,
 	}))
 }
 
 func GetLanguageStats(c *fiber.Ctx) error {
-	var languages []views.ListItem
+	var languages []types.ListItem
 
 	userId := c.Locals("UserId").(string)
 	year := c.Query("year", "All")
@@ -468,15 +471,18 @@ func GetLanguageStats(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.Render(c, views.MostWatchedLanguages(views.MostWatchedLanguagesProps{
+	return utils.Render(c, views.StatsSection(views.StatsSectionProps{
 		Data:  languages,
+		Title: "Language",
+		Root:  "language",
+		Route: "/stats/languages",
 		Year:  year,
 		Years: years,
 	}))
 }
 
 func GetBestOfTheYear(c *fiber.Ctx) error {
-	var movies []views.ListItem
+	var movies []types.ListItem
 
 	userId := c.Locals("UserId")
 	currentYear := time.Now().Format("2006")
@@ -489,9 +495,12 @@ func GetBestOfTheYear(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.Render(c, views.BestOfTheYear(views.BestOfTheYearProps{
-		Movies: movies,
-		Year:   year,
-		Years:  years,
+	return utils.Render(c, views.StatsSection(views.StatsSectionProps{
+		Data:  movies,
+		Title: "Best of the Year",
+		Route: "/stats/best-of-the-year",
+		Root:  "movie",
+		Year:  year,
+		Years: years,
 	}))
 }

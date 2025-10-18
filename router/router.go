@@ -96,6 +96,7 @@ func SetupRoutes(app *fiber.App) {
 	productionCompanyGroup := app.Group("/production-company")
 
 	productionCompanyGroup.Get("/", redirectToHome)
+	productionCompanyGroup.Get("/stats", h.GetProductionCompanyStats)
 	productionCompanyGroup.Get("/:id", h.GetProductionCompany)
 
 	// Production countries
@@ -103,6 +104,7 @@ func SetupRoutes(app *fiber.App) {
 	productionCountryGroup := app.Group("/production-country")
 
 	productionCountryGroup.Get("/", redirectToHome)
+	productionCountryGroup.Get("/stats", h.GetProductionCountryStats)
 	productionCountryGroup.Get("/:id", h.GetProductionCountry)
 
 	// Awards

@@ -29,8 +29,8 @@ type StatsProps struct {
 	BestYear                string
 	FormattedTotalRuntime   string
 	MostAwardedMovies       []types.AwardMovieStat
-	MostWatchedCast         []ListItem
-	MostWatchedMovies       []ListItem
+	MostWatchedCast         []types.ListItem
+	MostWatchedMovies       []types.ListItem
 	MoviesByYear            []graph.GraphData
 	Ratings                 []graph.Bar
 	Reviews                 int
@@ -190,6 +190,7 @@ templ Stats(props StatsProps) {
 											@separator.Separator()
 										}
 										<span
+											class="trailing"
 											style={ templ.KV("color: var(--color-content-highlight)", props.BestYear == year.Label) }
 										>
 											{ year.Value }
@@ -207,7 +208,10 @@ templ Stats(props StatsProps) {
 				<div class="stats__column">
 					@section.Section(section.Props{Title: "Most watched movies"}) {
 						if len(props.MostWatchedMovies) > 0 {
-							@StatsList(props.MostWatchedMovies, "movie")
+							@StatsList(StatsListProps{
+								Data: props.MostWatchedMovies,
+								Root: "movie",
+							})
 						} else {
 							@emptystate.EmptyState() {
 								No movies seen
@@ -238,6 +242,16 @@ templ Stats(props StatsProps) {
 					></section>
 					<section
 						hx-get="/stats/languages"
+						hx-trigger="load"
+						hx-swap="outerHTML"
+					></section>
+					<section
+						hx-get="/production-company/stats"
+						hx-trigger="load"
+						hx-swap="outerHTML"
+					></section>
+					<section
+						hx-get="/production-country/stats"
 						hx-trigger="load"
 						hx-swap="outerHTML"
 					></section>

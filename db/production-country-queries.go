@@ -15,16 +15,22 @@ type ProductionCountry struct {
 type ProductionCountryQueries struct {
 	Id     string
 	UserId string
+	Year   string
+	Years  []string
 }
 
-func MakeProductionCountryQueries(c *fiber.Ctx) (*ProductionCountryQueries, error) {
+func MakeProductionCountryQueries(c *fiber.Ctx) *ProductionCountryQueries {
 	id := utils.SelfHealingUrlString(c.Params("id"))
 	userId := c.Locals("UserId").(string)
+	year := c.Query("year", "All")
+	years := append([]string{"All"}, utils.AvailableYears()...)
 
 	return &ProductionCountryQueries{
 		Id:     id,
 		UserId: userId,
-	}, nil
+		Year:   year,
+		Years:  years,
+	}
 }
 
 func (pc *ProductionCountryQueries) ByID() (ProductionCountry, error) {
@@ -72,4 +78,32 @@ func (pc *ProductionCountryQueries) Movies(offset int) (types.Movies, error) {
 	}
 
 	return movies, nil
+}
+
+func (pc *ProductionCountryQueries) Stats() ([]types.ListItem, error) {
+	var productionCountries []types.ListItem
+
+	err := Client.Select(&productionCountries, `
+SELECT
+	pc.id,
+	pc."name",
+	COUNT(DISTINCT s.movie_id) AS count
+FROM (
+	SELECT DISTINCT ON (movie_id) movie_id
+  FROM seen
+  WHERE user_id = $1 AND (
+		$2 = 'All' OR EXTRACT(YEAR FROM date) = $2::int)
+) AS s
+	INNER JOIN movie_country mc ON mc.movie_id = s.movie_id
+	INNER JOIN production_country pc ON pc.id = mc.country_id
+GROUP BY pc.id
+ORDER BY count DESC
+LIMIT 10
+	`, pc.UserId, pc.Year)
+
+	if err != nil {
+		return productionCountries, err
+	}
+
+	return productionCountries, nil
 }

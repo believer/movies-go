@@ -1,0 +1,65 @@
+package views
+
+import (
+	"believer/movies/components/dropdown"
+	"believer/movies/components/empty-state"
+	"believer/movies/components/link"
+	"believer/movies/components/list"
+	"believer/movies/components/section"
+	"believer/movies/components/separator"
+	"believer/movies/types"
+)
+
+type StatsListProps struct {
+	Data []types.ListItem
+	Root string
+}
+
+type StatsSectionProps struct {
+	Data  []types.ListItem
+	Root  string
+	Year  string
+	Years []string
+	Route string
+	Title string
+}
+
+templ StatsList(p StatsListProps) {
+	if len(p.Data) > 0 {
+		@list.Ol() {
+			for _, item := range p.Data {
+				@list.Li(list.LiProps{Items: len(p.Data), Style: list.Numbered}) {
+					@link.Link(link.Props{Href: item.LinkTo(p.Root)}) {
+						{ item.Name }
+					}
+					@separator.Separator()
+					<span class="trailing">
+						{ item.FormattedCount() }
+					</span>
+				}
+			}
+		}
+	} else {
+		@emptystate.EmptyState() {
+			No movies seen
+		}
+	}
+}
+
+templ StatsSection(p StatsSectionProps) {
+	@section.Section(section.Props{
+		Title: p.Title,
+		Action: dropdown.Dropdown(dropdown.Props{
+			Name:    "year",
+			Options: p.Years,
+			Route:   p.Route,
+			Value:   p.Year,
+		}),
+	}) {
+		@StatsList(StatsListProps{
+			Data: p.Data,
+			Root: p.Root,
+		})
+		{ children... }
+	}
+}

@@ -8,72 +8,8 @@ import (
 	"believer/movies/components/section"
 	"believer/movies/components/separator"
 	"believer/movies/types"
-	"believer/movies/utils"
 	"fmt"
 )
-
-type ListItem struct {
-	Name  string `db:"name"`
-	ID    int    `db:"id"`
-	Count int    `db:"count"`
-}
-
-func (l ListItem) LinkToMovie() templ.SafeURL {
-	return templ.URL(fmt.Sprintf("/movie/%s-%d", utils.Slugify(l.Name), l.ID))
-}
-
-func (l ListItem) LinkToGenre() templ.SafeURL {
-	return templ.URL(fmt.Sprintf("/genre/%s-%d", utils.Slugify(l.Name), l.ID))
-}
-
-func (l ListItem) LinkToPerson() templ.SafeURL {
-	return templ.URL(fmt.Sprintf("/person/%s-%d", utils.Slugify(l.Name), l.ID))
-}
-
-func (l ListItem) LinkToLanguage() templ.SafeURL {
-	return templ.URL(fmt.Sprintf("/language/%s-%d", utils.Slugify(l.Name), l.ID))
-}
-
-func (l ListItem) FormattedCount() string {
-	return utils.Formatter().Sprintf("%d", l.Count)
-}
-
-templ listLink(href templ.SafeURL) {
-	@link.Link(link.Props{Href: href}) {
-		{ children... }
-	}
-}
-
-templ StatsList(data []ListItem, listType string) {
-	@list.Ol() {
-		for _, item := range data {
-			@list.Li(list.LiProps{Items: len(data), Style: list.Numbered}) {
-				switch listType {
-					case "movie":
-						@listLink(item.LinkToMovie()) {
-							{ item.Name }
-						}
-					case "person":
-						@listLink(item.LinkToPerson()) {
-							{ item.Name }
-						}
-					case "genre":
-						@listLink(item.LinkToGenre()) {
-							{ item.Name }
-						}
-					case "language":
-						@listLink(item.LinkToLanguage()) {
-							{ item.Name }
-						}
-				}
-				@separator.Separator()
-				<span>
-					{ item.FormattedCount() }
-				</span>
-			}
-		}
-	}
-}
 
 type HighestRatingProps struct {
 	Data  []types.HighestRated
@@ -123,18 +59,8 @@ templ HighestRating(props HighestRatingProps) {
 	}
 }
 
-templ listOrEmpty(items []ListItem, listType string) {
-	if len(items) > 0 {
-		@StatsList(items, listType)
-	} else {
-		@emptystate.EmptyState() {
-			No movies seen
-		}
-	}
-}
-
 type MostWatchedPersonProps struct {
-	Data  []ListItem
+	Data  []types.ListItem
 	Job   string
 	Title string
 	Total string
@@ -143,58 +69,16 @@ type MostWatchedPersonProps struct {
 }
 
 templ MostWatchedPerson(props MostWatchedPersonProps) {
-	@section.Section(section.Props{
+	@StatsSection(StatsSectionProps{
+		Data:  props.Data,
 		Title: props.Title,
-		Action: dropdown.Dropdown(dropdown.Props{
-			Route:   fmt.Sprintf("/stats/most-watched-person/%s", props.Job),
-			Name:    "year",
-			Options: props.Years,
-			Value:   props.Year,
-		}),
+		Route: fmt.Sprintf("/stats/most-watched-person/%s", props.Job),
+		Root:  "person",
+		Years: props.Years,
+		Year:  props.Year,
 	}) {
-		@listOrEmpty(props.Data, "person")
 		<div class="note">
 			{ props.Total } people total
 		</div>
-	}
-}
-
-type MostWatchedGenresProps struct {
-	Data  []ListItem
-	Year  string
-	Years []string
-}
-
-templ MostWatchedGenres(props MostWatchedGenresProps) {
-	@section.Section(section.Props{
-		Title: "Genre",
-		Action: dropdown.Dropdown(dropdown.Props{
-			Route:   "/stats/genres",
-			Name:    "year",
-			Options: props.Years,
-			Value:   props.Year,
-		}),
-	}) {
-		@listOrEmpty(props.Data, "genre")
-	}
-}
-
-type MostWatchedLanguagesProps struct {
-	Data  []ListItem
-	Year  string
-	Years []string
-}
-
-templ MostWatchedLanguages(props MostWatchedLanguagesProps) {
-	@section.Section(section.Props{
-		Title: "Language",
-		Action: dropdown.Dropdown(dropdown.Props{
-			Route:   "/stats/languages",
-			Name:    "year",
-			Options: props.Years,
-			Value:   props.Year,
-		}),
-	}) {
-		@listOrEmpty(props.Data, "language")
 	}
 }

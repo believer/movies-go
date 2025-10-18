@@ -71,8 +71,8 @@ type StatsProps struct {
 	BestYear                string
 	FormattedTotalRuntime   string
 	MostAwardedMovies       []types.AwardMovieStat
-	MostWatchedCast         []ListItem
-	MostWatchedMovies       []ListItem
+	MostWatchedCast         []types.ListItem
+	MostWatchedMovies       []types.ListItem
 	MoviesByYear            []graph.GraphData
 	Ratings                 []graph.Bar
 	Reviews                 int
@@ -872,14 +872,14 @@ func Stats(props StatsProps) templ.Component {
 										return templ_7745c5c3_Err
 									}
 								}
-								templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, " <span style=\"")
+								templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, " <span class=\"trailing\" style=\"")
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
 								}
 								var templ_7745c5c3_Var47 string
 								templ_7745c5c3_Var47, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues(templ.KV("color: var(--color-content-highlight)", props.BestYear == year.Label))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 193, Col: 98}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 194, Col: 98}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var47))
 								if templ_7745c5c3_Err != nil {
@@ -892,7 +892,7 @@ func Stats(props StatsProps) templ.Component {
 								var templ_7745c5c3_Var48 string
 								templ_7745c5c3_Var48, templ_7745c5c3_Err = templ.JoinStringErrs(year.Value)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 195, Col: 23}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 196, Col: 23}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var48))
 								if templ_7745c5c3_Err != nil {
@@ -962,7 +962,10 @@ func Stats(props StatsProps) templ.Component {
 				}
 				ctx = templ.InitializeContext(ctx)
 				if len(props.MostWatchedMovies) > 0 {
-					templ_7745c5c3_Err = StatsList(props.MostWatchedMovies, "movie").Render(ctx, templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = StatsList(StatsListProps{
+						Data: props.MostWatchedMovies,
+						Root: "movie",
+					}).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -1023,7 +1026,7 @@ func Stats(props StatsProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<section hx-get=\"/stats/highest-ranked-person\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/stats/genres\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/stats/languages\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section></div></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<section hx-get=\"/stats/highest-ranked-person\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/stats/genres\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/stats/languages\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/production-company/stats\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/production-country/stats\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section></div></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

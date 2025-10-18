@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/a-h/templ"
 	"github.com/gofiber/fiber/v2"
@@ -135,4 +136,20 @@ func ScanJSON[T any](v any, target *T) error {
 	default:
 		return fmt.Errorf("unsupported type: %T", v)
 	}
+}
+
+func AvailableYears() []string {
+	// First year with "real" data
+	// 2011 is used as a catch all for anything before I had the database
+	endYear := 2012
+	currentYear := time.Now().Year()
+
+	years := make([]string, 0)
+
+	for year := currentYear; year >= endYear; year-- {
+		y := strconv.Itoa(year)
+		years = append(years, y)
+	}
+
+	return years
 }

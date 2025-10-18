@@ -35,8 +35,10 @@
       display: flex;
       column-gap: var(--trailing-gap, var(--spacing-2));
       align-items: center;
+      font-variant-numeric: tabular-nums;
       line-height: 1;
       text-align: right;
+      white-space: nowrap;
 
       .secondary {
         font-size: var(--text-sm);
