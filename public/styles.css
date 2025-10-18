@@ -137,8 +137,8 @@
 * */
 @media (prefers-reduced-motion: no-preference) and (min-width: 1024px) {
   @supports (animation-range: 0 50vh) {
-    .year,
-    .month {
+    .feed-list__year,
+    .feed-list__month {
       opacity: 0;
       transform: translateY(50px);
       animation: fade-in linear forwards;
