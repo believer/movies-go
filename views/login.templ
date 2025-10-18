@@ -6,7 +6,13 @@ import "believer/movies/components/button"
 
 templ Login() {
 	@layout.Html(layout.Props{Title: "Login"}) {
-		<form class="form" hx-post="/login" hx-swap="outerHTML" hx-replace-url="/">
+		<form
+			class="form"
+			hx-post="/login"
+			hx-swap="innerHTML"
+			hx-target="closest body"
+			hx-replace-url="/"
+		>
 			@input.Text(input.TextProps{Name: "username", Label: "Username"})
 			@input.Password(input.PasswordProps{Name: "password", Label: "Password"})
 			<footer>

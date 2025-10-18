@@ -5,3 +5,9 @@ templ IsAuthenticated() {
 		{ children... }
 	}
 }
+
+templ IsNotAuthenticated() {
+	if !ctx.Value("IsAuthenticated").(bool) {
+		{ children... }
+	}
+}

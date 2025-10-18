@@ -165,6 +165,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    height: 52px;
     padding-inline: var(--spacing-5);
     padding-top: var(--spacing-5);
 
@@ -231,10 +232,10 @@
     row-gap: var(--spacing-8);
     max-width: 36rem;
     padding-inline: var(--spacing-5);
-    padding-top: var(--spacing-5);
+    padding-top: var(--spacing-6);
     margin-inline: auto;
 
-    @media (width >= 768px) {
+    @media (width >= 1024px) {
       padding-top: 0;
     }
   }

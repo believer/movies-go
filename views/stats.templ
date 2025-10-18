@@ -6,7 +6,6 @@ import (
 	"believer/movies/components/layout"
 	"believer/movies/components/link"
 	"believer/movies/components/list"
-	"believer/movies/components/navigation"
 	"believer/movies/components/section"
 	"believer/movies/components/separator"
 	"believer/movies/types"
@@ -47,9 +46,6 @@ type StatsProps struct {
 
 templ Stats(props StatsProps) {
 	@layout.Html(layout.Props{Title: "Stats"}) {
-		<nav>
-			@navigation.Home()
-		</nav>
 		<div class="stats">
 			<div class="stats__content">
 				<div class="stats__column">

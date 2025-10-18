@@ -45,7 +45,7 @@ func Login() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<form class=\"form\" hx-post=\"/login\" hx-swap=\"outerHTML\" hx-replace-url=\"/\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<form class=\"form\" hx-post=\"/login\" hx-swap=\"innerHTML\" hx-target=\"closest body\" hx-replace-url=\"/\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

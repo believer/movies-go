@@ -1,7 +1,5 @@
 package layout
 
-import "believer/movies/components/navigation"
-
 type Props struct {
 	Title       string
 	Description string
@@ -9,11 +7,6 @@ type Props struct {
 
 templ Layout(p Props) {
 	@Html() {
-		<nav>
-			<section>
-				@navigation.Home()
-			</section>
-		</nav>
 		@Body(BodyProps{Title: p.Title}) {
 			{ children... }
 		}
