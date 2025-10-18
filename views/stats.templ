@@ -47,10 +47,10 @@ type StatsProps struct {
 
 templ Stats(props StatsProps) {
 	@layout.Html(layout.Props{Title: "Stats"}) {
+		<nav>
+			@navigation.Home()
+		</nav>
 		<div class="stats">
-			<nav>
-				@navigation.Home()
-			</nav>
 			<div class="stats__content">
 				<div class="stats__column">
 					@section.Section(section.Props{Title: "Stats"}) {
