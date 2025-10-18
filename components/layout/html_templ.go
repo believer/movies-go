@@ -229,7 +229,7 @@ func Html(props ...Props) templ.Component {
 				return nil
 			})
 			templ_7745c5c3_Err = link.Link(link.Props{
-				Class: "link--new",
+				Class: "link--button link--new",
 				Href:  templ.SafeURL("/movie/new"),
 				Attrs: templ.Attributes{
 					"aria-label": "Add movie",
@@ -238,7 +238,7 @@ func Html(props ...Props) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<button class=\"link link--new\" popovertarget=\"settings\" aria-label=\"Settings\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<button class=\"link link--button\" popovertarget=\"settings\" aria-label=\"Settings\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

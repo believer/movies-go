@@ -17,7 +17,7 @@
     text-decoration-color: var(--color-content-secondary);
   }
 
-  &.link--new {
+  &.link--button {
     --size: 40px;
 
     position: relative;
@@ -181,7 +181,9 @@
     &:active:before {
       background-color: var(--color-background-tertiary);
     }
+  }
 
+  &.link--new {
     @media (width <= 480px) {
       --size: 56px;
 

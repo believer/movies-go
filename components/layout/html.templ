@@ -75,7 +75,7 @@ templ Html(props ...Props) {
 			@auth.IsAuthenticated() {
 				<section>
 					@link.Link(link.Props{
-						Class: "link--new",
+						Class: "link--button link--new",
 						Href:  templ.SafeURL("/movie/new"),
 						Attrs: templ.Attributes{
 							"aria-label": "Add movie",
@@ -83,7 +83,7 @@ templ Html(props ...Props) {
 					}) {
 						@icon.Icon(icon.Props{Name: icon.Plus})
 					}
-					<button class="link link--new" popovertarget="settings" aria-label="Settings">
+					<button class="link link--button" popovertarget="settings" aria-label="Settings">
 						@icon.Icon(icon.Props{Name: icon.Cog})
 					</button>
 					<div id="settings" popover class="settings">
