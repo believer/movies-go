@@ -125,23 +125,27 @@ templ Movie(props MovieProps) {
 			ID:          props.Movie.ID,
 		})
 		@CastList(props.Cast, props.HasCharacters)
-		@section.Section(section.Props{Title: "Production companies"}) {
-			@list.Ol() {
-				for _, c := range props.Movie.ProductionCompanies {
-					@list.Li(list.LiProps{Class: "wrapped"}) {
-						@link.Link(link.Props{Href: c.LinkTo()}) {
-							{ c.Name }
+		if len(props.Movie.ProductionCompanies) > 0 {
+			@section.Section(section.Props{Title: "Production companies"}) {
+				@list.Ol() {
+					for _, c := range props.Movie.ProductionCompanies {
+						@list.Li(list.LiProps{Class: "wrapped"}) {
+							@link.Link(link.Props{Href: c.LinkTo()}) {
+								{ c.Name }
+							}
 						}
 					}
 				}
 			}
 		}
-		@section.Section(section.Props{Title: "Production countries"}) {
-			@list.Ol() {
-				for _, c := range props.Movie.ProductionCountries {
-					@list.Li(list.LiProps{Class: "wrapped"}) {
-						@link.Link(link.Props{Href: c.LinkTo()}) {
-							{ c.Name }
+		if len(props.Movie.ProductionCountries) > 0 {
+			@section.Section(section.Props{Title: "Production countries"}) {
+				@list.Ol() {
+					for _, c := range props.Movie.ProductionCountries {
+						@list.Li(list.LiProps{Class: "wrapped"}) {
+							@link.Link(link.Props{Href: c.LinkTo()}) {
+								{ c.Name }
+							}
 						}
 					}
 				}
