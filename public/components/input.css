@@ -15,7 +15,7 @@
     color: var(--color-content-secondary);
   }
 
-  input {
+  input:not([type="checkbox"]) {
     height: 44px;
     padding-block: var(--spacing-2);
     padding-inline: var(--spacing-4);
