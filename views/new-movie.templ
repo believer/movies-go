@@ -6,7 +6,6 @@ import (
 	"believer/movies/components/collapsible"
 	"believer/movies/components/input"
 	"believer/movies/components/layout"
-	"believer/movies/components/link"
 	"believer/movies/components/textarea"
 	"believer/movies/types"
 )
@@ -24,11 +23,6 @@ templ NewMovie(props NewMovieProps) {
 			hx-indicator="button[type='submit']"
 			class="form"
 		>
-			<header>
-				@link.Link(link.Props{Href: "/"}) {
-					Back
-				}
-			</header>
 			if props.Movie.ID != 0 {
 				<div>
 					<strong>{ props.Movie.Title }</strong>
