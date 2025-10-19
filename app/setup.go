@@ -10,10 +10,10 @@ import (
 	"os"
 
 	"github.com/gofiber/fiber/v2"
-	// "github.com/gofiber/fiber/v2/middleware/csrf"
+	"github.com/gofiber/fiber/v2/middleware/csrf"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
-	// "github.com/gofiber/fiber/v2/middleware/session"
+	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/joho/godotenv"
 )
@@ -43,7 +43,7 @@ func SetupAndRunApp() error {
 	})
 
 	// Setup middleware
-	// store := session.New()
+	store := session.New()
 
 	// Recover middleware recovers from panics anywhere in
 	// the chain and handles the control to the centralized ErrorHandler.
@@ -53,22 +53,20 @@ func SetupAndRunApp() error {
 	app.Use(logger.New())
 
 	// Add CSRF token
-	// app.Use(csrf.New(csrf.Config{
-	// 	KeyLookup:      "cookie:csrf_",
-	// 	CookieName:     "csrf_",
-	// 	CookieSameSite: "Lax",
-	// 	CookieSecure:   appEnv != "development",
-	// 	CookieHTTPOnly: true,
-	// 	Session:        store,
-	// 	SessionKey:     "fiber.csrf.token",
-	// }))
+	app.Use(csrf.New(csrf.Config{
+		KeyLookup:      "cookie:csrf_",
+		CookieName:     "csrf_",
+		CookieSameSite: "Lax",
+		CookieSecure:   appEnv != "development",
+		CookieHTTPOnly: true,
+		Session:        store,
+		SessionKey:     "fiber.csrf.token",
+	}))
 
 	// Pass app environment to all views
 	app.Use(func(c *fiber.Ctx) error {
 		secret := os.Getenv("ADMIN_SECRET")
 		tokenString := c.Cookies("token")
-
-		fmt.Println(c.Cookies("token"))
 
 		// Set me as default user
 		userId := "1"
