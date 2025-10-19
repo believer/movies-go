@@ -1112,7 +1112,7 @@ func UpdateMovieByID(c *fiber.Ctx) error {
 		movie.Tagline,
 	)
 
-	// Insert movie information
+	// Update movie information
 	_, err = tx.Exec(`
 		UPDATE
 				movie
@@ -1124,7 +1124,8 @@ func UpdateMovieByID(c *fiber.Ctx) error {
 				overview = $6,
 				poster = $7,
 				tagline = $8,
-				updated_at = NOW()
+				updated_at = NOW(),
+				tmdb_id = $9
 		WHERE
 				id = $1;
 	`,
@@ -1136,6 +1137,7 @@ func UpdateMovieByID(c *fiber.Ctx) error {
 		movie.Overview,
 		movie.Poster,
 		movie.Tagline,
+		movie.TmdbId,
 	)
 
 	if err != nil {
@@ -1211,6 +1213,33 @@ func UpdateMovieByID(c *fiber.Ctx) error {
 	}
 
 	log.Println("Genres updated")
+
+	for _, c := range movie.ProductionCountries {
+		tx.MustExec(`
+			INSERT INTO movie_country (movie_id, country_id)
+			VALUES ($1, $2)
+			ON CONFLICT DO NOTHING
+    `, id, c.ID)
+	}
+
+	log.Println("Countries inserted")
+
+	// Production companies
+	for _, c := range movie.ProductionCompanies {
+		tx.MustExec(`
+			INSERT INTO production_company (tmdb_id, name, country)
+			VALUES ($1, $2, $3)
+			ON CONFLICT DO NOTHING
+		`, c.ID, c.Name, c.OriginCountry)
+
+		tx.MustExec(`
+			INSERT INTO movie_company (movie_id, company_id)
+			VALUES ($1, (SELECT id FROM production_company WHERE tmdb_id = $2))
+			ON CONFLICT DO NOTHING
+		`, id, c.ID)
+	}
+
+	log.Println("Production companies inserted")
 
 	var castStructs []NewPerson
 	var crewStructs []NewPerson
