@@ -70,7 +70,7 @@ func Login(c *fiber.Ctx) error {
 		Value:    tokenString,
 		Expires:  time.Now().AddDate(0, 0, 30),
 		HTTPOnly: true,
-		Secure:   true,
+		Secure:   c.Locals("AppEnv") != "development",
 	})
 
 	return c.Redirect("/", 303)

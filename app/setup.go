@@ -21,6 +21,7 @@ import (
 func SetupAndRunApp() error {
 	// Load environment variables
 	err := godotenv.Load()
+	appEnv := os.Getenv("APP_ENV")
 
 	if err != nil && os.Getenv("APP_ENV") == "development" {
 		return err
@@ -56,7 +57,7 @@ func SetupAndRunApp() error {
 		KeyLookup:      "cookie:csrf_",
 		CookieName:     "csrf_",
 		CookieSameSite: "Lax",
-		CookieSecure:   true,
+		CookieSecure:   appEnv != "development",
 		CookieHTTPOnly: true,
 		Session:        store,
 		SessionKey:     "fiber.csrf.token",
@@ -65,7 +66,6 @@ func SetupAndRunApp() error {
 	// Pass app environment to all views
 	app.Use(func(c *fiber.Ctx) error {
 		secret := os.Getenv("ADMIN_SECRET")
-		appEnv := os.Getenv("APP_ENV")
 		tokenString := c.Cookies("token")
 
 		// Set me as default user
