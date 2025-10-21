@@ -7,12 +7,7 @@ CSS_SRC := $(shell find components -type f -name '*.css' | sort)
 TARGET := public/styles.css
 TMPDIR := tmp
 
-build:
-	@./hasher.sh
-	@templ generate
-	@go build -o main main.go
-
-dev:
+css:
 	@awk 'BEGIN {in_section=0} \
 	{ \
 		if ($$0 ~ /\/\* *START:GENERATED *\*\//) { \
@@ -30,6 +25,14 @@ dev:
 		print \
 	}' $(TARGET) > $(TARGET).new
 	@mv $(TARGET).new $(TARGET)
+	@echo "\033[0;32m(✓)\033[0;37m Copied component CSS"
+
+build: css
+	@./hasher.sh
+	@templ generate
+	@go build -o main main.go
+
+dev: css
 	@sed -i "" "s/styles\(\.[a-z0-9]\{6\}\)\{0,1\}\.css/styles.css/g" ./components/layout/html.templ
 	@templ generate --watch \
 		--open-browser=false \

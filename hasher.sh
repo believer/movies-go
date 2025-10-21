@@ -25,4 +25,4 @@ cp ./public/styles.css ./public/styles.$hash.css
 # This matches both styles.css and styles.hash.css
 sed -i "" "s/styles\(\.[a-z0-9]\{6\}\)\{0,1\}\.css/styles\.$hash\.css/g" ./components/layout/html.templ
 
-echo "Hashed CSS"
+echo -e "\033[0;32m(✓)\033[0;37m Hashed CSS"
