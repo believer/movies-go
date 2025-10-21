@@ -4,7 +4,6 @@
 all: build
 
 CSS_SRC := $(shell find components -type f -name '*.css' | sort)
-BASENAMES := $(notdir $(CSS_SRC))
 TARGET := public/styles.css
 TMPDIR := tmp
 
@@ -14,16 +13,12 @@ build:
 	@go build -o main main.go
 
 dev:
-	@mkdir -p "./public/components/" && cp $(CSS_SRC) "./public/components/" 
 	@awk 'BEGIN {in_section=0} \
 	{ \
 		if ($$0 ~ /\/\* *START:GENERATED *\*\//) { \
 			in_section=1; \
 			print; \
-			n = split("$(BASENAMES)", files, " "); \
-			for (i = 1; i <= n; i++) { \
-				printf "@import \"components/%s\" layer(components);\n", files[i] \
-			} \
+			system("sed \"s/^/	/\" $(CSS_SRC)"); \
 			next \
 		} \
 		if ($$0 ~ /\/\* *END:GENERATED *\*\//) { \

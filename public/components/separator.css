@@ -1,9 +1,0 @@
-.separator {
-  flex: 1;
-  border-color: var(--color-content-quarternary);
-  border-style: var(--decoration);
-
-  &.separator--highlight {
-    border-color: var(--color-content-highlight);
-  }
-}
