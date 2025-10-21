@@ -435,52 +435,6 @@ func availableYears() []string {
 	return years
 }
 
-func GetGenreStats(c *fiber.Ctx) error {
-	var genres []types.ListItem
-
-	userId := c.Locals("UserId").(string)
-	year := c.Query("year", "All")
-	years := append([]string{"All"}, availableYears()...)
-
-	err := db.Dot.Select(db.Client, &genres, "stats-genres", userId, year)
-
-	if err != nil {
-		return err
-	}
-
-	return utils.Render(c, views.StatsSection(views.StatsSectionProps{
-		Data:  genres,
-		Title: "Genre",
-		Route: "/stats/genres",
-		Root:  "genre",
-		Year:  year,
-		Years: years,
-	}))
-}
-
-func GetLanguageStats(c *fiber.Ctx) error {
-	var languages []types.ListItem
-
-	userId := c.Locals("UserId").(string)
-	year := c.Query("year", "All")
-	years := append([]string{"All"}, availableYears()...)
-
-	err := db.Dot.Select(db.Client, &languages, "stats-languages", userId, year)
-
-	if err != nil {
-		return err
-	}
-
-	return utils.Render(c, views.StatsSection(views.StatsSectionProps{
-		Data:  languages,
-		Title: "Language",
-		Root:  "language",
-		Route: "/stats/languages",
-		Year:  year,
-		Years: years,
-	}))
-}
-
 func GetBestOfTheYear(c *fiber.Ctx) error {
 	var movies []types.ListItem
 

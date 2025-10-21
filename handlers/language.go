@@ -44,3 +44,21 @@ func GetLanguage(c *fiber.Ctx) error {
 		Movies:     movies,
 	}))
 }
+
+func GetLanguageStats(c *fiber.Ctx) error {
+	q := db.MakeLanguageQueries(c)
+	languages, err := q.Stats()
+
+	if err != nil {
+		return err
+	}
+
+	return utils.Render(c, views.StatsSection(views.StatsSectionProps{
+		Data:  languages,
+		Title: "Language",
+		Root:  "language",
+		Route: "/language/stats",
+		Year:  q.Year,
+		Years: q.Years,
+	}))
+}

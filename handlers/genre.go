@@ -44,3 +44,26 @@ func GetGenre(c *fiber.Ctx) error {
 		Movies:     movies,
 	}))
 }
+
+func GetGenreStats(c *fiber.Ctx) error {
+	var genres []types.ListItem
+
+	userId := c.Locals("UserId").(string)
+	year := c.Query("year", "All")
+	years := append([]string{"All"}, availableYears()...)
+
+	err := db.Dot.Select(db.Client, &genres, "stats-genres", userId, year)
+
+	if err != nil {
+		return err
+	}
+
+	return utils.Render(c, views.StatsSection(views.StatsSectionProps{
+		Data:  genres,
+		Title: "Genre",
+		Route: "/genre/stats",
+		Root:  "genre",
+		Year:  year,
+		Years: years,
+	}))
+}

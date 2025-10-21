@@ -10,7 +10,6 @@ import (
 )
 
 func GetProductionCompany(c *fiber.Ctx) error {
-	page := c.QueryInt("page", 1)
 	q := db.MakeProductionCompanyQueries(c)
 
 	company, err := q.ByID()
@@ -19,7 +18,7 @@ func GetProductionCompany(c *fiber.Ctx) error {
 		return err
 	}
 
-	movies, err := q.Movies((page - 1) * 50)
+	movies, err := q.Movies(q.Offset)
 
 	if err != nil {
 		return err
@@ -28,7 +27,7 @@ func GetProductionCompany(c *fiber.Ctx) error {
 	return utils.Render(c, views.ListView(views.ListViewProps{
 		EmptyState: "No movies for this production company",
 		Name:       company.Name,
-		NextPage:   fmt.Sprintf("/production-company/%s?page=%d", q.Id, page+1),
+		NextPage:   fmt.Sprintf("/production-company/%s?page=%d", q.Id, q.Page+1),
 		Movies:     movies,
 	}))
 }
