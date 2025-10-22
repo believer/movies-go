@@ -125,10 +125,11 @@ func GetWatchlistMovies(c *fiber.Ctx) error {
 
 	return utils.Render(c, views.WatchlistList(
 		views.WatchlistListProps{
-			Movies: movies,
-			Title:  "Movies",
-			Action: views.SortWatchlist("/watchlist/movies", sortOrder),
-			Order:  sortOrder,
+			Movies:      movies,
+			Title:       "Movies",
+			Action:      views.SortWatchlist("/watchlist/movies", sortOrder),
+			Order:       sortOrder,
+			ReleaseDate: views.Released,
 		}))
 }
 
@@ -144,10 +145,11 @@ func GetWatchlistUnreleasedMovies(c *fiber.Ctx) error {
 
 	return utils.Render(c, views.WatchlistList(
 		views.WatchlistListProps{
-			Movies: movies,
-			Title:  "Unreleased movies",
-			Action: views.SortWatchlist("/watchlist/unreleased-movies", sortOrder),
-			Order:  sortOrder,
+			Movies:      movies,
+			Title:       "Unreleased movies",
+			Action:      views.SortWatchlist("/watchlist/unreleased-movies", sortOrder),
+			Order:       sortOrder,
+			ReleaseDate: views.Unreleased,
 		}))
 }
 
