@@ -211,27 +211,6 @@ UNION ALL (
         m.runtime DESC
     LIMIT 1);
 
--- name: stats-genres
-SELECT
-    g.id,
-    g.name,
-    COUNT(DISTINCT s.movie_id) AS count
-FROM ( SELECT DISTINCT ON (movie_id)
-        movie_id
-    FROM
-        seen
-    WHERE
-        user_id = $1
-        AND ($2 = 'All'
-            OR EXTRACT(YEAR FROM date) = $2::int)) AS s
-    INNER JOIN movie_genre mg ON mg.movie_id = s.movie_id
-    INNER JOIN genre g ON mg.genre_id = g.id
-GROUP BY
-    g.id
-ORDER BY
-    count DESC
-LIMIT 10;
-
 -- name: stats-highest-ranked-persons-by-job
 WITH person_ratings AS (
     SELECT

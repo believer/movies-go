@@ -106,7 +106,16 @@ func (mq *MovieQueries) IsWatchlisted() (bool, error) {
 
 	err := Client.Get(
 		&isInWatchlist,
-		`select exists (select * from watchlist where movie_id = $1 and user_id = $2);`,
+		`SELECT
+    EXISTS (
+        SELECT
+            *
+        FROM
+            watchlist
+        WHERE
+            movie_id = $1
+            AND user_id = $2);
+`,
 		mq.Id,
 		mq.UserId,
 	)

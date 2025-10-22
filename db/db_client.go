@@ -27,8 +27,6 @@ func InitializeConnection() error {
 
 	files := []string{
 		"awardQueries",
-		"genreQueries",
-		"languageQueries",
 		"movieQueries",
 		"queries",
 		"ratingQueries",

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"believer/movies/db"
+	"believer/movies/types"
 	"believer/movies/utils"
 	"believer/movies/views"
 	"fmt"
@@ -10,16 +11,17 @@ import (
 )
 
 func GetProductionCountry(c *fiber.Ctx) error {
-	page := c.QueryInt("page", 1)
-	q := db.MakeProductionCountryQueries(c)
+	var country db.TableName
+	var movies types.Movies
 
-	country, err := q.ByID()
+	q := db.MakeQueries(c)
+	err := q.GetNameByID(&country, db.ProductionCountryTable)
 
 	if err != nil {
 		return err
 	}
 
-	movies, err := q.Movies((page - 1) * 50)
+	err = q.GetMovies(&movies, db.ProductionCountryTable)
 
 	if err != nil {
 		return err
@@ -28,14 +30,16 @@ func GetProductionCountry(c *fiber.Ctx) error {
 	return utils.Render(c, views.ListView(views.ListViewProps{
 		EmptyState: "No movies for this production country",
 		Name:       country.Name,
-		NextPage:   fmt.Sprintf("/production-country/%s?page=%d", q.Id, page+1),
+		NextPage:   fmt.Sprintf("/production-country/%s?page=%d", q.Id, q.Page+1),
 		Movies:     movies,
 	}))
 }
 
 func GetProductionCountryStats(c *fiber.Ctx) error {
-	q := db.MakeProductionCountryQueries(c)
-	productionCountries, err := q.Stats()
+	var productionCountries []types.ListItem
+
+	q := db.MakeQueries(c)
+	err := q.GetStats(&productionCountries, db.ProductionCountryTable)
 
 	if err != nil {
 		return err

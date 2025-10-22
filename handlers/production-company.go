@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"believer/movies/db"
+	"believer/movies/types"
 	"believer/movies/utils"
 	"believer/movies/views"
 	"fmt"
@@ -10,15 +11,17 @@ import (
 )
 
 func GetProductionCompany(c *fiber.Ctx) error {
-	q := db.MakeProductionCompanyQueries(c)
+	var company db.TableName
+	var movies types.Movies
 
-	company, err := q.ByID()
+	q := db.MakeQueries(c)
+	err := q.GetNameByID(&company, db.ProductionCompanyTable)
 
 	if err != nil {
 		return err
 	}
 
-	movies, err := q.Movies(q.Offset)
+	err = q.GetMovies(&movies, db.ProductionCompanyTable)
 
 	if err != nil {
 		return err
@@ -33,8 +36,10 @@ func GetProductionCompany(c *fiber.Ctx) error {
 }
 
 func GetProductionCompanyStats(c *fiber.Ctx) error {
-	q := db.MakeProductionCompanyQueries(c)
-	productionCompanies, err := q.Stats()
+	var productionCompanies []types.ListItem
+
+	q := db.MakeQueries(c)
+	err := q.GetStats(&productionCompanies, db.ProductionCompanyTable)
 
 	if err != nil {
 		return err
