@@ -22,6 +22,44 @@ func GetFeed(c *fiber.Ctx) error {
 	userId := c.Locals("UserId")
 	searchQueryType := "movie"
 
+	querySearch := `
+SELECT
+    m.id,
+    m.title,
+    m.overview,
+    se.name AS "series",
+    ms.number_in_series,
+    m.release_date AS watched_at
+FROM
+    movie AS m
+    LEFT JOIN movie_series AS ms ON ms.movie_id = m.id
+    LEFT JOIN series AS se ON se.id = ms.series_id
+WHERE
+    m.title ILIKE '%' || $1 || '%'
+    OR m.original_title ILIKE '%' || $1 || '%'
+    OR se.name ILIKE '%' || $1 || '%'
+ORDER BY
+    m.release_date DESC
+			`
+
+	queryJob := `
+SELECT
+    p.id,
+    p.name,
+    count(*)
+FROM
+    person p
+    INNER JOIN movie_person mp ON mp.person_id = p.id
+WHERE
+    p."name" ILIKE '%' || $1 || '%'
+    AND mp.job = $2
+GROUP BY
+    p.id
+ORDER BY
+    COUNT DESC
+LIMIT 100
+			`
+
 	if searchQuery != "" {
 		c.Set("HX-Push-Url", fmt.Sprintf("/?search=%s", searchQuery))
 
@@ -39,41 +77,78 @@ func GetFeed(c *fiber.Ctx) error {
 
 			switch queryType {
 			case "movie":
-				err := db.Dot.Select(db.Client, &movies, "feed-search", query)
+				err := db.Client.Select(&movies, querySearch, query)
 
 				if err != nil {
 					return err
 				}
 			case "actor", "cast":
-				err := db.Dot.Select(db.Client, &persons, "feed-search-job", query, "cast")
+				err := db.Client.Select(&persons, queryJob, query, "cast")
 				searchQueryType = "person"
 
 				if err != nil {
 					return err
 				}
 			case "director", "writer", "producer", "composer", "cinematographer", "editor":
-				err := db.Dot.Select(db.Client, &persons, "feed-search-job", query, queryType)
+				err := db.Client.Select(&persons, queryJob, query, queryType)
 				searchQueryType = "person"
 
 				if err != nil {
 					return err
 				}
 			case "rating":
-				err := db.Dot.Select(db.Client, &movies, "feed-search-rating", query, userId)
+				err := db.Client.Select(&movies, `
+SELECT
+    m.id,
+    m.title,
+    m.overview,
+    se.name AS "series",
+    ms.number_in_series,
+    m.release_date AS watched_at
+FROM
+    movie AS m
+    LEFT JOIN movie_series AS ms ON ms.movie_id = m.id
+    LEFT JOIN series AS se ON se.id = ms.series_id
+    LEFT JOIN rating AS r ON r.movie_id = m.id
+WHERE
+    r.rating = $1
+    AND r.user_id = $2
+ORDER BY
+    m.release_date DESC
+					`, query, userId)
 
 				if err != nil {
 					return err
 				}
 			}
 		} else {
-			err := db.Dot.Select(db.Client, &movies, "feed-search", searchQuery)
+			err := db.Client.Select(&movies, querySearch, searchQuery)
 
 			if err != nil {
 				return err
 			}
 		}
 	} else {
-		err := db.Dot.Select(db.Client, &movies, "feed", (page-1)*20, userId)
+		err := db.Client.Select(&movies, `
+SELECT
+    m.id,
+    m.title,
+    m.overview,
+    m.release_date,
+    se.name AS "series",
+    ms.number_in_series,
+    s.date at time zone 'UTC' at time zone 'Europe/Stockholm' AS watched_at
+FROM
+    seen AS s
+    INNER JOIN movie AS m ON m.id = s.movie_id
+    LEFT JOIN movie_series AS ms ON ms.movie_id = m.id
+    LEFT JOIN series AS se ON se.id = ms.series_id
+WHERE
+    user_id = $2
+ORDER BY
+    s.date DESC OFFSET $1
+LIMIT 20
+			`, (page-1)*20, userId)
 
 		c.Set("HX-Push-Url", "/")
 

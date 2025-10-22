@@ -60,21 +60,21 @@ func GetStats(c *fiber.Ctx) error {
 	var wg sync.WaitGroup
 
 	queries := []QueryTask{
+		{executeQuery("get", &awardNominations, "stats-most-award-nominations", userId), "stats-most-award-nominations"},
+		{executeQuery("get", &awardWins, "stats-most-award-wins", userId), "stats-most-award-wins"},
+		{executeQuery("get", &reviews, "stats-reviews", userId), "stats-reviews"},
+		{executeQuery("get", &stats, "stats-data", userId), "stats-data"},
+		{executeQuery("select", &cast, "stats-most-watched-by-job", "cast", userId, "All"), "stats-most-watched-by-job"},
+		{executeQuery("select", &mostAwardedMovies, "stats-top-awarded-movies", userId), "stats-top-awarded-movies"},
 		{executeQuery("select", &movies, "stats-most-watched-movies", userId), "stats-most-watched-movies"},
+		{executeQuery("select", &moviesByYear, "stats-movies-by-year", userId), "stats-movies-by-year"},
+		{executeQuery("select", &ratings, "stats-ratings", userId), "stats-ratings"},
+		{executeQuery("select", &seenThisYearByMonth, "stats-watched-this-year-by-month", userId, currentYear), "stats-watched-this-year-by-month"},
 		{executeQuery("select", &shortestAndLongest, "shortest-and-longest-movie", userId), "shortest-and-longest-movie"},
 		{executeQuery("select", &totals, "total-watched-by-job-and-year", userId, "cast", "All"), "total-watched-by-job-and-year"},
-		{executeQuery("get", &stats, "stats-data", userId), "stats-data"},
-		{executeQuery("select", &wilhelms, "wilhelm-screams", userId), "wilhelm-screams"},
-		{executeQuery("select", &cast, "stats-most-watched-by-job", "cast", userId, "All"), "stats-most-watched-by-job"},
-		{executeQuery("select", &ratings, "stats-ratings", userId), "stats-ratings"},
-		{executeQuery("select", &yearRatings, "stats-ratings-this-year", userId, currentYear), "stats-ratings-this-year"},
 		{executeQuery("select", &watchedByYear, "stats-watched-by-year", userId), "stats-watched-by-year"},
-		{executeQuery("select", &seenThisYearByMonth, "stats-watched-this-year-by-month", userId, currentYear), "stats-watched-this-year-by-month"},
-		{executeQuery("select", &moviesByYear, "stats-movies-by-year", userId), "stats-movies-by-year"},
-		{executeQuery("get", &awardWins, "stats-most-award-wins", userId), "stats-most-award-wins"},
-		{executeQuery("get", &awardNominations, "stats-most-award-nominations", userId), "stats-most-award-nominations"},
-		{executeQuery("select", &mostAwardedMovies, "stats-top-awarded-movies", userId), "stats-top-awarded-movies"},
-		{executeQuery("get", &reviews, "stats-reviews", userId), "stats-reviews"},
+		{executeQuery("select", &wilhelms, "wilhelm-screams", userId), "wilhelm-screams"},
+		{executeQuery("select", &yearRatings, "stats-ratings-this-year", userId, currentYear), "stats-ratings-this-year"},
 	}
 
 	errChan := make(chan error, len(queries))

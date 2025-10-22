@@ -92,7 +92,11 @@ func DeleteFromWatchlist(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	_, err := db.Client.Exec(`DELETE FROM watchlist WHERE movie_id = $1 AND user_id = $2`, movieId, userId)
+	_, err := db.Client.Exec(`
+DELETE FROM watchlist
+WHERE movie_id = $1
+    AND user_id = $2
+		`, movieId, userId)
 
 	if err != nil {
 		return err

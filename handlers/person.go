@@ -15,9 +15,26 @@ func GetPersonByID(c *fiber.Ctx) error {
 	var person types.Person
 	var awards []types.Award
 
-	id, _ := utils.SelfHealingUrl(c.Params("id"))
+	q := db.MakeQueries(c)
 
-	err := db.Dot.Get(db.Client, &person, "person-by-id", id, c.Locals("UserId"))
+	err := db.Client.Get(&person, `
+SELECT
+    p.id,
+    p.name,
+    -- Function get_person_role_json returns a JSON array of movies
+    -- The function is defined in the database
+    get_person_role_with_seen_json (p.id, 'director'::job, $2) AS director,
+    get_person_role_with_seen_json (p.id, 'cast', $2) AS cast,
+    get_person_role_with_seen_json (p.id, 'writer', $2) AS writer,
+    get_person_role_with_seen_json (p.id, 'composer', $2) AS composer,
+    get_person_role_with_seen_json (p.id, 'producer', $2) AS producer,
+    get_person_role_with_seen_json (p.id, 'cinematographer', $2) AS cinematographer,
+    get_person_role_with_seen_json (p.id, 'editor', $2) AS editor
+FROM
+    person AS p
+WHERE
+    p.id = $1
+		`, q.Id, q.UserId)
 
 	if err != nil {
 		// TODO: Display 404 page
@@ -28,7 +45,22 @@ func GetPersonByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	err = db.Dot.Select(db.Client, &awards, "awards-by-person-id", id)
+	err = db.Client.Select(&awards, `
+SELECT
+    a.name AS "category",
+    a.detail,
+    a.winner,
+    a.year,
+    m.title,
+    m.id AS "movie_id"
+FROM
+    award a
+    INNER JOIN movie m ON m.imdb_id = a.imdb_id
+WHERE
+    person_id = $1
+ORDER BY
+    a.year DESC
+		`, q.Id)
 
 	if err != nil {
 		return err

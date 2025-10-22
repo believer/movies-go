@@ -51,7 +51,7 @@ func GetMovieByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	review, err := movieQueries.ReviewByID()
+	review, err := movieQueries.ReviewByMovieID()
 
 	if err != nil && err != sql.ErrNoRows {
 		return err
@@ -149,7 +149,13 @@ func GetMovieNew(c *fiber.Ctx) error {
 		return err
 	}
 
-	err = db.Client.Get(&movie, `SELECT id, title FROM movie WHERE id = $1`, id)
+	err = db.Client.Get(&movie, `SELECT
+    id,
+    title
+FROM
+    movie
+WHERE
+    id = $1`, id)
 
 	if err != nil {
 		return err
@@ -165,7 +171,13 @@ func GetMovieNew(c *fiber.Ctx) error {
 func GetMovieNewSeries(c *fiber.Ctx) error {
 	var options []list.DataListItem
 
-	err := db.Client.Select(&options, `SELECT id as "value", name FROM series ORDER BY name ASC`)
+	err := db.Client.Select(&options, `SELECT
+    id AS "value",
+    name
+FROM
+    series
+ORDER BY
+    name ASC`)
 
 	if err != nil {
 		return err
@@ -339,10 +351,24 @@ func PostMovieNew(c *fiber.Ctx) error {
 	tx := db.Client.MustBegin()
 
 	// Insert movie information
-	err = db.Dot.Get(
-		db.Client,
+	err = db.Client.Get(
 		&movieId,
-		"insert-movie",
+		`
+INSERT INTO movie (title, runtime, release_date, imdb_id, overview, poster, tagline, tmdb_id, wilhelm)
+    VALUES ($1, $2, NULLIF ($3, '')::date, $4, $5, $6, $7, $8, $9)
+ON CONFLICT (imdb_id)
+    DO UPDATE SET
+        title = excluded.title,
+        runtime = excluded.runtime,
+        release_date = excluded.release_date,
+        imdb_id = excluded.imdb_id,
+        overview = excluded.overview,
+        poster = excluded.poster,
+        tagline = excluded.tagline,
+        tmdb_id = excluded.tmdb_id
+    RETURNING
+        id
+		`,
 		movie.Title,
 		movie.Runtime,
 		movie.ReleaseDate,
@@ -362,7 +388,12 @@ func PostMovieNew(c *fiber.Ctx) error {
 
 	// Add review if any
 	if data.Review != "" {
-		db.Dot.MustExec(db.Client, "insert-review", data.Review, data.IsPrivateReview, userId, movieId)
+		tx.MustExec(`
+INSERT INTO review (content, private, user_id, movie_id)
+    VALUES ($1, $2, $3, $4)
+ON CONFLICT
+    DO NOTHING
+			`, data.Review, data.IsPrivateReview, userId, movieId)
 	}
 
 	// Insert series
@@ -371,14 +402,20 @@ func PostMovieNew(c *fiber.Ctx) error {
 
 		// Series can't be turned into an int, so it's a new series
 		if err != nil {
-			err = tx.Get(&seriesId, `INSERT INTO series (name) VALUES ($1) ON CONFLICT DO NOTHING RETURNING id`, data.Series)
+			err = tx.Get(&seriesId, `INSERT INTO series (name)
+    VALUES ($1)
+ON CONFLICT
+    DO NOTHING
+RETURNING
+    id`, data.Series)
 
 			if err != nil {
 				return err
 			}
 		}
 
-		_, err = tx.Exec(`INSERT INTO movie_series (movie_id, series_id, number_in_series) VALUES ($1, $2, $3)`, movieId, seriesId, data.NumberInSeries)
+		_, err = tx.Exec(`INSERT INTO movie_series (movie_id, series_id, number_in_series)
+    VALUES ($1, $2, $3)`, movieId, seriesId, data.NumberInSeries)
 
 		if err != nil {
 			c.Set("HX-Retarget", "#error")
@@ -390,7 +427,8 @@ func PostMovieNew(c *fiber.Ctx) error {
 
 	if data.IsWatchlist {
 		// Add to watchlist
-		_, err = tx.Exec(`INSERT INTO watchlist (user_id, movie_id) VALUES ($1, $2)`, userId, movieId)
+		_, err = tx.Exec(`INSERT INTO watchlist (user_id, movie_id)
+    VALUES ($1, $2)`, userId, movieId)
 
 		if err != nil {
 			c.Set("HX-Retarget", "#error")
@@ -398,13 +436,17 @@ func PostMovieNew(c *fiber.Ctx) error {
 		}
 	} else {
 		// Insert a view and delete from watchlist if exists
-		tx.MustExec(`INSERT INTO seen (user_id, movie_id, date) VALUES ($1, $2, $3)`, userId, movieId, watchedAt)
-		tx.MustExec(`DELETE FROM watchlist WHERE user_id = $1 AND movie_id = $2`, userId, movieId)
+		tx.MustExec(`INSERT INTO seen (user_id, movie_id, date)
+    VALUES ($1, $2, $3)`, userId, movieId, watchedAt)
+		tx.MustExec(`DELETE FROM watchlist
+WHERE user_id = $1
+    AND movie_id = $2`, userId, movieId)
 	}
 
 	// Insert rating
 	if data.Rating != 0 {
-		tx.MustExec(`INSERT INTO rating (user_id, movie_id, rating) VALUES ($1, $2, $3)`, userId, movieId, data.Rating)
+		tx.MustExec(`INSERT INTO rating (user_id, movie_id, rating)
+    VALUES ($1, $2, $3)`, userId, movieId, data.Rating)
 	}
 
 	// Insert languages
@@ -428,17 +470,26 @@ func PostMovieNew(c *fiber.Ctx) error {
 
 	if len(languages) > 0 {
 		if _, err := tx.NamedExec(
-			`INSERT INTO language (name, english_name, iso_639_1) 
-     VALUES (:name, :english_name, :iso_639_1) 
-     ON CONFLICT DO NOTHING`, languages,
+			`INSERT INTO
+LANGUAGE (name, english_name, iso_639_1)
+    VALUES (:name, :english_name, :iso_639_1)
+ON CONFLICT
+    DO NOTHING`, languages,
 		); err != nil {
 			return err
 		}
 
 		if _, err := tx.NamedExec(
-			`INSERT INTO movie_language (movie_id, language_id) 
-     VALUES (:movie_id, (SELECT id FROM language WHERE name = :name)) 
-     ON CONFLICT DO NOTHING`, languages,
+			`INSERT INTO movie_language (movie_id, language_id)
+    VALUES (:movie_id, (
+            SELECT
+                id
+            FROM
+                LANGUAGE
+            WHERE
+                name = :name))
+ON CONFLICT
+    DO NOTHING`, languages,
 		); err != nil {
 			return err
 		}
@@ -460,13 +511,25 @@ func PostMovieNew(c *fiber.Ctx) error {
 	}
 
 	if len(genres) > 0 {
-		_, err = tx.NamedExec(`INSERT INTO genre (name) VALUES (:name) ON CONFLICT (name) DO NOTHING`, genres)
+		_, err = tx.NamedExec(`INSERT INTO genre (name)
+    VALUES (:name)
+ON CONFLICT (name)
+    DO NOTHING`, genres)
 
 		if err != nil {
 			return err
 		}
 
-		_, err = tx.NamedExec(`INSERT INTO movie_genre (movie_id, genre_id) VALUES (:movie_id, (SELECT id FROM genre WHERE name = :name)) ON CONFLICT DO NOTHING`, genres)
+		_, err = tx.NamedExec(`INSERT INTO movie_genre (movie_id, genre_id)
+    VALUES (:movie_id, (
+            SELECT
+                id
+            FROM
+                genre
+            WHERE
+                name = :name))
+ON CONFLICT
+    DO NOTHING`, genres)
 
 		if err != nil {
 			return err
@@ -479,8 +542,9 @@ func PostMovieNew(c *fiber.Ctx) error {
 	for _, c := range movie.ProductionCountries {
 		tx.MustExec(`
 			INSERT INTO movie_country (movie_id, country_id)
-			VALUES ($1, $2)
-			ON CONFLICT DO NOTHING
+			    VALUES ($1, $2)
+			ON CONFLICT
+			    DO NOTHING
     `, movieId, c.ID)
 	}
 
@@ -490,14 +554,22 @@ func PostMovieNew(c *fiber.Ctx) error {
 	for _, c := range movie.ProductionCompanies {
 		tx.MustExec(`
 			INSERT INTO production_company (tmdb_id, name, country)
-			VALUES ($1, $2, $3)
-			ON CONFLICT DO NOTHING
+			    VALUES ($1, $2, $3)
+			ON CONFLICT
+			    DO NOTHING
 		`, c.ID, c.Name, c.OriginCountry)
 
 		tx.MustExec(`
 			INSERT INTO movie_company (movie_id, company_id)
-			VALUES ($1, (SELECT id FROM production_company WHERE tmdb_id = $2))
-			ON CONFLICT DO NOTHING
+			    VALUES ($1, (
+			            SELECT
+			                id
+			            FROM
+			                production_company
+			            WHERE
+			                tmdb_id = $2))
+			ON CONFLICT
+			    DO NOTHING
 		`, movieId, c.ID)
 	}
 
@@ -608,8 +680,9 @@ func PostMovieNew(c *fiber.Ctx) error {
 	if len(castStructs) > 0 {
 		_, err = tx.NamedExec(`
 	INSERT INTO person (name, original_id, popularity, profile_picture)
-	VALUES (:name, :id, :popularity, :profile_picture)
-	ON CONFLICT DO NOTHING
+	    VALUES (:name, :id, :popularity, :profile_picture)
+	ON CONFLICT
+	    DO NOTHING
 	`, castStructs)
 
 		if err != nil {
@@ -619,9 +692,18 @@ func PostMovieNew(c *fiber.Ctx) error {
 
 		_, err = tx.NamedExec(`
 	INSERT INTO movie_person (movie_id, person_id, job, character)
-	    VALUES (:movie_id, (SELECT id FROM person WHERE original_id = :id), 'cast', :character)
-	ON CONFLICT (movie_id, person_id, job)
-	DO UPDATE SET character = excluded.character
+	    VALUES (:movie_id, (
+	            SELECT
+	                id
+	            FROM
+	                person
+	            WHERE
+	                original_id = :id), 'cast', :character)
+	ON CONFLICT (movie_id,
+	    person_id,
+	    job)
+	    DO UPDATE SET
+	        character = excluded.character
 	`, castStructs)
 
 		if err != nil {
@@ -635,8 +717,9 @@ func PostMovieNew(c *fiber.Ctx) error {
 	if len(crewStructs) > 0 {
 		_, err = tx.NamedExec(`
 	INSERT INTO person (name, original_id, popularity, profile_picture)
-	VALUES (:name, :id, :popularity, :profile_picture)
-	ON CONFLICT DO NOTHING
+	    VALUES (:name, :id, :popularity, :profile_picture)
+	ON CONFLICT
+	    DO NOTHING
 	`, crewStructs)
 
 		if err != nil {
@@ -646,9 +729,18 @@ func PostMovieNew(c *fiber.Ctx) error {
 
 		_, err = tx.NamedExec(`
 	INSERT INTO movie_person (movie_id, person_id, job)
-	   VALUES (:movie_id, (SELECT id FROM person WHERE original_id = :id), :job)
-	ON CONFLICT (movie_id, person_id, job)
-	DO UPDATE SET job = excluded.job
+	    VALUES (:movie_id, (
+	            SELECT
+	                id
+	            FROM
+	                person
+	            WHERE
+	                original_id = :id), :job)
+	ON CONFLICT (movie_id,
+	    person_id,
+	    job)
+	    DO UPDATE SET
+	        job = excluded.job
 	`, crewStructs)
 
 		if err != nil {
@@ -684,7 +776,13 @@ func GetByImdbId(c *fiber.Ctx) error {
 		return c.SendString("")
 	}
 
-	err = db.Client.Get(&movie, `SELECT id, title FROM movie WHERE imdb_id = $1`, imdbId)
+	err = db.Client.Get(&movie, `SELECT
+    id,
+    title
+FROM
+    movie
+WHERE
+    imdb_id = $1`, imdbId)
 
 	if err != nil || movie.ID == 0 {
 		return c.SendString("")
@@ -694,11 +792,14 @@ func GetByImdbId(c *fiber.Ctx) error {
 }
 
 func DeleteSeenMovie(c *fiber.Ctx) error {
-	var watchedAt []movie.WatchedAt
+	q, err := db.MakeMovieQueries(c)
+
+	if err != nil {
+		return err
+	}
 
 	movieId, err := c.ParamsInt("id")
 	seenId := c.Params("seenId")
-	userId := c.Locals("UserId")
 	isAuth := utils.IsAuthenticated(c)
 
 	if err != nil {
@@ -709,13 +810,16 @@ func DeleteSeenMovie(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	_, err = db.Client.Exec(`DELETE FROM seen WHERE id = $1`, seenId)
+	_, err = db.Client.Exec(`
+DELETE FROM seen
+WHERE id = $1
+		`, seenId)
 
 	if err != nil {
 		return err
 	}
 
-	err = db.Dot.Select(db.Client, &watchedAt, "seen-by-user-id", movieId, userId)
+	watchedAt, err := q.SeenByUser()
 
 	if err != nil {
 		return err
@@ -737,7 +841,12 @@ func GetSeenMovie(c *fiber.Ctx) error {
 		return err
 	}
 
-	err = db.Client.Get(&time, `SELECT TO_CHAR(date AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/Stockholm', 'YYYY-MM-DD"T"HH24:MI') as date FROM seen WHERE id = $1`, seenId)
+	err = db.Client.Get(&time, `SELECT
+    TO_CHAR(date AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/Stockholm', 'YYYY-MM-DD"T"HH24:MI') AS date
+FROM
+    seen
+WHERE
+    id = $1`, seenId)
 
 	if err != nil {
 		return err
@@ -786,7 +895,12 @@ func UpdateSeenMovie(c *fiber.Ctx) error {
 		watchedAt = watchedAt.Add(time.Duration(now.Hour()))
 	}
 
-	_, err = db.Client.Exec(`UPDATE seen SET date = $1 WHERE id = $2`, watchedAt, seenId)
+	_, err = db.Client.Exec(`UPDATE
+    seen
+SET
+    date = $1
+WHERE
+    id = $2`, watchedAt, seenId)
 
 	if err != nil {
 		return err
@@ -806,7 +920,8 @@ func CreateSeenMovie(c *fiber.Ctx) error {
 
 	tx := db.Client.MustBegin()
 
-	tx.MustExec(`INSERT INTO seen (user_id, movie_id) VALUES ($1, $2)`, c.Locals("UserId"), c.Params("id"))
+	tx.MustExec(`INSERT INTO seen (user_id, movie_id)
+    VALUES ($1, $2)`, c.Locals("UserId"), c.Params("id"))
 
 	err := tx.Commit()
 
@@ -839,7 +954,30 @@ func GetMoviesByYear(c *fiber.Ctx) error {
 	year := c.Params("year")
 	userId := c.Locals("UserId").(string)
 
-	err := db.Dot.Select(db.Client, &movies, "movies-by-year", userId, year)
+	err := db.Client.Select(&movies, `
+SELECT
+    m.id,
+    m.title,
+    m.release_date,
+    m.imdb_id,
+    (s.id IS NOT NULL) AS "seen"
+FROM
+    movie AS m
+    LEFT JOIN ( SELECT DISTINCT ON (movie_id)
+            movie_id,
+            id
+        FROM
+            public.seen
+        WHERE
+            user_id = $1
+        ORDER BY
+            movie_id,
+            id) AS s ON m.id = s.movie_id
+WHERE
+    date_part('year', release_date) = $2
+ORDER BY
+    release_date
+		`, userId, year)
 
 	if err != nil {
 		return err
@@ -865,7 +1003,9 @@ func DeleteRating(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	_, err = db.Client.Exec(`DELETE FROM rating WHERE movie_id = $1 AND user_id = $2`, movieId, userId)
+	_, err = db.Client.Exec(`DELETE FROM rating
+WHERE movie_id = $1
+    AND user_id = $2`, movieId, userId)
 
 	if err != nil {
 		return err
@@ -933,7 +1073,8 @@ func PostRating(c *fiber.Ctx) error {
 		return err
 	}
 
-	_, err = db.Client.Exec(`INSERT INTO rating (user_id, movie_id, rating) VALUES ($1, $2, $3)`, userId, movieId, data.Rating)
+	_, err = db.Client.Exec(`INSERT INTO rating (user_id, movie_id, rating)
+    VALUES ($1, $2, $3)`, userId, movieId, data.Rating)
 
 	if err != nil {
 		return err
@@ -973,7 +1114,14 @@ func UpdateRating(c *fiber.Ctx) error {
 		return err
 	}
 
-	_, err = db.Client.Exec(`UPDATE rating SET rating = $1, updated_at = NOW() WHERE movie_id = $2 AND user_id = $3`, data.Rating, movieId, userId)
+	_, err = db.Client.Exec(`UPDATE
+    rating
+SET
+    rating = $1,
+    updated_at = NOW()
+WHERE
+    movie_id = $2
+    AND user_id = $3`, data.Rating, movieId, userId)
 
 	if err != nil {
 		return err
@@ -994,7 +1142,35 @@ func GetMovieAwards(c *fiber.Ctx) error {
 
 	imdbId := c.Params("imdbId")
 
-	err := db.Dot.Select(db.Client, &awards, "movie-awards", imdbId)
+	err := db.Client.Select(&awards, `
+SELECT
+    name AS category,
+    year,
+    COALESCE(JSONB_AGG(
+            CASE WHEN person IS NOT NULL
+                AND person_id IS NOT NULL THEN
+                JSONB_BUILD_OBJECT('name', person, 'id', person_id)
+            WHEN person IS NOT NULL THEN
+                JSONB_BUILD_OBJECT('name', person)
+            ELSE
+                JSONB_BUILD_OBJECT('name', 'N/A')
+            END) FILTER (WHERE person IS NOT NULL
+            OR person_id IS NOT NULL), '[]'::jsonb) AS nominees,
+    winner,
+    detail
+FROM
+    award
+WHERE
+    imdb_id = $1
+GROUP BY
+    name,
+    year,
+    winner,
+    detail
+ORDER BY
+    winner DESC,
+    category ASC
+		`, imdbId)
 
 	if err != nil {
 		return err
@@ -1018,15 +1194,19 @@ func GetMovieAwards(c *fiber.Ctx) error {
 }
 
 func EditMovieReview(c *fiber.Ctx) error {
-	var reviewData types.Review
 	isAuth := utils.IsAuthenticated(c)
 
 	if !isAuth {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	id := c.Params("id")
-	err := db.Dot.Get(db.Client, &reviewData, "review-by-id", id)
+	q, err := db.MakeMovieQueries(c)
+
+	if err != nil {
+		return err
+	}
+
+	reviewData, err := q.ReviewByID()
 
 	if err != nil {
 		return err
@@ -1036,7 +1216,11 @@ func EditMovieReview(c *fiber.Ctx) error {
 }
 
 func UpdateMovieReview(c *fiber.Ctx) error {
-	var reviewData types.Review
+	q, err := db.MakeMovieQueries(c)
+
+	if err != nil {
+		return err
+	}
 
 	id := c.Params("id")
 	isAuth := utils.IsAuthenticated(c)
@@ -1054,13 +1238,19 @@ func UpdateMovieReview(c *fiber.Ctx) error {
 		return err
 	}
 
-	_, err := db.Client.Exec(`UPDATE review SET content = $1, private = $2 WHERE id = $3`, data.Review, data.IsPrivateReview, id)
+	_, err = db.Client.Exec(`UPDATE
+    review
+SET
+    content = $1,
+    private = $2
+WHERE
+    id = $3`, data.Review, data.IsPrivateReview, id)
 
 	if err != nil {
 		return err
 	}
 
-	err = db.Dot.Get(db.Client, &reviewData, "review-by-id", id)
+	reviewData, err := q.ReviewByID()
 
 	if err != nil {
 		return err
@@ -1114,21 +1304,22 @@ func UpdateMovieByID(c *fiber.Ctx) error {
 
 	// Update movie information
 	_, err = tx.Exec(`
-		UPDATE
-				movie
-		SET
-				title = $2,
-				runtime = $3,
-				release_date = NULLIF($4, '')::date,
-				imdb_id = $5,
-				overview = $6,
-				poster = $7,
-				tagline = $8,
-				updated_at = NOW(),
-				tmdb_id = $9
-		WHERE
-				id = $1;
-	`,
+	UPDATE
+	    movie
+	SET
+	    title = $2,
+	    runtime = $3,
+	    release_date = NULLIF ($4, '')::date,
+	    imdb_id = $5,
+	    overview = $6,
+	    poster = $7,
+	    tagline = $8,
+	    updated_at = NOW(),
+	    tmdb_id = $9
+	WHERE
+	    id = $1;
+
+`,
 		id,
 		movie.Title,
 		movie.Runtime,
@@ -1167,17 +1358,26 @@ func UpdateMovieByID(c *fiber.Ctx) error {
 
 	if len(languages) > 0 {
 		if _, err := tx.NamedExec(
-			`INSERT INTO language (name, english_name, iso_639_1) 
-     VALUES (:name, :english_name, :iso_639_1) 
-     ON CONFLICT DO NOTHING`, languages,
+			`INSERT INTO
+LANGUAGE (name, english_name, iso_639_1)
+    VALUES (:name, :english_name, :iso_639_1)
+ON CONFLICT
+    DO NOTHING`, languages,
 		); err != nil {
 			return err
 		}
 
 		if _, err := tx.NamedExec(
-			`INSERT INTO movie_language (movie_id, language_id) 
-     VALUES (:movie_id, (SELECT id FROM language WHERE name = :name)) 
-     ON CONFLICT DO NOTHING`, languages,
+			`INSERT INTO movie_language (movie_id, language_id)
+    VALUES (:movie_id, (
+            SELECT
+                id
+            FROM
+                LANGUAGE
+            WHERE
+                name = :name))
+ON CONFLICT
+    DO NOTHING`, languages,
 		); err != nil {
 			return err
 		}
@@ -1199,13 +1399,25 @@ func UpdateMovieByID(c *fiber.Ctx) error {
 	}
 
 	if len(genres) > 0 {
-		_, err = tx.NamedExec(`INSERT INTO genre (name) VALUES (:name) ON CONFLICT (name) DO NOTHING`, genres)
+		_, err = tx.NamedExec(`INSERT INTO genre (name)
+    VALUES (:name)
+ON CONFLICT (name)
+    DO NOTHING`, genres)
 
 		if err != nil {
 			return err
 		}
 
-		_, err = tx.NamedExec(`INSERT INTO movie_genre (movie_id, genre_id) VALUES (:movie_id, (SELECT id FROM genre WHERE name = :name)) ON CONFLICT DO NOTHING`, genres)
+		_, err = tx.NamedExec(`INSERT INTO movie_genre (movie_id, genre_id)
+    VALUES (:movie_id, (
+            SELECT
+                id
+            FROM
+                genre
+            WHERE
+                name = :name))
+ON CONFLICT
+    DO NOTHING`, genres)
 
 		if err != nil {
 			return err
@@ -1217,8 +1429,9 @@ func UpdateMovieByID(c *fiber.Ctx) error {
 	for _, c := range movie.ProductionCountries {
 		tx.MustExec(`
 			INSERT INTO movie_country (movie_id, country_id)
-			VALUES ($1, $2)
-			ON CONFLICT DO NOTHING
+			    VALUES ($1, $2)
+			ON CONFLICT
+			    DO NOTHING
     `, id, c.ID)
 	}
 
@@ -1228,14 +1441,22 @@ func UpdateMovieByID(c *fiber.Ctx) error {
 	for _, c := range movie.ProductionCompanies {
 		tx.MustExec(`
 			INSERT INTO production_company (tmdb_id, name, country)
-			VALUES ($1, $2, $3)
-			ON CONFLICT DO NOTHING
+			    VALUES ($1, $2, $3)
+			ON CONFLICT
+			    DO NOTHING
 		`, c.ID, c.Name, c.OriginCountry)
 
 		tx.MustExec(`
 			INSERT INTO movie_company (movie_id, company_id)
-			VALUES ($1, (SELECT id FROM production_company WHERE tmdb_id = $2))
-			ON CONFLICT DO NOTHING
+			    VALUES ($1, (
+			            SELECT
+			                id
+			            FROM
+			                production_company
+			            WHERE
+			                tmdb_id = $2))
+			ON CONFLICT
+			    DO NOTHING
 		`, id, c.ID)
 	}
 
@@ -1346,8 +1567,9 @@ func UpdateMovieByID(c *fiber.Ctx) error {
 	if len(castStructs) > 0 {
 		_, err = tx.NamedExec(`
 	INSERT INTO person (name, original_id, popularity, profile_picture)
-	VALUES (:name, :id, :popularity, :profile_picture)
-	ON CONFLICT DO NOTHING
+	    VALUES (:name, :id, :popularity, :profile_picture)
+	ON CONFLICT
+	    DO NOTHING
 	`, castStructs)
 
 		if err != nil {
@@ -1357,9 +1579,18 @@ func UpdateMovieByID(c *fiber.Ctx) error {
 
 		_, err = tx.NamedExec(`
 	INSERT INTO movie_person (movie_id, person_id, job, character)
-	    VALUES (:movie_id, (SELECT id FROM person WHERE original_id = :id), 'cast', :character)
-	ON CONFLICT (movie_id, person_id, job)
-	DO UPDATE SET character = excluded.character
+	    VALUES (:movie_id, (
+	            SELECT
+	                id
+	            FROM
+	                person
+	            WHERE
+	                original_id = :id), 'cast', :character)
+	ON CONFLICT (movie_id,
+	    person_id,
+	    job)
+	    DO UPDATE SET
+	        character = excluded.character
 	`, castStructs)
 
 		if err != nil {
@@ -1373,8 +1604,9 @@ func UpdateMovieByID(c *fiber.Ctx) error {
 	if len(crewStructs) > 0 {
 		_, err = tx.NamedExec(`
 	INSERT INTO person (name, original_id, popularity, profile_picture)
-	VALUES (:name, :id, :popularity, :profile_picture)
-	ON CONFLICT DO NOTHING
+	    VALUES (:name, :id, :popularity, :profile_picture)
+	ON CONFLICT
+	    DO NOTHING
 	`, crewStructs)
 
 		if err != nil {
@@ -1384,9 +1616,18 @@ func UpdateMovieByID(c *fiber.Ctx) error {
 
 		_, err = tx.NamedExec(`
 	INSERT INTO movie_person (movie_id, person_id, job)
-	   VALUES (:movie_id, (SELECT id FROM person WHERE original_id = :id), :job)
-	ON CONFLICT (movie_id, person_id, job)
-	DO UPDATE SET job = excluded.job
+	    VALUES (:movie_id, (
+	            SELECT
+	                id
+	            FROM
+	                person
+	            WHERE
+	                original_id = :id), :job)
+	ON CONFLICT (movie_id,
+	    person_id,
+	    job)
+	    DO UPDATE SET
+	        job = excluded.job
 	`, crewStructs)
 
 		if err != nil {
