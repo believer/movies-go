@@ -9,26 +9,96 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func GetWatchlist(c *fiber.Ctx) error {
+func released(userId, sortOrder string) (types.Movies, error) {
 	var movies types.Movies
-	var unreleasedMovies types.Movies
-	var moviesWithoutReleaseDate types.Movies
 
-	userId := c.Locals("UserId")
+	err := db.Client.Select(&movies, `
+SELECT
+    m.id,
+    m.title,
+    m.imdb_id,
+    m.release_date,
+    w.created_at
+FROM
+    watchlist w
+    INNER JOIN movie m ON m.id = w.movie_id
+WHERE
+    user_id = $1
+    AND m.release_date <= CURRENT_DATE
+ORDER BY
+    CASE WHEN $2 = 'Release date' THEN
+        m.release_date
+    ELSE
+        w.created_at
+    END ASC
+		`, userId, sortOrder)
 
-	err := db.Dot.Select(db.Client, &movies, "watchlist", userId, "Date added")
+	return movies, err
+}
+
+func unreleased(userId, sortOrder string) (types.Movies, error) {
+	var movies types.Movies
+
+	err := db.Client.Select(&movies, `
+SELECT
+    m.id,
+    m.title,
+    m.imdb_id,
+    m.release_date,
+    w.created_at
+FROM
+    watchlist w
+    INNER JOIN movie m ON m.id = w.movie_id
+WHERE
+    user_id = $1
+    AND m.release_date > CURRENT_DATE
+ORDER BY
+    CASE WHEN $2 = 'Date added' THEN
+        w.created_at
+    ELSE
+        m.release_date
+    END ASC
+		`, userId, sortOrder)
+
+	return movies, err
+}
+
+func tbd(userId string) (types.Movies, error) {
+	var movies types.Movies
+
+	err := db.Client.Select(&movies, `
+SELECT
+    m.id,
+    m.title,
+    m.imdb_id,
+    m.release_date,
+    w.created_at
+FROM
+    watchlist w
+    INNER JOIN movie m ON m.id = w.movie_id
+WHERE
+    user_id = $1
+    AND m.release_date IS NULL
+		`, userId)
+
+	return movies, err
+}
+
+func GetWatchlist(c *fiber.Ctx) error {
+	userId := c.Locals("UserId").(string)
+	movies, err := released(userId, "Date added")
 
 	if err != nil {
 		return err
 	}
 
-	err = db.Dot.Select(db.Client, &unreleasedMovies, "watchlist-unreleased", userId, "Release date")
+	unreleasedMovies, err := unreleased(userId, "Release date")
 
 	if err != nil {
 		return err
 	}
 
-	err = db.Dot.Select(db.Client, &moviesWithoutReleaseDate, "watchlist-no-date", userId)
+	moviesWithoutReleaseDate, err := tbd(userId)
 
 	if err != nil {
 		return err
@@ -42,12 +112,12 @@ func GetWatchlist(c *fiber.Ctx) error {
 }
 
 func GetWatchlistMovies(c *fiber.Ctx) error {
+	sortOrder := c.Query("sortOrder", "Date added")
+	userId := c.Locals("UserId").(string)
+
 	var movies types.Movies
 
-	sortOrder := c.Query("sortOrder", "Date added")
-	userId := c.Locals("UserId")
-
-	err := db.Dot.Select(db.Client, &movies, "watchlist", userId, sortOrder)
+	movies, err := released(userId, sortOrder)
 
 	if err != nil {
 		return err
@@ -63,12 +133,10 @@ func GetWatchlistMovies(c *fiber.Ctx) error {
 }
 
 func GetWatchlistUnreleasedMovies(c *fiber.Ctx) error {
-	var movies types.Movies
-
 	sortOrder := c.Query("sortOrder", "Release date")
-	userId := c.Locals("UserId")
+	userId := c.Locals("UserId").(string)
 
-	err := db.Dot.Select(db.Client, &movies, "watchlist-unreleased", userId, sortOrder)
+	movies, err := unreleased(userId, sortOrder)
 
 	if err != nil {
 		return err

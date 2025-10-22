@@ -28,7 +28,6 @@ func InitializeConnection() error {
 	files := []string{
 		"awardQueries",
 		"statsQueries",
-		"watchlistQueries",
 	}
 
 	var queries []*dotsql.DotSql
