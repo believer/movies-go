@@ -192,10 +192,6 @@ SELECT
 func (mq *MovieQueries) SeenByUser() ([]movie.WatchedAt, error) {
 	var watchedAt []movie.WatchedAt
 
-	if !mq.IsAuthenticated {
-		return watchedAt, fiber.ErrUnauthorized
-	}
-
 	err := Client.Select(&watchedAt, `
 SELECT
     id,
