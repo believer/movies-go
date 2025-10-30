@@ -172,7 +172,16 @@ LIMIT 20
 	groupedMovies := make(map[string]types.Movies)
 
 	for _, m := range movies {
-		key := m.WatchedAt.Format("2006-01-January")
+		key := "TBD"
+
+		if m.WatchedAt.Valid {
+			key = m.WatchedAt.Time.Format("2006-01-January")
+		}
+
+		if searchQuery != "" && m.ReleaseDate.Valid {
+			key = m.ReleaseDate.Time.Format("2006-01-January")
+		}
+
 		groupedMovies[key] = append(groupedMovies[key], m)
 	}
 

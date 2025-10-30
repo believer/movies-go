@@ -98,7 +98,7 @@ type Movie struct {
 	Tagline             string                   `db:"tagline" json:"tagline"`
 	Title               string                   `db:"title" json:"title"`
 	UpdatedAt           time.Time                `db:"updated_at" json:"updatedAt"`
-	WatchedAt           time.Time                `db:"watched_at" json:"watchedAt"`
+	WatchedAt           sql.NullTime             `db:"watched_at" json:"watchedAt"`
 	WilhelmScream       sql.NullBool             `db:"wilhelm" json:"wilhelm"`
 }
 
