@@ -1,5 +1,7 @@
 import { expect, Page, test } from '@playwright/test';
 
+const url = process.env.E2E_URL || 'https://movies.willcodefor.beer'
+
 async function search(page: Page, query: string) {
   const searchbox = page.getByRole('searchbox', { name: 'Find a movie, actor, director' })
 
@@ -10,7 +12,7 @@ async function search(page: Page, query: string) {
 }
 
 test('test pages', async ({ page }) => {
-  await page.goto('https://movies.willcodefor.beer');
+  await page.goto(url);
 
   // Go to moviee
   await page.getByRole('link', { name: 'Fast X' }).click();

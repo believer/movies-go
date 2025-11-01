@@ -43,5 +43,11 @@ dev: css
 test:
 	@go test ./...
 
+smoke: test
+	@E2E_URL=http://localhost:8080 pnpm exec playwright test
+
+e2e-ui:
+	@E2E_URL=http://localhost:8080 pnpm exec playwright test --ui
+
 clean:
 	rm -f $(CSS_OUTPUT)
