@@ -94,10 +94,13 @@ templ Feed(props FeedProps) {
 								}
 								{{ currentYear = year }}
 								for _, movie := range props.GroupedMovies[k] {
-									<li>
-										<a href={ movie.LinkTo() } class="feed-list__card focus">
+									<li class="feed-list__card">
 											<header>
-												<h2>{ movie.Title } </h2>
+												<h2>
+                          <a href={ movie.LinkTo() } class="focus">
+                            { movie.Title }
+                          </a>
+                        </h2>
 												<div class="subtitle">
                           if movie.WatchedAt.Valid { 
                             <time
@@ -119,7 +122,6 @@ templ Feed(props FeedProps) {
 													{ movie.Overview }
 												</p>
 											}
-										</a>
 									</li>
 								}
 							}

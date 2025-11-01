@@ -391,10 +391,17 @@
     }
 
     .feed-list__card {
+      position: relative;
       display: flex;
       flex-direction: column;
       row-gap: var(--spacing-4);
       border-radius: var(--rounded-sm);
+
+      a::after {
+        position: absolute;
+        inset: 0;
+        content: "";
+      }
 
       header {
         display: flex;
