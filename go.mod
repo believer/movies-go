@@ -13,7 +13,6 @@ require (
 	github.com/PuerkitoBio/goquery v1.10.1
 	github.com/a-h/templ v0.3.960
 	github.com/golang-jwt/jwt/v5 v5.3.0
-	github.com/qustavo/dotsql v1.2.0
 	golang.org/x/crypto v0.43.0
 	golang.org/x/text v0.30.0
 )
@@ -33,7 +32,6 @@ require (
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-runewidth v0.0.19 // indirect
-	github.com/swithek/dotsqlx v1.2.0
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.67.0 // indirect
 	golang.org/x/sys v0.37.0 // indirect
