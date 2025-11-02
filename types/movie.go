@@ -90,7 +90,7 @@ type Movie struct {
 	ProductionCountries MovieProductionCountries `db:"production_countries"`
 	RatedAt             sql.NullTime             `db:"rated_at" json:"ratedAt"`
 	Rating              sql.NullInt64            `db:"rating" json:"rating"`
-	ReleaseDate         utils.NullTime           `db:"release_date" json:"release_date"`
+	ReleaseDate         utils.NullTime           `db:"release_date" json:"releaseDate"`
 	Runtime             int                      `db:"runtime" json:"runtime"`
 	Seen                bool                     `db:"seen" json:"seen"`
 	Series              sql.NullString           `db:"series" json:"series"`
