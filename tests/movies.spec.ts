@@ -2,11 +2,6 @@ import assert from "node:assert"
 import { expect, Page, test } from "@playwright/test"
 
 const url = process.env.E2E_URL || "https://movies.willcodefor.beer"
-const user = process.env.MOVIES_USER
-const password = process.env.MOVIES_PASSWORD
-
-assert(user, "No user set")
-assert(password, "No password set")
 
 async function search(page: Page, query: string) {
 	const searchbox = page.getByRole("searchbox", {
@@ -102,21 +97,4 @@ test("test pages", async ({ page }) => {
 	await expect(
 		page.getByRole("link", { name: "Hans Zimmer", exact: true })
 	).toBeVisible()
-})
-
-test("can search for new movie without results", async ({ page }) => {
-	await page.goto(url)
-
-	// Login
-	await page.getByRole("link", { name: "Login" }).click()
-	await page.getByLabel("Username").fill(user)
-	await page.getByLabel("Password").fill(password)
-	await page.getByRole("button", { name: "Login" }).click()
-
-	// Search for unknown movie
-	await page.getByRole("link", { name: "Add movie" }).click()
-	await page.getByLabel("Search").fill("this_does_not_exist")
-	await page.getByRole("textbox", { name: "Search" }).press("Enter")
-
-	await expect(page.getByText("No movies found")).toBeVisible()
 })

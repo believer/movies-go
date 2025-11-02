@@ -48,9 +48,6 @@ jobs:
         run: pnpm exec playwright install --with-deps
       - name: Run Playwright tests
         run: pnpm exec playwright test
-        env:
-          MOVIES_USER: ${{ secrets.MOVIES_USER }}
-          MOVIES_PASSWORD: ${{ secrets.MOVIES_PASSWORD }}
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
