@@ -43,7 +43,9 @@ dev: css
 test:
 	@go test ./...
 
-smoke: test
+smoke: test e2e
+
+e2e:
 	@E2E_URL=http://localhost:8080 pnpm exec playwright test
 
 e2e-ui:

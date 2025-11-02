@@ -945,6 +945,10 @@ func HandleSearch(c *fiber.Ctx) error {
 
 	movies := tmdbSearchMovie(query)
 
+	if len(movies.Results) == 0 {
+		return utils.Render(c, views.MovieSearchEmpty())
+	}
+
 	return utils.Render(c, views.MovieSearch(movies.Results[:5]))
 }
 
