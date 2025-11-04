@@ -72,7 +72,12 @@ templ Feed(props FeedProps) {
 							{{ var currentHeader = props.LastHeader }}
 							{{ var currentYear = currentHeader[:4] }}
 							for _, k := range props.SortedKeys {
-								{{ var year = ""; if k != "TBD" { year = k[:4] } }}
+								{{
+									var year = ""
+									if k != "TBD" {
+										year = k[:4]
+									}
+								}}
 								{{ currentHeader = k }}
 								if currentYear != year {
 									<li class="feed-list__year-wrap">
@@ -84,44 +89,44 @@ templ Feed(props FeedProps) {
 								if props.LastHeader != currentHeader {
 									<li class="feed-list__month-wrap">
 										<div class="feed-list__month">
-                      if currentHeader != "TBD" {
-                          { currentHeader[8:] }
-                      } else {
-                        TBD
-                      }
+											if currentHeader != "TBD" {
+												{ currentHeader[8:] }
+											} else {
+												TBD
+											}
 										</div>
 									</li>
 								}
 								{{ currentYear = year }}
 								for _, movie := range props.GroupedMovies[k] {
 									<li class="feed-list__card">
-											<header>
-												<h2>
-                          <a href={ movie.LinkTo() } class="focus">
-                            { movie.Title }
-                          </a>
-                        </h2>
-												<div class="subtitle">
-                          if movie.WatchedAt.Valid { 
-                            <time
-                              title={ movie.WatchedAt.Time.Format("2006-01-02 15:04") }
-                              datetime={ movie.WatchedAt.Time.Format("2006-01-02T15:04:05Z") }
-                            >
-                              { movie.WatchedAt.Time.Format("January 2 2006") }
-                            </time>
-                          }
-													if movie.Series.Valid && movie.NumberInSeries.Valid {
-														<span>
-															- { movie.Series.String } #{  movie.NumberInSeries.Int64 }
-														</span>
-													}
-												</div>
-											</header>
-											if movie.Overview != "" {
-												<p class="overview">
-													{ movie.Overview }
-												</p>
-											}
+										<header>
+											<h2>
+												<a href={ movie.LinkTo() } class="focus">
+													{ movie.Title }
+												</a>
+											</h2>
+											<div class="subtitle">
+												if movie.WatchedAt.Valid {
+													<time
+														title={ movie.WatchedAt.Time.Format("2006-01-02 15:04") }
+														datetime={ movie.WatchedAt.Time.Format("2006-01-02T15:04:05Z") }
+													>
+														{ movie.WatchedAt.Time.Format("January 2 2006") }
+													</time>
+												}
+												if movie.Series.Valid && movie.NumberInSeries.Valid {
+													<span>
+														- { movie.Series.String } #{  movie.NumberInSeries.Int64 }
+													</span>
+												}
+											</div>
+										</header>
+										if movie.Overview != "" {
+											<p class="overview">
+												{ movie.Overview }
+											</p>
+										}
 									</li>
 								}
 							}
