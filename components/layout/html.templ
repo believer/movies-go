@@ -53,12 +53,12 @@ templ Html(props ...Props) {
 			<script defer src="/public/htmx.head-support.20240912.js"></script>
 			<script defer src="/public/hyperscript.0.9.12.min.js"></script>
 			<script>
-        const mode = localStorage.getItem("mode")
+				const mode = localStorage.getItem("mode")
 
-        if (mode !== null) {
-          document.querySelector('html').style.setProperty("color-scheme", mode)
-        }
-      </script>
+				if (mode !== null) {
+					document.querySelector("html").style.setProperty("color-scheme", mode)
+				}
+			</script>
 		</head>
 		<nav>
 			<section>
@@ -74,14 +74,16 @@ templ Html(props ...Props) {
 			</section>
 			@auth.IsAuthenticated() {
 				<section>
-					@link.Link(link.Props{
-						Class: "link--button link--new",
-						Href:  templ.SafeURL("/movie/new"),
-						Attrs: templ.Attributes{
-							"aria-label": "Add movie",
-						},
-					}) {
-						@icon.Icon(icon.Props{Name: icon.Plus})
+					if p.DisplayAdd {
+						@link.Link(link.Props{
+							Class: "link--button link--new",
+							Href:  templ.SafeURL("/movie/new"),
+							Attrs: templ.Attributes{
+								"aria-label": "Add movie",
+							},
+						}) {
+							@icon.Icon(icon.Props{Name: icon.Plus})
+						}
 					}
 					<button class="link link--button" popovertarget="settings" aria-label="Settings">
 						@icon.Icon(icon.Props{Name: icon.Cog})

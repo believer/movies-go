@@ -120,7 +120,7 @@ func Html(props ...Props) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<meta property=\"og:type\" content=\"website\"><meta property=\"og:url\" content=\"https://movies.willcodefor.beer/\"><meta name=\"twitter:card\" content=\"summary\"><meta name=\"twitter:site\" content=\"@rnattochdag\"><meta name=\"twitter:creator\" content=\"@rnattochdag\"><link rel=\"icon\" type=\"image/png\" href=\"/public/favicon.png\"><link href=\"/public/styles.389137.css\" rel=\"stylesheet\"><link rel=\"manifest\" href=\"/public/manifest.webmanifest\"><script defer src=\"/public/htmx.2.0.3.min.js\"></script><script defer src=\"/public/htmx.head-support.20240912.js\"></script><script defer src=\"/public/hyperscript.0.9.12.min.js\"></script><script>\n        const mode = localStorage.getItem(\"mode\")\n\n        if (mode !== null) {\n          document.querySelector('html').style.setProperty(\"color-scheme\", mode)\n        }\n      </script></head><nav><section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<meta property=\"og:type\" content=\"website\"><meta property=\"og:url\" content=\"https://movies.willcodefor.beer/\"><meta name=\"twitter:card\" content=\"summary\"><meta name=\"twitter:site\" content=\"@rnattochdag\"><meta name=\"twitter:creator\" content=\"@rnattochdag\"><link rel=\"icon\" type=\"image/png\" href=\"/public/favicon.png\"><link href=\"/public/styles.389137.css\" rel=\"stylesheet\"><link rel=\"manifest\" href=\"/public/manifest.webmanifest\"><script defer src=\"/public/htmx.2.0.3.min.js\"></script><script defer src=\"/public/htmx.head-support.20240912.js\"></script><script defer src=\"/public/hyperscript.0.9.12.min.js\"></script><script>\n\t\t\t\tconst mode = localStorage.getItem(\"mode\")\n\n\t\t\t\tif (mode !== null) {\n\t\t\t\t\tdocument.querySelector(\"html\").style.setProperty(\"color-scheme\", mode)\n\t\t\t\t}\n\t\t\t</script></head><nav><section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -210,33 +210,35 @@ func Html(props ...Props) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Var10 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-				if !templ_7745c5c3_IsBuffer {
-					defer func() {
-						templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-						if templ_7745c5c3_Err == nil {
-							templ_7745c5c3_Err = templ_7745c5c3_BufErr
-						}
-					}()
-				}
-				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = icon.Icon(icon.Props{Name: icon.Plus}).Render(ctx, templ_7745c5c3_Buffer)
+			if p.DisplayAdd {
+				templ_7745c5c3_Var10 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+					templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+					templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+					if !templ_7745c5c3_IsBuffer {
+						defer func() {
+							templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+							if templ_7745c5c3_Err == nil {
+								templ_7745c5c3_Err = templ_7745c5c3_BufErr
+							}
+						}()
+					}
+					ctx = templ.InitializeContext(ctx)
+					templ_7745c5c3_Err = icon.Icon(icon.Props{Name: icon.Plus}).Render(ctx, templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					return nil
+				})
+				templ_7745c5c3_Err = link.Link(link.Props{
+					Class: "link--button link--new",
+					Href:  templ.SafeURL("/movie/new"),
+					Attrs: templ.Attributes{
+						"aria-label": "Add movie",
+					},
+				}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				return nil
-			})
-			templ_7745c5c3_Err = link.Link(link.Props{
-				Class: "link--button link--new",
-				Href:  templ.SafeURL("/movie/new"),
-				Attrs: templ.Attributes{
-					"aria-label": "Add movie",
-				},
-			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
 			}
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<button class=\"link link--button\" popovertarget=\"settings\" aria-label=\"Settings\">")
 			if templ_7745c5c3_Err != nil {

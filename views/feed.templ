@@ -22,7 +22,7 @@ type FeedProps struct {
 }
 
 templ Feed(props FeedProps) {
-	@layout.Html() {
+	@layout.Html(layout.Props{DisplayAdd: true}) {
 		<div class="feed-search">
 			<search>
 				<div class="input">
