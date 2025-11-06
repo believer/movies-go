@@ -3,17 +3,16 @@ package types
 import (
 	"believer/movies/utils"
 	"fmt"
-	"time"
 
 	"github.com/a-h/templ"
 )
 
 type PersonMovie struct {
-	ID          int       `json:"id" db:"id"`
-	Title       string    `json:"title" db:"title"`
-	ReleaseDate time.Time `json:"release_date" db:"release_date"`
-	Seen        bool      `json:"seen" db:"seen"`
-	Character   string    `json:"character" db:"character"`
+	ID          int            `json:"id" db:"id"`
+	Title       string         `json:"title" db:"title"`
+	ReleaseDate utils.NullTime `json:"releaseDate" db:"release_date"`
+	Seen        bool           `json:"seen" db:"seen"`
+	Character   string         `json:"character" db:"character"`
 }
 
 // Link to the movie
@@ -23,17 +22,29 @@ func (m PersonMovie) LinkTo() templ.SafeURL {
 
 // Release year
 func (m PersonMovie) ReleaseYear() string {
-	return m.ReleaseDate.Format("2006")
+	if !m.ReleaseDate.Valid {
+		return ""
+	}
+
+	return m.ReleaseDate.Time.Format("2006")
 }
 
 // The movie's release date formatted as ISO 8601 - YYYY-MM-DD
 func (m PersonMovie) ISOReleaseDate() string {
-	return m.ReleaseDate.Format("2006-01-02")
+	if !m.ReleaseDate.Valid {
+		return ""
+	}
+
+	return m.ReleaseDate.Time.Format("2006-01-02")
 }
 
 // Link to the movie's release year
 func (m PersonMovie) LinkToYear() templ.SafeURL {
-	return templ.URL(fmt.Sprintf("/year/%s", m.ReleaseDate.Format("2006")))
+	if !m.ReleaseDate.Valid {
+		return ""
+	}
+
+	return templ.URL(fmt.Sprintf("/year/%s", m.ReleaseDate.Time.Format("2006")))
 }
 
 type PersonMovies []PersonMovie

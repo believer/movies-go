@@ -22,8 +22,10 @@ templ credit(title string, data types.PersonMovies) {
 							}
 							@separator.Separator()
 							<span class="trailing">
-								@link.Link(link.Props{Href: movie.LinkToYear()}) {
-									{ movie.ReleaseYear() }
+								if movie.ReleaseDate.Valid {
+									@link.Link(link.Props{Href: movie.LinkToYear()}) {
+										{ movie.ReleaseYear() }
+									}
 								}
 								@seen.Seen(seen.Props{
 									Title: title,
