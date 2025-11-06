@@ -181,7 +181,7 @@
     max-width: 36rem;
     padding-inline: var(--spacing-5);
     padding-top: var(--spacing-2);
-    padding-bottom: calc(env(safe-area-inset-bottom) + 32px);
+    padding-bottom: calc(env(safe-area-inset-bottom) + 64px);
     margin-inline: auto;
 
     @media (width <= 480px) {
