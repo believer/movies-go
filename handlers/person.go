@@ -21,7 +21,7 @@ func GetPersonByID(c *fiber.Ctx) error {
 SELECT
     p.id,
     p.name,
-    -- Function get_person_role_json returns a JSON array of movies
+    -- Function get_person_role_with_seen_json returns a JSON array of movies
     -- The function is defined in the database
     get_person_role_with_seen_json (p.id, 'director'::job, $2) AS director,
     get_person_role_with_seen_json (p.id, 'cast', $2) AS cast,
