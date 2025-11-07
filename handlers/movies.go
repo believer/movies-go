@@ -554,7 +554,7 @@ ON CONFLICT
 	for _, c := range movie.ProductionCompanies {
 		tx.MustExec(`
 			INSERT INTO production_company (tmdb_id, name, country)
-			    VALUES ($1, $2, $3)
+			    VALUES ($1, $2, NULLIF ($3, ''))
 			ON CONFLICT
 			    DO NOTHING
 		`, c.ID, c.Name, c.OriginCountry)
