@@ -613,6 +613,17 @@
       align-items: center;
     }
   }
+
+  .watch-providers {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    column-gap: var(--spacing-2);
+
+    @media (width <= 480px) {
+      grid-template-columns: 1fr;
+      row-gap: var(--spacing-4);
+    }
+  }
 }
 
 @layer components {

@@ -71,3 +71,22 @@ type MovieCreditsResponse struct {
 	Cast []CastResult `json:"cast"`
 	Crew []CrewResult `json:"crew"`
 }
+
+// https://api.themoviedb.org/3/movie/{id}/watch/providers
+type MovieWatchProvidersResponse struct {
+	Results ProviderCountries `json:"results"`
+}
+
+type ProviderCountries struct {
+	SE ProviderCountry `json:"SE"`
+}
+
+type ProviderCountry struct {
+	Buy          []Provider `json:"buy"`
+	Rent         []Provider `json:"rent"`
+	Subscription []Provider `json:"flatrate"`
+}
+
+type Provider struct {
+	Name string `json:"provider_name"`
+}

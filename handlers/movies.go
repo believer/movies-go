@@ -7,18 +7,14 @@ import (
 	"believer/movies/components/review"
 	"believer/movies/components/seen"
 	"believer/movies/db"
+	"believer/movies/services/tmdb"
 	"believer/movies/types"
 	"believer/movies/utils"
 	"believer/movies/utils/awards"
 	"believer/movies/views"
 	"database/sql"
-	"encoding/json"
 	"fmt"
-	"io"
 	"log"
-	"net/http"
-	"net/url"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -186,98 +182,6 @@ ORDER BY
 	return utils.Render(c, list.DataList(options, "series_list"))
 }
 
-func tmdbFetchMovie(id string) types.MovieDetailsResponse {
-	tmdbKey := os.Getenv("TMDB_API_KEY")
-
-	resp, err := http.Get(fmt.Sprintf("https://api.themoviedb.org/3/movie/%s?api_key=%s", id, tmdbKey))
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	defer resp.Body.Close()
-
-	if resp.StatusCode == 404 {
-		log.Printf("Movie information not found")
-	}
-
-	body, err := io.ReadAll(resp.Body)
-
-	if err != nil {
-		log.Print(err)
-	}
-
-	var result types.MovieDetailsResponse
-
-	err = json.Unmarshal([]byte(body), &result)
-
-	if err != nil {
-		log.Print(err)
-	}
-
-	return result
-}
-
-func tmdbFetchMovieCredits(id string) types.MovieCreditsResponse {
-	tmdbKey := os.Getenv("TMDB_API_KEY")
-
-	resp, err := http.Get(fmt.Sprintf("https://api.themoviedb.org/3/movie/%s/credits?api_key=%s", id, tmdbKey))
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	defer resp.Body.Close()
-
-	if resp.StatusCode == 404 {
-		log.Fatal("Movie credits not found")
-	}
-
-	body, err := io.ReadAll(resp.Body)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var result types.MovieCreditsResponse
-
-	err = json.Unmarshal([]byte(body), &result)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return result
-}
-
-func tmdbSearchMovie(query string) types.SearchMovieResponse {
-	tmdbBaseUrl := "https://api.themoviedb.org/3/search/movie"
-	tmdbKey := os.Getenv("TMDB_API_KEY")
-
-	resp, err := http.Get(tmdbBaseUrl + "?query=" + url.QueryEscape(query) + "&api_key=" + tmdbKey)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	defer resp.Body.Close()
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var result types.SearchMovieResponse
-
-	err = json.Unmarshal([]byte(body), &result)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return result
-}
-
 type NewPerson struct {
 	ID             int            `db:"id"`
 	Name           string         `db:"name"`
@@ -331,8 +235,18 @@ func PostMovieNew(c *fiber.Ctx) error {
 	}
 
 	movieId := 0
-	movie := tmdbFetchMovie(imdbId)
-	movieCast := tmdbFetchMovieCredits(imdbId)
+	tmdbApi := tmdb.New(imdbId)
+	movie, err := tmdbApi.Movie()
+
+	if err != nil {
+		return err
+	}
+
+	movieCast, err := tmdbApi.Credits()
+
+	if err != nil {
+		return err
+	}
 
 	watchedAt, err := time.Parse("2006-01-02T15:04", data.WatchedAt)
 
@@ -943,7 +857,12 @@ func HandleSearch(c *fiber.Ctx) error {
 		return utils.Render(c, views.MovieSearch([]types.SearchResult{}))
 	}
 
-	movies := tmdbSearchMovie(query)
+	tmdbApi := tmdb.New("")
+	movies, err := tmdbApi.Search(query)
+
+	if err != nil {
+		return err
+	}
 
 	if len(movies.Results) == 0 {
 		return utils.Render(c, views.MovieSearchEmpty())
@@ -1290,8 +1209,18 @@ func UpdateMovieByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	movie := tmdbFetchMovie(imdbId)
-	movieCast := tmdbFetchMovieCredits(imdbId)
+	tmdbApi := tmdb.New(imdbId)
+	movie, err := tmdbApi.Movie()
+
+	if err != nil {
+		return err
+	}
+
+	movieCast, err := tmdbApi.Credits()
+
+	if err != nil {
+		return err
+	}
 
 	tx := db.Client.MustBegin()
 
@@ -1655,4 +1584,33 @@ ON CONFLICT
 
 	return c.SendStatus(fiber.StatusOK)
 
+}
+
+func WatchProviders(c *fiber.Ctx) error {
+	movieQueries, err := db.MakeMovieQueries(c)
+
+	if err != nil {
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+	var movie types.Movie
+
+	err = db.Client.Get(&movie, "SELECT imdb_id, title FROM movie WHERE id = $1", movieQueries.Id)
+
+	t := tmdb.New(movie.ImdbId)
+	v, err := t.WatchProviders()
+
+	if err != nil {
+		return err
+	}
+
+	hasProviders := len(v.Results.SE.Buy) > 0 || len(v.Results.SE.Rent) > 0 || len(v.Results.SE.Subscription) > 0
+
+	if !hasProviders {
+		return c.SendStatus(fiber.StatusNotFound)
+	}
+
+	// Only Swedish providers supported
+	justWatchUrl := fmt.Sprintf("https://www.justwatch.com/se/film/%s", utils.Slugify(movie.Title))
+
+	return utils.Render(c, views.WatchProviders(v, justWatchUrl))
 }
