@@ -142,4 +142,10 @@ func SetupRoutes(app *fiber.App) {
 	seriesGroup := app.Group("/series")
 
 	seriesGroup.Get("/:id", h.GetSeries)
+
+	// Settings
+	// --------------------------
+	settingsGroup := app.Group("/settings")
+
+	settingsGroup.Get("/", h.Settings)
 }

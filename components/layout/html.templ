@@ -2,7 +2,6 @@ package layout
 
 import "believer/movies/components/auth"
 import "believer/movies/components/icon"
-import "believer/movies/components/input"
 import "believer/movies/components/link"
 
 templ Html(props ...Props) {
@@ -47,18 +46,16 @@ templ Html(props ...Props) {
 			<meta name="twitter:site" content="@rnattochdag"/>
 			<meta name="twitter:creator" content="@rnattochdag"/>
 			<link rel="icon" type="image/png" href="/public/favicon.png"/>
-			<link href="/public/styles.afe670.css" rel="stylesheet"/>
+			<link href="/public/styles.dc9476.css" rel="stylesheet"/>
 			<link rel="manifest" href="/public/manifest.webmanifest"/>
 			<script defer src="/public/htmx.2.0.3.min.js"></script>
 			<script defer src="/public/htmx.head-support.20240912.js"></script>
 			<script defer src="/public/hyperscript.0.9.12.min.js"></script>
 			<script>
-				const mode = localStorage.getItem("mode");
+				const mode = localStorage.getItem("mode")
 
 				if (mode !== null) {
-					document
-						.querySelector("html")
-						.style.setProperty("color-scheme", mode);
+					document.querySelector("html").style.setProperty("color-scheme", mode)
 				}
 			</script>
 		</head>
@@ -87,38 +84,15 @@ templ Html(props ...Props) {
 							@icon.Icon(icon.Props{Name: icon.Plus})
 						}
 					}
-					<button class="link link--button" popovertarget="settings" aria-label="Settings">
+          @link.Link(link.Props{
+            Class: "link--button link--new",
+            Href:  templ.SafeURL("/settings"),
+            Attrs: templ.Attributes{
+              "aria-label": "Settings",
+            },
+          }) {
 						@icon.Icon(icon.Props{Name: icon.Cog})
-					</button>
-					<div id="settings" popover class="settings">
-						<div>
-							<div class="input">
-								@input.Label("color-scheme", "Theme")
-								<select
-									class="dropdown"
-									id="color-scheme"
-									_="
-                  on load
-                  if localStorage.mode is not null then
-                  set my.value to localStorage.mode
-                  end
-                  end
-                  on change
-                  set the *color-scheme of <html/> to my.value
-                  set localStorage.mode to my.value then
-                  end
-                  "
-								>
-									<option value="light dark">Auto</option>
-									<option value="light">Light</option>
-									<option value="dark">Dark</option>
-								</select>
-							</div>
-							@link.Link(link.Props{Href: "/logout", Hx: "hx-post=/logout"}) {
-								Logout
-							}
-						</div>
-					</div>
+          }
 				</section>
 			}
 			@auth.IsNotAuthenticated() {

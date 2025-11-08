@@ -140,3 +140,33 @@ templ DateTime(props DateTimeProps) {
 		}
 	</div>
 }
+
+/* Radio
+ * =========================================================== */
+
+type RadioProps struct {
+	ID    string
+	Label string
+	Name  string
+	Value string
+	Attrs templ.Attributes
+}
+
+templ Radio(p RadioProps) {
+	<div>
+		<input
+			type="radio"
+			id={ p.ID }
+			name={ p.Name }
+			value={ p.Value }
+			{ p.Attrs... }
+		/>
+		@Label(p.ID, p.Label)
+	</div>
+}
+
+templ RadioGroup() {
+	<fieldset class="radio-group">
+		{ children... }
+	</fieldset>
+}

@@ -46,3 +46,17 @@
     color: var(--color-content-secondary);
   }
 }
+
+.radio-group {
+  display: flex;
+  column-gap: var(--spacing-4);
+
+  & > div {
+    display: flex;
+    column-gap: var(--spacing-1);
+  }
+
+  input {
+    accent-color: var(--color-content-highlight);
+  }
+}

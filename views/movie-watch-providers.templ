@@ -7,31 +7,32 @@ import "believer/movies/components/list"
 
 templ WatchProviders(data types.MovieWatchProvidersResponse, justWatch string) {
 	@section.Section(section.Props{Title: "Watch Providers"}) {
-    <div class="watch-providers">
-      @providers(data.Results.SE.Buy, "Buy")
-      @providers(data.Results.SE.Rent, "Rent")
-      @providers(data.Results.SE.Subscription, "Subscription")
-    </div>
+		<div class="watch-providers">
+			@providers(data.Results.SE.Buy, "Buy")
+			@providers(data.Results.SE.Rent, "Rent")
+			@providers(data.Results.SE.Subscription, "Subscription")
+		</div>
 		<div>
 			Only Swedish providers shown. Data provided by 
 			@link.Link(link.Props{Href: templ.SafeURL(justWatch), IsExternal: true}) {
 				JustWatch
-			}.
+			}
+			.
 		</div>
 	}
 }
 
 templ providers(p []types.Provider, title string) {
 	if len(p) > 0 {
-			<section class="section" style="--gap: var(--spacing-4); --trailing-gap: var(--spacing-4);">
-      <h3>{ title }</h3>
-      @list.Ol() {
-        for _, p := range p {
-          @list.Li() {
-            { p.Name }
-          }
-        }
-      }
-    </section>
+		<section class="section" style="--gap: var(--spacing-4); --trailing-gap: var(--spacing-4);">
+			<h3>{ title }</h3>
+			@list.Ol() {
+				for _, p := range p {
+					@list.Li() {
+						{ p.Name }
+					}
+				}
+			}
+		</section>
 	}
 }
