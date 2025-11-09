@@ -5,16 +5,58 @@ import "believer/movies/components/section"
 import "believer/movies/components/link"
 import "believer/movies/components/list"
 
-templ WatchProviders(data types.MovieWatchProvidersResponse, justWatch string) {
+import "believer/movies/components/empty-state"
+import "believer/movies/components/separator"
+
+type WatchProviderCategories struct {
+	Ads          []types.Provider
+	Buy          []types.Provider
+	Free         []types.Provider
+	Rent         []types.Provider
+	Subscription []types.Provider
+}
+
+type WatchProvidersProps struct {
+	AvailableProviders WatchProviderCategories
+	MyProviders        WatchProviderCategories
+	JustWatchLink      string
+}
+
+templ WatchProviders(props WatchProvidersProps) {
 	@section.Section(section.Props{Title: "Watch Providers"}) {
-		<div class="watch-providers">
-			@providers(data.Results.SE.Buy, "Buy")
-			@providers(data.Results.SE.Rent, "Rent")
-			@providers(data.Results.SE.Subscription, "Subscription")
-		</div>
+		if len(props.MyProviders.Buy) == 0 && len(props.MyProviders.Rent) == 0 && len(props.MyProviders.Subscription) == 0 {
+			@emptystate.EmptyState() {
+				Select your providers in 
+				@link.Link(link.Props{Href: "/settings"}) {
+					settings 
+				}
+			}
+		} else {
+			<div class="watch-providers">
+				@providers(props.MyProviders.Ads, "Ads")
+				@providers(props.MyProviders.Buy, "Buy")
+				@providers(props.MyProviders.Free, "Free")
+				@providers(props.MyProviders.Rent, "Rent")
+				@providers(props.MyProviders.Subscription, "Subscription")
+			</div>
+		}
+		@separator.Separator()
+		<details>
+			<summary>All available providers</summary>
+			<div class="watch-providers">
+				@providers(props.AvailableProviders.Ads, "Ads")
+				@providers(props.AvailableProviders.Buy, "Buy")
+				@providers(props.AvailableProviders.Free, "Free")
+				@providers(props.AvailableProviders.Rent, "Rent")
+				@providers(props.AvailableProviders.Subscription, "Subscription")
+			</div>
+		</details>
+		@separator.Separator()
 		<div>
-			Only Swedish providers shown. Data provided by 
-			@link.Link(link.Props{Href: templ.SafeURL(justWatch), IsExternal: true}) {
+			Only Swedish providers shown. Filtered on selected providers in settings.
+			<br/>
+			Data provided by 
+			@link.Link(link.Props{Href: templ.SafeURL(props.JustWatchLink), IsExternal: true}) {
 				JustWatch
 			}
 			.

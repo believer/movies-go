@@ -148,4 +148,5 @@ func SetupRoutes(app *fiber.App) {
 	settingsGroup := app.Group("/settings")
 
 	settingsGroup.Get("/", h.Settings)
+	settingsGroup.Put("/watch-providers", h.SettingsWatchProviders)
 }

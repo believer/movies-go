@@ -191,6 +191,10 @@
   .contents {
     display: contents;
   }
+
+  details summary {
+    cursor: pointer;
+  }
 }
 
 /* Scroll driven animation to fade in date indicators
@@ -239,6 +243,10 @@
       column-gap: var(--spacing-4);
       align-items: center;
     }
+  }
+
+  .form__settings > * + * {
+    margin-top: var(--spacing-6);
   }
 
   .form {
@@ -575,12 +583,11 @@
 
   .watch-providers {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    column-gap: var(--spacing-2);
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--spacing-4);
 
     @media (width <= 480px) {
       grid-template-columns: 1fr;
-      row-gap: var(--spacing-4);
     }
   }
 

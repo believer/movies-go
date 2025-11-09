@@ -82,7 +82,9 @@ type ProviderCountries struct {
 }
 
 type ProviderCountry struct {
+	Ads          []Provider `json:"ads"`
 	Buy          []Provider `json:"buy"`
+	Free         []Provider `json:"free"`
 	Rent         []Provider `json:"rent"`
 	Subscription []Provider `json:"flatrate"`
 }

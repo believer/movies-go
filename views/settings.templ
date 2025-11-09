@@ -4,8 +4,14 @@ import "believer/movies/components/layout"
 import "believer/movies/components/section"
 import "believer/movies/components/input"
 import "believer/movies/components/link"
+import "believer/movies/components/checkbox"
+import "believer/movies/components/button"
 
-templ Settings() {
+type SettingsProps struct {
+	Providers []checkbox.Props
+}
+
+templ Settings(props SettingsProps) {
 	@layout.Html(layout.Props{Title: "Settings"}) {
 		<script type="text/hyperscript">
 			behavior Theme(theme)
@@ -52,6 +58,20 @@ templ Settings() {
 						},
 					})
 				}
+			}
+			@section.Section(section.Props{Title: "My Watch Providers"}) {
+				<form class="form__settings" hx-put="/settings/watch-providers" hx-select="form" hx-swap="outerHTML">
+					<section>
+						for _, c := range props.Providers {
+							@checkbox.Checkbox(c)
+						}
+					</section>
+					<footer>
+						@button.Button(button.Props{Type: button.TypeSubmit}) {
+							Save
+						}
+					</footer>
+				</form>
 			}
 			@section.Section(section.Props{Title: "Profile"}) {
 				@link.Link(link.Props{Href: "/logout", Hx: "hx-post=/logout"}) {

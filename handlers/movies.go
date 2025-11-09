@@ -1592,18 +1592,39 @@ func WatchProviders(c *fiber.Ctx) error {
 	if err != nil {
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
+
+	var storedProviders string
+	userId := c.Locals("UserId")
+
+	err = db.Client.Get(&storedProviders, `SELECT
+    watch_providers
+FROM
+    "user"
+WHERE
+    id = $1`, userId)
+
 	var movie types.Movie
 
-	err = db.Client.Get(&movie, "SELECT imdb_id, title FROM movie WHERE id = $1", movieQueries.Id)
-
-	t := tmdb.New(movie.ImdbId)
-	v, err := t.WatchProviders()
+	err = db.Client.Get(&movie, `SELECT
+    imdb_id,
+    title
+FROM
+    movie
+WHERE
+    id = $1`, movieQueries.Id)
 
 	if err != nil {
 		return err
 	}
 
-	hasProviders := len(v.Results.SE.Buy) > 0 || len(v.Results.SE.Rent) > 0 || len(v.Results.SE.Subscription) > 0
+	t := tmdb.New(movie.ImdbId)
+	watchProviders, err := t.WatchProviders()
+
+	if err != nil {
+		return err
+	}
+
+	hasProviders := len(watchProviders.Results.SE.Buy) > 0 || len(watchProviders.Results.SE.Rent) > 0 || len(watchProviders.Results.SE.Subscription) > 0
 
 	if !hasProviders {
 		return c.SendStatus(fiber.StatusNotFound)
@@ -1612,5 +1633,49 @@ func WatchProviders(c *fiber.Ctx) error {
 	// Only Swedish providers supported
 	justWatchUrl := fmt.Sprintf("https://www.justwatch.com/se/film/%s", utils.Slugify(movie.Title))
 
-	return utils.Render(c, views.WatchProviders(v, justWatchUrl))
+	availableProviders := views.WatchProviderCategories{
+		Ads:          watchProviders.Results.SE.Ads,
+		Buy:          watchProviders.Results.SE.Buy,
+		Free:         watchProviders.Results.SE.Free,
+		Rent:         watchProviders.Results.SE.Rent,
+		Subscription: watchProviders.Results.SE.Subscription,
+	}
+
+	var myProviders views.WatchProviderCategories
+
+	for _, w := range watchProviders.Results.SE.Ads {
+		if strings.Contains(storedProviders, w.Name) {
+			myProviders.Ads = append(myProviders.Ads, w)
+		}
+	}
+
+	for _, w := range watchProviders.Results.SE.Buy {
+		if strings.Contains(storedProviders, w.Name) {
+			myProviders.Buy = append(myProviders.Buy, w)
+		}
+	}
+
+	for _, w := range watchProviders.Results.SE.Free {
+		if strings.Contains(storedProviders, w.Name) {
+			myProviders.Free = append(myProviders.Free, w)
+		}
+	}
+
+	for _, w := range watchProviders.Results.SE.Rent {
+		if strings.Contains(storedProviders, w.Name) {
+			myProviders.Rent = append(myProviders.Rent, w)
+		}
+	}
+
+	for _, w := range watchProviders.Results.SE.Subscription {
+		if strings.Contains(storedProviders, w.Name) {
+			myProviders.Subscription = append(myProviders.Subscription, w)
+		}
+	}
+
+	return utils.Render(c, views.WatchProviders(views.WatchProvidersProps{
+		AvailableProviders: availableProviders,
+		MyProviders:        myProviders,
+		JustWatchLink:      justWatchUrl,
+	}))
 }

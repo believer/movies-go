@@ -4,9 +4,11 @@ import "believer/movies/components/input"
 
 type Props struct {
 	Checked     bool
+	ID          string
 	Name        string
 	Label       string
 	Hyperscript string
+	Value       string
 }
 
 templ Checkbox(p Props) {
@@ -14,14 +16,25 @@ templ Checkbox(p Props) {
 		<input
 			type="checkbox"
 			name={ p.Name }
-			id={ p.Name }
+			if p.ID != "" {
+				id={ p.ID }
+			} else {
+				id={ p.Name }
+			}
 			if p.Checked {
 				checked="true"
+			}
+			if p.Value != "" {
+				value={ p.Value }
 			}
 			if p.Hyperscript != "" {
 				_={ p.Hyperscript }
 			}
 		/>
-		@input.Label(p.Name, p.Label)
+		if p.ID != "" {
+			@input.Label(p.ID, p.Label)
+		} else {
+			@input.Label(p.Name, p.Label)
+		}
 	</div>
 }
