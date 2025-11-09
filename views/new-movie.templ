@@ -34,7 +34,7 @@ templ NewMovie(props NewMovieProps) {
 					<input
 						type="text"
 						hx-get="/movie/search"
-						hx-trigger="keyup changed delay:500ms, blur"
+						hx-trigger="keyup changed delay:500ms"
 						hx-target="next .search-results"
 						hx-validate="true"
 						minlength="3"

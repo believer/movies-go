@@ -89,7 +89,7 @@ func NewMovie(props NewMovieProps) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<input type=\"text\" hx-get=\"/movie/search\" hx-trigger=\"keyup changed delay:500ms, blur\" hx-target=\"next .search-results\" hx-validate=\"true\" minlength=\"3\" name=\"search\" id=\"search\"><div class=\"search-results\"></div></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<input type=\"text\" hx-get=\"/movie/search\" hx-trigger=\"keyup changed delay:500ms\" hx-target=\"next .search-results\" hx-validate=\"true\" minlength=\"3\" name=\"search\" id=\"search\"><div class=\"search-results\"></div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
