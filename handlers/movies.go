@@ -868,7 +868,9 @@ func HandleSearch(c *fiber.Ctx) error {
 		return utils.Render(c, views.MovieSearchEmpty())
 	}
 
-	return utils.Render(c, views.MovieSearch(movies.Results[:5]))
+	maxResults := clamp(len(movies.Results), 1, 5)
+
+	return utils.Render(c, views.MovieSearch(movies.Results[:maxResults]))
 }
 
 func GetMoviesByYear(c *fiber.Ctx) error {
