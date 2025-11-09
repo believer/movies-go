@@ -46,7 +46,7 @@ templ Html(props ...Props) {
 			<meta name="twitter:site" content="@rnattochdag"/>
 			<meta name="twitter:creator" content="@rnattochdag"/>
 			<link rel="icon" type="image/png" href="/public/favicon.png"/>
-			<link href="/public/styles.b0cb9d.css" rel="stylesheet"/>
+			<link href="/public/styles.css" rel="stylesheet"/>
 			<link rel="manifest" href="/public/manifest.webmanifest"/>
 			<script defer src="/public/htmx.2.0.3.min.js"></script>
 			<script defer src="/public/htmx.head-support.20240912.js"></script>
@@ -84,15 +84,15 @@ templ Html(props ...Props) {
 							@icon.Icon(icon.Props{Name: icon.Plus})
 						}
 					}
-          @link.Link(link.Props{
-            Class: "link--button link--new",
-            Href:  templ.SafeURL("/settings"),
-            Attrs: templ.Attributes{
-              "aria-label": "Settings",
-            },
-          }) {
+					@link.Link(link.Props{
+						Class: "link--button",
+						Href:  templ.SafeURL("/settings"),
+						Attrs: templ.Attributes{
+							"aria-label": "Settings",
+						},
+					}) {
 						@icon.Icon(icon.Props{Name: icon.Cog})
-          }
+					}
 				</section>
 			}
 			@auth.IsNotAuthenticated() {
