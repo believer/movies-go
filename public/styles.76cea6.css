@@ -593,6 +593,7 @@
 
   .settings {
     max-width: 36rem;
+    padding-inline: var(--spacing-5);
     padding-top: var(--spacing-4);
     padding-bottom: calc(env(safe-area-inset-bottom) + 64px);
     margin-inline: auto;
@@ -847,6 +848,14 @@
 	  input {
 	    accent-color: var(--color-content-highlight);
 	  }
+	}
+	
+	.checkbox-group {
+	  --gap: var(--spacing-2);
+	
+	  display: grid;
+	  grid-template-columns: repeat(auto-fit, minmax(calc(50% - var(--gap)), 1fr));
+	  gap: var(--gap);
 	}
 	.link {
 	  display: inline-flex;

@@ -60,3 +60,11 @@
     accent-color: var(--color-content-highlight);
   }
 }
+
+.checkbox-group {
+  --gap: var(--spacing-2);
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(calc(50% - var(--gap)), 1fr));
+  gap: var(--gap);
+}

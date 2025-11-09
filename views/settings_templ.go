@@ -148,7 +148,7 @@ func Settings(props SettingsProps) templ.Component {
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<form class=\"form__settings\" hx-put=\"/settings/watch-providers\" hx-select=\"form\" hx-swap=\"outerHTML\"><section>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<form class=\"form__settings\" hx-put=\"/settings/watch-providers\" hx-select=\"form\" hx-swap=\"outerHTML\"><section class=\"checkbox-group\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

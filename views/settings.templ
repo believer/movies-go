@@ -61,7 +61,7 @@ templ Settings(props SettingsProps) {
 			}
 			@section.Section(section.Props{Title: "My Watch Providers"}) {
 				<form class="form__settings" hx-put="/settings/watch-providers" hx-select="form" hx-swap="outerHTML">
-					<section>
+					<section class="checkbox-group">
 						for _, c := range props.Providers {
 							@checkbox.Checkbox(c)
 						}
