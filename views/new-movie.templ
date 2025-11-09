@@ -3,7 +3,7 @@ package views
 import (
 	"believer/movies/components/button"
 	"believer/movies/components/checkbox"
-	"believer/movies/components/collapsible"
+	"believer/movies/components/details"
 	"believer/movies/components/input"
 	"believer/movies/components/layout"
 	"believer/movies/components/textarea"
@@ -91,8 +91,8 @@ templ NewMovie(props NewMovieProps) {
 					Label: "Review is private",
 				})
 			}
-			@collapsible.Collapsible(collapsible.Props{
-				Title: "Additional fields",
+			@details.Details(details.Props{
+				Summary: "Additional fields",
 			}) {
 				@input.DateTime(input.DateTimeProps{
 					Name:     "watched_at",

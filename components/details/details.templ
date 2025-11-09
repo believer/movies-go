@@ -1,0 +1,14 @@
+package details
+
+type Props struct {
+	Summary string
+}
+
+templ Details(p Props) {
+	<details class="details">
+		<summary>{ p.Summary }</summary>
+		<div>
+			{ children... }
+		</div>
+	</details>
+}

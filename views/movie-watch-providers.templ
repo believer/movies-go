@@ -4,9 +4,8 @@ import "believer/movies/types"
 import "believer/movies/components/section"
 import "believer/movies/components/link"
 import "believer/movies/components/list"
-
 import "believer/movies/components/empty-state"
-import "believer/movies/components/separator"
+import "believer/movies/components/details"
 
 type WatchProviderCategories struct {
 	Ads          []types.Provider
@@ -40,9 +39,9 @@ templ WatchProviders(props WatchProvidersProps) {
 				@providers(props.MyProviders.Subscription, "Subscription")
 			</div>
 		}
-		@separator.Separator()
-		<details>
-			<summary>All available providers</summary>
+		@details.Details(details.Props{
+			Summary: "All available providers",
+		}) {
 			<div class="watch-providers">
 				@providers(props.AvailableProviders.Ads, "Ads")
 				@providers(props.AvailableProviders.Buy, "Buy")
@@ -50,8 +49,7 @@ templ WatchProviders(props WatchProvidersProps) {
 				@providers(props.AvailableProviders.Rent, "Rent")
 				@providers(props.AvailableProviders.Subscription, "Subscription")
 			</div>
-		</details>
-		@separator.Separator()
+		}
 		<div>
 			Only Swedish providers shown. Filtered on selected providers in settings.
 			<br/>

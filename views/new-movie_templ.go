@@ -11,7 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"believer/movies/components/button"
 	"believer/movies/components/checkbox"
-	"believer/movies/components/collapsible"
+	"believer/movies/components/details"
 	"believer/movies/components/input"
 	"believer/movies/components/layout"
 	"believer/movies/components/textarea"
@@ -281,8 +281,8 @@ func NewMovie(props NewMovieProps) templ.Component {
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = collapsible.Collapsible(collapsible.Props{
-				Title: "Additional fields",
+			templ_7745c5c3_Err = details.Details(details.Props{
+				Summary: "Additional fields",
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
