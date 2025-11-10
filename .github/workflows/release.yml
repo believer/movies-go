@@ -34,6 +34,7 @@ jobs:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
   e2e:
+    name: E2E
     timeout-minutes: 60
     needs: [deploy]
     runs-on: ubuntu-latest
