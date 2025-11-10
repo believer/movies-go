@@ -355,7 +355,7 @@ func Stats(props StatsProps) templ.Component {
 								}
 								return nil
 							})
-							templ_7745c5c3_Err = link.Link(link.Props{Href: templ.URL(fmt.Sprintf("/movie/%d", props.ShortestAndLongestMovie[0].ID))}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var18), templ_7745c5c3_Buffer)
+							templ_7745c5c3_Err = link.Link(link.Props{Href: fmt.Sprintf("/movie/%d", props.ShortestAndLongestMovie[0].ID)}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var18), templ_7745c5c3_Buffer)
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
 							}
@@ -423,7 +423,7 @@ func Stats(props StatsProps) templ.Component {
 								}
 								return nil
 							})
-							templ_7745c5c3_Err = link.Link(link.Props{Href: templ.URL(fmt.Sprintf("/movie/%d", props.ShortestAndLongestMovie[1].ID))}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var22), templ_7745c5c3_Buffer)
+							templ_7745c5c3_Err = link.Link(link.Props{Href: fmt.Sprintf("/movie/%d", props.ShortestAndLongestMovie[1].ID)}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var22), templ_7745c5c3_Buffer)
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
 							}

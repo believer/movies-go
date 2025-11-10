@@ -230,7 +230,7 @@ func Html(props ...Props) templ.Component {
 				})
 				templ_7745c5c3_Err = link.Link(link.Props{
 					Class: "link--button link--new",
-					Href:  templ.SafeURL("/movie/new"),
+					Href:  "/movie/new",
 					Attrs: templ.Attributes{
 						"aria-label": "Add movie",
 					},
@@ -259,7 +259,7 @@ func Html(props ...Props) templ.Component {
 			})
 			templ_7745c5c3_Err = link.Link(link.Props{
 				Class: "link--button",
-				Href:  templ.SafeURL("/settings"),
+				Href:  "/settings",
 				Attrs: templ.Attributes{
 					"aria-label": "Settings",
 				},

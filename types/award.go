@@ -3,8 +3,6 @@ package types
 import (
 	"believer/movies/utils"
 	"fmt"
-
-	"github.com/a-h/templ"
 )
 
 // Award sub structs
@@ -39,24 +37,24 @@ func (u *Awards) Scan(v any) error {
 	return utils.ScanJSON(v, u)
 }
 
-func (a *Award) LinkToMovie() templ.SafeURL {
+func (a *Award) LinkToMovie() string {
 	if a.Title.Valid {
-		return templ.SafeURL(fmt.Sprintf("/movie/%s-%d", utils.Slugify(a.Title.String), a.MovieID))
+		return fmt.Sprintf("/movie/%s-%d", utils.Slugify(a.Title.String), a.MovieID)
 	}
 
 	return "#"
 }
 
-func (a *Award) LinkToPerson() templ.SafeURL {
+func (a *Award) LinkToPerson() string {
 	if a.Person.Valid && a.PersonId.Valid {
-		return templ.SafeURL(fmt.Sprintf("/person/%s-%d", utils.Slugify(a.Person.String), a.PersonId.Int64))
+		return fmt.Sprintf("/person/%s-%d", utils.Slugify(a.Person.String), a.PersonId.Int64)
 	}
 
 	return "#"
 }
 
-func (a *Award) LinkToYear() templ.SafeURL {
-	return templ.SafeURL(fmt.Sprintf("/awards/year/%s", a.Year))
+func (a *Award) LinkToYear() string {
+	return fmt.Sprintf("/awards/year/%s", a.Year)
 }
 
 // Awards for person
@@ -68,8 +66,8 @@ type AwardPersonStat struct {
 	Name  string `db:"person"`
 }
 
-func (a AwardPersonStat) LinkTo() templ.SafeURL {
-	return templ.URL(fmt.Sprintf("/person/%s-%d", utils.Slugify(a.Name), a.ID))
+func (a AwardPersonStat) LinkTo() string {
+	return fmt.Sprintf("/person/%s-%d", utils.Slugify(a.Name), a.ID)
 }
 
 // Awards for movie
@@ -81,8 +79,8 @@ type AwardMovieStat struct {
 	Title string `db:"title"`
 }
 
-func (a AwardMovieStat) LinkTo() templ.SafeURL {
-	return templ.URL(fmt.Sprintf("/movie/%s-%d", utils.Slugify(a.Title), a.ID))
+func (a AwardMovieStat) LinkTo() string {
+	return fmt.Sprintf("/movie/%s-%d", utils.Slugify(a.Title), a.ID)
 }
 
 // Awards for person
@@ -105,6 +103,6 @@ type AwardsByYear struct {
 	Awards  Awards `db:"awards"`
 }
 
-func (g *AwardsByYear) LinkToMovie() templ.SafeURL {
-	return templ.URL(fmt.Sprintf("/movie/%s-%d", utils.Slugify(g.Title), g.MovieID))
+func (g *AwardsByYear) LinkToMovie() string {
+	return fmt.Sprintf("/movie/%s-%d", utils.Slugify(g.Title), g.MovieID)
 }

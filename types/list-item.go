@@ -3,8 +3,6 @@ package types
 import (
 	"believer/movies/utils"
 	"fmt"
-
-	"github.com/a-h/templ"
 )
 
 type ListItem struct {
@@ -13,8 +11,8 @@ type ListItem struct {
 	Count int    `db:"count"`
 }
 
-func (l ListItem) LinkTo(root string) templ.SafeURL {
-	return templ.URL(fmt.Sprintf("/%s/%s-%s", root, utils.Slugify(l.Name), l.ID))
+func (l ListItem) LinkTo(root string) string {
+	return fmt.Sprintf("/%s/%s-%s", root, utils.Slugify(l.Name), l.ID)
 }
 
 func (l ListItem) FormattedCount() string {

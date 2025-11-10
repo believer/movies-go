@@ -2,22 +2,13 @@ package typography
 
 import "believer/movies/components/link"
 
-type Props struct {
-	ToRoot bool
-}
-
-templ H1(props ...Props) {
-	{{ var p Props }}
-	if len(props) > 0 {
-		{{ p = props[0] }}
-	}
+templ H1() {
 	<header class="page-header">
 		@link.Link(link.Props{
-			Href:        "#",
-			Hyperscript: "on click go back",
-			ToRoot:      p.ToRoot,
+			Href: "#",
 			Attrs: templ.Attributes{
 				"aria-label": "Back",
+				"_":          "on click go back",
 			},
 		}) {
 			..

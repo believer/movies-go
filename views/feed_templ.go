@@ -202,8 +202,8 @@ func Feed(props FeedProps) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var currentHeader = props.LastHeader
-					var currentYear = currentHeader[:4]
+					currentHeader := props.LastHeader
+					currentYear := currentHeader[:4]
 					for _, k := range props.SortedKeys {
 						var year = ""
 						if k != "TBD" {

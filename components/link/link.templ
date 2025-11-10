@@ -1,32 +1,23 @@
 package link
 
+import "strings"
+
 type Props struct {
-	Class       string
-	Href        templ.SafeURL
-	Hx          string
-	Hyperscript string
-	ToRoot      bool
-	IsExternal  bool
-	Style       map[string]templ.SafeCSSProperty
-	Attrs       templ.Attributes
+	Class string
+	Href  string
+	Style map[string]templ.SafeCSSProperty
+	Attrs templ.Attributes
 }
 
 templ Link(p Props) {
+	{{ isExternal := strings.HasPrefix(p.Href, "http") || strings.HasPrefix(p.Href, "https") }}
 	<a
 		class={ "link", p.Class }
+		href={ templ.SafeURL(p.Href) }
 		if len(p.Style) > 0 {
 			style={ p.Style }
 		}
-		{ p.Hx }
-		if p.ToRoot {
-			href="/"
-		} else {
-			href={ p.Href }
-			if p.Hyperscript != "" {
-				_={ p.Hyperscript }
-			}
-		}
-		if p.IsExternal {
+		if isExternal {
 			target="_blank"
 			rel="noopener noreferrer"
 		}

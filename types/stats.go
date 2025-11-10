@@ -4,8 +4,6 @@ import (
 	"believer/movies/utils"
 	"fmt"
 	"strconv"
-
-	"github.com/a-h/templ"
 )
 
 type Stats struct {
@@ -48,8 +46,8 @@ type HighestRated struct {
 	WeightedAverageRating float64 `db:"weighted_average_rating"`
 }
 
-func (h HighestRated) LinkTo() templ.SafeURL {
-	return templ.URL(fmt.Sprintf("/person/%s-%d", utils.Slugify(h.Name), h.ID))
+func (h HighestRated) LinkTo() string {
+	return fmt.Sprintf("/person/%s-%d", utils.Slugify(h.Name), h.ID)
 }
 
 func (h HighestRated) Rank() string {

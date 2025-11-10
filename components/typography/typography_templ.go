@@ -10,11 +10,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import "believer/movies/components/link"
 
-type Props struct {
-	ToRoot bool
-}
-
-func H1(props ...Props) templ.Component {
+func H1() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -35,10 +31,6 @@ func H1(props ...Props) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var p Props
-		if len(props) > 0 {
-			p = props[0]
-		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<header class=\"page-header\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -62,11 +54,10 @@ func H1(props ...Props) templ.Component {
 			return nil
 		})
 		templ_7745c5c3_Err = link.Link(link.Props{
-			Href:        "#",
-			Hyperscript: "on click go back",
-			ToRoot:      p.ToRoot,
+			Href: "#",
 			Attrs: templ.Attributes{
 				"aria-label": "Back",
+				"_":          "on click go back",
 			},
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

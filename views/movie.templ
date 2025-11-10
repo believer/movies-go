@@ -80,9 +80,8 @@ templ Movie(props MovieProps) {
 				if props.Movie.ImdbId != "tt0000000" {
 					@list.DlItem(list.DlProps{Detail: "IMDb"}) {
 						@link.Link(link.Props{
-							Href:       templ.URL(fmt.Sprintf("https://www.imdb.com/title/%s", props.Movie.ImdbId)),
-							IsExternal: true,
-							Class:      "link--imdb",
+							Href:  fmt.Sprintf("https://www.imdb.com/title/%s", props.Movie.ImdbId),
+							Class: "link--imdb",
 						}) {
 							<span>
 								{ props.Movie.ImdbId }

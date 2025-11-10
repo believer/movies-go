@@ -3,8 +3,6 @@ package types
 import (
 	"believer/movies/utils"
 	"fmt"
-
-	"github.com/a-h/templ"
 )
 
 type PersonMovie struct {
@@ -16,8 +14,8 @@ type PersonMovie struct {
 }
 
 // Link to the movie
-func (m PersonMovie) LinkTo() templ.SafeURL {
-	return templ.URL(fmt.Sprintf("/movie/%s-%d", utils.Slugify(m.Title), m.ID))
+func (m PersonMovie) LinkTo() string {
+	return fmt.Sprintf("/movie/%s-%d", utils.Slugify(m.Title), m.ID)
 }
 
 // Release year
@@ -39,12 +37,12 @@ func (m PersonMovie) ISOReleaseDate() string {
 }
 
 // Link to the movie's release year
-func (m PersonMovie) LinkToYear() templ.SafeURL {
+func (m PersonMovie) LinkToYear() string {
 	if !m.ReleaseDate.Valid {
 		return ""
 	}
 
-	return templ.URL(fmt.Sprintf("/year/%s", m.ReleaseDate.Time.Format("2006")))
+	return fmt.Sprintf("/year/%s", m.ReleaseDate.Time.Format("2006"))
 }
 
 type PersonMovies []PersonMovie
@@ -67,8 +65,8 @@ type Person struct {
 }
 
 // Link to the person
-func (p Person) LinkTo() templ.SafeURL {
-	return templ.URL(fmt.Sprintf("/person/%s-%d", utils.Slugify(p.Name), p.ID))
+func (p Person) LinkTo() string {
+	return fmt.Sprintf("/person/%s-%d", utils.Slugify(p.Name), p.ID)
 }
 
 type Persons []Person

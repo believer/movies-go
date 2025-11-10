@@ -23,8 +23,8 @@ type CastAndCrewDTO struct {
 	Character string
 }
 
-func (p CastAndCrewDTO) LinkTo() templ.SafeURL {
-	return templ.URL(fmt.Sprintf("/person/%s-%d", utils.Slugify(p.Name), p.ID))
+func (p CastAndCrewDTO) LinkTo() string {
+	return fmt.Sprintf("/person/%s-%d", utils.Slugify(p.Name), p.ID)
 }
 
 type CastDTO struct {

@@ -19,7 +19,7 @@ import (
 )
 
 type SectionProps interface {
-	Href() templ.SafeURL
+	Href() string
 	NumberOfAwards() int
 	Subtitle() string
 	Title() string
@@ -108,8 +108,8 @@ func (p MovieAwardsProps) Title() string {
 	return fmt.Sprintf("Academy Awards %s", p.Year)
 }
 
-func (p MovieAwardsProps) Href() templ.SafeURL {
-	return templ.SafeURL(fmt.Sprintf("/awards/year/%s", p.Year))
+func (p MovieAwardsProps) Href() string {
+	return fmt.Sprintf("/awards/year/%s", p.Year)
 }
 
 func (p MovieAwardsProps) NominationMsg() string {
@@ -438,8 +438,8 @@ func (p PersonAwardsProps) Title() string {
 	return "Academy Awards"
 }
 
-func (p PersonAwardsProps) Href() templ.SafeURL {
-	return templ.SafeURL("")
+func (p PersonAwardsProps) Href() string {
+	return ""
 }
 
 func PersonAwards(props PersonAwardsProps) templ.Component {

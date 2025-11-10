@@ -5,8 +5,6 @@ import (
 	"database/sql"
 	"fmt"
 	"time"
-
-	"github.com/a-h/templ"
 )
 
 type Entity struct {
@@ -14,8 +12,8 @@ type Entity struct {
 	ID   int    `db:"id" json:"id"`
 }
 
-func (e Entity) LinkTo(prefix string) templ.SafeURL {
-	return templ.SafeURL(fmt.Sprintf("/%s/%s-%d", prefix, utils.Slugify(e.Name), e.ID))
+func (e Entity) LinkTo(prefix string) string {
+	return fmt.Sprintf("/%s/%s-%d", prefix, utils.Slugify(e.Name), e.ID)
 }
 
 // Movie sub structs
@@ -45,8 +43,8 @@ func (u *MovieLanguages) Scan(v any) error {
 // Production Companies
 type MovieProductionCompany struct{ Entity }
 
-func (mpc *MovieProductionCompany) LinkTo() templ.SafeURL {
-	return templ.SafeURL(fmt.Sprintf("/production-company/%s-%d", utils.Slugify(mpc.Name), mpc.ID))
+func (mpc *MovieProductionCompany) LinkTo() string {
+	return fmt.Sprintf("/production-company/%s-%d", utils.Slugify(mpc.Name), mpc.ID)
 }
 
 type MovieProductionCompanies []MovieProductionCompany
@@ -61,8 +59,8 @@ type MovieProductionCountry struct {
 	Name string `db:"name" json:"name"`
 }
 
-func (mpc *MovieProductionCountry) LinkTo() templ.SafeURL {
-	return templ.SafeURL(fmt.Sprintf("/production-country/%s-%s", utils.Slugify(mpc.Name), mpc.Id))
+func (mpc *MovieProductionCountry) LinkTo() string {
+	return fmt.Sprintf("/production-country/%s-%s", utils.Slugify(mpc.Name), mpc.Id)
 }
 
 type MovieProductionCountries []MovieProductionCountry
@@ -142,38 +140,38 @@ func (m Movie) ReleaseYear() string {
 }
 
 // Link to the movie
-func (m Movie) LinkTo() templ.SafeURL {
-	return templ.URL(fmt.Sprintf("/movie/%s-%d", utils.Slugify(m.Title), m.ID))
+func (m Movie) LinkTo() string {
+	return fmt.Sprintf("/movie/%s-%d", utils.Slugify(m.Title), m.ID)
 }
 
-func (m Movie) LinkToReleaseYear() templ.SafeURL {
-	return templ.URL(fmt.Sprintf("/year/%s", m.ReleaseDate.Time.Format("2006")))
+func (m Movie) LinkToReleaseYear() string {
+	return fmt.Sprintf("/year/%s", m.ReleaseDate.Time.Format("2006"))
 }
 
-func (m Movie) LinkToCreatedYear() templ.SafeURL {
-	return templ.URL(fmt.Sprintf("/year/%s", m.CreatedAt.Format("2006")))
+func (m Movie) LinkToCreatedYear() string {
+	return fmt.Sprintf("/year/%s", m.CreatedAt.Format("2006"))
 }
 
 // Link to the movie's release year
-func (m Movie) LinkToYear() templ.SafeURL {
+func (m Movie) LinkToYear() string {
 	year := m.ReleaseDate.Time
 
 	if year.Year() == 1 {
 		year = m.CreatedAt
 	}
 
-	return templ.URL(fmt.Sprintf("/year/%s", year.Format("2006")))
+	return fmt.Sprintf("/year/%s", year.Format("2006"))
 }
 
 // Link to the movie's watchlist add
-func (m Movie) LinkToWatchlistAdd() templ.SafeURL {
-	return templ.URL(fmt.Sprintf("/movie/new?imdbId=%s&id=%d", m.ImdbId, m.ID))
+func (m Movie) LinkToWatchlistAdd() string {
+	return fmt.Sprintf("/movie/new?imdbId=%s&id=%d", m.ImdbId, m.ID)
 }
 
 // Link to the movie's series
-func (m Movie) LinkToSeries() templ.SafeURL {
+func (m Movie) LinkToSeries() string {
 	if m.SeriesID.Valid && m.Series.Valid {
-		return templ.URL(fmt.Sprintf("/series/%s-%d", utils.Slugify(m.Series.String), m.SeriesID.Int64))
+		return fmt.Sprintf("/series/%s-%d", utils.Slugify(m.Series.String), m.SeriesID.Int64)
 	}
 
 	return ""

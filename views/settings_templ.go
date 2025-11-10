@@ -224,7 +224,12 @@ func Settings(props SettingsProps) templ.Component {
 					}
 					return nil
 				})
-				templ_7745c5c3_Err = link.Link(link.Props{Href: "/logout", Hx: "hx-post=/logout"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = link.Link(link.Props{
+					Href: "/logout",
+					Attrs: templ.Attributes{
+						"hx-post": "/logout",
+					}},
+				).Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

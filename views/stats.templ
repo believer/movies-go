@@ -87,7 +87,7 @@ templ Stats(props StatsProps) {
 								@list.DlItem(list.DlProps{
 									Detail: "Shortest movie",
 								}) {
-									@link.Link(link.Props{Href: templ.URL(fmt.Sprintf("/movie/%d", props.ShortestAndLongestMovie[0].ID))}) {
+									@link.Link(link.Props{Href: fmt.Sprintf("/movie/%d", props.ShortestAndLongestMovie[0].ID)}) {
 										{ props.ShortestAndLongestMovie[0].Title }
 									}
 									({ utils.FormatRuntime(props.ShortestAndLongestMovie[0].Runtime) })
@@ -95,7 +95,7 @@ templ Stats(props StatsProps) {
 								@list.DlItem(list.DlProps{
 									Detail: "Longest movie",
 								}) {
-									@link.Link(link.Props{Href: templ.URL(fmt.Sprintf("/movie/%d", props.ShortestAndLongestMovie[1].ID))}) {
+									@link.Link(link.Props{Href: fmt.Sprintf("/movie/%d", props.ShortestAndLongestMovie[1].ID)}) {
 										{ props.ShortestAndLongestMovie[1].Title }
 									}
 									({ utils.FormatRuntime(props.ShortestAndLongestMovie[1].Runtime) })

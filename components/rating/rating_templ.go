@@ -154,7 +154,7 @@ func GetRating(props Props) templ.Component {
 			return nil
 		})
 		templ_7745c5c3_Err = link.Link(link.Props{
-			Href: templ.SafeURL(fmt.Sprintf("/rating/%d", props.Rating)),
+			Href: fmt.Sprintf("/rating/%d", props.Rating),
 			Attrs: templ.Attributes{
 				"aria-labelledby": "rating",
 			},

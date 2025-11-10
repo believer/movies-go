@@ -74,7 +74,12 @@ templ Settings(props SettingsProps) {
 				</form>
 			}
 			@section.Section(section.Props{Title: "Profile"}) {
-				@link.Link(link.Props{Href: "/logout", Hx: "hx-post=/logout"}) {
+				@link.Link(link.Props{
+					Href: "/logout",
+					Attrs: templ.Attributes{
+						"hx-post": "/logout",
+					}},
+				) {
 					Logout
 				}
 			}

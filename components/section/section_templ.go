@@ -13,7 +13,7 @@ import "believer/movies/components/link"
 
 type Props struct {
 	Action        templ.Component
-	Href          templ.SafeURL
+	Href          string
 	Subtitle      string
 	Title         string
 	NumberOfItems int
