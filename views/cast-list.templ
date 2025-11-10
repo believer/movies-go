@@ -25,23 +25,21 @@ type CastDTO struct {
 }
 
 templ CastList(castOrCrew []CastDTO, hasCharacters bool) {
-	<div class="movie">
-		for _, job := range castOrCrew {
-			@section.Section(section.Props{Title: job.Job}) {
-				@list.Ol() {
-					for _, person := range job.People {
-						@list.Li(list.LiProps{Class: "wrapped"}) {
-							@link.Link(link.Props{Href: person.LinkTo()}) {
-								{ person.Name }
-							}
-							if person.Character != "" {
-								@separator.Separator()
-								<div class="trailing">{ person.Character }</div>
-							}
+	for _, job := range castOrCrew {
+		@section.Section(section.Props{Title: job.Job}) {
+			@list.Ol() {
+				for _, person := range job.People {
+					@list.Li(list.LiProps{Class: "wrapped"}) {
+						@link.Link(link.Props{Href: person.LinkTo()}) {
+							{ person.Name }
+						}
+						if person.Character != "" {
+							@separator.Separator()
+							<div class="trailing">{ person.Character }</div>
 						}
 					}
 				}
 			}
 		}
-	</div>
+	}
 }
