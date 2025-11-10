@@ -16,21 +16,16 @@ type WatchProviderCategories struct {
 }
 
 type WatchProvidersProps struct {
-	AvailableProviders WatchProviderCategories
-	MyProviders        WatchProviderCategories
-	JustWatchLink      string
+	HasOtherProviders bool
+	HasMyProviders    bool
+	OtherProviders    WatchProviderCategories
+	MyProviders       WatchProviderCategories
+	JustWatchLink     string
 }
 
 templ WatchProviders(props WatchProvidersProps) {
 	@section.Section(section.Props{Title: "Watch Providers"}) {
-		if len(props.MyProviders.Buy) == 0 && len(props.MyProviders.Rent) == 0 && len(props.MyProviders.Subscription) == 0 {
-			@emptystate.EmptyState() {
-				Select your providers in 
-				@link.Link(link.Props{Href: "/settings"}) {
-					settings 
-				}
-			}
-		} else {
+		if props.HasMyProviders {
 			<div class="watch-providers">
 				@providers(props.MyProviders.Ads, "Ads")
 				@providers(props.MyProviders.Buy, "Buy")
@@ -38,22 +33,29 @@ templ WatchProviders(props WatchProvidersProps) {
 				@providers(props.MyProviders.Rent, "Rent")
 				@providers(props.MyProviders.Subscription, "Subscription")
 			</div>
+		} else {
+			@emptystate.EmptyState() {
+				Select your providers in 
+				@link.Link(link.Props{Href: "/settings"}) {
+					settings 
+				}
+			}
 		}
-		@details.Details(details.Props{
-			Summary: "All available providers",
-		}) {
-			<div class="watch-providers">
-				@providers(props.AvailableProviders.Ads, "Ads")
-				@providers(props.AvailableProviders.Buy, "Buy")
-				@providers(props.AvailableProviders.Free, "Free")
-				@providers(props.AvailableProviders.Rent, "Rent")
-				@providers(props.AvailableProviders.Subscription, "Subscription")
-			</div>
+		if props.HasOtherProviders {
+			@details.Details(details.Props{
+				Summary: "Other providers",
+			}) {
+				<div class="watch-providers">
+					@providers(props.OtherProviders.Ads, "Ads")
+					@providers(props.OtherProviders.Buy, "Buy")
+					@providers(props.OtherProviders.Free, "Free")
+					@providers(props.OtherProviders.Rent, "Rent")
+					@providers(props.OtherProviders.Subscription, "Subscription")
+				</div>
+			}
 		}
 		<div>
-			Only Swedish providers shown. Filtered on selected providers in settings.
-			<br/>
-			Data provided by 
+			Only Swedish providers shown. Filtered on selected providers in settings. Data provided by 
 			@link.Link(link.Props{Href: templ.SafeURL(props.JustWatchLink), IsExternal: true}) {
 				JustWatch
 			}

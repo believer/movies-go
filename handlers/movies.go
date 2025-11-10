@@ -1635,49 +1635,66 @@ WHERE
 	// Only Swedish providers supported
 	justWatchUrl := fmt.Sprintf("https://www.justwatch.com/se/film/%s", utils.Slugify(movie.Title))
 
-	availableProviders := views.WatchProviderCategories{
-		Ads:          watchProviders.Results.SE.Ads,
-		Buy:          watchProviders.Results.SE.Buy,
-		Free:         watchProviders.Results.SE.Free,
-		Rent:         watchProviders.Results.SE.Rent,
-		Subscription: watchProviders.Results.SE.Subscription,
-	}
-
 	var myProviders views.WatchProviderCategories
+	var otherProviders views.WatchProviderCategories
+	hasOtherProviders := false
+	hasMyProviders := false
 
 	for _, w := range watchProviders.Results.SE.Ads {
 		if strings.Contains(storedProviders, w.Name) {
 			myProviders.Ads = append(myProviders.Ads, w)
+			hasMyProviders = true
+		} else {
+			otherProviders.Ads = append(otherProviders.Ads, w)
+			hasOtherProviders = true
 		}
 	}
 
 	for _, w := range watchProviders.Results.SE.Buy {
 		if strings.Contains(storedProviders, w.Name) {
 			myProviders.Buy = append(myProviders.Buy, w)
+			hasMyProviders = true
+		} else {
+			otherProviders.Buy = append(otherProviders.Buy, w)
+			hasOtherProviders = true
 		}
 	}
 
 	for _, w := range watchProviders.Results.SE.Free {
 		if strings.Contains(storedProviders, w.Name) {
 			myProviders.Free = append(myProviders.Free, w)
+			hasMyProviders = true
+		} else {
+			otherProviders.Free = append(otherProviders.Free, w)
+			hasOtherProviders = true
 		}
 	}
 
 	for _, w := range watchProviders.Results.SE.Rent {
 		if strings.Contains(storedProviders, w.Name) {
 			myProviders.Rent = append(myProviders.Rent, w)
+			hasMyProviders = true
+		} else {
+			otherProviders.Rent = append(otherProviders.Rent, w)
+			hasOtherProviders = true
 		}
 	}
 
 	for _, w := range watchProviders.Results.SE.Subscription {
 		if strings.Contains(storedProviders, w.Name) {
 			myProviders.Subscription = append(myProviders.Subscription, w)
+			hasMyProviders = true
+		} else {
+			otherProviders.Subscription = append(otherProviders.Subscription, w)
+			hasOtherProviders = true
 		}
 	}
 
 	return utils.Render(c, views.WatchProviders(views.WatchProvidersProps{
-		AvailableProviders: availableProviders,
-		MyProviders:        myProviders,
-		JustWatchLink:      justWatchUrl,
+		HasMyProviders:    hasMyProviders,
+		HasOtherProviders: hasOtherProviders,
+		OtherProviders:    otherProviders,
+		MyProviders:       myProviders,
+		JustWatchLink:     justWatchUrl,
 	}))
 }

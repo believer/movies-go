@@ -182,10 +182,6 @@
     padding-inline: var(--spacing-5);
     padding-bottom: calc(env(safe-area-inset-bottom) + 64px);
     margin-inline: auto;
-
-    @media (width <= 480px) {
-      padding-top: var(--spacing-8);
-    }
   }
 
   .contents {
