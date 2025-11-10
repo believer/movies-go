@@ -1,7 +1,7 @@
 package db
 
 import (
-	"log"
+	"log/slog"
 	"os"
 
 	"github.com/jmoiron/sqlx"
@@ -20,7 +20,7 @@ func InitializeConnection() error {
 		return err
 	}
 
-	log.Println("Connected to database")
+	slog.Info("Connected to database")
 
 	// Set the global DBClient variable to the db connection
 	Client = db
@@ -32,6 +32,6 @@ func CloseConnection() {
 	err := Client.Close()
 
 	if err != nil {
-		log.Fatal("Failed to close connection to database")
+		slog.Error("Failed to close connection to database")
 	}
 }

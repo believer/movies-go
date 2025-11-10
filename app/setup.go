@@ -15,15 +15,13 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/joho/godotenv"
 )
 
 func SetupAndRunApp() error {
-	// Load environment variables
-	err := godotenv.Load()
+	err := utils.LoadEnv()
 	appEnv := os.Getenv("APP_ENV")
 
-	if err != nil && os.Getenv("APP_ENV") == "development" {
+	if err != nil && appEnv == "development" {
 		return err
 	}
 
