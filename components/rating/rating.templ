@@ -24,7 +24,12 @@ templ Rating(props Props) {
 
 templ GetRating(props Props) {
 	<div class="rating" id="rating-value">
-		@link.Link(link.Props{Href: templ.SafeURL(fmt.Sprintf("/rating/%d", props.Rating))}) {
+		@link.Link(link.Props{
+			Href: templ.SafeURL(fmt.Sprintf("/rating/%d", props.Rating)),
+			Attrs: templ.Attributes{
+				"aria-labelledby": "rating",
+			},
+		}) {
 			<time
 				title={ props.RatedAt.Format("2006-01-02 15:04") }
 				datetime={ props.RatedAt.Format("2006-01-02T15:04:05Z") }

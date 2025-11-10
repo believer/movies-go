@@ -49,8 +49,13 @@ templ Movie(props MovieProps) {
 					}
 				}
 				if props.Movie.ReleaseDate.Valid {
-					@list.DlItem(list.DlProps{Detail: "Release date"}) {
-						@link.Link(link.Props{Href: props.Movie.LinkToYear()}) {
+					@list.DlItem(list.DlProps{Detail: "Release date", ID: "release-date"}) {
+						@link.Link(link.Props{
+							Href: props.Movie.LinkToYear(),
+							Attrs: templ.Attributes{
+								"aria-labelledby": "release-date",
+							},
+						}) {
 							{ props.Movie.ISOReleaseDate() }
 						}
 					}
@@ -61,8 +66,13 @@ templ Movie(props MovieProps) {
 					}
 				}
 				if props.Movie.Series.Valid && props.Movie.NumberInSeries.Valid {
-					@list.DlItem(list.DlProps{Detail: "Series"}) {
-						@link.Link(link.Props{Href: props.Movie.LinkToSeries()}) {
+					@list.DlItem(list.DlProps{Detail: "Series", ID: "series"}) {
+						@link.Link(link.Props{
+							Href: props.Movie.LinkToSeries(),
+							Attrs: templ.Attributes{
+								"aria-labelledby": "series",
+							},
+						}) {
 							{ props.Movie.Series.String } #{  props.Movie.NumberInSeries.Int64 }
 						}
 					}
@@ -82,7 +92,7 @@ templ Movie(props MovieProps) {
 					}
 				}
 				if len(props.Movie.Genres) > 0 {
-					@list.DlItem(list.DlProps{Detail: "Genres", IsTabular: false}) {
+					@list.DlItem(list.DlProps{Detail: "Genres", IsTabular: false, ID: "genres"}) {
 						for _, genre := range props.Movie.Genres {
 							@link.Link(link.Props{Href: genre.LinkTo("genre")}) {
 								{ genre.Name }
@@ -91,7 +101,7 @@ templ Movie(props MovieProps) {
 					}
 				}
 				if len(props.Movie.Languages) > 0 {
-					@list.DlItem(list.DlProps{Detail: "Languages", IsTabular: false}) {
+					@list.DlItem(list.DlProps{Detail: "Languages", IsTabular: false, ID: "languages"}) {
 						for _, language := range props.Movie.Languages {
 							@link.Link(link.Props{Href: language.LinkTo("language")}) {
 								{ language.Name }

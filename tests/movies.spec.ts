@@ -1,4 +1,3 @@
-import assert from "node:assert"
 import { expect, Page, test } from "@playwright/test"
 
 const url = process.env.E2E_URL || "https://movies.willcodefor.beer"
@@ -17,35 +16,63 @@ async function search(page: Page, query: string) {
 test("test pages", async ({ page }) => {
 	await page.goto(url)
 
-	// Go to movie
-	await page.getByRole("link", { name: "Fast X" }).click()
+	// Go to first movie
+	const firstMovie = page.locator(".feed-list__card").nth(0)
+	const title = await firstMovie.getByRole("heading").textContent()
+
+	await firstMovie.click()
 	await expect(page.getByRole("heading", { name: "Metadata" })).toBeVisible()
 
 	// Year
-	await page.getByRole("link", { name: "2023-05-17" }).click()
-	await expect(page.getByRole("heading", { name: "2023" })).toBeVisible()
+	const yearLink = page.getByLabel("Release date")
+	const year = ((await yearLink.textContent()) ?? "").substring(0, 4)
+
+	await yearLink.click()
+	await expect(page.getByRole("heading", { name: year })).toBeVisible()
 	await page.getByRole("link", { name: "Back" }).click()
+
+	if (title) {
+		await expect(page.getByRole("heading", { name: title })).toBeVisible()
+	}
 
 	// Series
-	await expect(page.getByRole("heading", { name: "Fast X" })).toBeVisible()
-	await page.getByRole("link", { name: "Fast & Furious #10" }).click()
-	await expect(
-		page.getByRole("link", { name: "The Fast and the Furious", exact: true })
-	).toBeVisible()
-	await page.getByRole("link", { name: "Back" }).click()
+	const seriesLink = page.getByLabel("Series")
+	let series = await seriesLink.textContent()
+
+	if (series) {
+		series = series.replace(/\s#\d{1,}/, "")
+
+		await seriesLink.click()
+		await expect(
+			page.getByRole("heading", { name: series, exact: true })
+		).toBeVisible()
+		await page.getByRole("link", { name: "Back" }).click()
+	}
 
 	// Genre
-	await page.getByRole("link", { name: "Adventure" }).click()
-	await expect(page.getByRole("heading", { name: "Adventure" })).toBeVisible()
-	await page.getByRole("link", { name: "Back", exact: true }).click()
+	const firstGenre = await page
+		.locator(".contents:has(#genres) > dt > a:first-child")
+		.textContent()
+
+	if (firstGenre) {
+		await page.getByRole("link", { name: firstGenre }).click()
+		await expect(page.getByRole("heading", { name: firstGenre })).toBeVisible()
+		await page.getByRole("link", { name: "Back", exact: true }).click()
+	}
 
 	// Language
-	await page.getByRole("link", { name: "English" }).click()
-	await expect(page.getByRole("heading", { name: "English" })).toBeVisible()
-	await page.getByRole("link", { name: "Back" }).click()
+	const firstLanguage = await page
+		.locator(".contents:has(#languages) > dt > a:first-child")
+		.textContent()
+
+	if (firstLanguage) {
+		await page.getByRole("link", { name: "English" }).click()
+		await expect(page.getByRole("heading", { name: "English" })).toBeVisible()
+		await page.getByRole("link", { name: "Back" }).click()
+	}
 
 	// Rating
-	await page.getByRole("link", { name: "8" }).click()
+	await page.getByLabel("rating").click()
 	await expect(
 		page.getByRole("heading", { name: "Movies rated" })
 	).toBeVisible()
@@ -94,7 +121,7 @@ test("test pages", async ({ page }) => {
 
 	/// Composer
 	await search(page, "composer:HaNs")
-	await expect(
-		page.getByRole("link", { name: "Hans Zimmer", exact: true })
-	).toBeVisible()
+	await page.getByRole("link", { name: "Hans Zimmer", exact: true }).click()
+	await expect(page.getByText("Academy Awards")).toBeVisible()
+	await expect(page.getByText("Dune Won2021")).toBeVisible()
 })

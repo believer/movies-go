@@ -1,7 +1,7 @@
 package list
 
-templ dd(text string) {
-	<dd class="dd">
+templ dd(text, id string) {
+	<dd class="dd" id={ id }>
 		{ text }
 	</dd>
 }
@@ -31,7 +31,7 @@ templ DlItem(props DlProps) {
 			id={ props.ID }
 		}
 	>
-		@dd(props.Detail)
+		@dd(props.Detail, props.ID)
 		@dt(props.IsTabular) {
 			{ children... }
 		}
