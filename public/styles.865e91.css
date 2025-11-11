@@ -297,12 +297,7 @@
     row-gap: var(--spacing-8);
     max-width: 36rem;
     padding-inline: var(--spacing-5);
-    padding-top: var(--spacing-6);
     margin-inline: auto;
-
-    @media (width >= 1024px) {
-      padding-top: 0;
-    }
   }
 
   .feed-list {
