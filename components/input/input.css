@@ -57,7 +57,7 @@
   }
 
   input {
-    accent-color: var(--color-content-highlight);
+    accent-color: var(--color-content-secondary);
   }
 }
 

@@ -665,7 +665,7 @@
 	
 	  input {
 	    height: var(--spacing-4);
-	    accent-color: var(--color-neutral-700);
+	    accent-color: var(--color-content-secondary);
 	    border: 1px solid var(--color-border-primary);
 	    border-radius: var(--rounded-sm);
 	  }
@@ -842,7 +842,7 @@
 	  }
 	
 	  input {
-	    accent-color: var(--color-content-highlight);
+	    accent-color: var(--color-content-secondary);
 	  }
 	}
 	
