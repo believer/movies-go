@@ -479,10 +479,14 @@
 
   .new-movie__series {
     display: flex;
-    column-gap: var(--spacing-4);
+    gap: var(--spacing-4);
 
     > div {
       flex-grow: 1;
+    }
+
+    @media (width <= 480px) {
+      flex-direction: column;
     }
   }
 
