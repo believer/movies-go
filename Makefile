@@ -37,8 +37,8 @@ dev: css
 	@templ generate --watch \
 		--open-browser=false \
 		--proxy=http://localhost:8080 \
-		--watch-pattern='.+\.(css|go|sql|templ)$$' \
-		--cmd='go run .'
+		--watch-pattern='.+\.(css|go|templ)$$' \
+		--cmd='go run cmd/*.go'
 
 test:
 	@go test ./...

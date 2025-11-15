@@ -1,9 +1,9 @@
 package db
 
 import (
-	"log/slog"
 	"os"
 
+	"github.com/gofiber/fiber/v2/log"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
@@ -20,7 +20,7 @@ func InitializeConnection() error {
 		return err
 	}
 
-	slog.Info("Connected to database")
+	log.Info("Connected to database")
 
 	// Set the global DBClient variable to the db connection
 	Client = db
@@ -32,6 +32,6 @@ func CloseConnection() {
 	err := Client.Close()
 
 	if err != nil {
-		slog.Error("Failed to close connection to database")
+		log.Error("Failed to close connection to database")
 	}
 }

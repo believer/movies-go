@@ -1,16 +1,116 @@
-package router
+package main
 
 import (
-	h "believer/movies/handlers"
+	"fmt"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
+	"github.com/gofiber/fiber/v2/middleware/csrf"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/gofiber/fiber/v2/middleware/session"
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/jackc/pgx/v5"
+
+	h "believer/movies/handlers"
+	repo "believer/movies/internal/adapters/sqlc"
+	"believer/movies/internal/movies"
+	"believer/movies/utils"
+	"believer/movies/views"
 )
+
+type api struct {
+	config config
+	db     *pgx.Conn
+}
+
+type dbConfig struct {
+	dsn string
+}
+
+type config struct {
+	addr string
+	db   dbConfig
+}
 
 func redirectToHome(c *fiber.Ctx) error {
 	return c.Redirect("/")
 }
 
-func SetupRoutes(app *fiber.App) {
+func NotFoundMiddleware(c *fiber.Ctx) error {
+	c.Status(fiber.StatusNotFound)
+	return utils.Render(c, views.NotFound())
+}
+
+func (api *api) mount() *fiber.App {
+	app := fiber.New(fiber.Config{
+		DisableStartupMessage: true,
+	})
+
+	appEnv := os.Getenv("APP_ENV")
+
+	// Recover middleware recovers from panics anywhere in
+	// the chain and handles the control to the centralized ErrorHandler.
+	app.Use(recover.New())
+
+	// Logger middleware will log the HTTP requests.
+	app.Use(logger.New())
+
+	// Add CSRF token
+	store := session.New()
+	app.Use(csrf.New(csrf.Config{
+		KeyLookup:      "cookie:csrf_",
+		CookieName:     "csrf_",
+		CookieSameSite: "Lax",
+		CookieSecure:   appEnv != "development",
+		CookieHTTPOnly: true,
+		Session:        store,
+		SessionKey:     "fiber.csrf.token",
+	}))
+
+	// Setup locals
+	app.Use(func(c *fiber.Ctx) error {
+		secret := os.Getenv("ADMIN_SECRET")
+		tokenString := c.Cookies("token")
+
+		// Set me as default user
+		userId := "1"
+
+		// Parse the JWT token if it exists
+		// and set the user ID in the locals
+		if tokenString != "" {
+			token, err := jwt.Parse(tokenString, func(token *jwt.Token) (any, error) {
+				// Validate the signing method
+				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+					return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+				}
+
+				return []byte(secret), nil
+			})
+
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			if claims, ok := token.Claims.(jwt.MapClaims); ok {
+				userId = claims["id"].(string)
+			}
+		}
+
+		c.Locals("AppEnv", appEnv)
+		c.Locals("UserId", userId)
+		c.Locals("IsAuthenticated", utils.IsAuthenticated(c))
+
+		return c.Next()
+	})
+
+	// Serve static files
+	app.Static("/robots.txt", "./public/robots.txt")
+	app.Static("/public", "./public", fiber.Static{
+		MaxAge: 31_536_000, // 1 year
+	})
+
 	app.Get("/health", h.GetHealth)
 	app.Get("/", h.GetFeed)
 
@@ -31,6 +131,10 @@ func SetupRoutes(app *fiber.App) {
 
 	// Movies
 	// --------------------------
+
+	movieService := movies.NewService(repo.New(api.db))
+	movieHandler := movies.NewHandler(movieService)
+
 	movieGroup := app.Group("/movie")
 
 	movieGroup.Get("/", redirectToHome)
@@ -41,7 +145,7 @@ func SetupRoutes(app *fiber.App) {
 	// TODO: Should really be post to /movie
 	movieGroup.Post("/new", h.PostMovieNew)
 
-	movieGroup.Get("/:id", h.GetMovieByID)
+	movieGroup.Get("/:id", movieHandler.Movie)
 	movieGroup.Patch("/:id", h.UpdateMovieByID)
 	movieGroup.Get("/:imdbId/awards", h.GetMovieAwards)
 	movieGroup.Get("/:id/seen/others", h.GetMovieOthersSeenByID)
@@ -149,4 +253,14 @@ func SetupRoutes(app *fiber.App) {
 
 	settingsGroup.Get("/", h.Settings)
 	settingsGroup.Put("/watch-providers", h.SettingsWatchProviders)
+
+	app.Use(NotFoundMiddleware)
+
+	return app
+}
+
+func (api *api) run(a *fiber.App) error {
+	log.Info("Server started on " + api.config.addr)
+
+	return a.Listen(api.config.addr)
 }

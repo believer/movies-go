@@ -3,11 +3,12 @@ package utils
 import (
 	"bufio"
 	"fmt"
-	"log/slog"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
+
+	"github.com/gofiber/fiber/v2/log"
 )
 
 func LoadEnv() error {
@@ -43,7 +44,7 @@ func LoadEnv() error {
 		return err
 	}
 
-	slog.Info("ENV loaded from .env")
+	log.Info("ENV loaded from .env")
 
 	return nil
 }
