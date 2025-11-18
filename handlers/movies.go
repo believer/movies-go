@@ -1120,6 +1120,7 @@ ORDER BY
 
 func EditMovieReview(c *fiber.Ctx) error {
 	isAuth := utils.IsAuthenticated(c)
+	movieId := c.QueryInt("movieId")
 
 	if !isAuth {
 		return c.SendStatus(fiber.StatusUnauthorized)
@@ -1137,11 +1138,95 @@ func EditMovieReview(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.Render(c, review.EditReview(reviewData))
+	return utils.Render(c, review.EditReview(reviewData, movieId))
+}
+
+func AddMovieReview(c *fiber.Ctx) error {
+	isAuth := utils.IsAuthenticated(c)
+	movieId := c.Query("movieId")
+
+	if !isAuth {
+		return c.SendStatus(fiber.StatusUnauthorized)
+	}
+
+	return utils.Render(c, review.AddReview(movieId))
+}
+
+func InsertMovieReview(c *fiber.Ctx) error {
+	isAuth := utils.IsAuthenticated(c)
+	movieId := c.QueryInt("movieId")
+	userId := c.Locals("UserId")
+
+	if !isAuth {
+		return c.SendStatus(fiber.StatusUnauthorized)
+	}
+
+	data := new(struct {
+		IsPrivate bool   `form:"review_private"`
+		Review    string `form:"review"`
+	})
+
+	if err := c.BodyParser(data); err != nil {
+		return err
+	}
+
+	id := 0
+
+	err := db.Client.Get(&id, `
+INSERT INTO review (content, private, user_id, movie_id)
+    VALUES ($1, $2, $3, $4)
+RETURNING
+    id
+		`, data.Review, data.IsPrivate, userId, movieId)
+
+	if err != nil {
+		return err
+	}
+
+	var reviewData types.Review
+
+	err = db.Client.Get(&reviewData, `
+SELECT
+    id,
+    content,
+    private
+FROM
+    review
+WHERE
+    id = $1
+		`, id)
+
+	if err != nil {
+		return err
+	}
+
+	return utils.Render(c, review.Review(reviewData, movieId))
+}
+
+func DeleteMovieReview(c *fiber.Ctx) error {
+	id := c.Params("id")
+	isAuth := utils.IsAuthenticated(c)
+	movieId := c.QueryInt("movieId")
+
+	if !isAuth {
+		return c.SendStatus(fiber.StatusUnauthorized)
+	}
+
+	_, err := db.Client.Exec(`
+DELETE FROM review
+WHERE id = $1
+		`, id)
+
+	if err != nil {
+		return err
+	}
+
+	return utils.Render(c, review.Review(types.Review{}, movieId))
 }
 
 func UpdateMovieReview(c *fiber.Ctx) error {
 	q, err := db.MakeMovieQueries(c)
+	movieId := c.QueryInt("movieId")
 
 	if err != nil {
 		return err
@@ -1181,7 +1266,7 @@ WHERE
 		return err
 	}
 
-	return utils.Render(c, review.ReviewContent(reviewData))
+	return utils.Render(c, review.ReviewContent(reviewData, movieId))
 }
 
 func UpdateMovieByID(c *fiber.Ctx) error {

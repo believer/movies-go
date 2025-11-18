@@ -94,7 +94,7 @@ func Movie(props MovieProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = review.Review(props.Review).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = review.Review(props.Review, props.Movie.ID).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

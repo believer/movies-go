@@ -832,6 +832,8 @@
 	  }
 	
 	  & + footer {
+	    display: flex;
+	    column-gap: var(--spacing-4);
 	    margin-top: var(--spacing-6);
 	  }
 	}

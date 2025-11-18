@@ -10,6 +10,10 @@ type Review struct {
 	Private bool   `db:"private"`
 }
 
-func (r *Review) Edit() string {
-	return fmt.Sprintf("/review/%d/edit", r.ID)
+func (r *Review) Edit(id int) string {
+	return fmt.Sprintf("/review/%d/edit?movieId=%d", r.ID, id)
+}
+
+func (r *Review) Delete(id int) string {
+	return fmt.Sprintf("/review/%d?movieId=%d", r.ID, id)
 }

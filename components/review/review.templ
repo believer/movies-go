@@ -3,26 +3,40 @@ package review
 import "believer/movies/types"
 import "fmt"
 import "believer/movies/components/section"
-
 import "believer/movies/components/button"
 import "believer/movies/components/checkbox"
 import "believer/movies/components/textarea"
 
-templ Review(props types.Review) {
+templ Review(props types.Review, id int) {
 	if (props.Private == false && props.Content != "") {
 		@section.Section(section.Props{Title: "Review"}) {
-			@ReviewContent(props)
+			@ReviewContent(props, id)
 		}
 	} else if (props.Private == true && props.Content != "") {
 		if ctx.Value("IsAuthenticated").(bool) {
 			@section.Section(section.Props{Title: "Review"}) {
-				@ReviewContent(props)
+				@ReviewContent(props, id)
 			}
+		}
+	} else {
+		if ctx.Value("IsAuthenticated").(bool) {
+			<div>
+				@button.Button(button.Props{
+					Rank: button.Secondary,
+					Attrs: templ.Attributes{
+						"hx-get":    fmt.Sprintf("/review/new?movieId=%d", id),
+						"hx-target": "closest div",
+						"hx-swap":   "outerHTML",
+					},
+				}) {
+					Add review
+				}
+			</div>
 		}
 	}
 }
 
-templ ReviewContent(props types.Review) {
+templ ReviewContent(props types.Review, id int) {
 	<div class="section">
 		{ props.Content }
 		if ctx.Value("IsAuthenticated").(bool) {
@@ -30,7 +44,7 @@ templ ReviewContent(props types.Review) {
 				@button.Button(button.Props{
 					Rank: button.Secondary,
 					Attrs: templ.Attributes{
-						"hx-get":    props.Edit(),
+						"hx-get":    props.Edit(id),
 						"hx-target": "closest div",
 						"hx-swap":   "outerHTML",
 					},
@@ -42,8 +56,8 @@ templ ReviewContent(props types.Review) {
 	</div>
 }
 
-templ EditReview(props types.Review) {
-	<form hx-post={ fmt.Sprintf("/review/%d/update", props.ID) } hx-swap="outerHTML">
+templ EditReview(props types.Review, id int) {
+	<form hx-put={ fmt.Sprintf("/review/%d?movieId=%d", props.ID, id) } hx-swap="outerHTML">
 		@textarea.Textarea(textarea.Props{
 			Name:  "review",
 			Label: "Content",
@@ -59,6 +73,43 @@ templ EditReview(props types.Review) {
 			@button.Button(button.Props{Type: button.TypeSubmit}) {
 				Update review
 			}
+			@button.Button(button.Props{
+				Rank: button.Secondary,
+				Type: button.TypeButton,
+				Attrs: templ.Attributes{
+					"hx-delete": props.Delete(id),
+					"hx-target": "closest section",
+					"hx-swap":   "outerHTML",
+				}},
+			) {
+				Delete review
+			}
 		</footer>
 	</form>
+}
+
+templ AddReview(id string) {
+	@section.Section(section.Props{Title: "Review"}) {
+		<form
+			hx-post={ fmt.Sprintf("/review/new?movieId=%s", id) }
+			hx-target="closest section"
+			hx-swap="outerHTML"
+		>
+			@textarea.Textarea(textarea.Props{
+				Name:  "review",
+				Label: "Content",
+			}) {
+				@checkbox.Checkbox(checkbox.Props{
+					Name:    "review_private",
+					Label:   "Review is private",
+					Checked: false,
+				})
+			}
+			<footer>
+				@button.Button(button.Props{Type: button.TypeSubmit}) {
+					Add review
+				}
+			</footer>
+		</form>
+	}
 }
