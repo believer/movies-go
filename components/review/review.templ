@@ -46,7 +46,8 @@ templ EditReview(props types.Review) {
 	<form hx-post={ fmt.Sprintf("/review/%d/update", props.ID) } hx-swap="outerHTML">
 		@textarea.Textarea(textarea.Props{
 			Name:  "review",
-			Label: "Review",
+			Label: "Content",
+			Value: props.Content,
 		}) {
 			@checkbox.Checkbox(checkbox.Props{
 				Name:    "review_private",

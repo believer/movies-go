@@ -5,12 +5,13 @@ import "believer/movies/components/input"
 type Props struct {
 	Name  string
 	Label string
+	Value string
 }
 
 templ Textarea(p Props) {
 	<div class="input">
 		@input.Label(p.Name, p.Label)
-		<textarea name={ p.Name } id={ p.Name }></textarea>
+		<textarea name={ p.Name } id={ p.Name }>{ p.Value }</textarea>
 		{ children... }
 	</div>
 }
