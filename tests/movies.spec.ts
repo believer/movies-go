@@ -36,15 +36,16 @@ test("test pages", async ({ page }) => {
 	}
 
 	// Series
-	const seriesLink = page.getByLabel("Series")
-	let series = await seriesLink.textContent()
+	const series = await page.locator("dd#series").count()
 
-	if (series) {
-		series = series.replace(/\s#\d{1,}/, "")
+	if (series > 0) {
+		const seriesLink = page.getByLabel("Series")
+		const text = await seriesLink.textContent()
+		const clean = text!.replace(/\s#\d{1,}/, "")
 
 		await seriesLink.click()
 		await expect(
-			page.getByRole("heading", { name: series, exact: true })
+			page.getByRole("heading", { name: clean, exact: true })
 		).toBeVisible()
 		await page.getByRole("link", { name: "Back" }).click()
 	}
