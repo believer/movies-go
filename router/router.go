@@ -135,6 +135,7 @@ func SetupRoutes(app *fiber.App) {
 
 	statsGroup.Get("/", h.GetStats)
 	statsGroup.Get("/ratings", h.GetRatingsByYear)
+	statsGroup.Get("/ratings/:year", h.GetRatingsForYear)
 	statsGroup.Get("/by-month", h.GetThisYearByMonth)
 	statsGroup.Get("/highest-ranked-person", h.GetHighestRankedPersonByJob)
 	statsGroup.Get("/best-of-the-year", h.GetBestOfTheYear)

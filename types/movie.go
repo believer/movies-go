@@ -118,6 +118,14 @@ func (m Movie) ISOCreatedDate() string {
 	return m.CreatedAt.Format("2006-01-02")
 }
 
+func (m Movie) ISOWatchedAt() string {
+	if !m.WatchedAt.Valid {
+		return ""
+	}
+
+	return m.WatchedAt.Time.Format("2006-01-02")
+}
+
 func (m Movie) ReleaseDateOrCreatedAt() string {
 	if !m.ReleaseDate.Valid {
 		return ""

@@ -1,0 +1,36 @@
+package views
+
+import "believer/movies/components/layout"
+import "believer/movies/types"
+import "believer/movies/components/list"
+import "believer/movies/components/section"
+import "fmt"
+import "believer/movies/components/separator"
+
+type RatingsProps struct {
+	Movies []types.Movies
+}
+
+templ Ratings(p RatingsProps) {
+	@layout.Layout(layout.Props{Title: "Ratings"}) {
+		for i, rating := range p.Movies {
+			if len(rating) > 0 {
+				@section.Section(section.Props{
+					Title: fmt.Sprintf("%d", len(p.Movies)-i),
+				}) {
+					@list.Ol() {
+						for _, m := range rating {
+							@list.Li() {
+								{ m.Title }
+								@separator.Separator()
+								@list.Trailing() {
+									{ m.ISOWatchedAt() }
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

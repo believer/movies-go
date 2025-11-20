@@ -735,6 +735,7 @@ func GetRatingsByYear(c *fiber.Ctx) error {
 
 	return utils.Render(c, graph.WithYear(
 		graph.WithYearProps{
+			Href: fmt.Sprintf("/stats/ratings/%s", year),
 			Props: graph.Props{
 				Bars:  yearRatings,
 				Title: title,
@@ -743,6 +744,63 @@ func GetRatingsByYear(c *fiber.Ctx) error {
 			Years:        availableYears(),
 			Route:        "/stats/ratings",
 		}))
+}
+
+func GetRatingsForYear(c *fiber.Ctx) error {
+	userId := c.Locals("UserId").(string)
+	year := c.Params("year")
+	var movies types.Movies
+
+	err := db.Client.Select(&movies, `
+WITH RankedRatings AS (
+    SELECT
+        r.movie_id,
+        r.user_id,
+        r.rating,
+        r.created_at,
+        -- Assigns a rank to each rating for a specific movie and user,
+        -- ordering by the rating date in descending order (latest first).
+        ROW_NUMBER() OVER (PARTITION BY r.movie_id,
+            r.user_id ORDER BY r.created_at DESC) AS rn
+    FROM
+        rating r
+)
+SELECT DISTINCT
+    m.id,
+    m.title,
+    rr.rating,
+    s.date AS "watched_at"
+FROM
+    seen s
+    INNER JOIN movie m ON m.id = s.movie_id
+    INNER JOIN RankedRatings rr ON rr.movie_id = s.movie_id
+        AND rr.user_id = s.user_id
+WHERE
+    EXTRACT('YEAR' FROM s.date) = $1
+    AND s.user_id = $2
+    -- Only keep the latest rating
+    AND rr.rn = 1
+ORDER BY
+    rr.rating DESC,
+    s.date ASC
+		`, year, userId)
+
+	if err != nil {
+		return err
+	}
+
+	sorted := make([]types.Movies, 10)
+
+	for _, m := range movies {
+		key := m.Rating.Int64 - 1
+		sorted[key] = append(sorted[key], m)
+	}
+
+	slices.Reverse(sorted)
+
+	return utils.Render(c, views.Ratings(views.RatingsProps{
+		Movies: sorted,
+	}))
 }
 
 func GetThisYearByMonth(c *fiber.Ctx) error {
