@@ -800,6 +800,7 @@ ORDER BY
 
 	return utils.Render(c, views.Ratings(views.RatingsProps{
 		Movies: sorted,
+		Title:  fmt.Sprintf("Ratings in %s", year),
 	}))
 }
 

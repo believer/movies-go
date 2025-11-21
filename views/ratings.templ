@@ -9,10 +9,11 @@ import "believer/movies/components/separator"
 
 type RatingsProps struct {
 	Movies []types.Movies
+	Title  string
 }
 
 templ Ratings(p RatingsProps) {
-	@layout.Layout(layout.Props{Title: "Ratings"}) {
+	@layout.Layout(layout.Props{Title: p.Title}) {
 		for i, rating := range p.Movies {
 			if len(rating) > 0 {
 				@section.Section(section.Props{

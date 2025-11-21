@@ -17,6 +17,7 @@ import "believer/movies/components/separator"
 
 type RatingsProps struct {
 	Movies []types.Movies
+	Title  string
 }
 
 func Ratings(p RatingsProps) templ.Component {
@@ -94,7 +95,7 @@ func Ratings(p RatingsProps) templ.Component {
 									var templ_7745c5c3_Var6 string
 									templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(m.Title)
 									if templ_7745c5c3_Err != nil {
-										return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/ratings.templ`, Line: 24, Col: 17}
+										return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/ratings.templ`, Line: 25, Col: 17}
 									}
 									_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 									if templ_7745c5c3_Err != nil {
@@ -123,7 +124,7 @@ func Ratings(p RatingsProps) templ.Component {
 										var templ_7745c5c3_Var8 string
 										templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(m.ISOWatchedAt())
 										if templ_7745c5c3_Err != nil {
-											return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/ratings.templ`, Line: 27, Col: 27}
+											return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/ratings.templ`, Line: 28, Col: 27}
 										}
 										_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 										if templ_7745c5c3_Err != nil {
@@ -160,7 +161,7 @@ func Ratings(p RatingsProps) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = layout.Layout(layout.Props{Title: "Ratings"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = layout.Layout(layout.Props{Title: p.Title}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
