@@ -5,7 +5,6 @@ all: build
 
 CSS_SRC := $(shell find components -type f -name '*.css' | sort)
 TARGET := public/styles.css
-TMPDIR := tmp
 
 css:
 	@awk 'BEGIN {in_section=0} \
@@ -38,6 +37,7 @@ dev: css
 		--open-browser=false \
 		--proxy=http://localhost:8080 \
 		--watch-pattern='.+\.(css|go|sql|templ)$$' \
+		--ignore-pattern='playwright-report' \
 		--cmd='go run .'
 
 test:
