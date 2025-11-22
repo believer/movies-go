@@ -144,10 +144,12 @@ templ Stats(props StatsProps) {
 					})
 					@graph.Graph(graph.Props{
 						Bars:  props.Ratings,
+						Href:  "/rating",
 						Title: "Ratings",
 					})
 					@graph.WithYear(graph.WithYearProps{
-						Href: fmt.Sprintf("/stats/ratings/%s", props.Year),
+						SectionHref: fmt.Sprintf("/stats/ratings/%s", props.Year),
+						BarHref:     "/rating",
 						Props: graph.Props{
 							Title: "Ratings this year",
 							Bars:  props.YearRatings,

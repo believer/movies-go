@@ -1,10 +1,10 @@
 package graph
 
-templ Bars(bars []Bar) {
-	<svg role="img" viewBox="0 0 536 200" class="graph">
-		for _, bar := range bars {
-			<g
-				_="
+import "fmt"
+
+templ group(bar Bar) {
+	<g
+		_="
         def bar.remove()
           remove .active from <text/> in me
           remove .active from <rect /> in me
@@ -16,24 +16,41 @@ templ Bars(bars []Bar) {
         on mouseleave bar.remove(remove)
         on touchend wait 1s then bar.remove(remove)
        "
-			>
-				<rect
-					class="bar"
-					width={ bar.BarWidth }
-					height={ bar.BarHeight }
-					stroke-dasharray="4 2"
-					rx="2"
-					ry="2"
-					x={ bar.BarX }
-					y={ bar.BarY }
-				></rect>
-				<text class="value" x={ bar.LabelX } y={ bar.LabelY }>
-					{ bar.Label }
-				</text>
-				<text class="value" x={ bar.ValueX } y={ bar.ValueY }>
-					{ bar.Value }
-				</text>
-			</g>
+	>
+		<rect
+			class="bar"
+			width={ bar.BarWidth }
+			height={ bar.BarHeight }
+			stroke-dasharray="4 2"
+			rx="2"
+			ry="2"
+			x={ bar.BarX }
+			y={ bar.BarY }
+		></rect>
+		<text class="value" x={ bar.LabelX } y={ bar.LabelY }>
+			{ bar.Label }
+		</text>
+		<text class="value" x={ bar.ValueX } y={ bar.ValueY }>
+			{ bar.Value }
+		</text>
+	</g>
+}
+
+type BarsProps struct {
+	Bars []Bar
+	Href string
+}
+
+templ Bars(p BarsProps) {
+	<svg role="img" viewBox="0 0 536 200" class="graph">
+		for _, bar := range p.Bars {
+			if p.Href != "" {
+				<a xlink:href={ fmt.Sprintf("%s/%s", p.Href, bar.Label) }>
+					@group(bar)
+				</a>
+			} else {
+				@group(bar)
+			}
 		}
 	</svg>
 }

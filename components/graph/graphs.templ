@@ -5,7 +5,8 @@ import "believer/movies/components/section"
 
 type WithYearProps struct {
 	Props
-	Href         string
+	BarHref      string
+	SectionHref  string
 	Route        string
 	SelectedYear string
 	Years        []string
@@ -13,7 +14,7 @@ type WithYearProps struct {
 
 templ WithYear(p WithYearProps) {
 	@section.Section(section.Props{
-		Href:  p.Href,
+		Href:  p.SectionHref,
 		Title: p.Title,
 		Action: dropdown.Dropdown(dropdown.Props{
 			Name:    "year",
@@ -22,6 +23,9 @@ templ WithYear(p WithYearProps) {
 			Value:   p.SelectedYear,
 		}),
 	}) {
-		@barsOrEmpty(p.Bars)
+		@barsOrEmpty(Props{
+			Bars: p.Bars,
+			Href: p.BarHref,
+		})
 	}
 }

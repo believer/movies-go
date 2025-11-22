@@ -4,19 +4,23 @@ import "believer/movies/components/section"
 import "believer/movies/components/empty-state"
 
 type Props struct {
+	Href  string
 	Bars  []Bar
 	Title string
 }
 
 templ Graph(p Props) {
 	@section.Section(section.Props{Title: p.Title}) {
-		@barsOrEmpty(p.Bars)
+		@barsOrEmpty(p)
 	}
 }
 
-templ barsOrEmpty(bars []Bar) {
-	if len(bars) > 0 {
-		@Bars(bars)
+templ barsOrEmpty(p Props) {
+	if len(p.Bars) > 0 {
+		@Bars(BarsProps{
+			Bars: p.Bars,
+			Href: p.Href,
+		})
 	} else {
 		@emptystate.EmptyState() {
 			No movies seen

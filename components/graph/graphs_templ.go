@@ -13,7 +13,8 @@ import "believer/movies/components/section"
 
 type WithYearProps struct {
 	Props
-	Href         string
+	BarHref      string
+	SectionHref  string
 	Route        string
 	SelectedYear string
 	Years        []string
@@ -52,14 +53,17 @@ func WithYear(p WithYearProps) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = barsOrEmpty(p.Bars).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = barsOrEmpty(Props{
+				Bars: p.Bars,
+				Href: p.BarHref,
+			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = section.Section(section.Props{
-			Href:  p.Href,
+			Href:  p.SectionHref,
 			Title: p.Title,
 			Action: dropdown.Dropdown(dropdown.Props{
 				Name:    "year",

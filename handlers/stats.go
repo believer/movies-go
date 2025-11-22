@@ -735,7 +735,8 @@ func GetRatingsByYear(c *fiber.Ctx) error {
 
 	return utils.Render(c, graph.WithYear(
 		graph.WithYearProps{
-			Href: fmt.Sprintf("/stats/ratings/%s", year),
+			SectionHref: fmt.Sprintf("/stats/ratings/%s", year),
+			BarHref:     "/rating",
 			Props: graph.Props{
 				Bars:  yearRatings,
 				Title: title,

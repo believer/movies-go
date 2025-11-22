@@ -12,6 +12,7 @@ import "believer/movies/components/section"
 import "believer/movies/components/empty-state"
 
 type Props struct {
+	Href  string
 	Bars  []Bar
 	Title string
 }
@@ -49,7 +50,7 @@ func Graph(p Props) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = barsOrEmpty(p.Bars).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = barsOrEmpty(p).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -63,7 +64,7 @@ func Graph(p Props) templ.Component {
 	})
 }
 
-func barsOrEmpty(bars []Bar) templ.Component {
+func barsOrEmpty(p Props) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -84,8 +85,11 @@ func barsOrEmpty(bars []Bar) templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		if len(bars) > 0 {
-			templ_7745c5c3_Err = Bars(bars).Render(ctx, templ_7745c5c3_Buffer)
+		if len(p.Bars) > 0 {
+			templ_7745c5c3_Err = Bars(BarsProps{
+				Bars: p.Bars,
+				Href: p.Href,
+			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
