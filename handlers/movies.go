@@ -878,6 +878,7 @@ func GetMoviesByYear(c *fiber.Ctx) error {
 
 	year := c.Params("year")
 	userId := c.Locals("UserId").(string)
+	page := c.QueryInt("page", 1)
 
 	err := db.Client.Select(&movies, `
 SELECT
@@ -901,8 +902,9 @@ FROM
 WHERE
     date_part('year', release_date) = $2
 ORDER BY
-    release_date
-		`, userId, year)
+    release_date ASC OFFSET $3
+LIMIT 50
+		`, userId, year, (page-1)*50)
 
 	if err != nil {
 		return err
@@ -910,6 +912,7 @@ ORDER BY
 
 	return utils.Render(c, views.ListView(views.ListViewProps{
 		EmptyState: "No movies this year",
+		NextPage:   fmt.Sprintf("/year/%s?page=%d", year, page+1),
 		Movies:     movies,
 		Name:       year,
 	}))
