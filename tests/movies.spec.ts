@@ -28,12 +28,11 @@ test("test pages", async ({ page }) => {
 	const year = ((await yearLink.textContent()) ?? "").substring(0, 4)
 
 	await yearLink.click()
+	await page.waitForURL(`**\/year\/${year}`)
 	await expect(page.getByRole("heading", { name: year })).toBeVisible()
 	await page.getByRole("link", { name: "Back" }).click()
 
-	if (title) {
-		await expect(page.getByRole("heading", { name: title })).toBeVisible()
-	}
+	await expect(page.getByRole("heading", { name: title! })).toBeVisible()
 
 	// Series
 	const series = await page.locator("dd#series").count()
