@@ -228,11 +228,11 @@ func GetRating(props Props) templ.Component {
 			templ_7745c5c3_Err = button.Button(button.Props{
 				Rank: button.Secondary,
 				Attrs: templ.Attributes{
-					"hx-swap":                       "outerHTML",
-					"hx-target":                     "#rating",
-					"hx-delete":                     fmt.Sprintf("/movie/%d/rating", props.MovieId),
-					"hx-confirm":                    "Delete rating?",
-					"hx-on::before-cleanup-element": "document.body.dispatchEvent(new Event('update-rating'))",
+					"hx-swap":               "outerHTML",
+					"hx-target":             "#rating",
+					"hx-delete":             fmt.Sprintf("/movie/%d/rating", props.MovieId),
+					"hx-confirm":            "Delete rating?",
+					"hx-on::before-on-load": "document.body.dispatchEvent(new Event('update-rating'))",
 				},
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {

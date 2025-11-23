@@ -51,11 +51,11 @@ templ GetRating(props Props) {
 			@button.Button(button.Props{
 				Rank: button.Secondary,
 				Attrs: templ.Attributes{
-					"hx-swap":                       "outerHTML",
-					"hx-target":                     "#rating",
-					"hx-delete":                     fmt.Sprintf("/movie/%d/rating", props.MovieId),
-					"hx-confirm":                    "Delete rating?",
-					"hx-on::before-cleanup-element": "document.body.dispatchEvent(new Event('update-rating'))",
+					"hx-swap":               "outerHTML",
+					"hx-target":             "#rating",
+					"hx-delete":             fmt.Sprintf("/movie/%d/rating", props.MovieId),
+					"hx-confirm":            "Delete rating?",
+					"hx-on::before-on-load": "document.body.dispatchEvent(new Event('update-rating'))",
 				},
 			}) {
 				Delete
