@@ -201,7 +201,7 @@
   }
 
   &.link--highlight {
-    color: var(--color-content-highlight);
+    --color: var(--color-content-highlight);
   }
 
   &.link--secondary {
