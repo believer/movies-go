@@ -157,7 +157,12 @@ func SetupRoutes(app *fiber.App) {
 
 	hookGroup := app.Group("/hooks")
 
-	hookGroup.Post("/playback", func(c *fiber.Ctx) error {
+	hookGroup.Post("/progress", func(c *fiber.Ctx) error {
+		fmt.Println(string(c.Body()))
+		return c.SendStatus(fiber.StatusOK)
+	})
+
+	hookGroup.Post("/stopped", func(c *fiber.Ctx) error {
 		fmt.Println(string(c.Body()))
 		return c.SendStatus(fiber.StatusOK)
 	})
