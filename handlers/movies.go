@@ -357,6 +357,11 @@ WHERE user_id = $1
     AND movie_id = $2`, userId, movieId)
 	}
 
+	// Remove from now playing if exists
+	tx.MustExec(`DELETE FROM now_playing
+WHERE user_id = $1
+    AND imdb_id = $2`, userId, movie.ImdbId)
+
 	// Insert rating
 	if data.Rating != 0 {
 		tx.MustExec(`INSERT INTO rating (user_id, movie_id, rating)

@@ -2,7 +2,6 @@ package router
 
 import (
 	h "believer/movies/handlers"
-	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -155,15 +154,16 @@ func SetupRoutes(app *fiber.App) {
 	settingsGroup.Get("/", h.Settings)
 	settingsGroup.Put("/watch-providers", h.SettingsWatchProviders)
 
+	// Webhooks
+	// --------------------------
+	nowPlayingGroup := app.Group("/now-playing")
+
+	nowPlayingGroup.Get("/", h.NowPlaying)
+
+	// Webhooks
+	// --------------------------
 	hookGroup := app.Group("/hooks")
 
-	hookGroup.Post("/progress", func(c *fiber.Ctx) error {
-		fmt.Println(string(c.Body()))
-		return c.SendStatus(fiber.StatusOK)
-	})
-
-	hookGroup.Post("/stopped", func(c *fiber.Ctx) error {
-		fmt.Println(string(c.Body()))
-		return c.SendStatus(fiber.StatusOK)
-	})
+	hookGroup.Post("/progress", h.ProgressHook)
+	hookGroup.Post("/stopped", h.ProgressStopped)
 }

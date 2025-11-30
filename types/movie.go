@@ -4,6 +4,7 @@ import (
 	"believer/movies/utils"
 	"database/sql"
 	"fmt"
+	"math"
 	"time"
 )
 
@@ -86,6 +87,7 @@ type Movie struct {
 	Poster              string                   `db:"poster" json:"poster"`
 	ProductionCompanies MovieProductionCompanies `db:"production_companies"`
 	ProductionCountries MovieProductionCountries `db:"production_countries"`
+	Position            float64                  `db:"position"`
 	RatedAt             sql.NullTime             `db:"rated_at" json:"ratedAt"`
 	Rating              sql.NullInt64            `db:"rating" json:"rating"`
 	ReleaseDate         utils.NullTime           `db:"release_date" json:"releaseDate"`
@@ -103,6 +105,13 @@ type Movie struct {
 // Format runtime in hours and minutes from minutes
 func (m Movie) RuntimeFormatted() string {
 	return utils.FormatRuntime(m.Runtime)
+}
+
+func (m Movie) PositionFormatted() string {
+	seconds := int(math.Mod(m.Position, 1) * 60)
+	minutes := int(m.Position)
+
+	return fmt.Sprintf("%s %ds", utils.FormatRuntime(minutes), seconds)
 }
 
 // The movie's release date formatted as ISO 8601 - YYYY-MM-DD
@@ -158,6 +167,12 @@ func (m Movie) LinkToReleaseYear() string {
 
 func (m Movie) LinkToCreatedYear() string {
 	return fmt.Sprintf("/year/%s", m.CreatedAt.Format("2006"))
+}
+
+func (m Movie) Progress() string {
+	percent := (m.Position / float64(m.Runtime)) * 100
+
+	return fmt.Sprintf("width: %f%%", percent)
 }
 
 // Link to the movie's release year

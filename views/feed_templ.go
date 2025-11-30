@@ -25,6 +25,7 @@ type FeedProps struct {
 	SortedKeys    []string
 	Persons       types.Persons
 	NextPage      int
+	NowPlaying    types.Movies
 	Query         string
 	QueryType     string
 }
@@ -69,7 +70,7 @@ func Feed(props FeedProps) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(props.Query)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 42, Col: 25}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 43, Col: 25}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -122,7 +123,7 @@ func Feed(props FeedProps) templ.Component {
 									var templ_7745c5c3_Var7 string
 									templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(person.Name)
 									if templ_7745c5c3_Err != nil {
-										return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 53, Col: 23}
+										return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 54, Col: 23}
 									}
 									_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 									if templ_7745c5c3_Err != nil {
@@ -149,7 +150,7 @@ func Feed(props FeedProps) templ.Component {
 								var templ_7745c5c3_Var8 string
 								templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(person.NumberOfMovies)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 58, Col: 34}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 59, Col: 34}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 								if templ_7745c5c3_Err != nil {
@@ -202,6 +203,12 @@ func Feed(props FeedProps) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
+					templ_7745c5c3_Err = NowPlaying(NowPlayingProps{
+						Movies: props.NowPlaying,
+					}).Render(ctx, templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
 					currentHeader := props.LastHeader
 					currentYear := currentHeader[:4]
 					for _, k := range props.SortedKeys {
@@ -218,7 +225,7 @@ func Feed(props FeedProps) templ.Component {
 							var templ_7745c5c3_Var10 templ.SafeURL
 							templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(fmt.Sprintf("/year/%s", year)))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 84, Col: 94}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 88, Col: 94}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 							if templ_7745c5c3_Err != nil {
@@ -231,7 +238,7 @@ func Feed(props FeedProps) templ.Component {
 							var templ_7745c5c3_Var11 string
 							templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(year)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 85, Col: 17}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 89, Col: 17}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 							if templ_7745c5c3_Err != nil {
@@ -255,7 +262,7 @@ func Feed(props FeedProps) templ.Component {
 								var templ_7745c5c3_Var12 string
 								templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(currentHeader[8:])
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 93, Col: 31}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 97, Col: 31}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 								if templ_7745c5c3_Err != nil {
@@ -285,7 +292,7 @@ func Feed(props FeedProps) templ.Component {
 							var templ_7745c5c3_Var13 templ.SafeURL
 							templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinURLErrs(movie.LinkTo())
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 105, Col: 36}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 109, Col: 36}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 							if templ_7745c5c3_Err != nil {
@@ -298,7 +305,7 @@ func Feed(props FeedProps) templ.Component {
 							var templ_7745c5c3_Var14 string
 							templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(movie.Title)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 106, Col: 26}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 110, Col: 26}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 							if templ_7745c5c3_Err != nil {
@@ -316,7 +323,7 @@ func Feed(props FeedProps) templ.Component {
 								var templ_7745c5c3_Var15 string
 								templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(movie.WatchedAt.Time.Format("2006-01-02 15:04"))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 112, Col: 69}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 116, Col: 69}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 								if templ_7745c5c3_Err != nil {
@@ -329,7 +336,7 @@ func Feed(props FeedProps) templ.Component {
 								var templ_7745c5c3_Var16 string
 								templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(movie.WatchedAt.Time.Format("2006-01-02T15:04:05Z"))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 113, Col: 76}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 117, Col: 76}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 								if templ_7745c5c3_Err != nil {
@@ -342,7 +349,7 @@ func Feed(props FeedProps) templ.Component {
 								var templ_7745c5c3_Var17 string
 								templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(movie.WatchedAt.Time.Format("January 2 2006"))
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 115, Col: 61}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 119, Col: 61}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 								if templ_7745c5c3_Err != nil {
@@ -361,7 +368,7 @@ func Feed(props FeedProps) templ.Component {
 								var templ_7745c5c3_Var18 string
 								templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(movie.Series.String)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 120, Col: 37}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 124, Col: 37}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 								if templ_7745c5c3_Err != nil {
@@ -374,7 +381,7 @@ func Feed(props FeedProps) templ.Component {
 								var templ_7745c5c3_Var19 string
 								templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(movie.NumberInSeries.Int64)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 120, Col: 70}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 124, Col: 70}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 								if templ_7745c5c3_Err != nil {
@@ -397,7 +404,7 @@ func Feed(props FeedProps) templ.Component {
 								var templ_7745c5c3_Var20 string
 								templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(movie.Overview)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 127, Col: 28}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 131, Col: 28}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 								if templ_7745c5c3_Err != nil {
@@ -422,7 +429,7 @@ func Feed(props FeedProps) templ.Component {
 						var templ_7745c5c3_Var21 string
 						templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/?page=%d&last-header=%s", props.NextPage, currentHeader))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 135, Col: 88}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/feed.templ`, Line: 139, Col: 88}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 						if templ_7745c5c3_Err != nil {

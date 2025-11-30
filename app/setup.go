@@ -8,14 +8,20 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	// "github.com/gofiber/fiber/v2/middleware/csrf"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+
 	// "github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/golang-jwt/jwt/v5"
 )
+
+type Headers struct {
+	Authorization string `reqHeader:"Authorization"`
+}
 
 func SetupAndRunApp() error {
 	err := utils.LoadEnv()
@@ -66,6 +72,17 @@ func SetupAndRunApp() error {
 		secret := os.Getenv("ADMIN_SECRET")
 		tokenString := c.Cookies("token")
 
+		h := new(Headers)
+
+		if err := c.ReqHeaderParser(h); err != nil {
+			return err
+		}
+
+		if tokenString == "" && h.Authorization != "" {
+			_, token, _ := strings.Cut(h.Authorization, " ")
+			tokenString = token
+		}
+
 		// Set me as default user
 		userId := "1"
 
@@ -87,12 +104,12 @@ func SetupAndRunApp() error {
 
 			if claims, ok := token.Claims.(jwt.MapClaims); ok {
 				userId = claims["id"].(string)
+				c.Locals("IsAuthenticated", true)
 			}
 		}
 
 		c.Locals("AppEnv", appEnv)
 		c.Locals("UserId", userId)
-		c.Locals("IsAuthenticated", utils.IsAuthenticated(c))
 
 		return c.Next()
 	})

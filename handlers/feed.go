@@ -15,6 +15,7 @@ import (
 func GetFeed(c *fiber.Ctx) error {
 	var movies types.Movies
 	var persons types.Persons
+	var nowPlaying types.Movies
 
 	page := c.QueryInt("page", 1)
 	lastHeader := c.Query("last-header", "0000-00-January")
@@ -150,11 +151,29 @@ ORDER BY
 LIMIT 20
 			`, (page-1)*20, userId)
 
-		c.Set("HX-Push-Url", "/")
+		if err != nil {
+			return err
+		}
+
+		err = db.Client.Select(&nowPlaying, `
+SELECT
+    np.position,
+    m.id,
+    m.title,
+    m.runtime,
+    m.overview
+FROM
+    now_playing np
+    RIGHT JOIN movie m ON m.imdb_id = np.imdb_id
+WHERE
+    user_id = $1
+			`, userId)
 
 		if err != nil {
 			return err
 		}
+
+		c.Set("HX-Push-Url", "/")
 	}
 
 	// When there are no more movies to show, just return 200. Otherwise we
@@ -200,6 +219,7 @@ LIMIT 20
 		GroupedMovies: groupedMovies,
 		SortedKeys:    keys,
 		NextPage:      page + 1,
+		NowPlaying:    nowPlaying,
 		Persons:       persons,
 		Query:         searchQuery,
 		QueryType:     searchQueryType,

@@ -1,0 +1,41 @@
+package views
+
+import "believer/movies/types"
+
+type NowPlayingProps struct {
+	Movies types.Movies
+}
+
+templ NowPlaying(p NowPlayingProps) {
+	if len(p.Movies) > 0 {
+		<section
+			class="now-playing"
+			hx-get="/now-playing"
+			hx-trigger="every 5m"
+			hx-swap="outerHTML"
+		>
+			<h2>Now watching</h2>
+			<ol>
+				for _, m := range p.Movies {
+					<li>
+						<h3>
+							<a href={ m.LinkTo() }>
+								{ m.Title }
+							</a>
+						</h3>
+						<p class="overview">
+							{ m.Overview }
+						</p>
+						<div class="position">
+							<div>{ m.PositionFormatted() }</div>
+							<div class="progress-bar">
+								<div style={ m.Progress() }></div>
+							</div>
+							<div>{ m.RuntimeFormatted() }</div>
+						</div>
+					</li>
+				}
+			</ol>
+		</section>
+	}
+}

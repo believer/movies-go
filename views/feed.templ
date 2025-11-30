@@ -17,6 +17,7 @@ type FeedProps struct {
 	SortedKeys    []string
 	Persons       types.Persons
 	NextPage      int
+	NowPlaying    types.Movies
 	Query         string
 	QueryType     string
 }
@@ -69,6 +70,9 @@ templ Feed(props FeedProps) {
 				case "movie":
 					if len(props.GroupedMovies) > 0 {
 						<ol class="feed-list">
+							@NowPlaying(NowPlayingProps{
+								Movies: props.NowPlaying,
+							})
 							{{ currentHeader := props.LastHeader }}
 							{{ currentYear := currentHeader[:4] }}
 							for _, k := range props.SortedKeys {
