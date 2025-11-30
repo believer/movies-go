@@ -33,10 +33,10 @@ templ Feed(props FeedProps) {
 						name="search"
 						placeholder="Find a movie"
 						hx-get="/"
-						hx-select="ol"
+						hx-select="#feed"
 						hx-trigger="keyup changed delay:500ms, search"
 						hx-swap="outerHTML"
-						hx-target="ol"
+						hx-target="#feed"
 						minlength="3"
 						hx-validate="true"
 						style="--border-radius: var(--spacing-max);"
@@ -47,7 +47,7 @@ templ Feed(props FeedProps) {
 			switch props.QueryType {
 				case "person":
 					if len(props.Persons) > 0 {
-						@list.Ol() {
+						@list.Ol(list.Props{ID: "feed"}) {
 							for _, person := range props.Persons {
 								@list.Li() {
 									@link.Link(link.Props{Href: person.LinkTo()}) {
@@ -69,7 +69,7 @@ templ Feed(props FeedProps) {
 					}
 				case "movie":
 					if len(props.GroupedMovies) > 0 {
-						<ol class="feed-list">
+						<ol class="feed-list" id="feed">
 							@NowPlaying(NowPlayingProps{
 								Movies: props.NowPlaying,
 							})

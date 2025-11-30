@@ -63,7 +63,7 @@ func Feed(props FeedProps) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"feed-search\"><search><div class=\"input\"><input aria-label=\"Find a movie, actor, director, producer, or composer\" type=\"search\" name=\"search\" placeholder=\"Find a movie\" hx-get=\"/\" hx-select=\"ol\" hx-trigger=\"keyup changed delay:500ms, search\" hx-swap=\"outerHTML\" hx-target=\"ol\" minlength=\"3\" hx-validate=\"true\" style=\"--border-radius: var(--spacing-max);\" value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"feed-search\"><search><div class=\"input\"><input aria-label=\"Find a movie, actor, director, producer, or composer\" type=\"search\" name=\"search\" placeholder=\"Find a movie\" hx-get=\"/\" hx-select=\"#feed\" hx-trigger=\"keyup changed delay:500ms, search\" hx-swap=\"outerHTML\" hx-target=\"#feed\" minlength=\"3\" hx-validate=\"true\" style=\"--border-radius: var(--spacing-max);\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -169,7 +169,7 @@ func Feed(props FeedProps) templ.Component {
 						}
 						return nil
 					})
-					templ_7745c5c3_Err = list.Ol().Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = list.Ol(list.Props{ID: "feed"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -199,7 +199,7 @@ func Feed(props FeedProps) templ.Component {
 				}
 			case "movie":
 				if len(props.GroupedMovies) > 0 {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<ol class=\"feed-list\">")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<ol class=\"feed-list\" id=\"feed\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
