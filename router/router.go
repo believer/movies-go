@@ -164,6 +164,5 @@ func SetupRoutes(app *fiber.App) {
 	// --------------------------
 	hookGroup := app.Group("/hooks")
 
-	hookGroup.Post("/progress", h.ProgressHook)
-	hookGroup.Post("/stopped", h.ProgressStopped)
+	hookGroup.Post("/playback", h.PlaybackProgress)
 }

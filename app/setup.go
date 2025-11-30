@@ -71,6 +71,7 @@ func SetupAndRunApp() error {
 	app.Use(func(c *fiber.Ctx) error {
 		secret := os.Getenv("ADMIN_SECRET")
 		tokenString := c.Cookies("token")
+		c.Locals("IsAuthenticated", false)
 
 		h := new(Headers)
 
