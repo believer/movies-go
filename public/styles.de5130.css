@@ -286,6 +286,12 @@
       margin-top: var(--spacing-4);
     }
 
+    ol {
+      > * + * {
+        margin-top: var(--spacing-4);
+      }
+    }
+
     li {
       position: relative;
       padding: var(--spacing-4);
