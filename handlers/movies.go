@@ -204,9 +204,7 @@ func personExists(arr []NewPerson, id int, job any) (int, bool) {
 
 // Handle adding a movie
 func PostMovieNew(c *fiber.Ctx) error {
-	isAuth := utils.IsAuthenticated(c)
-
-	if !isAuth {
+	if c.Locals("IsAuthenticated") == false {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
