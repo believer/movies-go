@@ -2,7 +2,12 @@ package graph
 
 import "fmt"
 
-templ group(bar Bar) {
+type BarsProps struct {
+	Bars []Bar
+	Href string
+}
+
+templ group(bar Bar, href string) {
 	<g
 		_="
         def bar.remove()
@@ -27,6 +32,32 @@ templ group(bar Bar) {
 			x={ bar.BarX }
 			y={ bar.BarY }
 		></rect>
+		if href != "" {
+			<a xlink:href={ fmt.Sprintf("%s/%s", href, bar.Label) }>
+				<rect
+					fill="rgba(0,0,0,0)"
+					width={ bar.BarWidth }
+					height="40"
+					x={ bar.BarX }
+					y="180"
+				></rect>
+			</a>
+		} else {
+			<rect
+				fill="rgba(0,0,0,0)"
+				width={ bar.BarWidth }
+				height="40"
+				x={ bar.BarX }
+				y="180"
+			></rect>
+		}
+		<rect
+			fill="rgba(0,0,0,0)"
+			width={ bar.BarWidth }
+			height="40"
+			x={ bar.BarX }
+			y={ bar.BarY - 40 }
+		></rect>
 		<text class="value" x={ bar.LabelX } y={ bar.LabelY }>
 			{ bar.Label }
 		</text>
@@ -36,21 +67,10 @@ templ group(bar Bar) {
 	</g>
 }
 
-type BarsProps struct {
-	Bars []Bar
-	Href string
-}
-
 templ Bars(p BarsProps) {
 	<svg role="img" viewBox="0 0 536 200" class="graph">
 		for _, bar := range p.Bars {
-			if p.Href != "" {
-				<a xlink:href={ fmt.Sprintf("%s/%s", p.Href, bar.Label) }>
-					@group(bar)
-				</a>
-			} else {
-				@group(bar)
-			}
+			@group(bar, p.Href)
 		}
 	</svg>
 }
