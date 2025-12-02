@@ -7,6 +7,7 @@ import (
 	"believer/movies/components/review"
 	"believer/movies/components/seen"
 	"believer/movies/db"
+	"believer/movies/services/api"
 	"believer/movies/services/tmdb"
 	"believer/movies/types"
 	"believer/movies/utils"
@@ -14,7 +15,7 @@ import (
 	"believer/movies/views"
 	"database/sql"
 	"fmt"
-	"log"
+	"log/slog"
 	"strconv"
 	"strings"
 	"time"
@@ -232,19 +233,14 @@ func PostMovieNew(c *fiber.Ctx) error {
 		return c.SendString(err.Error())
 	}
 
-	movieId := 0
-	tmdbApi := tmdb.New(imdbId)
-	movie, err := tmdbApi.Movie()
+	api := api.New()
+	movie, movieId, err := api.AddMovie(imdbId, data.HasWilhelmScream)
 
 	if err != nil {
 		return err
 	}
 
-	movieCast, err := tmdbApi.Credits()
-
-	if err != nil {
-		return err
-	}
+	slog.Debug("Movie inserted")
 
 	watchedAt, err := time.Parse("2006-01-02T15:04", data.WatchedAt)
 
@@ -261,42 +257,6 @@ func PostMovieNew(c *fiber.Ctx) error {
 	}
 
 	tx := db.Client.MustBegin()
-
-	// Insert movie information
-	err = db.Client.Get(
-		&movieId,
-		`
-INSERT INTO movie (title, runtime, release_date, imdb_id, overview, poster, tagline, tmdb_id, wilhelm)
-    VALUES ($1, $2, NULLIF ($3, '')::date, $4, $5, $6, $7, $8, $9)
-ON CONFLICT (imdb_id)
-    DO UPDATE SET
-        title = excluded.title,
-        runtime = excluded.runtime,
-        release_date = excluded.release_date,
-        imdb_id = excluded.imdb_id,
-        overview = excluded.overview,
-        poster = excluded.poster,
-        tagline = excluded.tagline,
-        tmdb_id = excluded.tmdb_id
-    RETURNING
-        id
-		`,
-		movie.Title,
-		movie.Runtime,
-		movie.ReleaseDate,
-		movie.ImdbId,
-		movie.Overview,
-		movie.Poster,
-		movie.Tagline,
-		movie.TmdbId,
-		data.HasWilhelmScream,
-	)
-
-	if err != nil {
-		return err
-	}
-
-	log.Println("Movie inserted")
 
 	// Add review if any
 	if data.Review != "" {
@@ -334,7 +294,7 @@ RETURNING
 			return c.SendString(fmt.Sprintf("Movie #%d already exists in series", data.NumberInSeries))
 		}
 
-		log.Println("Series inserted")
+		slog.Debug("Series inserted")
 	}
 
 	if data.IsWatchlist {
@@ -453,7 +413,7 @@ ON CONFLICT
 		}
 	}
 
-	log.Println("Genres inserted")
+	slog.Debug("Genres inserted")
 
 	// Country
 	for _, c := range movie.ProductionCountries {
@@ -465,7 +425,7 @@ ON CONFLICT
     `, movieId, c.ID)
 	}
 
-	log.Println("Countries inserted")
+	slog.Debug("Countries inserted")
 
 	// Production companies
 	for _, c := range movie.ProductionCompanies {
@@ -490,183 +450,7 @@ ON CONFLICT
 		`, movieId, c.ID)
 	}
 
-	log.Println("Production companies inserted")
-
-	var castStructs []NewPerson
-	var crewStructs []NewPerson
-
-	// Insert cast
-	for _, cast := range movieCast.Cast {
-		var pfp sql.NullString
-		var char sql.NullString
-
-		if cast.ProfilePath == nil {
-			pfp = sql.NullString{String: "", Valid: false}
-		} else {
-			pfp = sql.NullString{String: *cast.ProfilePath, Valid: true}
-		}
-
-		if cast.Character == nil {
-			char = sql.NullString{String: "", Valid: false}
-		} else {
-			char = sql.NullString{String: *cast.Character, Valid: true}
-		}
-
-		personIndex, exists := personExists(castStructs, cast.ID, "cast")
-
-		if exists {
-			castStructs[personIndex].Name = cast.Name
-			castStructs[personIndex].Popularity = cast.Popularity
-			castStructs[personIndex].Character = char
-			castStructs[personIndex].ProfilePicture = pfp
-
-			continue
-		}
-
-		castStructs = append(castStructs, NewPerson{
-			ID:             cast.ID,
-			Name:           cast.Name,
-			Popularity:     cast.Popularity,
-			Job:            sql.NullString{String: "cast", Valid: true},
-			Character:      char,
-			ProfilePicture: pfp,
-			MovieId:        movieId,
-		})
-	}
-
-	// Crew
-	for _, crew := range movieCast.Crew {
-		department := crew.Department
-
-		if department != "Directing" && department != "Writing" && department != "Production" && department != "Sound" && department != "Camera" && department != "Editing" {
-			continue
-		}
-
-		var pfp sql.NullString
-
-		if crew.ProfilePath == nil {
-			pfp = sql.NullString{String: "", Valid: false}
-		} else {
-			pfp = sql.NullString{String: *crew.ProfilePath, Valid: true}
-		}
-
-		if crew.Job == nil {
-			continue
-		}
-
-		job := *crew.Job
-
-		switch job {
-		case "Screenplay", "Writer", "Novel":
-			job = "writer"
-		case "Original Music Composer":
-			job = "composer"
-		case "Producer", "Associate Producer", "Executive Producer":
-			job = "producer"
-		case "Director":
-			job = "director"
-		case "Director of Photography":
-			job = "cinematographer"
-		case "Editor":
-			job = "editor"
-		default:
-			continue
-		}
-
-		jobStr := sql.NullString{String: job, Valid: true}
-		personIndex, exists := personExists(crewStructs, crew.Id, job)
-
-		if exists {
-			crewStructs[personIndex].Name = crew.Name
-			crewStructs[personIndex].Popularity = crew.Popularity
-			crewStructs[personIndex].ProfilePicture = pfp
-
-			continue
-		}
-
-		crewStructs = append(crewStructs, NewPerson{
-			ID:             crew.Id,
-			Name:           crew.Name,
-			Popularity:     crew.Popularity,
-			Job:            jobStr,
-			ProfilePicture: pfp,
-			MovieId:        movieId,
-		})
-	}
-
-	if len(castStructs) > 0 {
-		_, err = tx.NamedExec(`
-	INSERT INTO person (name, original_id, popularity, profile_picture)
-	    VALUES (:name, :id, :popularity, :profile_picture)
-	ON CONFLICT
-	    DO NOTHING
-	`, castStructs)
-
-		if err != nil {
-			log.Println("Could not insert person")
-			return err
-		}
-
-		_, err = tx.NamedExec(`
-	INSERT INTO movie_person (movie_id, person_id, job, character)
-	    VALUES (:movie_id, (
-	            SELECT
-	                id
-	            FROM
-	                person
-	            WHERE
-	                original_id = :id), 'cast', :character)
-	ON CONFLICT (movie_id,
-	    person_id,
-	    job)
-	    DO UPDATE SET
-	        character = excluded.character
-	`, castStructs)
-
-		if err != nil {
-			log.Println("Could not insert movie_person")
-			return err
-		}
-	}
-
-	log.Println("Cast inserted")
-
-	if len(crewStructs) > 0 {
-		_, err = tx.NamedExec(`
-	INSERT INTO person (name, original_id, popularity, profile_picture)
-	    VALUES (:name, :id, :popularity, :profile_picture)
-	ON CONFLICT
-	    DO NOTHING
-	`, crewStructs)
-
-		if err != nil {
-			log.Println("Could not insert crew")
-			return err
-		}
-
-		_, err = tx.NamedExec(`
-	INSERT INTO movie_person (movie_id, person_id, job)
-	    VALUES (:movie_id, (
-	            SELECT
-	                id
-	            FROM
-	                person
-	            WHERE
-	                original_id = :id), :job)
-	ON CONFLICT (movie_id,
-	    person_id,
-	    job)
-	    DO UPDATE SET
-	        job = excluded.job
-	`, crewStructs)
-
-		if err != nil {
-			log.Println("Could not insert movie_person crew")
-			return err
-		}
-	}
-
-	log.Println("Crew inserted")
+	slog.Debug("Production companies inserted")
 
 	err = tx.Commit()
 
@@ -1361,7 +1145,7 @@ func UpdateMovieByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	log.Println("Movie updated")
+	slog.Debug("Movie updated")
 
 	// Insert languages
 	type Language struct {
@@ -1450,7 +1234,7 @@ ON CONFLICT
 		}
 	}
 
-	log.Println("Genres updated")
+	slog.Debug("Genres updated")
 
 	for _, c := range movie.ProductionCountries {
 		tx.MustExec(`
@@ -1461,7 +1245,7 @@ ON CONFLICT
     `, id, c.ID)
 	}
 
-	log.Println("Countries inserted")
+	slog.Debug("Countries inserted")
 
 	// Production companies
 	for _, c := range movie.ProductionCompanies {
@@ -1486,7 +1270,7 @@ ON CONFLICT
 		`, id, c.ID)
 	}
 
-	log.Println("Production companies inserted")
+	slog.Debug("Production companies inserted")
 
 	var castStructs []NewPerson
 	var crewStructs []NewPerson
@@ -1599,7 +1383,7 @@ ON CONFLICT
 	`, castStructs)
 
 		if err != nil {
-			log.Println("Could not insert person")
+			slog.Error("Could not insert person")
 			return err
 		}
 
@@ -1620,12 +1404,12 @@ ON CONFLICT
 	`, castStructs)
 
 		if err != nil {
-			log.Println("Could not insert movie_person")
+			slog.Error("Could not insert movie_person")
 			return err
 		}
 	}
 
-	log.Println("Cast updated")
+	slog.Debug("Cast updated")
 
 	if len(crewStructs) > 0 {
 		_, err = tx.NamedExec(`
@@ -1636,7 +1420,7 @@ ON CONFLICT
 	`, crewStructs)
 
 		if err != nil {
-			log.Println("Could not insert crew")
+			slog.Error("Could not insert crew")
 			return err
 		}
 
@@ -1657,12 +1441,12 @@ ON CONFLICT
 	`, crewStructs)
 
 		if err != nil {
-			log.Println("Could not insert movie_person crew")
+			slog.Error("Could not insert movie_person crew")
 			return err
 		}
 	}
 
-	log.Println("Crew updated")
+	slog.Debug("Crew updated")
 
 	err = tx.Commit()
 

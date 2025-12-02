@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"believer/movies/db"
+	"believer/movies/services/api"
+	"log/slog"
 	"strconv"
 	"strings"
 
@@ -31,6 +33,7 @@ func PlaybackProgress(c *fiber.Ctx) error {
 	}
 
 	if data.Completed {
+		slog.Info("Playback completed", "data", data)
 		PostMovieNew(c)
 	} else {
 		// Convert string position to float
@@ -65,6 +68,35 @@ func PlaybackProgress(c *fiber.Ctx) error {
 		if err != nil {
 			return err
 		}
+
+		// If movie doesn't exist, add it
+		movieExists := false
+
+		err = db.Client.Get(&movieExists, `
+			SELECT
+			    EXISTS (
+			        SELECT
+			            1
+			        FROM
+			            movie
+			        WHERE
+			            imdb_id = $1)
+			`, data.ImdbID)
+
+		if err != nil {
+			return err
+		}
+
+		if !movieExists {
+			api := api.New()
+			_, _, err := api.AddMovie(data.ImdbID, false)
+
+			if err != nil {
+				return err
+			}
+		}
+
+		slog.Info("Playback updated", "data", data)
 	}
 
 	return c.SendStatus(200)
