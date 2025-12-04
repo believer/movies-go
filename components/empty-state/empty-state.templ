@@ -1,7 +1,19 @@
 package emptystate
 
-templ EmptyState() {
-	<ol>
+type Props struct {
+	ID string
+}
+
+templ EmptyState(props ...Props) {
+	{{ var p Props }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<ol
+		if p.ID != "" {
+			id={ p.ID }
+		}
+	>
 		<li class="empty-state">
 			{ children... }
 		</li>

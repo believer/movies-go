@@ -63,7 +63,7 @@ templ Feed(props FeedProps) {
 							}
 						}
 					} else {
-						@emptystate.EmptyState() {
+						@emptystate.EmptyState(emptystate.Props{ID: "feed"}) {
 							No persons found
 						}
 					}
@@ -144,7 +144,7 @@ templ Feed(props FeedProps) {
 							}
 						</ol>
 					} else {
-						@emptystate.EmptyState() {
+						@emptystate.EmptyState(emptystate.Props{ID: "feed"}) {
 							No movies seen
 						}
 					}
