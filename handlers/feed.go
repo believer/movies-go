@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"believer/movies/db"
+	"believer/movies/services/api"
 	"believer/movies/types"
 	"believer/movies/utils"
 	"believer/movies/views"
@@ -22,6 +23,7 @@ func GetFeed(c *fiber.Ctx) error {
 	searchQuery := c.Query("search")
 	userId := c.Locals("UserId")
 	searchQueryType := "movie"
+	api := api.New(c)
 
 	querySearch := `
 SELECT
@@ -155,25 +157,13 @@ LIMIT 20
 			return err
 		}
 
-		err = db.Client.Select(&nowPlaying, `
-SELECT
-    np.position,
-    m.id,
-    m.title,
-    m.runtime,
-    m.overview
-FROM
-    now_playing np
-    RIGHT JOIN movie m ON m.imdb_id = np.imdb_id
-WHERE
-    user_id = $1
-			`, userId)
-
-		if err != nil {
-			return err
-		}
-
 		c.Set("HX-Push-Url", "/")
+	}
+
+	nowPlaying, err := api.NowPlaying()
+
+	if err != nil {
+		return err
 	}
 
 	// When there are no more movies to show, just return 200. Otherwise we

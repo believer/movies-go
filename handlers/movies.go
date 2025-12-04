@@ -233,7 +233,7 @@ func PostMovieNew(c *fiber.Ctx) error {
 		return c.SendString(err.Error())
 	}
 
-	api := api.New()
+	api := api.New(c)
 	movie, movieId, err := api.AddMovie(imdbId, data.HasWilhelmScream)
 
 	if err != nil {

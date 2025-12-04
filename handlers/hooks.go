@@ -88,7 +88,7 @@ func PlaybackProgress(c *fiber.Ctx) error {
 		}
 
 		if !movieExists {
-			api := api.New()
+			api := api.New(c)
 			_, _, err := api.AddMovie(data.ImdbID, false)
 
 			if err != nil {

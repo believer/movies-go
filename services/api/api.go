@@ -6,12 +6,20 @@ import (
 	"believer/movies/types"
 	"database/sql"
 	"log/slog"
+
+	"github.com/gofiber/fiber/v2"
 )
 
-type Api struct{}
+type Api struct {
+	UserID string
+}
 
-func New() *Api {
-	return &Api{}
+func New(c *fiber.Ctx) *Api {
+	userId := c.Locals("UserId").(string)
+
+	return &Api{
+		UserID: userId,
+	}
 }
 
 func (a *Api) AddMovie(imdbId string, hasWilhelmScream bool) (types.MovieDetailsResponse, int, error) {
@@ -270,6 +278,32 @@ func (a *Api) AddCast(imdbId string, movieId int) {
 		slog.Error("Could not commit cast")
 		err = tx.Rollback()
 	}
+}
+
+func (a *Api) NowPlaying() (types.Movies, error) {
+	var nowPlaying types.Movies
+
+	err := db.Client.Select(&nowPlaying, `
+SELECT
+    np.position,
+    m.id,
+    m.title,
+    m.runtime,
+    m.overview
+FROM
+    now_playing np
+    RIGHT JOIN movie m ON m.imdb_id = np.imdb_id
+WHERE
+    user_id = $1
+ORDER BY
+    np.position DESC
+			`, a.UserID)
+
+	if err != nil {
+		return nowPlaying, err
+	}
+
+	return nowPlaying, nil
 }
 
 func personExists(arr []NewPerson, id int, job any) (int, bool) {
