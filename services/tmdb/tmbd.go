@@ -78,7 +78,13 @@ func fetchJSON[T any](path []string, additionalParams map[string]string) (T, err
 		return result, err
 	}
 
-	defer resp.Body.Close()
+	defer func() {
+		cerr := resp.Body.Close()
+
+		if err != nil {
+			err = cerr
+		}
+	}()
 
 	if resp.StatusCode == 404 {
 		log.Printf("Movie watch providers not found")

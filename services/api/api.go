@@ -276,7 +276,11 @@ func (a *Api) AddCast(imdbId string, movieId int) {
 
 	if err != nil {
 		slog.Error("Could not commit cast")
-		err = tx.Rollback()
+		err := tx.Rollback()
+
+		if err != nil {
+			slog.Error("Could not rollback cast")
+		}
 	}
 }
 

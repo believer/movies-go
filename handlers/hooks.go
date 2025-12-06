@@ -34,7 +34,7 @@ func PlaybackProgress(c *fiber.Ctx) error {
 
 	if data.Completed {
 		slog.Info("Playback completed", "data", data)
-		PostMovieNew(c)
+		return PostMovieNew(c)
 	} else {
 		// Convert string position to float
 		positionParts := strings.Split(data.Position, ":")

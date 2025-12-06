@@ -54,12 +54,16 @@ func SettingsWatchProviders(c *fiber.Ctx) error {
 
 	selectedProviders := strings.Join(formData.Providers, ",")
 
-	db.Client.Exec(`UPDATE
+	_, err := db.Client.Exec(`UPDATE
     "user"
 SET
     watch_providers = $1
 WHERE
     id = $2`, selectedProviders, userId)
+
+	if err != nil {
+		return err
+	}
 
 	return utils.Render(c, views.Settings(views.SettingsProps{
 		Providers: watchProviders(selectedProviders),

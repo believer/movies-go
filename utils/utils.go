@@ -29,7 +29,7 @@ func IsAuthenticated(c *fiber.Ctx) bool {
 
 func ParseId(s string) (string, error) {
 	if s == "" {
-		return "", fmt.Errorf("Empty ID")
+		return "", fmt.Errorf("empty ID")
 	}
 
 	parsedUrl, err := url.Parse(s)
@@ -41,14 +41,14 @@ func ParseId(s string) (string, error) {
 	id := strings.ToLower(strings.TrimRight(path.Base(parsedUrl.Path), "/"))
 
 	if id == "" {
-		return "", fmt.Errorf("Empty ID")
+		return "", fmt.Errorf("empty ID")
 	}
 
 	if imdbPattern.MatchString(id) || tmdbPattern.MatchString(id) {
 		return id, nil
 	}
 
-	return "", fmt.Errorf("Invalid ID format: %s", id)
+	return "", fmt.Errorf("invalid ID format: %s", id)
 }
 
 func FormatRuntime(runtime int) string {
@@ -112,7 +112,7 @@ func SelfHealingUrl(text string) (string, error) {
 	_, err := strconv.Atoi(parts[len(parts)-1])
 
 	if err != nil {
-		return "", errors.New("Not a valid ID")
+		return "", errors.New("not a valid ID")
 	}
 
 	return id, nil

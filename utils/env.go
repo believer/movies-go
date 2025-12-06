@@ -14,7 +14,7 @@ func LoadEnv() error {
 	_, file, _, ok := runtime.Caller(1)
 
 	if !ok {
-		return fmt.Errorf("No calling file")
+		return fmt.Errorf("no calling file")
 	}
 
 	f, err := os.Open(filepath.Join(filepath.Dir(file), "..", ".env"))
@@ -23,7 +23,13 @@ func LoadEnv() error {
 		return err
 	}
 
-	defer f.Close()
+	defer func() {
+		cerr := f.Close()
+
+		if err != nil {
+			err = cerr
+		}
+	}()
 
 	sc := bufio.NewScanner(f)
 
@@ -35,7 +41,11 @@ func LoadEnv() error {
 		}
 
 		if k, v, ok := strings.Cut(sc.Text(), "="); ok {
-			os.Setenv(k, strings.Trim(v, `"`))
+			err := os.Setenv(k, strings.Trim(v, `"`))
+
+			if err != nil {
+				return err
+			}
 		}
 	}
 

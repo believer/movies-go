@@ -16,7 +16,13 @@ func Add(id string) {
 		panic(err)
 	}
 
-	defer f.Close()
+	defer func() {
+		cerr := f.Close()
+
+		if err != nil {
+			err = cerr
+		}
+	}()
 
 	csvReader := csv.NewReader(f)
 	records, err := csvReader.ReadAll()
@@ -50,7 +56,12 @@ func Add(id string) {
 		// We can only add where movie exists in database, otherwise
 		// we get a violation on the foreign key to the movie table
 		var movie types.Movie
-		err := tx.Get(&movie, `SELECT id FROM movie WHERE imdb_id = $1`, imdbId)
+		err := tx.Get(&movie, `SELECT
+    id
+FROM
+    movie
+WHERE
+    imdb_id = $1`, imdbId)
 
 		if err != nil {
 			continue
@@ -78,15 +89,15 @@ func Add(id string) {
 
 				err = tx.Get(&person, `
 					SELECT
-						p."name",
-						p.id
+					    p."name",
+					    p.id
 					FROM
-						movie m
-						INNER JOIN movie_person mp ON mp.movie_id = m.id
-						INNER JOIN person p ON p.id = mp.person_id
+					    movie m
+					    INNER JOIN movie_person mp ON mp.movie_id = m.id
+					    INNER JOIN person p ON p.id = mp.person_id
 					WHERE
-						m.imdb_id = $1
-						AND p."name" ILIKE '%' || $2 || '%'
+					    m.imdb_id = $1
+					    AND p."name" ILIKE '%' || $2 || '%'
 					`, imdbId, n)
 
 				if err != nil {
@@ -94,16 +105,13 @@ func Add(id string) {
 				}
 
 				_, err = tx.Exec(`
-					INSERT INTO
-						award (name, imdb_id, winner, YEAR, person, person_id)
-					VALUES
-						($1, $2, $3, $4, $5, $6)
-					ON CONFLICT (imdb_id, name, YEAR, person, detail) DO
-					UPDATE
-					SET
-						winner = excluded.winner,
-						name = excluded.name,
-						person_id = excluded.person_id
+					INSERT INTO award (name, imdb_id, winner, YEAR, person, person_id)
+					    VALUES ($1, $2, $3, $4, $5, $6)
+					ON CONFLICT (imdb_id, name, YEAR, person, detail)
+					    DO UPDATE SET
+					        winner = excluded.winner,
+					        name = excluded.name,
+					        person_id = excluded.person_id
 				`, category, imdbId, winner, year, n, person.ID)
 
 				if err != nil {
@@ -115,14 +123,11 @@ func Add(id string) {
 			}
 		case "Music (Original Song)":
 			_, err = tx.Exec(`
-				INSERT INTO
-					award (name, imdb_id, winner, YEAR, detail)
-				VALUES
-					($1, $2, $3, $4, $5)
-				ON CONFLICT (imdb_id, name, YEAR, person, detail) DO
-				UPDATE
-				SET
-					winner = excluded.winner
+				INSERT INTO award (name, imdb_id, winner, YEAR, detail)
+				    VALUES ($1, $2, $3, $4, $5)
+				ON CONFLICT (imdb_id, name, YEAR, person, detail)
+				    DO UPDATE SET
+				        winner = excluded.winner
 			`, category, imdbId, winner, year, detail)
 
 			if err != nil {
@@ -133,14 +138,11 @@ func Add(id string) {
 			fmt.Printf("Music %s\n", detail)
 		default:
 			_, err = tx.Exec(`
-				INSERT INTO
-					award (name, imdb_id, winner, YEAR)
-				VALUES
-					($1, $2, $3, $4)
-				ON CONFLICT (imdb_id, name, YEAR, person, detail) DO
-				UPDATE
-				SET
-					winner = excluded.winner
+				INSERT INTO award (name, imdb_id, winner, YEAR)
+				    VALUES ($1, $2, $3, $4)
+				ON CONFLICT (imdb_id, name, YEAR, person, detail)
+				    DO UPDATE SET
+				        winner = excluded.winner
 			`, category, imdbId, winner, year)
 
 			if err != nil {

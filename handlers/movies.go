@@ -1480,6 +1480,10 @@ FROM
 WHERE
     id = $1`, userId)
 
+	if err != nil {
+		return err
+	}
+
 	var movie types.Movie
 
 	err = db.Client.Get(&movie, `SELECT
