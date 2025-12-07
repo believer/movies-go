@@ -87,20 +87,26 @@ templ Stats(props StatsProps) {
 							}
 							if len(props.ShortestAndLongestMovie) == 2 {
 								@list.DlItem(list.DlProps{
-									Detail: "Shortest movie",
+									Detail:   "Shortest movie",
+									IsColumn: true,
 								}) {
 									@link.Link(link.Props{Href: fmt.Sprintf("/movie/%d", props.ShortestAndLongestMovie[0].ID)}) {
 										{ props.ShortestAndLongestMovie[0].Title }
 									}
-									({ utils.FormatRuntime(props.ShortestAndLongestMovie[0].Runtime) })
+									<div class="detail">
+										{ utils.FormatRuntime(props.ShortestAndLongestMovie[0].Runtime) }
+									</div>
 								}
 								@list.DlItem(list.DlProps{
-									Detail: "Longest movie",
+									Detail:   "Longest movie",
+									IsColumn: true,
 								}) {
 									@link.Link(link.Props{Href: fmt.Sprintf("/movie/%d", props.ShortestAndLongestMovie[1].ID)}) {
 										{ props.ShortestAndLongestMovie[1].Title }
 									}
-									({ utils.FormatRuntime(props.ShortestAndLongestMovie[1].Runtime) })
+									<div class="detail">
+										{ utils.FormatRuntime(props.ShortestAndLongestMovie[1].Runtime) }
+									</div>
 								}
 							}
 						}

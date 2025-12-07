@@ -22,6 +22,7 @@ type DlProps struct {
 	ID        string
 	Detail    string
 	IsTabular bool
+	IsColumn  bool
 }
 
 templ DlItem(props DlProps) {
@@ -29,6 +30,9 @@ templ DlItem(props DlProps) {
 		class="contents"
 		if props.ID != "" {
 			id={ props.ID }
+		}
+		if props.IsColumn {
+			style="--style:column;--align:flex-start;--spacing:var(--spacing-1);"
 		}
 	>
 		@dd(props.Detail, props.ID)
