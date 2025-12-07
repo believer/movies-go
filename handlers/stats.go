@@ -308,14 +308,20 @@ LIMIT 10
 `
 
 	wilhelmQuery = `
+WITH seen_once AS (
+    SELECT DISTINCT
+        movie_id
+    FROM
+        seen s
+    WHERE
+        user_id = $1
+)
 SELECT
-    count(*)
+    COUNT(*)
 FROM
-    seen s
+    seen_once s
     INNER JOIN movie m ON m.id = s.movie_id
-WHERE
-    user_id = $1
-    AND m.wilhelm = TRUE
+        AND m.wilhelm = TRUE
 `
 
 	reviewsQuery = `
