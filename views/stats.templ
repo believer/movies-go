@@ -74,7 +74,9 @@ templ Stats(props StatsProps) {
 									Detail:    "Wilhelm screams",
 									IsTabular: true,
 								}) {
-									{ props.WilhelmScreams }
+									@link.Link(link.Props{Href: "/stats/wilhelm-scream"}) {
+										{ props.WilhelmScreams }
+									}
 								}
 							}
 							@list.DlItem(list.DlProps{

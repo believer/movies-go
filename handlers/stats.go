@@ -894,3 +894,43 @@ func GetBestOfTheYear(c *fiber.Ctx) error {
 		Years: years,
 	}))
 }
+
+func GetWilhelmScream(c *fiber.Ctx) error {
+	page := c.QueryInt("page", 1)
+	userId := c.Locals("UserId")
+	var movies types.Movies
+
+	err := db.Client.Select(&movies, `
+WITH seen_once AS (
+    SELECT DISTINCT
+        movie_id
+    FROM
+        seen s
+    WHERE
+        user_id = $1
+)
+SELECT
+    m.id,
+    m.title,
+    m.release_date
+FROM
+    seen_once s
+    INNER JOIN movie m ON m.id = s.movie_id
+WHERE
+    m.wilhelm = TRUE
+ORDER BY
+    m.release_date DESC OFFSET $2
+LIMIT 50
+		`, userId, (page-1)*50)
+
+	if err != nil {
+		return err
+	}
+
+	return utils.Render(c, views.ListView(views.ListViewProps{
+		EmptyState: "No movies with the Wilhelm scream",
+		Name:       "Wilhelm screams",
+		NextPage:   fmt.Sprintf("/stats/wilhelm-scream?page=%d", page+1),
+		Movies:     movies,
+	}))
+}
