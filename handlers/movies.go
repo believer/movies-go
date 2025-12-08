@@ -1023,7 +1023,6 @@ func UpdateMovieByID(c *fiber.Ctx) error {
 	awards.Add(movie.ImdbId)
 
 	return c.SendStatus(fiber.StatusOK)
-
 }
 
 func WatchProviders(c *fiber.Ctx) error {
