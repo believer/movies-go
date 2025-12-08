@@ -35,7 +35,9 @@ templ Movie(props MovieProps) {
 		if props.Movie.Overview != "" {
 			<p class="movie__overview">{ props.Movie.Overview }</p>
 		}
-		@review.Review(props.Review, props.Movie.ID)
+		if len(props.WatchedAt) > 0 {
+			@review.Review(props.Review, props.Movie.ID)
+		}
 		@section.Section(section.Props{Title: "Metadata"}) {
 			@list.Dl() {
 				if props.Movie.Tagline != "" {
@@ -108,7 +110,7 @@ templ Movie(props MovieProps) {
 						}
 					}
 				}
-				if !props.IsInWatchlist {
+				if len(props.WatchedAt) > 0 {
 					if props.Movie.Rating.Valid {
 						@rating.Rating(rating.Props{
 							MovieId: props.Movie.ID,
