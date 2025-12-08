@@ -8,6 +8,7 @@ import (
 	"log/slog"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/jmoiron/sqlx"
 )
 
 type Api struct {
@@ -67,6 +68,12 @@ ON CONFLICT (imdb_id)
 		return movie, 0, err
 	}
 
+	a.AddCast(tx, imdbId, id)
+	a.AddLanguages(tx, id, movie)
+	a.AddGenres(tx, id, movie)
+	a.AddCountries(tx, id, movie)
+	a.AddProductionCompanies(tx, id, movie)
+
 	err = tx.Commit()
 
 	if err != nil {
@@ -75,8 +82,6 @@ ON CONFLICT (imdb_id)
 
 		return movie, 0, err
 	}
-
-	a.AddCast(imdbId, id)
 
 	return movie, id, nil
 }
@@ -91,7 +96,7 @@ type NewPerson struct {
 	MovieId        int            `db:"movie_id"`
 }
 
-func (a *Api) AddCast(imdbId string, movieId int) {
+func (a *Api) AddCast(tx *sqlx.Tx, imdbId string, movieId int) {
 	tmdbApi := tmdb.New(imdbId)
 	movieCast, err := tmdbApi.Credits()
 
@@ -102,8 +107,6 @@ func (a *Api) AddCast(imdbId string, movieId int) {
 
 	var castStructs []NewPerson
 	var crewStructs []NewPerson
-
-	tx := db.Client.MustBegin()
 
 	// Insert cast
 	for _, cast := range movieCast.Cast {
@@ -271,17 +274,6 @@ func (a *Api) AddCast(imdbId string, movieId int) {
 			slog.Error("Could not insert movie_person crew")
 		}
 	}
-
-	err = tx.Commit()
-
-	if err != nil {
-		slog.Error("Could not commit cast")
-		err := tx.Rollback()
-
-		if err != nil {
-			slog.Error("Could not rollback cast")
-		}
-	}
 }
 
 func (a *Api) NowPlaying() (types.Movies, error) {
@@ -318,4 +310,133 @@ func personExists(arr []NewPerson, id int, job any) (int, bool) {
 	}
 
 	return 0, false
+}
+
+func (a *Api) AddLanguages(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse) {
+	type Language struct {
+		ISO639      string `db:"iso_639_1"`
+		EnglishName string `db:"english_name"`
+		Name        string `db:"name"`
+		MovieId     int    `db:"movie_id"`
+	}
+
+	languages := make([]Language, len(movie.SpokenLanguages))
+
+	for i, l := range movie.SpokenLanguages {
+		languages[i] = Language{
+			ISO639:      l.ISO639,
+			Name:        l.Name,
+			EnglishName: l.EnglishName,
+			MovieId:     id,
+		}
+	}
+
+	if len(languages) > 0 {
+		_, err := tx.NamedExec(
+			`INSERT INTO
+LANGUAGE (name, english_name, iso_639_1)
+    VALUES (:name, :english_name, :iso_639_1)
+ON CONFLICT
+    DO NOTHING`, languages,
+		)
+
+		if err != nil {
+			slog.Error("Could not insert language")
+		}
+
+		_, err = tx.NamedExec(
+			`INSERT INTO movie_language (movie_id, language_id)
+    VALUES (:movie_id, (
+            SELECT
+                id
+            FROM
+                LANGUAGE
+            WHERE
+                name = :name))
+ON CONFLICT
+    DO NOTHING`, languages,
+		)
+
+		if err != nil {
+			slog.Error("Could not insert movie_language")
+		}
+	}
+}
+
+func (a *Api) AddGenres(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse) {
+	type Genre struct {
+		Name    string `db:"name"`
+		MovieId int    `db:"movie_id"`
+	}
+
+	genres := make([]Genre, len(movie.Genres))
+
+	for i, genre := range movie.Genres {
+		genres[i] = Genre{
+			Name:    genre.Name,
+			MovieId: id,
+		}
+	}
+
+	if len(genres) > 0 {
+		_, err := tx.NamedExec(`INSERT INTO genre (name)
+    VALUES (:name)
+ON CONFLICT (name)
+    DO NOTHING`, genres)
+
+		if err != nil {
+			slog.Error("Could not insert genre")
+		}
+
+		_, err = tx.NamedExec(`INSERT INTO movie_genre (movie_id, genre_id)
+    VALUES (:movie_id, (
+            SELECT
+                id
+            FROM
+                genre
+            WHERE
+                name = :name))
+ON CONFLICT
+    DO NOTHING`, genres)
+
+		if err != nil {
+			slog.Error("Could not insert movie_genre")
+		}
+	}
+}
+
+func (a *Api) AddCountries(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse) {
+
+	for _, c := range movie.ProductionCountries {
+		tx.MustExec(`
+			INSERT INTO movie_country (movie_id, country_id)
+			    VALUES ($1, $2)
+			ON CONFLICT
+			    DO NOTHING
+    `, id, c.ID)
+	}
+}
+
+func (a *Api) AddProductionCompanies(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse) {
+	for _, c := range movie.ProductionCompanies {
+		tx.MustExec(`
+			INSERT INTO production_company (tmdb_id, name, country)
+			    VALUES ($1, $2, NULLIF ($3, ''))
+			ON CONFLICT
+			    DO NOTHING
+		`, c.ID, c.Name, c.OriginCountry)
+
+		tx.MustExec(`
+			INSERT INTO movie_company (movie_id, company_id)
+			    VALUES ($1, (
+			            SELECT
+			                id
+			            FROM
+			                production_company
+			            WHERE
+			                tmdb_id = $2))
+			ON CONFLICT
+			    DO NOTHING
+		`, id, c.ID)
+	}
 }
