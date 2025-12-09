@@ -909,13 +909,24 @@ WITH seen_once AS (
     WHERE
         user_id = $1
 )
-SELECT
-    m.id,
+SELECT DISTINCT
+    (m.id),
     m.title,
-    m.release_date
+    m.release_date,
+    (s.id IS NOT NULL) AS "seen"
 FROM
-    seen_once s
-    INNER JOIN movie m ON m.id = s.movie_id
+    seen_once so
+    INNER JOIN movie m ON m.id = so.movie_id
+    LEFT JOIN ( SELECT DISTINCT ON (movie_id)
+            movie_id,
+            id
+        FROM
+            public.seen
+        WHERE
+            user_id = $1
+        ORDER BY
+            movie_id,
+            id) AS s ON m.id = s.movie_id
 WHERE
     m.wilhelm = TRUE
 ORDER BY
