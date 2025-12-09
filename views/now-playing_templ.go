@@ -41,7 +41,7 @@ func NowPlaying(p NowPlayingProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			for _, m := range p.Movies {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<li><h3><a href=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<li class=\"now-playing__movie\"><h3><a href=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

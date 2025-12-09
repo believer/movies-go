@@ -139,7 +139,7 @@ templ Feed(props FeedProps) {
 									hx-get={ fmt.Sprintf("/?page=%d&last-header=%s", props.NextPage, currentHeader) }
 									hx-trigger="intersect"
 									hx-swap="outerHTML"
-									hx-select="li"
+									hx-select="li:not(.now-playing__movie)"
 								></li>
 							}
 						</ol>

@@ -17,7 +17,7 @@ templ NowPlaying(p NowPlayingProps) {
 			<h2>Now watching</h2>
 			<ol>
 				for _, m := range p.Movies {
-					<li>
+					<li class="now-playing__movie">
 						<h3>
 							<a href={ m.LinkTo() }>
 								{ m.Title }
