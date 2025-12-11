@@ -84,6 +84,7 @@ type Movie struct {
 	NumberInSeries      utils.NullInt64          `db:"number_in_series" json:"numberInSeries"`
 	OriginalTitle       sql.NullString           `db:"original_title" json:"originaTitle"`
 	Overview            string                   `db:"overview" json:"overview"`
+	Percent             string                   `db:"percent"`
 	Poster              string                   `db:"poster" json:"poster"`
 	ProductionCompanies MovieProductionCompanies `db:"production_companies"`
 	ProductionCountries MovieProductionCountries `db:"production_countries"`

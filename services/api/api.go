@@ -285,14 +285,15 @@ SELECT
     m.id,
     m.title,
     m.runtime,
-    m.overview
+    m.overview,
+    np."position" / m.runtime AS percent
 FROM
     now_playing np
     RIGHT JOIN movie m ON m.imdb_id = np.imdb_id
 WHERE
     user_id = $1
 ORDER BY
-    np.position DESC
+    percent DESC
 			`, a.UserID)
 
 	if err != nil {
