@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"believer/movies/db"
+	"believer/movies/services/api"
 	"believer/movies/types"
 	"believer/movies/utils"
 	"believer/movies/views"
@@ -104,63 +105,37 @@ ORDER BY
 }
 
 func GetAwardsByYear(c *fiber.Ctx) error {
-	var awards []types.AwardsByYear
-
 	year := c.Params("year")
+	sort := c.Query("sort", "Movie")
 
-	err := db.Client.Select(&awards, `WITH nominees AS (
-    SELECT
-        a.imdb_id,
-        a.name AS category,
-        a.detail,
-        a.winner,
-        JSONB_AGG(
-            CASE WHEN person IS NOT NULL
-                AND person_id IS NOT NULL THEN
-                JSONB_BUILD_OBJECT('name', person, 'id', person_id)
-            WHEN person IS NOT NULL THEN
-                JSONB_BUILD_OBJECT('name', person)
-            ELSE
-                JSONB_BUILD_OBJECT('name', 'N/A')
-            END ORDER BY person) FILTER (WHERE person IS NOT NULL
-            OR person_id IS NOT NULL) AS nominees
-    FROM
-        award a
-    WHERE
-        a.year = $1
-    GROUP BY
-        a.imdb_id,
-        a.name,
-        a.detail,
-        a.winner
-),
-movie_awards AS (
-    SELECT
-        m.id AS movie_id,
-        m.title,
-        JSONB_AGG(JSONB_BUILD_OBJECT('winner', n.winner, 'category', n.category, 'detail', n.detail, 'nominees', COALESCE(n.nominees, '[]'::jsonb))
-        ORDER BY n.winner DESC, n.category ASC) AS awards
-    FROM
-        movie m
-        JOIN nominees n ON m.imdb_id = n.imdb_id
-    GROUP BY
-        m.id,
-        m.title
-)
-SELECT
-    *
-FROM
-    movie_awards
-ORDER BY
-    title ASC
-		`, year)
+	a := api.New(c)
 
-	if err != nil {
-		return err
+	switch sort {
+	case "Movie":
+		awards, err := a.AwardsByMovie(year)
+
+		if err != nil {
+			return err
+		}
+
+		return utils.Render(c, views.AwardsPage(views.AwardsPageProps{
+			GroupedAwards: awards,
+			Sort:          sort,
+			Year:          year,
+		}))
+	case "Category":
+		awards, err := a.AwardsByCategory(year)
+
+		if err != nil {
+			return err
+		}
+
+		return utils.Render(c, views.AwardsCategory(views.AwardsCategoryProps{
+			Awards: awards,
+			Sort:   sort,
+			Year:   year,
+		}))
 	}
 
-	return utils.Render(c, views.AwardsPage(views.AwardsPageProps{
-		GroupedAwards: awards,
-		Name:          year,
-	}))
+	return utils.Render(c, views.NotFound())
 }

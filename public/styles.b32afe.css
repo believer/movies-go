@@ -666,6 +666,12 @@
 }
 
 @layer components {
+  .sort {
+    display: flex;
+    column-gap: var(--spacing-2);
+    align-items: center;
+  }
+
   /* START:GENERATED */
 	.button {
 	  color: var(--color-background-primary);
@@ -1254,6 +1260,11 @@
 	
 	    .comma {
 	      margin-right: var(--spacing-1);
+	    }
+	
+	    .link {
+	      font-size: inherit;
+	      color: inherit;
 	    }
 	  }
 	

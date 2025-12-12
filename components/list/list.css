@@ -76,6 +76,11 @@
     .comma {
       margin-right: var(--spacing-1);
     }
+
+    .link {
+      font-size: inherit;
+      color: inherit;
+    }
   }
 
   + .note {

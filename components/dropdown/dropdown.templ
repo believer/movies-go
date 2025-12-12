@@ -1,6 +1,7 @@
 package dropdown
 
 type Props struct {
+	Attrs   templ.Attributes
 	Name    string
 	Route   string
 	Options []string
@@ -10,11 +11,13 @@ type Props struct {
 templ Dropdown(props Props) {
 	<select
 		class="dropdown focus"
+		id={ props.Name }
 		name={ props.Name }
 		value={ props.Value }
 		hx-get={ props.Route }
 		hx-swap="outerHTML"
 		hx-target="closest section"
+		{ props.Attrs... }
 	>
 		for _, option := range props.Options {
 			<option

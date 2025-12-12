@@ -1,0 +1,65 @@
+package views
+
+import "believer/movies/types"
+import "believer/movies/components/separator"
+import "believer/movies/components/section"
+import "believer/movies/components/layout"
+import "believer/movies/components/list"
+import "believer/movies/components/link"
+
+type AwardsCategoryProps struct {
+	Awards []types.AwardsByCategory
+	Sort   string
+	Year   string
+}
+
+templ AwardsCategory(props AwardsCategoryProps) {
+	@layout.Layout(layout.Props{Title: props.Year}) {
+		@awardSort(props.Sort, props.Year)
+		for _, group := range props.Awards {
+			@section.Section(section.Props{Title: group.Category}) {
+				@list.Ol() {
+					for _, award := range group.Nominees {
+						@list.Li() {
+							<div class="row">
+								if award.Person.Valid {
+									<div>
+										@link.Link(link.Props{Href: award.LinkToPerson()}) {
+											{ award.Person.String }
+										}
+									</div>
+								} else if award.Title.Valid {
+									<div>
+										@link.Link(link.Props{Href: award.LinkToMovie()}) {
+											{ award.Title.String }
+										}
+									</div>
+								}
+								@separator.Separator()
+								<span>
+									if award.Winner {
+										Won
+									} else {
+										Nominated
+									}
+								</span>
+							</div>
+							if award.Title.Valid && award.Person.Valid {
+								<div class="detail">
+									@link.Link(link.Props{Href: award.LinkToMovie()}) {
+										{ award.Title.String }
+									}
+								</div>
+							}
+							if award.Detail.Valid {
+								<div class="detail">
+									{ award.Detail.String }
+								</div>
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -22,7 +22,7 @@ type Award struct {
 	Detail   utils.NullString `db:"detail" json:"detail"`
 	ID       string           `db:"id" json:"id"`
 	ImdbID   string           `db:"imdb_id"`
-	MovieID  int              `db:"movie_id"`
+	MovieID  int              `db:"movie_id" json:"movie_id"`
 	Nominees Nominees         `db:"nominees"`
 	Person   utils.NullString `db:"person" json:"person"`
 	PersonId utils.NullInt64  `db:"person_id" json:"person_id"`
@@ -89,7 +89,7 @@ func (a AwardMovieStat) LinkTo() string {
 type GroupedAward struct {
 	Name     string
 	Winner   bool
-	Nominees []Award
+	Nominees Awards
 }
 
 type GroupedAwards map[string]GroupedAward
@@ -105,4 +105,12 @@ type AwardsByYear struct {
 
 func (g *AwardsByYear) LinkToMovie() string {
 	return fmt.Sprintf("/movie/%s-%d", utils.Slugify(g.Title), g.MovieID)
+}
+
+// Awards by category
+// ======================================================
+
+type AwardsByCategory struct {
+	Category string `db:"category"`
+	Nominees Awards `db:"nominees"`
 }

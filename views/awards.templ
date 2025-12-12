@@ -1,19 +1,42 @@
 package views
 
-import "believer/movies/types"
-import "believer/movies/components/separator"
-import "believer/movies/components/section"
-import "believer/movies/components/layout"
-import "believer/movies/components/list"
-import "believer/movies/components/link"
+import (
+	"believer/movies/components/dropdown"
+	"believer/movies/components/input"
+	"believer/movies/components/layout"
+	"believer/movies/components/link"
+	"believer/movies/components/list"
+	"believer/movies/components/section"
+	"believer/movies/components/separator"
+	"believer/movies/types"
+	"fmt"
+)
 
 type AwardsPageProps struct {
 	GroupedAwards []types.AwardsByYear
-	Name          string
+	Sort          string
+	Year          string
+}
+
+templ awardSort(sort, year string) {
+	<div class="sort">
+		@input.Label("sort", "Sort")
+		@dropdown.Dropdown(dropdown.Props{
+			Name:    "sort",
+			Route:   fmt.Sprintf("/awards/year/%s", year),
+			Options: []string{"Movie", "Category"},
+			Value:   sort,
+			Attrs: templ.Attributes{
+				"hx-select":   ".layout",
+				"hx-push-url": "true",
+			},
+		})
+	</div>
 }
 
 templ AwardsPage(props AwardsPageProps) {
-	@layout.Layout(layout.Props{Title: props.Name}) {
+	@layout.Layout(layout.Props{Title: props.Year}) {
+		@awardSort(props.Sort, props.Year)
 		for _, group := range props.GroupedAwards {
 			@section.Section(section.Props{
 				Title: group.Title,
