@@ -507,7 +507,7 @@ SELECT
             JSONB_BUILD_OBJECT('movie_id', m.id, 'title', m.title, 'detail', detail)
         ELSE
             JSONB_BUILD_OBJECT('person', 'N/A')
-        END ORDER BY person) AS nominees
+        END ORDER BY person, title ASC) AS nominees
 FROM
     award a
     INNER JOIN movie m ON m.imdb_id = a.imdb_id
