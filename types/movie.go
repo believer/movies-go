@@ -170,6 +170,10 @@ func (m Movie) LinkToCreatedYear() string {
 	return fmt.Sprintf("/year/%s", m.CreatedAt.Format("2006"))
 }
 
+func (m Movie) LinkToWatchedYear() string {
+	return fmt.Sprintf("/year/%s", m.WatchedAt.Time.Format("2006"))
+}
+
 func (m Movie) Progress() string {
 	percent := (m.Position / float64(m.Runtime)) * 100
 

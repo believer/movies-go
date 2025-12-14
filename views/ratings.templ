@@ -6,6 +6,7 @@ import "believer/movies/components/list"
 import "believer/movies/components/section"
 import "fmt"
 import "believer/movies/components/separator"
+import "believer/movies/components/link"
 
 type RatingsProps struct {
 	Movies []types.Movies
@@ -14,6 +15,7 @@ type RatingsProps struct {
 
 templ Ratings(p RatingsProps) {
 	@layout.Layout(layout.Props{Title: p.Title}) {
+		This includes all seen movies in a year. Both new ones and rewatches.
 		for i, rating := range p.Movies {
 			if len(rating) > 0 {
 				@section.Section(section.Props{
@@ -22,10 +24,14 @@ templ Ratings(p RatingsProps) {
 					@list.Ol() {
 						for _, m := range rating {
 							@list.Li() {
-								{ m.Title }
+								@link.Link(link.Props{Href: m.LinkTo()}) {
+									{ m.Title }
+								}
 								@separator.Separator()
 								@list.Trailing() {
-									{ m.ISOWatchedAt() }
+									@link.Link(link.Props{Href: m.LinkToWatchedYear()}) {
+										{ m.ISOWatchedAt() }
+									}
 								}
 							}
 						}
