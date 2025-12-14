@@ -166,4 +166,5 @@ func SetupRoutes(app *fiber.App) {
 	hookGroup := app.Group("/hooks")
 
 	hookGroup.Post("/playback", h.PlaybackProgress)
+	hookGroup.Post("/plex", h.PlexProgress)
 }

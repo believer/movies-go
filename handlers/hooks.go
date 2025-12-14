@@ -99,5 +99,11 @@ func PlaybackProgress(c *fiber.Ctx) error {
 		slog.Info("Playback updated", "data", data)
 	}
 
-	return c.SendStatus(200)
+	return c.SendStatus(fiber.StatusOK)
+}
+
+func PlexProgress(c *fiber.Ctx) error {
+	slog.Info("[PLEX]", "data", string(c.Body()))
+
+	return c.SendStatus(fiber.StatusOK)
 }
