@@ -194,10 +194,13 @@ func (mq *MovieQueries) SeenByUser() ([]movie.WatchedAt, error) {
 
 	err := Client.Select(&watchedAt, `
 SELECT
-    id,
-    date at time zone 'UTC' at time zone 'Europe/Stockholm' AS date
+    s.id,
+    date at time zone 'UTC' at time zone 'Europe/Stockholm' AS date,
+    u.name AS seen_with
 FROM
-    seen
+    seen s
+    LEFT JOIN seen_with sw ON sw.seen_id = s.id
+    LEFT JOIN "user" u ON u.id = sw.other_user_id
 WHERE
     movie_id = $1
     AND user_id = $2

@@ -7,13 +7,15 @@ import (
 	"believer/movies/components/list"
 	"believer/movies/components/section"
 	"believer/movies/components/separator"
+	"database/sql"
 	"fmt"
 	"time"
 )
 
 type WatchedAt struct {
-	ID   int       `db:"id"`
-	Date time.Time `db:"date"`
+	ID       int            `db:"id"`
+	Date     time.Time      `db:"date"`
+	SeenWith sql.NullString `db:"seen_with"`
 }
 
 type WatchedProps struct {
@@ -51,12 +53,18 @@ templ Watched(props WatchedProps) {
 						Items: len(props.WatchedAt),
 					}) {
 						<div>
-							<div class="watched__primary">
+							<time
+								class="watched__primary"
+								title={ w.Date.Format("2006-01-02 15:04 (Monday)") }
+								datetime={ w.Date.Format("2006-01-02T15:04:05Z") }
+							>
 								{ w.Date.Format(" January 02, 2006") }
-							</div>
-							<div class="watched__secondary">
-								{ w.Date.Format("15:04 (Monday)") }
-							</div>
+							</time>
+							if w.SeenWith.Valid {
+								<div class="watched__secondary">
+									{ w.SeenWith.String }
+								</div>
+							}
 						</div>
 						@auth.IsAuthenticated() {
 							@separator.Separator()
