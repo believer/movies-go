@@ -945,3 +945,33 @@ LIMIT 50
 		Movies:     movies,
 	}))
 }
+
+func GetSeenWith(c *fiber.Ctx) error {
+	var items []types.ListItem
+
+	// This includes duplicate watches on a movie with the same person
+	err := db.Client.Select(&items, `
+SELECT
+    u.name,
+    COUNT(*)
+FROM
+    seen s
+    RIGHT JOIN seen_with sw ON sw.seen_id = s.id
+    INNER JOIN "user" u ON u.id = sw.other_user_id
+WHERE
+    user_id = 1
+GROUP BY
+    1
+ORDER BY
+    2 DESC
+`)
+
+	if err != nil {
+		return err
+	}
+
+	return utils.Render(c, views.StatsSection(views.StatsSectionProps{
+		Data:  items,
+		Title: "Seen with",
+	}))
+}

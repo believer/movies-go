@@ -29,7 +29,11 @@ templ StatsList(p StatsListProps) {
 		@list.Ol() {
 			for _, item := range p.Data {
 				@list.Li(list.LiProps{Items: len(p.Data), Style: list.Numbered}) {
-					@link.Link(link.Props{Href: item.LinkTo(p.Root)}) {
+					if p.Root != "" {
+						@link.Link(link.Props{Href: item.LinkTo(p.Root)}) {
+							{ item.Name }
+						}
+					} else {
 						{ item.Name }
 					}
 					@separator.Separator()
@@ -47,19 +51,29 @@ templ StatsList(p StatsListProps) {
 }
 
 templ StatsSection(p StatsSectionProps) {
-	@section.Section(section.Props{
-		Title: p.Title,
-		Action: dropdown.Dropdown(dropdown.Props{
-			Name:    "year",
-			Options: p.Years,
-			Route:   p.Route,
-			Value:   p.Year,
-		}),
-	}) {
-		@StatsList(StatsListProps{
-			Data: p.Data,
-			Root: p.Root,
-		})
-		{ children... }
+	if p.Route != "" {
+		@section.Section(section.Props{
+			Title: p.Title,
+			Action: dropdown.Dropdown(dropdown.Props{
+				Name:    "year",
+				Options: p.Years,
+				Route:   p.Route,
+				Value:   p.Year,
+			}),
+		}) {
+			@StatsList(StatsListProps{
+				Data: p.Data,
+				Root: p.Root,
+			})
+			{ children... }
+		}
+	} else {
+		@section.Section(section.Props{Title: p.Title}) {
+			@StatsList(StatsListProps{
+				Data: p.Data,
+				Root: p.Root,
+			})
+			{ children... }
+		}
 	}
 }

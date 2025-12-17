@@ -8,12 +8,19 @@
 
   li:not(:has(.row)),
   li .row {
+    --align-items: flex-end;
+
     display: flex;
     column-gap: var(--spacing-4);
-    align-items: flex-end;
+    align-items: var(--align-items, flex-end);
     justify-content: space-between;
     list-style: initial;
     counter-increment: count;
+
+    /* No links should place items on baseline */
+    &:not(:has(a)) {
+      --align-items: baseline;
+    }
 
     > .separator {
       min-width: 40px;

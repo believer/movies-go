@@ -1040,7 +1040,7 @@ func Stats(props StatsProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<section hx-get=\"/stats/highest-ranked-person\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/genre/stats\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/language/stats\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/production-company/stats\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/production-country/stats\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section></div></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<section hx-get=\"/stats/highest-ranked-person\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/genre/stats\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/language/stats\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/production-company/stats\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/production-country/stats\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/stats/seen-with\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section></div></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
