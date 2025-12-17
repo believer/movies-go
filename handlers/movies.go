@@ -386,6 +386,15 @@ func DeleteSeenMovie(c *fiber.Ctx) error {
 	}
 
 	_, err = db.Client.Exec(`
+DELETE FROM seen_with
+WHERE seen_id = $1
+		`, seenId)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Client.Exec(`
 DELETE FROM seen
 WHERE id = $1
 		`, seenId)
@@ -407,7 +416,7 @@ WHERE id = $1
 }
 
 func GetSeenMovie(c *fiber.Ctx) error {
-	var time string
+	var watch views.WatchData
 
 	movieId, err := c.ParamsInt("id")
 	seenId := c.Params("seenId")
@@ -416,10 +425,12 @@ func GetSeenMovie(c *fiber.Ctx) error {
 		return err
 	}
 
-	err = db.Client.Get(&time, `SELECT
-    TO_CHAR(date AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/Stockholm', 'YYYY-MM-DD"T"HH24:MI') AS date
+	err = db.Client.Get(&watch, `SELECT
+    TO_CHAR(date AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/Stockholm', 'YYYY-MM-DD"T"HH24:MI') AS date,
+    sw.other_user_id AS seen_with
 FROM
-    seen
+    seen s
+    LEFT JOIN seen_with sw ON sw.seen_id = s.id
 WHERE
     id = $1`, seenId)
 
@@ -430,13 +441,13 @@ WHERE
 	return utils.Render(c, views.UpdateWatched(views.UpdateWatchedProps{
 		MovieId: movieId,
 		SeenId:  seenId,
-		Time:    time,
+		Watch:   watch,
 	}))
 }
 
 func UpdateSeenMovie(c *fiber.Ctx) error {
 	movieId, err := c.ParamsInt("id")
-	seenId := c.Params("seenId")
+	seenID := c.Params("seenId")
 	isAuth := utils.IsAuthenticated(c)
 
 	if err != nil {
@@ -450,6 +461,7 @@ func UpdateSeenMovie(c *fiber.Ctx) error {
 	// Parse form data and watched at time
 	data := new(struct {
 		WatchedAt string `form:"watched_at"`
+		User      string `form:"user"`
 	})
 
 	if err := c.BodyParser(data); err != nil {
@@ -475,10 +487,23 @@ func UpdateSeenMovie(c *fiber.Ctx) error {
 SET
     date = $1
 WHERE
-    id = $2`, watchedAt, seenId)
+    id = $2`, watchedAt, seenID)
 
 	if err != nil {
 		return err
+	}
+
+	if data.User != "" {
+		_, err = db.Client.Exec(`
+			INSERT INTO seen_with (seen_id, other_user_id)
+			    VALUES ($1, $2)
+			ON CONFLICT
+			    DO NOTHING
+			`, seenID, data.User)
+
+		if err != nil {
+			return err
+		}
 	}
 
 	c.Set("HX-Redirect", fmt.Sprintf("/movie/%d", movieId))

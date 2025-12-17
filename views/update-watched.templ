@@ -5,13 +5,19 @@ import (
 	"believer/movies/components/input"
 	"believer/movies/components/layout"
 	"believer/movies/components/link"
+	"database/sql"
 	"fmt"
 )
+
+type WatchData struct {
+	Date     string         `db:"date"`
+	SeenWith sql.NullString `db:"seen_with"`
+}
 
 type UpdateWatchedProps struct {
 	MovieId int
 	SeenId  string
-	Time    string
+	Watch   WatchData
 }
 
 templ UpdateWatched(props UpdateWatchedProps) {
@@ -30,8 +36,16 @@ templ UpdateWatched(props UpdateWatchedProps) {
 				Name:     "watched_at",
 				Label:    "Watched at",
 				HelpText: "Defaults to current time if left empty. Time zone is UTC.",
-				Value:    props.Time,
+				Value:    props.Watch.Date,
 			})
+			@input.Text(input.TextProps{
+				Name:  "user",
+				Label: "Friend",
+				List:  "friend_list",
+				Value: props.Watch.SeenWith.String,
+			}) {
+				<div hx-get="/users" hx-swap="outerHTML" hx-trigger="load"></div>
+			}
 			<footer>
 				<div id="error" class="form__error"></div>
 				@button.Button(button.Props{Type: button.TypeSubmit}) {

@@ -196,7 +196,7 @@ func (mq *MovieQueries) SeenByUser() ([]movie.WatchedAt, error) {
 SELECT
     s.id,
     date at time zone 'UTC' at time zone 'Europe/Stockholm' AS date,
-    u.name AS seen_with
+    COALESCE(ARRAY_AGG(u.name) FILTER (WHERE u.name IS NOT NULL), '{}') AS seen_with
 FROM
     seen s
     LEFT JOIN seen_with sw ON sw.seen_id = s.id
@@ -204,6 +204,8 @@ FROM
 WHERE
     movie_id = $1
     AND user_id = $2
+GROUP BY
+    1
 ORDER BY
     date DESC
 `, mq.Id, mq.UserId)
