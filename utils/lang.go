@@ -15,12 +15,14 @@ var (
 
 const (
 	NominationKey = "%d nomination"
+	UsersKey      = "%d user"
 	WinKey        = "%d win"
 )
 
 func initMessages() {
 	register(NominationKey, "%d nomination", "%d nominations")
 	register(WinKey, "%d win", "%d wins")
+	register(UsersKey, "%d user", "%d users")
 }
 
 func register(key, one, other string) {

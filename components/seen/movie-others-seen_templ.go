@@ -11,6 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"believer/movies/components/list"
 	"believer/movies/types"
+	"believer/movies/utils"
 	"fmt"
 	"strconv"
 )
@@ -18,6 +19,10 @@ import (
 type MovieOthersSeenProps struct {
 	ID     int
 	Others types.OthersStats
+}
+
+func (m *MovieOthersSeenProps) users() string {
+	return utils.PluralMessage(utils.UsersKey, m.Others.Seen)
 }
 
 func MovieOthersSeen(props MovieOthersSeenProps) templ.Component {
@@ -61,7 +66,7 @@ func MovieOthersSeen(props MovieOthersSeenProps) templ.Component {
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/movie/%d/seen/others", props.ID))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/seen/movie-others-seen.templ`, Line: 18, Col: 115}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/seen/movie-others-seen.templ`, Line: 23, Col: 115}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
@@ -74,7 +79,7 @@ func MovieOthersSeen(props MovieOthersSeenProps) templ.Component {
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatFloat(props.Others.AverageRating, 'f', 1, 64))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/seen/movie-others-seen.templ`, Line: 19, Col: 65}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/seen/movie-others-seen.templ`, Line: 24, Col: 65}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -85,15 +90,15 @@ func MovieOthersSeen(props MovieOthersSeenProps) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var5 string
-				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(props.Others.Seen)
+				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(props.users())
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/seen/movie-others-seen.templ`, Line: 21, Col: 25}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/seen/movie-others-seen.templ`, Line: 26, Col: 21}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, " users)</span></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, ")</span></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

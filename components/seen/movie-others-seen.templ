@@ -3,6 +3,7 @@ package seen
 import (
 	"believer/movies/components/list"
 	"believer/movies/types"
+	"believer/movies/utils"
 	"fmt"
 	"strconv"
 )
@@ -12,13 +13,17 @@ type MovieOthersSeenProps struct {
 	Others types.OthersStats
 }
 
+func (m *MovieOthersSeenProps) users() string {
+	return utils.PluralMessage(utils.UsersKey, m.Others.Seen)
+}
+
 templ MovieOthersSeen(props MovieOthersSeenProps) {
 	if props.Others.Seen > 0 {
 		@list.DlItem(list.DlProps{Detail: "Global rating", IsTabular: true}) {
 			<div class="global-rating" hx-target="closest .contents" hx-get={ fmt.Sprintf("/movie/%d/seen/others", props.ID) } hx-trigger="update-rating from:body">
 				{ strconv.FormatFloat(props.Others.AverageRating, 'f', 1, 64) }
 				<span class="global-rating__users">
-					({ props.Others.Seen } users)
+					({ props.users() })
 				</span>
 			</div>
 		}
