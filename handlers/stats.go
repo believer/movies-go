@@ -413,6 +413,28 @@ WHERE
         FROM
             movie_awards)
 `
+
+	watchedByWeekdayQuery = `
+WITH days (
+    day_val
+) AS (
+    SELECT
+        generate_series(1, 7))
+SELECT
+    TRIM(TO_CHAR(make_date(2023, 1, 1) + (days.day_val * INTERVAL '1 day'), 'Day')) AS label,
+    COALESCE(count(seen.id), 0) AS value
+FROM
+    days
+    LEFT JOIN seen ON EXTRACT(ISODOW FROM seen.date) = days.day_val
+        AND user_id = $1
+        AND ($2 = 'All'
+            OR EXTRACT(YEAR FROM seen.date) = EXTRACT(YEAR FROM $2::date))
+        AND EXTRACT(YEAR FROM seen.date) > 2011
+GROUP BY
+    days.day_val
+ORDER BY
+    days.day_val
+	`
 )
 
 // Handler for /stats.
@@ -422,7 +444,7 @@ func GetStats(c *fiber.Ctx) error {
 	var shortestAndLongest types.Movies
 	var wilhelms []int
 	var movies, totals, cast []types.ListItem
-	var ratings, yearRatings, watchedByYear, seenThisYearByMonth, moviesByYear []graph.GraphData
+	var ratings, yearRatings, watchedByYear, seenThisYearByMonth, moviesByYear, watchedByWeekday []graph.GraphData
 	var awardWins types.AwardPersonStat
 	var awardNominations types.AwardPersonStat
 	var mostAwardedMovies []types.AwardMovieStat
@@ -446,6 +468,7 @@ func GetStats(c *fiber.Ctx) error {
 		{executeQuery("select", &shortestAndLongest, shortestLongestQuery, userId), "shortest-and-longest-movie"},
 		{executeQuery("select", &totals, totalWatchedByJobAndYearQuery, userId, "cast", "All"), "total-watched-by-job-and-year"},
 		{executeQuery("select", &watchedByYear, watchedByYearQuery, userId), "stats-watched-by-year"},
+		{executeQuery("select", &watchedByWeekday, watchedByWeekdayQuery, userId, "All"), "stats-watched-by-weekday"},
 		{executeQuery("select", &wilhelms, wilhelmQuery, userId), "wilhelm-screams"},
 		{executeQuery("select", &yearRatings, ratingsThisYearQuery, userId, currentYear), "stats-ratings-this-year"},
 		{executeQuery("get", &awardNominations, mostAwardNominationsQuery, userId), "stats-most-award-nominations"},
@@ -485,9 +508,9 @@ func GetStats(c *fiber.Ctx) error {
 
 	// Process all graph data in parallel
 	errChan = make(chan error, 5)
-	var ratingsBars, yearBars, watchedByYearBar, seenThisYearByMonthBars []graph.Bar
+	var ratingsBars, yearBars, watchedByYearBar, watchedByWeekdayBar, seenThisYearByMonthBars []graph.Bar
 
-	wg.Add(4)
+	wg.Add(5)
 
 	go func() {
 		defer wg.Done()
@@ -511,6 +534,15 @@ func GetStats(c *fiber.Ctx) error {
 		defer wg.Done()
 		var err error
 		watchedByYearBar, err = constructGraphFromData(watchedByYear)
+		if err != nil {
+			errChan <- err
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+		var err error
+		watchedByWeekdayBar, err = constructGraphFromData(watchedByWeekday)
 		if err != nil {
 			errChan <- err
 		}
@@ -564,6 +596,7 @@ func GetStats(c *fiber.Ctx) error {
 			Stats:                   stats,
 			TotalCast:               utils.Formatter().Sprintf("%d", totalCast),
 			WatchedByYear:           watchedByYearBar,
+			WatchedByWeekday:        watchedByWeekdayBar,
 			Year:                    year,
 			YearRatings:             yearBars,
 			Years:                   availableYears(),
@@ -845,7 +878,44 @@ func GetThisYearByMonth(c *fiber.Ctx) error {
 		}))
 }
 
+func GetThisYearByWeekday(c *fiber.Ctx) error {
+	userId := c.Locals("UserId").(string)
+	year := c.Query("year")
+	yearTime, err := pgSelectedYear(year)
+
+	if err != nil {
+		return err
+	}
+
+	yearRatings, err := getGraphByYearWithQuery(watchedByWeekdayQuery, userId, yearTime)
+
+	if err != nil {
+		return err
+	}
+
+	title := "Seen " + year + " by weekday"
+
+	if year == "All" {
+		title = "Seen by weekday"
+	}
+
+	return utils.Render(c, graph.WithYear(
+		graph.WithYearProps{
+			Props: graph.Props{
+				Bars:  yearRatings,
+				Title: title,
+			},
+			SelectedYear: year,
+			Years:        append([]string{"All"}, availableYears()...),
+			Route:        "/stats/by-weekday",
+		}))
+}
+
 func pgSelectedYear(year string) (string, error) {
+	if year == "All" {
+		return "All", nil
+	}
+
 	parsedYear, err := strconv.Atoi(year)
 
 	if err != nil {

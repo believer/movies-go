@@ -38,6 +38,7 @@ type StatsProps struct {
 	Stats                   types.Stats
 	TotalCast               string
 	WatchedByYear           []graph.Bar
+	WatchedByWeekday        []graph.Bar
 	WilhelmScreams          int
 	Year                    string
 	YearRatings             []graph.Bar
@@ -174,6 +175,15 @@ templ Stats(props StatsProps) {
 						Route:        "/stats/by-month",
 						SelectedYear: props.Year,
 						Years:        props.Years,
+					})
+					@graph.WithYear(graph.WithYearProps{
+						Props: graph.Props{
+							Title: "Seen by weekday",
+							Bars:  props.WatchedByWeekday,
+						},
+						Route:        "/stats/by-weekday",
+						SelectedYear: "All",
+						Years:        append([]string{"All"}, props.Years...),
 					})
 					<section
 						hx-get="/stats/best-of-the-year"
