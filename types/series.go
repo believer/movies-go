@@ -78,3 +78,21 @@ func (s SeriesMovies) Runtime() string {
 func (s SeriesMovies) SeenInSeries() string {
 	return fmt.Sprintf("Seen %d of %d movies", s.Seen, len(s.Movies))
 }
+
+func (s SeriesMovies) AverageRating() string {
+	total := 0
+	movies := 0
+
+	for _, m := range s.Movies {
+		if m.Rating.Valid {
+			total += int(m.Rating.Int64)
+			movies++
+		}
+	}
+
+	if total == 0 {
+		return ""
+	}
+
+	return fmt.Sprintf(" - Average rating %d/10", total/movies)
+}
