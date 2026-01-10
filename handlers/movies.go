@@ -193,16 +193,6 @@ type NewPerson struct {
 	MovieId        int            `db:"movie_id"`
 }
 
-func personExists(arr []NewPerson, id int, job any) (int, bool) {
-	for i, person := range arr {
-		if person.ID == id && person.Job.String == job {
-			return i, true
-		}
-	}
-
-	return 0, false
-}
-
 // Handle adding a movie
 func PostMovieNew(c *fiber.Ctx) error {
 	if c.Locals("IsAuthenticated") == false {
@@ -420,25 +410,46 @@ func GetSeenMovie(c *fiber.Ctx) error {
 
 	movieId, err := c.ParamsInt("id")
 	seenId := c.Params("seenId")
+	userId := c.Locals("UserId")
 
 	if err != nil {
 		return err
 	}
 
-	err = db.Client.Get(&watch, `SELECT
+	err = db.Client.Get(&watch, `
+SELECT
     TO_CHAR(date AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/Stockholm', 'YYYY-MM-DD"T"HH24:MI') AS date,
-    sw.other_user_id AS seen_with
+    COALESCE(ARRAY_AGG(sw.other_user_id) FILTER (WHERE sw.other_user_id IS NOT NULL), '{}') AS seen_with
 FROM
     seen s
     LEFT JOIN seen_with sw ON sw.seen_id = s.id
 WHERE
-    id = $1`, seenId)
+    id = $1
+GROUP BY
+    id
+`, seenId)
+
+	if err != nil {
+		return err
+	}
+
+	var friends []list.DataListItem
+	err = db.Client.Select(&friends, `
+		SELECT
+		    id AS "value",
+		    name
+		FROM
+		    "user"
+		WHERE
+		    id != $1
+		`, userId)
 
 	if err != nil {
 		return err
 	}
 
 	return utils.Render(c, views.UpdateWatched(views.UpdateWatchedProps{
+		Friends: friends,
 		MovieId: movieId,
 		SeenId:  seenId,
 		Watch:   watch,
@@ -460,8 +471,8 @@ func UpdateSeenMovie(c *fiber.Ctx) error {
 
 	// Parse form data and watched at time
 	data := new(struct {
-		WatchedAt string `form:"watched_at"`
-		User      string `form:"user"`
+		Friend    []string `form:"friend"`
+		WatchedAt string   `form:"watched_at"`
 	})
 
 	if err := c.BodyParser(data); err != nil {
@@ -493,13 +504,22 @@ WHERE
 		return err
 	}
 
-	if data.User != "" {
+	_, err = db.Client.Exec(`DELETE FROM seen_with
+WHERE seen_id = $1`, seenID)
+
+	if err != nil {
+		return err
+	}
+
+	if len(data.Friend) > 0 {
 		_, err = db.Client.Exec(`
 			INSERT INTO seen_with (seen_id, other_user_id)
-			    VALUES ($1, $2)
+			SELECT
+			    $1,
+			    UNNEST($2::text[])::int
 			ON CONFLICT
 			    DO NOTHING
-			`, seenID, data.User)
+			`, seenID, pq.Array(data.Friend))
 
 		if err != nil {
 			return err

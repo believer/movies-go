@@ -1,0 +1,36 @@
+package multiselect
+
+import "believer/movies/components/list"
+import "github.com/lib/pq"
+import "slices"
+import "believer/movies/components/input"
+
+type MultiSelectProps struct {
+	Label    string
+	Name     string
+	Selected pq.StringArray
+	Options  []list.DataListItem
+}
+
+templ MultiSelect(props MultiSelectProps) {
+	<div class="input">
+		@input.Label(props.Name, props.Label)
+		<select
+			class="multi-select"
+			name={ props.Name }
+			id={ props.Name }
+			multiple
+			size={ len(props.Options) }
+		>
+			for _, o := range props.Options {
+				<option
+					value={ o.Value }
+					label={ o.Label }
+					if slices.Contains(props.Selected, o.Value) {
+						selected
+					}
+				></option>
+			}
+		</select>
+	</div>
+}

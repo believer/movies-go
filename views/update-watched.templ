@@ -5,16 +5,19 @@ import (
 	"believer/movies/components/input"
 	"believer/movies/components/layout"
 	"believer/movies/components/link"
-	"database/sql"
+	"believer/movies/components/list"
+	"believer/movies/components/multi-select"
 	"fmt"
+	"github.com/lib/pq"
 )
 
 type WatchData struct {
 	Date     string         `db:"date"`
-	SeenWith sql.NullString `db:"seen_with"`
+	SeenWith pq.StringArray `db:"seen_with"`
 }
 
 type UpdateWatchedProps struct {
+	Friends []list.DataListItem
 	MovieId int
 	SeenId  string
 	Watch   WatchData
@@ -38,14 +41,12 @@ templ UpdateWatched(props UpdateWatchedProps) {
 				HelpText: "Defaults to current time if left empty. Time zone is UTC.",
 				Value:    props.Watch.Date,
 			})
-			@input.Text(input.TextProps{
-				Name:  "user",
-				Label: "Friend",
-				List:  "friend_list",
-				Value: props.Watch.SeenWith.String,
-			}) {
-				<div hx-get="/users" hx-swap="outerHTML" hx-trigger="load"></div>
-			}
+			@multiselect.MultiSelect(multiselect.MultiSelectProps{
+				Label:    "Friend",
+				Name:     "friend",
+				Options:  props.Friends,
+				Selected: props.Watch.SeenWith,
+			})
 			<footer>
 				<div id="error" class="form__error"></div>
 				@button.Button(button.Props{Type: button.TypeSubmit}) {
