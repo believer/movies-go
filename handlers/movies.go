@@ -124,16 +124,33 @@ func GetMovieOthersSeenByID(c *fiber.Ctx) error {
 func GetMovieNew(c *fiber.Ctx) error {
 	var movie types.Movie
 
-	movieQueries, err := db.MakeMovieQueries(c)
+	movieQueries, queryError := db.MakeMovieQueries(c)
 	id := c.QueryInt("id")
 	imdbId := c.Query("imdbId")
+	userID := c.Locals("UserId")
 
 	if !movieQueries.IsAuthenticated {
 		return c.Redirect("/")
 	}
 
+	var friends []list.DataListItem
+	err := db.Client.Select(&friends, `
+		SELECT
+		    id AS "value",
+		    name
+		FROM
+		    "user"
+		WHERE
+		    id != $1
+		`, userID)
+
 	if err != nil {
+		return err
+	}
+
+	if queryError != nil {
 		return utils.Render(c, views.NewMovie(views.NewMovieProps{
+			Friends:     friends,
 			ImdbID:      imdbId,
 			InWatchlist: false,
 			Movie:       movie,
@@ -159,6 +176,7 @@ WHERE
 	}
 
 	return utils.Render(c, views.NewMovie(views.NewMovieProps{
+		Friends:     friends,
 		ImdbID:      imdbId,
 		InWatchlist: isInWatchlist,
 		Movie:       movie,
@@ -200,15 +218,16 @@ func PostMovieNew(c *fiber.Ctx) error {
 	}
 
 	data := new(struct {
-		HasWilhelmScream bool   `form:"wilhelm_scream"`
-		ImdbID           string `form:"imdb_id"`
-		IsPrivateReview  bool   `form:"review_private"`
-		IsWatchlist      bool   `form:"watchlist"`
-		NumberInSeries   int    `form:"number_in_series"`
-		Rating           int    `form:"rating"`
-		Review           string `form:"review"`
-		Series           string `form:"series"`
-		WatchedAt        string `form:"watched_at"`
+		HasWilhelmScream bool     `form:"wilhelm_scream"`
+		ImdbID           string   `form:"imdb_id"`
+		IsPrivateReview  bool     `form:"review_private"`
+		IsWatchlist      bool     `form:"watchlist"`
+		NumberInSeries   int      `form:"number_in_series"`
+		Rating           int      `form:"rating"`
+		Review           string   `form:"review"`
+		Series           string   `form:"series"`
+		Friend           []string `form:"friend"`
+		WatchedAt        string   `form:"watched_at"`
 	})
 
 	if err := c.BodyParser(data); err != nil {
@@ -298,11 +317,39 @@ RETURNING
 		}
 	} else {
 		// Insert a view and delete from watchlist if exists
-		tx.MustExec(`INSERT INTO seen (user_id, movie_id, date)
-    VALUES ($1, $2, $3)`, userId, movieId, watchedAt)
+		seenID := 0
+
+		err := tx.Get(&seenID, `
+INSERT INTO seen (user_id, movie_id, date)
+    VALUES ($1, $2, $3)
+RETURNING
+    id
+			`, userId, movieId, watchedAt)
+
+		if err != nil {
+			return err
+		}
+
 		tx.MustExec(`DELETE FROM watchlist
 WHERE user_id = $1
     AND movie_id = $2`, userId, movieId)
+
+		// Add friends if any
+		if seenID != 0 && len(data.Friend) > 0 {
+			_, err = tx.Exec(`
+			INSERT INTO seen_with (seen_id, other_user_id)
+			SELECT
+			    $1,
+			    UNNEST($2::text[])::int
+			ON CONFLICT
+			    DO NOTHING
+			`, seenID, pq.Array(data.Friend))
+
+			if err != nil {
+				return err
+			}
+		}
+
 	}
 
 	// Remove from now playing if exists

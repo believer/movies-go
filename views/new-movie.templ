@@ -6,11 +6,14 @@ import (
 	"believer/movies/components/details"
 	"believer/movies/components/input"
 	"believer/movies/components/layout"
+	"believer/movies/components/list"
+	"believer/movies/components/multi-select"
 	"believer/movies/components/textarea"
 	"believer/movies/types"
 )
 
 type NewMovieProps struct {
+	Friends     []list.DataListItem
 	ImdbID      string
 	InWatchlist bool
 	Movie       types.Movie
@@ -98,6 +101,11 @@ templ NewMovie(props NewMovieProps) {
 					Name:     "watched_at",
 					Label:    "Watched at",
 					HelpText: "Defaults to current time if left empty.",
+				})
+				@multiselect.MultiSelect(multiselect.MultiSelectProps{
+					Label:   "Friend",
+					Name:    "friend",
+					Options: props.Friends,
 				})
 				<div class="new-movie__series">
 					@input.Text(input.TextProps{
