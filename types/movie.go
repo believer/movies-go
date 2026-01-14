@@ -108,6 +108,13 @@ func (m Movie) RuntimeFormatted() string {
 	return utils.FormatRuntime(m.Runtime)
 }
 
+func (m Movie) RemainingRuntimeFormatted() string {
+	seconds := int(math.Mod(m.Position, 1) * 60)
+	minutes := m.Runtime - int(m.Position)
+
+	return fmt.Sprintf("-%s %ds", utils.FormatRuntime(minutes), seconds)
+}
+
 func (m Movie) PositionFormatted() string {
 	seconds := int(math.Mod(m.Position, 1) * 60)
 	minutes := int(m.Position)

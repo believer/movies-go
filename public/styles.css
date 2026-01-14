@@ -322,6 +322,12 @@
       align-items: center;
       font-size: var(--text-xs);
       color: var(--color-content-secondary);
+
+      button {
+        position: relative;
+        z-index: 10;
+        color: inherit;
+      }
     }
 
     .progress-bar {

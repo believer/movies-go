@@ -31,7 +31,16 @@ templ NowPlaying(p NowPlayingProps) {
 							<div class="progress-bar">
 								<div style={ m.Progress() }></div>
 							</div>
-							<div>{ m.RuntimeFormatted() }</div>
+							<button
+								_="on click hide #runtime then show #remainingTime"
+								style="display:block"
+								id="runtime"
+							>{ m.RuntimeFormatted() }</button>
+							<button
+								_="on click hide #remainingTime then show #runtime"
+								style="display:none"
+								id="remainingTime"
+							>{ m.RemainingRuntimeFormatted() }</button>
 						</div>
 					</li>
 				}
