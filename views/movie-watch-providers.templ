@@ -16,11 +16,12 @@ type WatchProviderCategories struct {
 }
 
 type WatchProvidersProps struct {
-	HasOtherProviders bool
-	HasMyProviders    bool
-	OtherProviders    WatchProviderCategories
-	MyProviders       WatchProviderCategories
-	JustWatchLink     string
+	HasOtherProviders      bool
+	MissingStoredProviders bool
+	HasMyProviders         bool
+	OtherProviders         WatchProviderCategories
+	MyProviders            WatchProviderCategories
+	JustWatchLink          string
 }
 
 templ WatchProviders(props WatchProvidersProps) {
@@ -33,11 +34,18 @@ templ WatchProviders(props WatchProvidersProps) {
 				@providers(props.MyProviders.Rent, "Rent")
 				@providers(props.MyProviders.Subscription, "Subscription")
 			</div>
-		} else {
+		} else if props.MissingStoredProviders {
 			@emptystate.EmptyState() {
 				Select your providers in 
 				@link.Link(link.Props{Href: "/settings"}) {
 					settings 
+				}
+			}
+		} else {
+			@emptystate.EmptyState() {
+				Movie does not exist in 
+				@link.Link(link.Props{Href: "/settings"}) {
+					your providers 
 				}
 			}
 		}

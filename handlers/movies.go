@@ -1224,10 +1224,11 @@ WHERE
 	}
 
 	return utils.Render(c, views.WatchProviders(views.WatchProvidersProps{
-		HasMyProviders:    hasMyProviders,
-		HasOtherProviders: hasOtherProviders,
-		OtherProviders:    otherProviders,
-		MyProviders:       myProviders,
-		JustWatchLink:     justWatchUrl,
+		HasMyProviders:         hasMyProviders,
+		HasOtherProviders:      hasOtherProviders,
+		MissingStoredProviders: storedProviders == "",
+		OtherProviders:         otherProviders,
+		MyProviders:            myProviders,
+		JustWatchLink:          justWatchUrl,
 	}))
 }
