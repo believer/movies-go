@@ -240,7 +240,9 @@ FROM ( SELECT DISTINCT
     FROM
         seen
     WHERE
-        user_id = $1) AS s
+        user_id = $1
+        AND ($2 = 'All'
+            OR EXTRACT(YEAR FROM date) = $2::int)) AS s
     INNER JOIN movie AS m ON m.id = s.movie_id
 GROUP BY
     label
@@ -462,7 +464,7 @@ func GetStats(c *fiber.Ctx) error {
 		{executeQuery("get", &stats, dataQuery, userId), "stats-data"},
 		{executeQuery("select", &cast, mostWatchedByJobQuery, "cast", userId, "All"), "stats-most-watched-by-job"},
 		{executeQuery("select", &movies, mostWatchedQuery, userId), "stats-most-watched-movies"},
-		{executeQuery("select", &moviesByYear, moviesByYearQuery, userId), "stats-movies-by-year"},
+		{executeQuery("select", &moviesByYear, moviesByYearQuery, userId, "All"), "stats-movies-by-year"},
 		{executeQuery("select", &ratings, ratingsQuery, userId), "stats-ratings"},
 		{executeQuery("select", &seenThisYearByMonth, watchedThisYearByMonth, userId, currentYear), "stats-watched-this-year-by-month"},
 		{executeQuery("select", &shortestAndLongest, shortestLongestQuery, userId), "shortest-and-longest-movie"},
@@ -1043,5 +1045,35 @@ ORDER BY
 	return utils.Render(c, views.StatsSection(views.StatsSectionProps{
 		Data:  items,
 		Title: "Seen with",
+	}))
+}
+
+func GetMoviesByYearStat(c *fiber.Ctx) error {
+	var moviesByYear []graph.GraphData
+
+	userId := c.Locals("UserId").(string)
+	year := c.Query("year", "All")
+
+	err := db.Client.Select(&moviesByYear, moviesByYearQuery, userId, year)
+
+	if err != nil {
+		return err
+	}
+
+	bestYear := ""
+	maxYear := 0
+
+	for _, m := range moviesByYear {
+		if m.Value > maxYear {
+			maxYear = m.Value
+			bestYear = m.Label
+		}
+	}
+
+	return utils.Render(c, views.MoviesByYear(views.MoviesByYearProps{
+		BestYear: bestYear,
+		Movies:   moviesByYear,
+		Year:     year,
+		Years:    append([]string{"All"}, availableYears()...),
 	}))
 }

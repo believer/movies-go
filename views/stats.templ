@@ -7,7 +7,6 @@ import (
 	"believer/movies/components/link"
 	"believer/movies/components/list"
 	"believer/movies/components/section"
-	"believer/movies/components/separator"
 	"believer/movies/types"
 	"believer/movies/utils"
 	"fmt"
@@ -190,37 +189,12 @@ templ Stats(props StatsProps) {
 						hx-trigger="load"
 						hx-swap="outerHTML"
 					></section>
-					@section.Section(section.Props{Title: "Movies by year"}) {
-						if len(props.MoviesByYear) > 0 {
-							@list.Ol() {
-								for _, year := range props.MoviesByYear {
-									@list.Li() {
-										<a
-											class={ "link focus", templ.KV("link--highlight", props.BestYear == year.Label) }
-											href={ templ.URL(fmt.Sprintf("/year/%s", year.Label)) }
-										>
-											{ year.Label }
-										</a>
-										if props.BestYear == year.Label {
-											@separator.Separator(separator.Props{Highlight: true})
-										} else {
-											@separator.Separator()
-										}
-										<span
-											class="trailing"
-											style={ templ.KV("color: var(--color-content-highlight)", props.BestYear == year.Label) }
-										>
-											{ year.Value }
-										</span>
-									}
-								}
-							}
-						} else {
-							@emptystate.EmptyState() {
-								No movies seen
-							}
-						}
-					}
+					@MoviesByYear(MoviesByYearProps{
+						BestYear: props.BestYear,
+						Movies:   props.MoviesByYear,
+						Year:     "All",
+						Years:    append([]string{"All"}, props.Years...),
+					})
 				</div>
 				<div class="stats__column">
 					@section.Section(section.Props{Title: "Most watched movies"}) {

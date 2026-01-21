@@ -1,0 +1,60 @@
+package views
+
+import (
+	"believer/movies/components/dropdown"
+	"believer/movies/components/empty-state"
+	"believer/movies/components/graph"
+	"believer/movies/components/list"
+	"believer/movies/components/section"
+	"believer/movies/components/separator"
+	"fmt"
+)
+
+type MoviesByYearProps struct {
+	BestYear string
+	Movies   []graph.GraphData
+	Year     string
+	Years    []string
+}
+
+templ MoviesByYear(props MoviesByYearProps) {
+	@section.Section(section.Props{
+		Title: "Movies by year",
+		Action: dropdown.Dropdown(dropdown.Props{
+			Name:    "year",
+			Options: props.Years,
+			Route:   "/stats/movies-by-year",
+			Value:   props.Year,
+		}),
+	}) {
+		if len(props.Movies) > 0 {
+			@list.Ol() {
+				for _, year := range props.Movies {
+					@list.Li() {
+						<a
+							class={ "link focus", templ.KV("link--highlight", props.BestYear == year.Label) }
+							href={ templ.URL(fmt.Sprintf("/year/%s", year.Label)) }
+						>
+							{ year.Label }
+						</a>
+						if props.BestYear == year.Label {
+							@separator.Separator(separator.Props{Highlight: true})
+						} else {
+							@separator.Separator()
+						}
+						<span
+							class="trailing"
+							style={ templ.KV("color: var(--color-content-highlight)", props.BestYear == year.Label) }
+						>
+							{ year.Value }
+						</span>
+					}
+				}
+			}
+		} else {
+			@emptystate.EmptyState() {
+				No movies seen
+			}
+		}
+	}
+}
