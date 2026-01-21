@@ -190,7 +190,7 @@
       position: fixed;
       right: var(--spacing-8);
       bottom: var(--spacing-8);
-      z-index: 10;
+      z-index: 30;
       display: flex;
       align-items: center;
       justify-content: center;
