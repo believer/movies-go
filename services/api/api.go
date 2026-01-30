@@ -35,6 +35,8 @@ func (a *Api) AddMovie(imdbId string, hasWilhelmScream bool) (types.MovieDetails
 
 	tx := db.Client.MustBegin()
 
+	slog.Info("Inserting movie")
+
 	err = tx.Get(
 		&id,
 		`
@@ -65,15 +67,22 @@ ON CONFLICT (imdb_id)
 	)
 
 	if err != nil {
+		slog.Error("No movie")
 		return movie, 0, err
 	}
 
+	slog.Info("Inserting cast and crew")
 	a.AddCast(tx, imdbId, id)
+	slog.Info("Inserting language")
 	a.AddLanguages(tx, id, movie)
+	slog.Info("Inserting genres")
 	a.AddGenres(tx, id, movie)
+	slog.Info("Inserting countries")
 	a.AddCountries(tx, id, movie)
+	slog.Info("Inserting ProductionCompanies")
 	a.AddProductionCompanies(tx, id, movie)
 
+	slog.Info("Commiting")
 	err = tx.Commit()
 
 	if err != nil {
@@ -82,6 +91,8 @@ ON CONFLICT (imdb_id)
 
 		return movie, 0, err
 	}
+
+	slog.Info("Movie", movie.Title, id)
 
 	return movie, id, nil
 }
@@ -420,26 +431,35 @@ func (a *Api) AddCountries(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse
 
 func (a *Api) AddProductionCompanies(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse) {
 	for _, c := range movie.ProductionCompanies {
-		tx.MustExec(`
+		var pcID int
+
+		err := tx.Get(&pcID, `
 			INSERT INTO production_company (tmdb_id, name, country)
 			    VALUES ($1, $2, NULLIF ($3, ''))
-			ON CONFLICT
-			    DO NOTHING
+			ON CONFLICT (tmdb_id, name)
+			    DO UPDATE SET
+			        name = EXCLUDED.name
+			    RETURNING
+			        id
 		`, c.ID, c.Name, c.OriginCountry)
 
-		tx.MustExec(`
+		if err != nil {
+			slog.Error("Could not add company", "err", err)
+		}
+
+		_, err = tx.Exec(`
 			INSERT INTO movie_company (movie_id, company_id)
-			    VALUES ($1, (
-			            SELECT
-			                id
-			            FROM
-			                production_company
-			            WHERE
-			                tmdb_id = $2))
+			    VALUES ($1, $2)
 			ON CONFLICT
 			    DO NOTHING
-		`, id, c.ID)
+		`, id, pcID)
+
+		if err != nil {
+			slog.Error("Could not add", "err", err)
+		}
 	}
+
+	slog.Info("Inserted production companies")
 }
 
 func (a *Api) AwardsByMovie(year string) (awards []types.AwardsByYear, err error) {
