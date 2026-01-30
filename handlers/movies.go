@@ -286,9 +286,10 @@ ON CONFLICT
 			err = tx.Get(&seriesId, `INSERT INTO series (name)
     VALUES ($1)
 ON CONFLICT
-    DO NOTHING
-RETURNING
-    id`, data.Series)
+    DO UPDATE SET
+        name = EXCLUDED.name
+    RETURNING
+        id`, data.Series)
 
 			if err != nil {
 				return err
