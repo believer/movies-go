@@ -106,7 +106,7 @@ func NowPlaying(p NowPlayingProps) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\"></div></div><button _=\"on click hide #runtime then show #remainingTime\" style=\"display:block\" id=\"runtime\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\"></div></div><button _=\"on click hide me then show next <button/>\" style=\"display:block\" id=\"runtime\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -119,7 +119,7 @@ func NowPlaying(p NowPlayingProps) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</button> <button _=\"on click hide #remainingTime then show #runtime\" style=\"display:none\" id=\"remainingTime\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</button> <button _=\"on click hide me then show previous <button/>\" style=\"display:none\" id=\"remainingTime\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

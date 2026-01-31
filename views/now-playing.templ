@@ -32,12 +32,12 @@ templ NowPlaying(p NowPlayingProps) {
 								<div style={ m.Progress() }></div>
 							</div>
 							<button
-								_="on click hide #runtime then show #remainingTime"
+								_="on click hide me then show next <button/>"
 								style="display:block"
 								id="runtime"
 							>{ m.RuntimeFormatted() }</button>
 							<button
-								_="on click hide #remainingTime then show #runtime"
+								_="on click hide me then show previous <button/>"
 								style="display:none"
 								id="remainingTime"
 							>{ m.RemainingRuntimeFormatted() }</button>
