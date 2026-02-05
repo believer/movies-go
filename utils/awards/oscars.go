@@ -5,6 +5,7 @@ import (
 	"believer/movies/types"
 	"encoding/csv"
 	"fmt"
+	"log/slog"
 	"os"
 	"strings"
 )
@@ -51,7 +52,7 @@ func Add(id string) {
 			continue
 		}
 
-		fmt.Println("Found awards for ", r[fields["Film"]])
+		slog.Info("Found awards", "movie", r[fields["Film"]])
 
 		// We can only add where movie exists in database, otherwise
 		// we get a violation on the foreign key to the movie table
