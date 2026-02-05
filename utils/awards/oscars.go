@@ -1,16 +1,17 @@
 package awards
 
 import (
-	"believer/movies/db"
 	"believer/movies/types"
 	"encoding/csv"
 	"fmt"
 	"log/slog"
 	"os"
 	"strings"
+
+	"github.com/jmoiron/sqlx"
 )
 
-func Add(id string) {
+func Add(tx *sqlx.Tx, id string) {
 	f, err := os.Open("oscars.csv")
 
 	if err != nil {
@@ -37,8 +38,6 @@ func Add(id string) {
 	for i, name := range records[0] {
 		fields[name] = i
 	}
-
-	tx := db.Client.MustBegin()
 
 	for _, r := range records {
 		year := r[fields["Year"]]
@@ -153,13 +152,5 @@ WHERE
 
 			fmt.Printf("Other %s %s\n", category, imdbId)
 		}
-	}
-
-	err = tx.Commit()
-
-	if err != nil {
-		err = tx.Rollback()
-
-		panic(err)
 	}
 }

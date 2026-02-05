@@ -82,7 +82,7 @@ ON CONFLICT (imdb_id)
 	a.AddCountries(tx, id, movie)
 	slog.Info("Inserting ProductionCompanies")
 	a.AddProductionCompanies(tx, id, movie)
-	awards.Add(imdbId)
+	awards.Add(tx, imdbId)
 
 	slog.Info("Commiting")
 	err = tx.Commit()

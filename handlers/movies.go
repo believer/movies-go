@@ -364,6 +364,9 @@ WHERE user_id = $1
     VALUES ($1, $2, $3)`, userId, movieId, data.Rating)
 	}
 
+	// Add awards
+	awards.Add(tx, movie.ImdbId)
+
 	err = tx.Commit()
 
 	if err != nil {
@@ -371,9 +374,6 @@ WHERE user_id = $1
 
 		return err
 	}
-
-	// Add awards
-	awards.Add(movie.ImdbId)
 
 	c.Set("HX-Redirect", fmt.Sprintf("/movie/%d?back=true", movieId))
 
@@ -1104,6 +1104,9 @@ func UpdateMovieByID(c *fiber.Ctx) error {
 	api.AddProductionCompanies(tx, id, movie)
 	api.AddCast(tx, movie.ImdbId, id)
 
+	// Add awards
+	awards.Add(tx, movie.ImdbId)
+
 	err = tx.Commit()
 
 	if err != nil {
@@ -1111,9 +1114,6 @@ func UpdateMovieByID(c *fiber.Ctx) error {
 
 		return err
 	}
-
-	// Add awards
-	awards.Add(movie.ImdbId)
 
 	return c.SendStatus(fiber.StatusOK)
 }
