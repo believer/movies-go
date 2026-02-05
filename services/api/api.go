@@ -4,6 +4,7 @@ import (
 	"believer/movies/db"
 	"believer/movies/services/tmdb"
 	"believer/movies/types"
+	"believer/movies/utils/awards"
 	"database/sql"
 	"log/slog"
 
@@ -81,6 +82,7 @@ ON CONFLICT (imdb_id)
 	a.AddCountries(tx, id, movie)
 	slog.Info("Inserting ProductionCompanies")
 	a.AddProductionCompanies(tx, id, movie)
+	awards.Add(imdbId)
 
 	slog.Info("Commiting")
 	err = tx.Commit()
