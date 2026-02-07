@@ -23,3 +23,19 @@ Disallow: /
 
 User-agent: FacebookBot
 Disallow: /
+
+# Block SEO bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: Rogerbot
+Disallow: /
