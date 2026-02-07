@@ -1,4 +1,25 @@
+# Block all bots from crawling the site
 User-agent: *
+Disallow: /
 
-Disallow: /movie/new
+# Specifically target AI crawlers that sometimes ignore the wildcard
+User-agent: GPTBot
+Disallow: /
 
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: AnthropicAI
+Disallow: /
+
+User-agent: OAI-SearchBot
+Disallow: /
+
+User-agent: FacebookBot
+Disallow: /
