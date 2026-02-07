@@ -5,11 +5,15 @@ import (
 	"believer/movies/router"
 	"believer/movies/utils"
 	"believer/movies/views"
+	"context"
 	"fmt"
 	"log"
 	"os"
 	"strings"
+	"time"
 
+	"github.com/getsentry/sentry-go"
+	sentryfiber "github.com/getsentry/sentry-go/fiber"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
@@ -29,6 +33,21 @@ func SetupAndRunApp() error {
 		return err
 	}
 
+	if err := sentry.Init(sentry.ClientOptions{
+		Dsn:        os.Getenv("SENTRY_DSN"),
+		EnableLogs: true,
+	}); err != nil {
+		fmt.Printf("Sentry initialization failed: %v\n", err)
+	}
+
+	defer sentry.Flush(2 * time.Second)
+
+	ctx := context.Background()
+	sentryLog := sentry.NewLogger(ctx)
+
+	sentryLog.Info().Emit("Test log")
+	sentryLog.Error().Emit("Test error")
+
 	// Initialize database connection
 	err = db.InitializeConnection()
 
@@ -39,10 +58,18 @@ func SetupAndRunApp() error {
 	// Close database connection when the app exits
 	defer db.CloseConnection()
 
+	sentryHandler := sentryfiber.New(sentryfiber.Options{
+		Repanic:         true,
+		WaitForDelivery: true,
+	})
+
 	// Setup the app
 	app := fiber.New(fiber.Config{
 		DisableStartupMessage: true,
 	})
+
+	// Add Sentry
+	app.Use(sentryHandler)
 
 	// Recover middleware recovers from panics anywhere in
 	// the chain and handles the control to the centralized ErrorHandler.
