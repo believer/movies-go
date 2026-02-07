@@ -415,8 +415,8 @@
       color: transparent;
       -webkit-text-stroke-width: 2px;
       -webkit-text-stroke-color: light-dark(
-        rgba(163 163 163 / 1),
-        rgba(82 82 82 / 1)
+        rgb(163 163 163 / 100%),
+        rgb(82 82 82 / 100%)
       );
       background-color: var(--color-background-primary);
 
@@ -686,11 +686,11 @@
 	  border-radius: var(--rounded-sm);
 	
 	  &:hover .button__state {
-	    background-color: rgba(0, 0, 0, 0.1);
+	    background-color: rgb(0 0 0 / 10%);
 	  }
 	
 	  &:active .button__state {
-	    background-color: rgba(0, 0, 0, 0.3);
+	    background-color: rgb(0 0 0 / 30%);
 	  }
 	
 	  &.button--secondary {

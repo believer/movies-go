@@ -35,7 +35,7 @@ templ group(bar Bar, href string) {
 		if href != "" {
 			<a xlink:href={ fmt.Sprintf("%s/%s", href, bar.Label) }>
 				<rect
-					fill="rgba(0,0,0,0)"
+					fill="rgb(0 0 0 / 0%)"
 					width={ bar.BarWidth }
 					height="40"
 					x={ bar.BarX }
@@ -44,7 +44,7 @@ templ group(bar Bar, href string) {
 			</a>
 		} else {
 			<rect
-				fill="rgba(0,0,0,0)"
+				fill="rgb(0 0 0 / 0%)"
 				width={ bar.BarWidth }
 				height="40"
 				x={ bar.BarX }
@@ -52,7 +52,7 @@ templ group(bar Bar, href string) {
 			></rect>
 		}
 		<rect
-			fill="rgba(0,0,0,0)"
+			fill="rgb(0 0 0 / 0%)"
 			width={ bar.BarWidth }
 			height="40"
 			x={ bar.BarX }
