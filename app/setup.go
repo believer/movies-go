@@ -5,14 +5,11 @@ import (
 	"believer/movies/router"
 	"believer/movies/utils"
 	"believer/movies/views"
-	"context"
 	"fmt"
 	"log"
 	"os"
 	"strings"
-	"time"
 
-	"github.com/getsentry/sentry-go"
 	sentryfiber "github.com/getsentry/sentry-go/fiber"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -33,20 +30,13 @@ func SetupAndRunApp() error {
 		return err
 	}
 
-	if err := sentry.Init(sentry.ClientOptions{
-		Dsn:        os.Getenv("SENTRY_DSN"),
-		EnableLogs: true,
-	}); err != nil {
-		fmt.Printf("Sentry initialization failed: %v\n", err)
+	err = utils.InitLogger(os.Getenv("SENTRY_DSN"))
+
+	if err != nil {
+		return err
 	}
 
-	defer sentry.Flush(2 * time.Second)
-
-	ctx := context.Background()
-	sentryLog := sentry.NewLogger(ctx)
-
-	sentryLog.Info().Emit("Test log")
-	sentryLog.Error().Emit("Test error")
+	defer utils.SyncLogger()
 
 	// Initialize database connection
 	err = db.InitializeConnection()
@@ -83,6 +73,9 @@ func SetupAndRunApp() error {
 		secret := os.Getenv("ADMIN_SECRET")
 		tokenString := c.Cookies("token")
 		c.Locals("IsAuthenticated", false)
+
+		userAgent := c.Get("User-Agent")
+		utils.Log.Debug(c.UserContext()).Emit(userAgent)
 
 		h := new(Headers)
 
