@@ -39,3 +39,11 @@ Disallow: /
 
 User-agent: Rogerbot
 Disallow: /
+
+# Block Baidu's crawler
+User-agent: Baiduspider
+Disallow: /
+
+# Block Baidu's mobile-specific crawler
+User-agent: Baiduspider-render
+Disallow: /
