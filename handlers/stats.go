@@ -189,7 +189,7 @@ ORDER BY
 
 	bestOfYearQuery = `
 WITH max_rating AS (
-    SELECT
+    SELECT DISTINCT
         s.movie_id,
         s.user_id,
         r.rating
