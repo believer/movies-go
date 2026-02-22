@@ -7,6 +7,7 @@ import (
 	"believer/movies/utils"
 	"believer/movies/views"
 	"fmt"
+	"log/slog"
 	"sort"
 	"strings"
 
@@ -21,7 +22,7 @@ func GetFeed(c *fiber.Ctx) error {
 	page := c.QueryInt("page", 1)
 	lastHeader := c.Query("last-header", "0000-00-January")
 	searchQuery := c.Query("search")
-	userId := c.Locals("UserId")
+	userID := c.Locals("UserId")
 	searchQueryType := "movie"
 	api := api.New(c)
 
@@ -118,7 +119,7 @@ WHERE
     AND r.user_id = $2
 ORDER BY
     m.release_date DESC
-					`, query, userId)
+					`, query, userID)
 
 				if err != nil {
 					return err
@@ -151,7 +152,7 @@ WHERE
 ORDER BY
     s.date DESC OFFSET $1
 LIMIT 20
-			`, (page-1)*20, userId)
+			`, (page-1)*20, userID)
 
 		if err != nil {
 			return err
@@ -163,6 +164,7 @@ LIMIT 20
 	nowPlaying, err := api.NowPlaying()
 
 	if err != nil {
+		slog.Error("[Now Playing]", "error", err)
 		return err
 	}
 

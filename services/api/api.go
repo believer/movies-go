@@ -299,7 +299,12 @@ SELECT
     m.title,
     m.runtime,
     m.overview,
-    np."position" / m.runtime AS percent
+    (
+        CASE WHEN m.runtime != 0 THEN
+            np."position" / m.runtime
+        ELSE
+            0
+        END) AS percent
 FROM
     now_playing np
     RIGHT JOIN movie m ON m.imdb_id = np.imdb_id
