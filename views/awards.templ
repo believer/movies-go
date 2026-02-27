@@ -15,15 +15,16 @@ import (
 type AwardsPageProps struct {
 	GroupedAwards []types.AwardsByYear
 	Sort          string
+	Type          string
 	Year          string
 }
 
-templ awardSort(sort, year string) {
+templ awardSort(sort, year, awardType string) {
 	<div class="sort">
 		@input.Label("sort", "Sort")
 		@dropdown.Dropdown(dropdown.Props{
 			Name:    "sort",
-			Route:   fmt.Sprintf("/awards/year/%s", year),
+			Route:   fmt.Sprintf("/awards/year/%s?type=%s", year, awardType),
 			Options: []string{"Movie", "Category"},
 			Value:   sort,
 			Attrs: templ.Attributes{
@@ -36,7 +37,7 @@ templ awardSort(sort, year string) {
 
 templ AwardsPage(props AwardsPageProps) {
 	@layout.Layout(layout.Props{Title: props.Year}) {
-		@awardSort(props.Sort, props.Year)
+		@awardSort(props.Sort, props.Year, props.Type)
 		for _, group := range props.GroupedAwards {
 			@section.Section(section.Props{
 				Title: group.Title,

@@ -201,11 +201,14 @@ func credit(title string, data types.PersonMovies) templ.Component {
 }
 
 type PersonProps struct {
-	Awards       map[string][]types.Award
-	AwardsOrder  []string
-	Person       types.Person
-	TotalCredits int
-	Won          int
+	AcademyAwards      map[string][]types.Award
+	AcademyAwardsOrder []string
+	AcademyAwardsWon   int
+	Baftas             map[string][]types.Award
+	BaftaOrder         []string
+	BaftasWon          int
+	Person             types.Person
+	TotalCredits       int
 }
 
 func Person(props PersonProps) templ.Component {
@@ -248,7 +251,7 @@ func Person(props PersonProps) templ.Component {
 			var templ_7745c5c3_Var12 string
 			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(props.TotalCredits)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/person.templ`, Line: 58, Col: 23}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/person.templ`, Line: 61, Col: 23}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
@@ -315,9 +318,23 @@ func Person(props PersonProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			templ_7745c5c3_Err = PersonAwards(PersonAwardsProps{
-				Awards:      props.Awards,
-				AwardsOrder: props.AwardsOrder,
-				Won:         props.Won,
+				Awards:      props.AcademyAwards,
+				AwardsOrder: props.AcademyAwardsOrder,
+				Type:        "academy-award",
+				Won:         props.AcademyAwardsWon,
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = PersonAwards(PersonAwardsProps{
+				Awards:      props.Baftas,
+				AwardsOrder: props.BaftaOrder,
+				Type:        "bafta",
+				Won:         props.BaftasWon,
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

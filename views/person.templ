@@ -45,11 +45,14 @@ templ credit(title string, data types.PersonMovies) {
 }
 
 type PersonProps struct {
-	Awards       map[string][]types.Award
-	AwardsOrder  []string
-	Person       types.Person
-	TotalCredits int
-	Won          int
+	AcademyAwards      map[string][]types.Award
+	AcademyAwardsOrder []string
+	AcademyAwardsWon   int
+	Baftas             map[string][]types.Award
+	BaftaOrder         []string
+	BaftasWon          int
+	Person             types.Person
+	TotalCredits       int
 }
 
 templ Person(props PersonProps) {
@@ -65,9 +68,16 @@ templ Person(props PersonProps) {
 		@credit("Director of Photography", props.Person.Cinematographer)
 		@credit("Editor", props.Person.Editor)
 		@PersonAwards(PersonAwardsProps{
-			Awards:      props.Awards,
-			AwardsOrder: props.AwardsOrder,
-			Won:         props.Won,
+			Awards:      props.AcademyAwards,
+			AwardsOrder: props.AcademyAwardsOrder,
+			Type:        "academy-award",
+			Won:         props.AcademyAwardsWon,
+		})
+		@PersonAwards(PersonAwardsProps{
+			Awards:      props.Baftas,
+			AwardsOrder: props.BaftaOrder,
+			Type:        "bafta",
+			Won:         props.BaftasWon,
 		})
 	}
 }

@@ -22,11 +22,12 @@ type Award struct {
 	Detail   utils.NullString `db:"detail" json:"detail"`
 	ID       string           `db:"id" json:"id"`
 	ImdbID   string           `db:"imdb_id"`
-	MovieID  int              `db:"movie_id" json:"movie_id"`
+	MovieID  utils.NullInt64  `db:"movie_id" json:"movie_id"`
 	Nominees Nominees         `db:"nominees"`
 	Person   utils.NullString `db:"person" json:"person"`
 	PersonId utils.NullInt64  `db:"person_id" json:"person_id"`
 	Title    utils.NullString `db:"title"`
+	Type     string           `db:"type"`
 	Winner   bool             `db:"winner" json:"winner"`
 	Year     string           `db:"year"`
 }
@@ -38,8 +39,8 @@ func (u *Awards) Scan(v any) error {
 }
 
 func (a *Award) LinkToMovie() string {
-	if a.Title.Valid {
-		return fmt.Sprintf("/movie/%s-%d", utils.Slugify(a.Title.String), a.MovieID)
+	if a.Title.Valid && a.MovieID.Valid {
+		return fmt.Sprintf("/movie/%s-%d", utils.Slugify(a.Title.String), a.MovieID.Int64)
 	}
 
 	return "#"

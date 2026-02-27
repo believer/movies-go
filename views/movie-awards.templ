@@ -33,6 +33,7 @@ templ awardSection(props SectionProps) {
 
 type MovieAwardsProps struct {
 	Awards []types.Award
+	Type   string
 	Year   string
 	Won    int
 }
@@ -56,11 +57,16 @@ func (p MovieAwardsProps) Wins() int {
 }
 
 func (p MovieAwardsProps) Title() string {
-	return fmt.Sprintf("Academy Awards %s", p.Year)
+	switch p.Type {
+	case "bafta":
+		return fmt.Sprintf("BAFTA %s", p.Year)
+	default:
+		return fmt.Sprintf("Academy Awards %s", p.Year)
+	}
 }
 
 func (p MovieAwardsProps) Href() string {
-	return fmt.Sprintf("/awards/year/%s", p.Year)
+	return fmt.Sprintf("/awards/year/%s?type=%s", p.Year, p.Type)
 }
 
 func (p MovieAwardsProps) NominationMsg() string {
@@ -127,14 +133,14 @@ templ MovieAwards(props MovieAwardsProps) {
 			</span>
 			<a
 				class="link"
-				href={ templ.SafeURL(fmt.Sprintf("/awards/%d?nominations=true", props.NumberOfAwards())) }
+				href={ templ.SafeURL(fmt.Sprintf("/awards/%d?nominations=true&type=%s", props.NumberOfAwards(), props.Type)) }
 			>{ props.NominationMsg() }</a>
 			if props.Won > 0 {
 				<span>or</span>
 				<div>
 					<a
 						class="link"
-						href={ templ.SafeURL(fmt.Sprintf("/awards/%d", props.Won)) }
+						href={ templ.SafeURL(fmt.Sprintf("/awards/%d?type=%s", props.Won, props.Type)) }
 					>{ props.WinMsg() }</a>
 				</div>
 			}
@@ -145,6 +151,7 @@ templ MovieAwards(props MovieAwardsProps) {
 type PersonAwardsProps struct {
 	Awards      map[string][]types.Award
 	AwardsOrder []string
+	Type        string
 	Won         int
 }
 
@@ -167,7 +174,12 @@ func (p PersonAwardsProps) Wins() int {
 }
 
 func (p PersonAwardsProps) Title() string {
-	return "Academy Awards"
+	switch p.Type {
+	case "bafta":
+		return "BAFTA"
+	default:
+		return "Academy Awards"
+	}
 }
 
 func (p PersonAwardsProps) Href() string {

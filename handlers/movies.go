@@ -365,7 +365,8 @@ WHERE user_id = $1
 	}
 
 	// Add awards
-	awards.Add(tx, movie.ImdbId)
+	awards.AddOscars(tx, movie.ImdbId)
+	awards.AddBaftas(tx, movie.ImdbId)
 
 	err = tx.Commit()
 
@@ -823,6 +824,7 @@ func GetMovieAwards(c *fiber.Ctx) error {
 	var year string
 
 	imdbId := c.Params("imdbId")
+	awardType := c.Query("type")
 
 	err := db.Client.Select(&awards, `
 SELECT
@@ -844,6 +846,7 @@ FROM
     award
 WHERE
     imdb_id = $1
+    AND type = $2
 GROUP BY
     name,
     year,
@@ -852,7 +855,7 @@ GROUP BY
 ORDER BY
     winner DESC,
     category ASC
-		`, imdbId)
+		`, imdbId, awardType)
 
 	if err != nil {
 		return err
@@ -870,6 +873,7 @@ ORDER BY
 
 	return utils.Render(c, views.MovieAwards(views.MovieAwardsProps{
 		Awards: awards,
+		Type:   awardType,
 		Year:   year,
 		Won:    won,
 	}))
@@ -1105,7 +1109,8 @@ func UpdateMovieByID(c *fiber.Ctx) error {
 	api.AddCast(tx, movie.ImdbId, id)
 
 	// Add awards
-	awards.Add(tx, movie.ImdbId)
+	awards.AddOscars(tx, movie.ImdbId)
+	awards.AddBaftas(tx, movie.ImdbId)
 
 	err = tx.Commit()
 

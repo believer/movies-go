@@ -10,12 +10,13 @@ import "believer/movies/components/link"
 type AwardsCategoryProps struct {
 	Awards []types.AwardsByCategory
 	Sort   string
+	Type   string
 	Year   string
 }
 
 templ AwardsCategory(props AwardsCategoryProps) {
 	@layout.Layout(layout.Props{Title: props.Year}) {
-		@awardSort(props.Sort, props.Year)
+		@awardSort(props.Sort, props.Year, props.Type)
 		for _, group := range props.Awards {
 			@section.Section(section.Props{Title: group.Category}) {
 				@list.Ol() {

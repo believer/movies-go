@@ -11,7 +11,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func Add(tx *sqlx.Tx, id string) {
+func AddOscars(tx *sqlx.Tx, id string) {
 	f, err := os.Open("oscars.csv")
 
 	if err != nil {
@@ -51,7 +51,7 @@ func Add(tx *sqlx.Tx, id string) {
 			continue
 		}
 
-		slog.Info("Found awards", "movie", r[fields["Film"]])
+		slog.Info("Found Academy Award", "movie", r[fields["Film"]])
 
 		// We can only add where movie exists in database, otherwise
 		// we get a violation on the foreign key to the movie table
@@ -105,8 +105,8 @@ WHERE
 				}
 
 				_, err = tx.Exec(`
-					INSERT INTO award (name, imdb_id, winner, YEAR, person, person_id)
-					    VALUES ($1, $2, $3, $4, $5, $6)
+					INSERT INTO award (name, imdb_id, winner, YEAR, person, person_id, type)
+					    VALUES ($1, $2, $3, $4, $5, $6, 'academy-award')
 					ON CONFLICT (imdb_id, name, YEAR, person, detail)
 					    DO UPDATE SET
 					        winner = excluded.winner,
@@ -123,8 +123,8 @@ WHERE
 			}
 		case "Music (Original Song)":
 			_, err = tx.Exec(`
-				INSERT INTO award (name, imdb_id, winner, YEAR, detail)
-				    VALUES ($1, $2, $3, $4, $5)
+				INSERT INTO award (name, imdb_id, winner, YEAR, detail, type)
+				    VALUES ($1, $2, $3, $4, $5, 'academy-award')
 				ON CONFLICT (imdb_id, name, YEAR, person, detail)
 				    DO UPDATE SET
 				        winner = excluded.winner
@@ -138,8 +138,8 @@ WHERE
 			fmt.Printf("Music %s\n", detail)
 		default:
 			_, err = tx.Exec(`
-				INSERT INTO award (name, imdb_id, winner, YEAR)
-				    VALUES ($1, $2, $3, $4)
+				INSERT INTO award (name, imdb_id, winner, YEAR, type)
+				    VALUES ($1, $2, $3, $4, 'academy-award')
 				ON CONFLICT (imdb_id, name, YEAR, person, detail)
 				    DO UPDATE SET
 				        winner = excluded.winner

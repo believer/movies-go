@@ -13,7 +13,6 @@ import (
 
 func GetPersonByID(c *fiber.Ctx) error {
 	var person types.Person
-	var awards []types.Award
 
 	q := db.MakeQueries(c)
 
@@ -45,7 +44,8 @@ WHERE
 		return err
 	}
 
-	err = db.Client.Select(&awards, `
+	var academyAwards []types.Award
+	err = db.Client.Select(&academyAwards, `
 SELECT
     a.name AS "category",
     a.detail,
@@ -58,6 +58,26 @@ FROM
     INNER JOIN movie m ON m.imdb_id = a.imdb_id
 WHERE
     person_id = $1
+    AND type = 'academy-award'
+ORDER BY
+    a.year DESC
+		`, q.Id)
+
+	var baftas []types.Award
+	err = db.Client.Select(&baftas, `
+SELECT
+    a.name AS "category",
+    a.detail,
+    a.winner,
+    a.year,
+    m.title,
+    m.id AS "movie_id"
+FROM
+    award a
+    LEFT JOIN movie m ON m.imdb_id = a.imdb_id
+WHERE
+    person_id = $1
+    AND type = 'bafta'
 ORDER BY
     a.year DESC
 		`, q.Id)
@@ -81,30 +101,50 @@ ORDER BY
 		totalCredits += field
 	}
 
-	groupedAwards := make(map[string][]types.Award)
+	groupedAcademyAwards := make(map[string][]types.Award)
+	groupedBaftas := make(map[string][]types.Award)
 
-	won := 0
-	for _, award := range awards {
+	academyWon := 0
+	for _, award := range academyAwards {
 		if award.Winner {
-			won++
+			academyWon++
 		}
 
-		groupedAwards[award.Category] = append(groupedAwards[award.Category], award)
+		groupedAcademyAwards[award.Category] = append(groupedAcademyAwards[award.Category], award)
 	}
 
 	// Awards map is unsorted, create a sort order
-	awardsOrder := make([]string, 0, len(groupedAwards))
-	for k := range groupedAwards {
+	awardsOrder := make([]string, 0, len(groupedAcademyAwards))
+	for k := range groupedAcademyAwards {
 		awardsOrder = append(awardsOrder, k)
 	}
 
+	baftaWon := 0
+	for _, award := range baftas {
+		if award.Winner {
+			baftaWon++
+		}
+
+		groupedBaftas[award.Category] = append(groupedBaftas[award.Category], award)
+	}
+
+	// Awards map is unsorted, create a sort order
+	baftaOrder := make([]string, 0, len(groupedBaftas))
+	for k := range groupedBaftas {
+		baftaOrder = append(baftaOrder, k)
+	}
+
+	sort.Strings(baftaOrder)
 	sort.Strings(awardsOrder)
 
 	return utils.Render(c, views.Person(views.PersonProps{
-		Awards:       groupedAwards,
-		AwardsOrder:  awardsOrder,
-		Person:       person,
-		TotalCredits: totalCredits,
-		Won:          won,
+		AcademyAwards:      groupedAcademyAwards,
+		AcademyAwardsOrder: awardsOrder,
+		AcademyAwardsWon:   academyWon,
+		Baftas:             groupedBaftas,
+		BaftaOrder:         baftaOrder,
+		BaftasWon:          baftaWon,
+		Person:             person,
+		TotalCredits:       totalCredits,
 	}))
 }

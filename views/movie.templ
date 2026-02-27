@@ -165,7 +165,12 @@ templ Movie(props MovieProps) {
 		}
 		<div
 			hx-swap="outerHTML"
-			hx-get={ fmt.Sprintf("/movie/%s/awards", props.Movie.ImdbId) }
+			hx-get={ fmt.Sprintf("/movie/%s/awards?type=academy-award", props.Movie.ImdbId) }
+			hx-trigger="load"
+		></div>
+		<div
+			hx-swap="outerHTML"
+			hx-get={ fmt.Sprintf("/movie/%s/awards?type=bafta", props.Movie.ImdbId) }
 			hx-trigger="load"
 		></div>
 		@auth.IsAuthenticated() {

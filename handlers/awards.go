@@ -17,15 +17,31 @@ func GetMoviesByNumberOfAwards(c *fiber.Ctx) error {
 	userId := c.Locals("UserId")
 	numberOfAwards, err := c.ParamsInt("awards")
 	includeNominations := c.QueryBool("nominations")
+	awardType := c.Query("type")
 
 	if err != nil {
 		return err
 	}
 
-	name := fmt.Sprintf("%d Academy Award wins", numberOfAwards)
+	var name string
+	var emptyState string
+
+	switch awardType {
+	case "bafta":
+		emptyState = "No movies with this amount of BAFTAs"
+		name = fmt.Sprintf("%d BAFTA wins", numberOfAwards)
+	default:
+		emptyState = "No movies with this amount of Academy Awards"
+		name = fmt.Sprintf("%d Academy Award wins", numberOfAwards)
+	}
 
 	if includeNominations {
-		name = fmt.Sprintf("%d Academy Award nominations", numberOfAwards)
+		switch awardType {
+		case "bafta":
+			name = fmt.Sprintf("%d BAFTA nominations", numberOfAwards)
+		default:
+			name = fmt.Sprintf("%d Academy Award nominations", numberOfAwards)
+		}
 
 		err = db.Client.Select(&movies, `
 SELECT
@@ -46,15 +62,21 @@ FROM
         ORDER BY
             movie_id,
             id) AS s ON m.id = s.movie_id
+WHERE
+    a.type = $3
 GROUP BY
     a.imdb_id,
     m.id,
     s.id
 HAVING
-    count(DISTINCT a.name) = $2
+    count(DISTINCT CASE WHEN a.name IN ('Best Film', 'Best Screenplay', 'Editing', 'Adapted Screenplay') THEN
+            a.name
+        ELSE
+            a.id::text
+        END) = $2
 ORDER BY
     m.release_date DESC
-			`, userId, numberOfAwards)
+`, userId, numberOfAwards, awardType)
 
 		if err != nil {
 			return err
@@ -82,6 +104,7 @@ FROM
             id) AS s ON m.id = s.movie_id
 WHERE
     winner = TRUE
+    AND type = $3
 GROUP BY
     a.imdb_id,
     m.id,
@@ -90,7 +113,7 @@ HAVING
     count(DISTINCT a.name) = $2
 ORDER BY
     m.release_date DESC
-`, userId, numberOfAwards)
+`, userId, numberOfAwards, awardType)
 
 		if err != nil {
 			return err
@@ -98,7 +121,7 @@ ORDER BY
 	}
 
 	return utils.Render(c, views.ListView(views.ListViewProps{
-		EmptyState: "No movies with this amount of Academy Awards",
+		EmptyState: emptyState,
 		Name:       name,
 		Movies:     movies,
 	}))
@@ -107,12 +130,13 @@ ORDER BY
 func GetAwardsByYear(c *fiber.Ctx) error {
 	year := c.Params("year")
 	sort := c.Query("sort", "Movie")
+	awardType := c.Query("type")
 
 	a := api.New(c)
 
 	switch sort {
 	case "Movie":
-		awards, err := a.AwardsByMovie(year)
+		awards, err := a.AwardsByMovie(year, awardType)
 
 		if err != nil {
 			return err
@@ -121,10 +145,11 @@ func GetAwardsByYear(c *fiber.Ctx) error {
 		return utils.Render(c, views.AwardsPage(views.AwardsPageProps{
 			GroupedAwards: awards,
 			Sort:          sort,
+			Type:          awardType,
 			Year:          year,
 		}))
 	case "Category":
-		awards, err := a.AwardsByCategory(year)
+		awards, err := a.AwardsByCategory(year, awardType)
 
 		if err != nil {
 			return err
@@ -133,6 +158,7 @@ func GetAwardsByYear(c *fiber.Ctx) error {
 		return utils.Render(c, views.AwardsCategory(views.AwardsCategoryProps{
 			Awards: awards,
 			Sort:   sort,
+			Type:   awardType,
 			Year:   year,
 		}))
 	}

@@ -23,10 +23,11 @@ import (
 type AwardsPageProps struct {
 	GroupedAwards []types.AwardsByYear
 	Sort          string
+	Type          string
 	Year          string
 }
 
-func awardSort(sort, year string) templ.Component {
+func awardSort(sort, year, awardType string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -57,7 +58,7 @@ func awardSort(sort, year string) templ.Component {
 		}
 		templ_7745c5c3_Err = dropdown.Dropdown(dropdown.Props{
 			Name:    "sort",
-			Route:   fmt.Sprintf("/awards/year/%s", year),
+			Route:   fmt.Sprintf("/awards/year/%s?type=%s", year, awardType),
 			Options: []string{"Movie", "Category"},
 			Value:   sort,
 			Attrs: templ.Attributes{
@@ -109,7 +110,7 @@ func AwardsPage(props AwardsPageProps) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = awardSort(props.Sort, props.Year).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = awardSort(props.Sort, props.Year, props.Type).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -158,7 +159,7 @@ func AwardsPage(props AwardsPageProps) templ.Component {
 								var templ_7745c5c3_Var7 string
 								templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(award.Category)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/awards.templ`, Line: 50, Col: 25}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/awards.templ`, Line: 51, Col: 25}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 								if templ_7745c5c3_Err != nil {
@@ -213,7 +214,7 @@ func AwardsPage(props AwardsPageProps) templ.Component {
 												var templ_7745c5c3_Var9 string
 												templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(n.Name)
 												if templ_7745c5c3_Err != nil {
-													return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/awards.templ`, Line: 72, Col: 20}
+													return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/awards.templ`, Line: 73, Col: 20}
 												}
 												_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 												if templ_7745c5c3_Err != nil {
@@ -235,7 +236,7 @@ func AwardsPage(props AwardsPageProps) templ.Component {
 											var templ_7745c5c3_Var10 string
 											templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(n.Name)
 											if templ_7745c5c3_Err != nil {
-												return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/awards.templ`, Line: 75, Col: 19}
+												return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/awards.templ`, Line: 76, Col: 19}
 											}
 											_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 											if templ_7745c5c3_Err != nil {
@@ -254,7 +255,7 @@ func AwardsPage(props AwardsPageProps) templ.Component {
 											var templ_7745c5c3_Var11 string
 											templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(", ")
 											if templ_7745c5c3_Err != nil {
-												return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/awards.templ`, Line: 79, Col: 18}
+												return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/awards.templ`, Line: 80, Col: 18}
 											}
 											_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 											if templ_7745c5c3_Err != nil {
@@ -283,7 +284,7 @@ func AwardsPage(props AwardsPageProps) templ.Component {
 									var templ_7745c5c3_Var12 string
 									templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(award.Detail.String)
 									if templ_7745c5c3_Err != nil {
-										return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/awards.templ`, Line: 87, Col: 30}
+										return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/awards.templ`, Line: 88, Col: 30}
 									}
 									_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 									if templ_7745c5c3_Err != nil {

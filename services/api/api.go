@@ -82,7 +82,8 @@ ON CONFLICT (imdb_id)
 	a.AddCountries(tx, id, movie)
 	slog.Info("Inserting ProductionCompanies")
 	a.AddProductionCompanies(tx, id, movie)
-	awards.Add(tx, imdbId)
+	awards.AddOscars(tx, imdbId)
+	awards.AddBaftas(tx, imdbId)
 
 	slog.Info("Commiting")
 	err = tx.Commit()
@@ -469,7 +470,7 @@ func (a *Api) AddProductionCompanies(tx *sqlx.Tx, id int, movie types.MovieDetai
 	slog.Info("Inserted production companies")
 }
 
-func (a *Api) AwardsByMovie(year string) (awards []types.AwardsByYear, err error) {
+func (a *Api) AwardsByMovie(year string, awardType string) (awards []types.AwardsByYear, err error) {
 	err = db.Client.Select(&awards, `WITH nominees AS (
     SELECT
         a.imdb_id,
@@ -490,6 +491,7 @@ func (a *Api) AwardsByMovie(year string) (awards []types.AwardsByYear, err error
         award a
     WHERE
         a.year = $1
+        AND a.type = $2
     GROUP BY
         a.imdb_id,
         a.name,
@@ -515,12 +517,12 @@ FROM
     movie_awards
 ORDER BY
     title ASC
-		`, year)
+		`, year, awardType)
 
 	return
 }
 
-func (a *Api) AwardsByCategory(year string) (awards []types.AwardsByCategory, err error) {
+func (a *Api) AwardsByCategory(year string, awardType string) (awards []types.AwardsByCategory, err error) {
 	err = db.Client.Select(&awards, `
 SELECT
     a.name AS category,
@@ -537,14 +539,15 @@ SELECT
         END ORDER BY person, title ASC) AS nominees
 FROM
     award a
-    INNER JOIN movie m ON m.imdb_id = a.imdb_id
+    LEFT JOIN movie m ON m.imdb_id = a.imdb_id
 WHERE
     YEAR = $1
+    AND type = $2
 GROUP BY
     1
 ORDER BY
     1
-		`, year)
+		`, year, awardType)
 
 	return
 }

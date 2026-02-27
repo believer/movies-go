@@ -82,6 +82,7 @@ func awardSection(props SectionProps) templ.Component {
 
 type MovieAwardsProps struct {
 	Awards []types.Award
+	Type   string
 	Year   string
 	Won    int
 }
@@ -105,11 +106,16 @@ func (p MovieAwardsProps) Wins() int {
 }
 
 func (p MovieAwardsProps) Title() string {
-	return fmt.Sprintf("Academy Awards %s", p.Year)
+	switch p.Type {
+	case "bafta":
+		return fmt.Sprintf("BAFTA %s", p.Year)
+	default:
+		return fmt.Sprintf("Academy Awards %s", p.Year)
+	}
 }
 
 func (p MovieAwardsProps) Href() string {
-	return fmt.Sprintf("/awards/year/%s", p.Year)
+	return fmt.Sprintf("/awards/year/%s?type=%s", p.Year, p.Type)
 }
 
 func (p MovieAwardsProps) NominationMsg() string {
@@ -185,7 +191,7 @@ func MovieAwards(props MovieAwardsProps) templ.Component {
 						var templ_7745c5c3_Var7 string
 						templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(award.Category)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-awards.templ`, Line: 81, Col: 23}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-awards.templ`, Line: 87, Col: 23}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 						if templ_7745c5c3_Err != nil {
@@ -240,7 +246,7 @@ func MovieAwards(props MovieAwardsProps) templ.Component {
 										var templ_7745c5c3_Var9 string
 										templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(n.Name)
 										if templ_7745c5c3_Err != nil {
-											return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-awards.templ`, Line: 103, Col: 18}
+											return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-awards.templ`, Line: 109, Col: 18}
 										}
 										_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 										if templ_7745c5c3_Err != nil {
@@ -262,7 +268,7 @@ func MovieAwards(props MovieAwardsProps) templ.Component {
 									var templ_7745c5c3_Var10 string
 									templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(n.Name)
 									if templ_7745c5c3_Err != nil {
-										return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-awards.templ`, Line: 106, Col: 17}
+										return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-awards.templ`, Line: 112, Col: 17}
 									}
 									_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 									if templ_7745c5c3_Err != nil {
@@ -281,7 +287,7 @@ func MovieAwards(props MovieAwardsProps) templ.Component {
 									var templ_7745c5c3_Var11 string
 									templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(", ")
 									if templ_7745c5c3_Err != nil {
-										return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-awards.templ`, Line: 110, Col: 16}
+										return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-awards.templ`, Line: 116, Col: 16}
 									}
 									_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 									if templ_7745c5c3_Err != nil {
@@ -310,7 +316,7 @@ func MovieAwards(props MovieAwardsProps) templ.Component {
 							var templ_7745c5c3_Var12 string
 							templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(award.Detail.String)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-awards.templ`, Line: 118, Col: 29}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-awards.templ`, Line: 124, Col: 29}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 							if templ_7745c5c3_Err != nil {
@@ -339,9 +345,9 @@ func MovieAwards(props MovieAwardsProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var13 templ.SafeURL
-			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(fmt.Sprintf("/awards/%d?nominations=true", props.NumberOfAwards())))
+			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(fmt.Sprintf("/awards/%d?nominations=true&type=%s", props.NumberOfAwards(), props.Type)))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-awards.templ`, Line: 130, Col: 92}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-awards.templ`, Line: 136, Col: 112}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 			if templ_7745c5c3_Err != nil {
@@ -354,7 +360,7 @@ func MovieAwards(props MovieAwardsProps) templ.Component {
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(props.NominationMsg())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-awards.templ`, Line: 131, Col: 27}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-awards.templ`, Line: 137, Col: 27}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
@@ -370,9 +376,9 @@ func MovieAwards(props MovieAwardsProps) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var15 templ.SafeURL
-				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(fmt.Sprintf("/awards/%d", props.Won)))
+				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(fmt.Sprintf("/awards/%d?type=%s", props.Won, props.Type)))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-awards.templ`, Line: 137, Col: 64}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-awards.templ`, Line: 143, Col: 84}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
@@ -385,7 +391,7 @@ func MovieAwards(props MovieAwardsProps) templ.Component {
 				var templ_7745c5c3_Var16 string
 				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(props.WinMsg())
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-awards.templ`, Line: 138, Col: 22}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-awards.templ`, Line: 144, Col: 22}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 				if templ_7745c5c3_Err != nil {
@@ -413,6 +419,7 @@ func MovieAwards(props MovieAwardsProps) templ.Component {
 type PersonAwardsProps struct {
 	Awards      map[string][]types.Award
 	AwardsOrder []string
+	Type        string
 	Won         int
 }
 
@@ -435,7 +442,12 @@ func (p PersonAwardsProps) Wins() int {
 }
 
 func (p PersonAwardsProps) Title() string {
-	return "Academy Awards"
+	switch p.Type {
+	case "bafta":
+		return "BAFTA"
+	default:
+		return "Academy Awards"
+	}
 }
 
 func (p PersonAwardsProps) Href() string {
@@ -485,7 +497,7 @@ func PersonAwards(props PersonAwardsProps) templ.Component {
 				var templ_7745c5c3_Var19 string
 				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(category)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-awards.templ`, Line: 183, Col: 18}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-awards.templ`, Line: 195, Col: 18}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 				if templ_7745c5c3_Err != nil {
@@ -536,7 +548,7 @@ func PersonAwards(props PersonAwardsProps) templ.Component {
 									var templ_7745c5c3_Var23 string
 									templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(award.Title.String)
 									if templ_7745c5c3_Err != nil {
-										return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-awards.templ`, Line: 189, Col: 29}
+										return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-awards.templ`, Line: 201, Col: 29}
 									}
 									_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 									if templ_7745c5c3_Err != nil {
@@ -561,7 +573,7 @@ func PersonAwards(props PersonAwardsProps) templ.Component {
 								var templ_7745c5c3_Var24 string
 								templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(award.Detail.String)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-awards.templ`, Line: 193, Col: 30}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-awards.templ`, Line: 205, Col: 30}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 								if templ_7745c5c3_Err != nil {
@@ -614,7 +626,7 @@ func PersonAwards(props PersonAwardsProps) templ.Component {
 								var templ_7745c5c3_Var26 string
 								templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(award.Year)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-awards.templ`, Line: 205, Col: 21}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/movie-awards.templ`, Line: 217, Col: 21}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 								if templ_7745c5c3_Err != nil {
