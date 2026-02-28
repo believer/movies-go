@@ -10,9 +10,10 @@ import (
 )
 
 type Relation struct {
-	Table        string
-	ToMovieTable string
-	Column       string
+	Table          string
+	ToMovieTable   string
+	Column         string
+	AdditionalData string
 }
 
 type TableName struct {
@@ -20,10 +21,10 @@ type TableName struct {
 }
 
 var (
-	GenreTable             = Relation{"genre", "movie_genre", "t.genre_id"}
-	LanguageTable          = Relation{"language", "movie_language", "t.language_id"}
-	ProductionCompanyTable = Relation{"production_company", "movie_company", "t.company_id"}
-	ProductionCountryTable = Relation{"production_country", "movie_country", "t.country_id"}
+	GenreTable             = Relation{"genre", "movie_genre", "t.genre_id", ""}
+	LanguageTable          = Relation{"language", "movie_language", "t.language_id", "pc.english_name as link_name,"}
+	ProductionCompanyTable = Relation{"production_company", "movie_company", "t.company_id", ""}
+	ProductionCountryTable = Relation{"production_country", "movie_country", "t.country_id", ""}
 )
 
 type Queries struct {
@@ -103,7 +104,7 @@ func (q *Queries) GetStats(dest *[]types.ListItem, relation Relation) error {
 SELECT
     pc.id,
     pc."name",
-    COUNT(DISTINCT s.movie_id) AS count
+    {{additional_data}} COUNT(DISTINCT s.movie_id) AS count
 FROM ( SELECT DISTINCT ON (movie_id)
         movie_id
     FROM
@@ -124,6 +125,7 @@ LIMIT 10
 	query = strings.ReplaceAll(query, "{{table}}", pq.QuoteIdentifier(relation.Table))
 	query = strings.ReplaceAll(query, "{{relation_table}}", pq.QuoteIdentifier(relation.ToMovieTable))
 	query = strings.ReplaceAll(query, "{{column}}", relation.Column)
+	query = strings.ReplaceAll(query, "{{additional_data}}", relation.AdditionalData)
 
 	return Client.Select(dest, query, q.UserId, q.Year)
 }
