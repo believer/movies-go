@@ -22,6 +22,7 @@ COPY --from=build /app/db /app/db
 COPY --from=build /app/public /app/public
 COPY --from=build /app/views /app/views
 COPY --from=build /app/oscars.csv /app
+COPY --from=build /app/baftas.csv /app
 COPY --from=build /app/movies /app
 
 CMD ["/app/movies"]
