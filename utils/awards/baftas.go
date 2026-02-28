@@ -39,62 +39,61 @@ func AddBaftas(tx *sqlx.Tx, id string) {
 		fields[name] = i
 	}
 
-	for i, r := range records {
-		year := r[fields["Year"]]
-		category := r[fields["Category"]]
+	for _, r := range records {
 		imdbId := r[fields["FilmId"]]
-		title := r[fields["Film"]]
-		winner := r[fields["Winner"]] == "TRUE"
-
-		fmt.Printf("%d/%d - %s %s\n", i, len(records), title, year)
-
-		if category == "EE Rising Star" {
-			var person types.Person
-			nominees := strings.Split(r[fields["Nominees"]], ", ")
-
-			if len(nominees) == 0 {
-				continue
-			}
-
-			n := nominees[0]
-
-			err = tx.Get(&person, `
-				SELECT
-				    p."name",
-				    p.id
-				FROM
-				    person p
-				WHERE
-				    p."name" ILIKE '%' || $1 || '%'
-				`, n)
-
-			if err != nil {
-				continue
-			}
-
-			_, err = tx.Exec(`
-				INSERT INTO award (name, winner, YEAR, person, person_id, type)
-				    VALUES ($1, $2, $3, $4, $5, 'bafta')
-				ON CONFLICT (imdb_id, name, YEAR, person, detail)
-				    DO UPDATE SET
-				        winner = excluded.winner,
-				        name = excluded.name,
-				        person_id = excluded.person_id
-			`, category, winner, year, n, person.ID)
-
-			if err != nil {
-				continue
-			}
-
-			fmt.Printf("Rising Star %s\n", n)
-
-			continue
-		}
 
 		// Use to update one movie
 		if imdbId != id {
 			continue
 		}
+
+		year := r[fields["Year"]]
+		category := r[fields["Category"]]
+		title := r[fields["Film"]]
+		winner := r[fields["Winner"]] == "TRUE"
+
+		// if category == "EE Rising Star" {
+		// 	var person types.Person
+		// 	nominees := strings.Split(r[fields["Nominees"]], ", ")
+		//
+		// 	if len(nominees) == 0 {
+		// 		continue
+		// 	}
+		//
+		// 	n := nominees[0]
+		//
+		// 	err = tx.Get(&person, `
+		// 		SELECT
+		// 		    p."name",
+		// 		    p.id
+		// 		FROM
+		// 		    person p
+		// 		WHERE
+		// 		    p."name" ILIKE '%' || $1 || '%'
+		// 		`, n)
+		//
+		// 	if err != nil {
+		// 		continue
+		// 	}
+		//
+		// 	_, err = tx.Exec(`
+		// 		INSERT INTO award (name, winner, YEAR, person, person_id, type)
+		// 		    VALUES ($1, $2, $3, $4, $5, 'bafta')
+		// 		ON CONFLICT (imdb_id, name, YEAR, person, detail)
+		// 		    DO UPDATE SET
+		// 		        winner = excluded.winner,
+		// 		        name = excluded.name,
+		// 		        person_id = excluded.person_id
+		// 	`, category, winner, year, n, person.ID)
+		//
+		// 	if err != nil {
+		// 		continue
+		// 	}
+		//
+		// 	fmt.Printf("Rising Star %s\n", n)
+		//
+		// 	continue
+		// }
 
 		yearAsInt, err := strconv.Atoi(year)
 
@@ -118,7 +117,7 @@ WHERE
         AND EXTRACT(year FROM release_date) = $3)
 		`, imdbId, title, yearAsInt-1)
 
-		if err != nil {
+		if err != nil || movie.ImdbId == "" {
 			continue
 		}
 
