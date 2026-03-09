@@ -10,14 +10,14 @@ import (
 	"strings"
 )
 
-func LoadEnv() error {
+func setVariables(filename string) error {
 	_, file, _, ok := runtime.Caller(1)
 
 	if !ok {
 		return fmt.Errorf("no calling file")
 	}
 
-	f, err := os.Open(filepath.Join(filepath.Dir(file), "..", ".env"))
+	f, err := os.Open(filepath.Join(filepath.Dir(file), "..", filename))
 
 	if err != nil {
 		return err
@@ -53,7 +53,12 @@ func LoadEnv() error {
 		return err
 	}
 
-	slog.Info("ENV loaded from .env")
+	slog.Info("ENV loaded from", "File", filename)
 
 	return nil
+}
+
+func LoadEnv() {
+	setVariables(".env")
+	setVariables(".env.local")
 }

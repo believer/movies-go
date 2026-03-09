@@ -23,14 +23,10 @@ type Headers struct {
 }
 
 func SetupAndRunApp() error {
-	err := utils.LoadEnv()
+	utils.LoadEnv()
 	appEnv := os.Getenv("APP_ENV")
 
-	if err != nil && appEnv == "development" {
-		return err
-	}
-
-	err = utils.InitLogger(os.Getenv("SENTRY_DSN"))
+	err := utils.InitLogger(os.Getenv("SENTRY_DSN"))
 
 	if err != nil {
 		return err
