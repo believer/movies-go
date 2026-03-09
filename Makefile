@@ -53,3 +53,14 @@ e2e-ui:
 
 clean:
 	rm -f $(CSS_OUTPUT)
+
+db-up:
+	@docker-compose up -d
+	@docker exec \
+		-i postgres_local psql \
+		-U admin \
+		-d movies \
+		< ~/Library/Mobile\ Documents/com~apple~CloudDocs/Backups/Movie\ DB/movies_2026-03-06.sql
+
+db-down:
+	@docker-compose down -v

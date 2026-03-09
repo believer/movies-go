@@ -118,6 +118,10 @@ func SelfHealingUrl(text string) (string, error) {
 	return id, nil
 }
 
+func CreateSelfHealingUrl(root, name, id string) string {
+	return fmt.Sprintf("/%s/%s-%s", root, Slugify(name), id)
+}
+
 func SelfHealingUrlString(text string) string {
 	parts := strings.Split(path.Base(text), "-")
 	return parts[len(parts)-1]

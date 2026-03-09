@@ -88,7 +88,7 @@ func SetupRoutes(app *fiber.App) {
 	// --------------------------
 	genreGroup := app.Group("/genre")
 
-	genreGroup.Get("/", redirectToHome)
+	genreGroup.Get("/", h.ListGenres)
 	genreGroup.Get("/stats", h.GetGenreStats)
 	genreGroup.Get("/:id", h.GetGenre)
 
@@ -96,7 +96,7 @@ func SetupRoutes(app *fiber.App) {
 	// --------------------------
 	languageGroup := app.Group("/language")
 
-	languageGroup.Get("/", redirectToHome)
+	languageGroup.Get("/", h.ListLanguages)
 	languageGroup.Get("/stats", h.GetLanguageStats)
 	languageGroup.Get("/:id", h.GetLanguage)
 
@@ -104,7 +104,7 @@ func SetupRoutes(app *fiber.App) {
 	// --------------------------
 	productionCompanyGroup := app.Group("/production-company")
 
-	productionCompanyGroup.Get("/", redirectToHome)
+	productionCompanyGroup.Get("/", h.ListProductionCompanies)
 	productionCompanyGroup.Get("/stats", h.GetProductionCompanyStats)
 	productionCompanyGroup.Get("/:id", h.GetProductionCompany)
 
@@ -112,7 +112,7 @@ func SetupRoutes(app *fiber.App) {
 	// --------------------------
 	productionCountryGroup := app.Group("/production-country")
 
-	productionCountryGroup.Get("/", redirectToHome)
+	productionCountryGroup.Get("/", h.ListProductionCountries)
 	productionCountryGroup.Get("/stats", h.GetProductionCountryStats)
 	productionCountryGroup.Get("/:id", h.GetProductionCountry)
 

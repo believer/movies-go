@@ -6,9 +6,53 @@ import (
 	"believer/movies/utils"
 	"believer/movies/views"
 	"fmt"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 )
+
+type Language struct {
+	ID          int    `db:"id"`
+	Name        string `db:"name"`
+	EnglishName string `db:"english_name"`
+}
+
+func (l Language) Title() string {
+	return l.EnglishName
+}
+
+func (l Language) Subtitle() string {
+	return l.Name
+}
+
+func (l Language) Href() string {
+	return utils.CreateSelfHealingUrl("language", l.EnglishName, strconv.Itoa(l.ID))
+}
+
+func ListLanguages(c *fiber.Ctx) error {
+	var languages []Language
+
+	err := db.Client.Select(&languages, `
+		SELECT
+		    id,
+		    name,
+		    english_name
+		FROM
+		    "language"
+		ORDER BY
+		    english_name ASC
+		`)
+
+	if err != nil {
+		return err
+	}
+
+	return utils.Render(c, views.RootView(views.RootViewProps{
+		EmptyState: "No languages",
+		Title:      "Languages",
+		Items:      views.ToViewItems(languages),
+	}))
+}
 
 func GetLanguage(c *fiber.Ctx) error {
 	var language db.TableName
@@ -56,6 +100,7 @@ func GetLanguageStats(c *fiber.Ctx) error {
 		Data:  languages,
 		Title: "Language",
 		Root:  "language",
+		Href:  "/language",
 		Route: "/language/stats",
 		Year:  q.Year,
 		Years: q.Years,

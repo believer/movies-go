@@ -17,6 +17,7 @@ type StatsListProps struct {
 
 type StatsSectionProps struct {
 	Data  []types.ListItem
+	Href  string
 	Root  string
 	Year  string
 	Years []string
@@ -54,6 +55,7 @@ templ StatsSection(p StatsSectionProps) {
 	if p.Route != "" {
 		@section.Section(section.Props{
 			Title: p.Title,
+			Href:  p.Href,
 			Action: dropdown.Dropdown(dropdown.Props{
 				Name:    "year",
 				Options: p.Years,

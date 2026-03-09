@@ -6,9 +6,51 @@ import (
 	"believer/movies/utils"
 	"believer/movies/views"
 	"fmt"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 )
+
+type Genre struct {
+	ID   int    `db:"id"`
+	Name string `db:"name"`
+}
+
+func (g Genre) Title() string {
+	return g.Name
+}
+
+func (g Genre) Subtitle() string {
+	return ""
+}
+
+func (g Genre) Href() string {
+	return utils.CreateSelfHealingUrl("genre", g.Name, strconv.Itoa(g.ID))
+}
+
+func ListGenres(c *fiber.Ctx) error {
+	var genres []Genre
+
+	err := db.Client.Select(&genres, `
+		SELECT
+		    id,
+		    name
+		FROM
+		    genre
+		ORDER BY
+		    name ASC
+		`)
+
+	if err != nil {
+		return err
+	}
+
+	return utils.Render(c, views.RootView(views.RootViewProps{
+		EmptyState: "No genres",
+		Title:      "Genres",
+		Items:      views.ToViewItems(genres),
+	}))
+}
 
 func GetGenre(c *fiber.Ctx) error {
 	var movies types.Movies
@@ -55,6 +97,7 @@ func GetGenreStats(c *fiber.Ctx) error {
 	return utils.Render(c, views.StatsSection(views.StatsSectionProps{
 		Data:  genres,
 		Title: "Genre",
+		Href:  "/genre",
 		Route: "/genre/stats",
 		Root:  "genre",
 		Year:  q.Year,
