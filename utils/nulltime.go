@@ -39,3 +39,11 @@ func (nt NullTime) MarshalJSON() ([]byte, error) {
 	}
 	return json.Marshal(nt.Time.Format(time.RFC3339))
 }
+
+func (nt NullTime) Format() string {
+	if !nt.Valid {
+		return ""
+	}
+
+	return nt.Time.Format("2006-01-02")
+}

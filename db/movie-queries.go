@@ -68,7 +68,7 @@ SELECT
     r.rating,
     COALESCE(ARRAY_TO_JSON(ARRAY (
                 SELECT
-                    jsonb_build_object('id', id, 'name', name)
+                    jsonb_build_object('id', id::text, 'name', name)
                 FROM ( SELECT DISTINCT ON (pc.id)
                     pc.id, pc.name FROM production_company pc
                     JOIN movie_company mc2 ON mc2.company_id = pc.id
@@ -76,7 +76,7 @@ SELECT
                         mc2.movie_id = m.id ORDER BY pc.id, pc.name) AS uniq_pc ORDER BY name ASC)), '[]') AS production_companies,
     COALESCE(ARRAY_TO_JSON(ARRAY (
                 SELECT
-                    jsonb_build_object('id', id, 'name', name)
+                    jsonb_build_object('id', id::text, 'name', name)
                 FROM ( SELECT DISTINCT ON (pc.id)
                         pc.id, pc.name
                     FROM production_country pc
@@ -84,8 +84,8 @@ SELECT
                     WHERE
                         mc2.movie_id = m.id ORDER BY pc.id, pc.name) AS uniq_pc ORDER BY name ASC)), '[]') AS production_countries,
     r.created_at at time zone 'UTC' at time zone 'Europe/Stockholm' AS "rated_at",
-    COALESCE(ARRAY_TO_JSON(ARRAY_AGG(DISTINCT jsonb_build_object('name', g.name, 'id', g.id)) FILTER (WHERE g.name IS NOT NULL)), '[]') AS genres,
-    COALESCE(ARRAY_TO_JSON(ARRAY_AGG(DISTINCT jsonb_build_object('name', l.english_name, 'id', l.id)) FILTER (WHERE l.english_name IS NOT NULL)), '[]') AS languages
+    COALESCE(ARRAY_TO_JSON(ARRAY_AGG(DISTINCT jsonb_build_object('name', g.name, 'id', g.id::text)) FILTER (WHERE g.name IS NOT NULL)), '[]') AS genres,
+    COALESCE(ARRAY_TO_JSON(ARRAY_AGG(DISTINCT jsonb_build_object('name', l.english_name, 'id', l.id::text)) FILTER (WHERE l.english_name IS NOT NULL)), '[]') AS languages
 FROM
     movie AS m
     LEFT JOIN movie_genre AS mg ON mg.movie_id = m.id

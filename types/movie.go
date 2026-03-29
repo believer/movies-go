@@ -9,12 +9,12 @@ import (
 )
 
 type Entity struct {
+	ID   string `db:"id" json:"id"`
 	Name string `db:"name" json:"name"`
-	ID   int    `db:"id" json:"id"`
 }
 
 func (e Entity) LinkTo(prefix string) string {
-	return fmt.Sprintf("/%s/%s-%d", prefix, utils.Slugify(e.Name), e.ID)
+	return fmt.Sprintf("/%s/%s-%s", prefix, utils.Slugify(e.Name), e.ID)
 }
 
 // Movie sub structs
@@ -45,7 +45,7 @@ func (u *MovieLanguages) Scan(v any) error {
 type MovieProductionCompany struct{ Entity }
 
 func (mpc *MovieProductionCompany) LinkTo() string {
-	return fmt.Sprintf("/production-company/%s-%d", utils.Slugify(mpc.Name), mpc.ID)
+	return mpc.Entity.LinkTo("production-company")
 }
 
 type MovieProductionCompanies []MovieProductionCompany
@@ -55,13 +55,10 @@ func (u *MovieProductionCompanies) Scan(v any) error {
 }
 
 // Production Countries
-type MovieProductionCountry struct {
-	Id   string `db:"id" json:"id"`
-	Name string `db:"name" json:"name"`
-}
+type MovieProductionCountry struct{ Entity }
 
 func (mpc *MovieProductionCountry) LinkTo() string {
-	return fmt.Sprintf("/production-country/%s-%s", utils.Slugify(mpc.Name), mpc.Id)
+	return mpc.Entity.LinkTo("production-country")
 }
 
 type MovieProductionCountries []MovieProductionCountry
@@ -99,7 +96,7 @@ type Movie struct {
 	Tagline             string                   `db:"tagline" json:"tagline"`
 	Title               string                   `db:"title" json:"title"`
 	UpdatedAt           time.Time                `db:"updated_at" json:"updatedAt"`
-	WatchedAt           sql.NullTime             `db:"watched_at" json:"watchedAt"`
+	WatchedAt           utils.NullTime           `db:"watched_at" json:"watchedAt"`
 	WilhelmScream       sql.NullBool             `db:"wilhelm" json:"wilhelm"`
 }
 
@@ -109,38 +106,27 @@ func (m Movie) RuntimeFormatted() string {
 }
 
 func (m Movie) RemainingRuntimeFormatted() string {
-	seconds := int(math.Mod(m.Position, 1) * 60)
 	minutes := m.Runtime - int(m.Position)
 
-	return fmt.Sprintf("-%s %ds", utils.FormatRuntime(minutes), seconds)
+	return fmt.Sprintf("-%s %ds", utils.FormatRuntime(minutes), seconds(m.Position))
 }
 
 func (m Movie) PositionFormatted() string {
-	seconds := int(math.Mod(m.Position, 1) * 60)
 	minutes := int(m.Position)
 
-	return fmt.Sprintf("%s %ds", utils.FormatRuntime(minutes), seconds)
+	return fmt.Sprintf("%s %ds", utils.FormatRuntime(minutes), seconds(m.Position))
+}
+
+func seconds(position float64) int {
+	return int(math.Mod(position, 1) * 60)
 }
 
 // The movie's release date formatted as ISO 8601 - YYYY-MM-DD
-func (m Movie) ISOReleaseDate() string {
-	if !m.ReleaseDate.Valid {
-		return ""
-	}
-
-	return m.ReleaseDate.Time.Format("2006-01-02")
-}
+func (m Movie) ISOReleaseDate() string { return m.ReleaseDate.Format() }
+func (m Movie) ISOWatchedAt() string   { return m.WatchedAt.Format() }
 
 func (m Movie) ISOCreatedDate() string {
 	return m.CreatedAt.Format("2006-01-02")
-}
-
-func (m Movie) ISOWatchedAt() string {
-	if !m.WatchedAt.Valid {
-		return ""
-	}
-
-	return m.WatchedAt.Time.Format("2006-01-02")
 }
 
 func (m Movie) ReleaseDateOrCreatedAt() string {
