@@ -1,9 +1,7 @@
 package router
 
 import (
-	"believer/movies/db"
 	h "believer/movies/handlers"
-	"believer/movies/utils/awards"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -120,20 +118,43 @@ func SetupRoutes(app *fiber.App) {
 	// --------------------------
 	awardsGroup := app.Group("/awards")
 
-	awardsGroup.Get("/baftas", func(c *fiber.Ctx) error {
-		tx := db.Client.MustBegin()
+	// Updating awards twice per year (nominations and wins)
+	// - Update the CSV for award type
+	// - Uncomment the route for award type
+	// - Update year in awards file to only update new year
+	// - After testing locally, comment out the local DATABASE_URL
+	// - Run against production database
 
-		awards.AddBaftas(tx, "")
+	// awardsGroup.Get("/baftas", func(c *fiber.Ctx) error {
+	// 	tx := db.Client.MustBegin()
+	//
+	// 	awards.AddBaftas(tx, "")
+	//
+	// 	err := tx.Commit()
+	//
+	// 	if err != nil {
+	// 		err = tx.Rollback()
+	// 		return err
+	// 	}
+	//
+	// 	return c.SendStatus(200)
+	// })
 
-		err := tx.Commit()
+	// awardsGroup.Get("/oscars", func(c *fiber.Ctx) error {
+	// 	tx := db.Client.MustBegin()
+	//
+	// 	awards.AddOscars(tx, "")
+	//
+	// 	err := tx.Commit()
+	//
+	// 	if err != nil {
+	// 		err = tx.Rollback()
+	// 		return err
+	// 	}
+	//
+	// 	return c.SendStatus(200)
+	// })
 
-		if err != nil {
-			err = tx.Rollback()
-			return err
-		}
-
-		return c.SendStatus(200)
-	})
 	awardsGroup.Get("/", redirectToHome)
 	awardsGroup.Get("/:awards", h.GetMoviesByNumberOfAwards)
 	awardsGroup.Get("/year/:year", h.GetAwardsByYear)

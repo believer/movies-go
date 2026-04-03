@@ -51,6 +51,11 @@ func AddOscars(tx *sqlx.Tx, id string) {
 			continue
 		}
 
+		// Use to update a year
+		// if year != "2025" {
+		// 	continue
+		// }
+
 		slog.Info("Found Academy Award", "movie", r[fields["Film"]])
 
 		// We can only add where movie exists in database, otherwise
