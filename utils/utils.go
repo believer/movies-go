@@ -142,15 +142,13 @@ func ScanJSON[T any](v any, target *T) error {
 	}
 }
 
-func AvailableYears() []string {
+func AvailableYears(now time.Time) []string {
 	// First year with "real" data
 	// 2011 is used as a catch all for anything before I had the database
 	endYear := 2012
-	currentYear := time.Now().Year()
-
 	years := make([]string, 0)
 
-	for year := currentYear; year >= endYear; year-- {
+	for year := now.Year(); year >= endYear; year-- {
 		y := strconv.Itoa(year)
 		years = append(years, y)
 	}

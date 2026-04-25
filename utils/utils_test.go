@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -72,4 +73,39 @@ func TestSlugify(t *testing.T) {
 			assert.Equal(t, tc.want, Slugify(tc.text))
 		})
 	}
+}
+
+func TestSelfHealingUrlSuccess(t *testing.T) {
+	got, err := SelfHealingUrl("/root/sub/test-1234")
+
+	assert.NoError(t, err)
+	assert.Equal(t, "1234", got)
+}
+
+func TestSelfHealingUrlError(t *testing.T) {
+	_, err := SelfHealingUrl("/root/sub/test-test")
+
+	assert.Errorf(t, err, "not a valid ID")
+}
+
+func TestCreateSelfHealingUrl(t *testing.T) {
+	got := CreateSelfHealingUrl("root", "name", "1234")
+	want := "/root/name-1234"
+
+	assert.Equal(t, want, got)
+}
+
+func TestSelfHealingUrlString(t *testing.T) {
+	got := SelfHealingUrlString("/root/sub/test-test")
+
+	assert.Equal(t, "test", got)
+}
+
+func TestAvailableYears(t *testing.T) {
+	fixedTime := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
+	got := AvailableYears(fixedTime)
+
+	want := []string{"2024", "2023", "2022", "2021", "2020", "2019", "2018", "2017", "2016", "2015", "2014", "2013", "2012"}
+
+	assert.Equal(t, want, got)
 }

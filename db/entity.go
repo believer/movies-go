@@ -4,6 +4,7 @@ import (
 	"believer/movies/types"
 	"believer/movies/utils"
 	"strings"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/lib/pq"
@@ -41,7 +42,7 @@ func MakeQueries(c *fiber.Ctx) *Queries {
 	page := c.QueryInt("page", 1)
 	userId := c.Locals("UserId").(string)
 	year := c.Query("year", "All")
-	years := append([]string{"All"}, utils.AvailableYears()...)
+	years := append([]string{"All"}, utils.AvailableYears(time.Now())...)
 
 	return &Queries{
 		Id:     id,
