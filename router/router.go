@@ -193,7 +193,10 @@ func SetupRoutes(app *fiber.App) {
 	// --------------------------
 	seriesGroup := app.Group("/series")
 
-	seriesGroup.Get("/:id", h.GetSeries)
+	seriesRepo := db.NewSeriesRepository(db.Client)
+	seriesHandler := h.NewSeriesHandler(seriesRepo)
+
+	seriesGroup.Get("/:id", seriesHandler.GetSeries)
 
 	// Settings
 	// --------------------------
