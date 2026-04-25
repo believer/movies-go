@@ -7,6 +7,7 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/a-h/templ"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestLink(t *testing.T) {
@@ -24,25 +25,15 @@ func TestLink(t *testing.T) {
 	ctx := templ.WithChildren(context.Background(), children)
 
 	go func() {
-		_ = Link(Props{
-			Href: href,
-		}).Render(ctx, w)
+		_ = Link(Props{Href: href}).Render(ctx, w)
 		_ = w.Close()
 	}()
 
 	doc, err := goquery.NewDocumentFromReader(r)
-
-	if err != nil {
-		t.Fatalf("Failed to read template: %v", err)
-	}
+	assert.NoError(t, err, "Failed to read template")
 
 	a := doc.Find("a")
-
-	if actualHref, _ := a.Attr("href"); actualHref != href {
-		t.Errorf("Expected href %q, got %q", href, actualHref)
-	}
-
-	if actualTitle := a.Text(); actualTitle != title {
-		t.Errorf("Expected title name %q, got %q", title, actualTitle)
-	}
+	actualHref, _ := a.Attr("href")
+	assert.Equal(t, href, actualHref)
+	assert.Equal(t, title, a.Text())
 }
