@@ -115,3 +115,30 @@ type AwardsByCategory struct {
 	Category string `db:"category"`
 	Nominees Awards `db:"nominees"`
 }
+
+// Award texts
+// ======================================================
+
+type AwardConfig struct {
+	WinName        string
+	NominationName string
+	EmptyState     string
+}
+
+var awardConfigs = map[string]AwardConfig{
+	"academy-award": {
+		WinName:        "%d Academy Award wins",
+		NominationName: "%d Academy Award nominations",
+		EmptyState:     "No movies with this amount of Academy Awards",
+	},
+	"bafta": {
+		WinName:        "%d BAFTA wins",
+		NominationName: "%d BAFTA nominations",
+		EmptyState:     "No movies with this amount of BAFTAs",
+	},
+}
+
+func GetAwardConfig(awardType string) (cfg AwardConfig, ok bool) {
+	cfg, ok = awardConfigs[awardType]
+	return
+}

@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"believer/movies/db"
-	"believer/movies/services/api"
 	"believer/movies/types"
 	"believer/movies/utils"
 	"believer/movies/views"
@@ -11,132 +10,74 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func GetMoviesByNumberOfAwards(c *fiber.Ctx) error {
-	var movies types.Movies
+type AwardsHandler struct {
+	repo db.AwardsQuerier
+}
 
-	userId := c.Locals("UserId")
+func NewAwardsHandler(repo db.AwardsQuerier) *AwardsHandler {
+	return &AwardsHandler{repo}
+}
+
+func (h *AwardsHandler) GetMoviesByNumberOfAwards(c *fiber.Ctx) error {
+	userID := c.Locals("UserId").(string)
 	numberOfAwards, err := c.ParamsInt("awards")
+	if err != nil {
+		return err
+	}
+
 	includeNominations := c.QueryBool("nominations")
 	awardType := c.Query("type")
+
+	cfg, err := awardConfigFromQuery(c)
 
 	if err != nil {
 		return err
 	}
 
+	var movies types.Movies
 	var name string
-	var emptyState string
-
-	switch awardType {
-	case "bafta":
-		emptyState = "No movies with this amount of BAFTAs"
-		name = fmt.Sprintf("%d BAFTA wins", numberOfAwards)
-	default:
-		emptyState = "No movies with this amount of Academy Awards"
-		name = fmt.Sprintf("%d Academy Award wins", numberOfAwards)
-	}
 
 	if includeNominations {
-		switch awardType {
-		case "bafta":
-			name = fmt.Sprintf("%d BAFTA nominations", numberOfAwards)
-		default:
-			name = fmt.Sprintf("%d Academy Award nominations", numberOfAwards)
-		}
-
-		err = db.Client.Select(&movies, `
-SELECT
-    m.id,
-    m.title,
-    m.release_date,
-    (s.id IS NOT NULL) AS "seen"
-FROM
-    award a
-    INNER JOIN movie m ON m.imdb_id = a.imdb_id
-    LEFT JOIN ( SELECT DISTINCT ON (movie_id)
-            movie_id,
-            id
-        FROM
-            public.seen
-        WHERE
-            user_id = $1
-        ORDER BY
-            movie_id,
-            id) AS s ON m.id = s.movie_id
-WHERE
-    a.type = $3
-GROUP BY
-    a.imdb_id,
-    m.id,
-    s.id
-HAVING
-    count(DISTINCT CASE WHEN a.name IN ('Best Film', 'Best Screenplay', 'Editing', 'Adapted Screenplay') THEN
-            a.name
-        ELSE
-            a.id::text
-        END) = $2
-ORDER BY
-    m.release_date DESC
-`, userId, numberOfAwards, awardType)
-
-		if err != nil {
-			return err
-		}
+		name = fmt.Sprintf(cfg.NominationName, numberOfAwards)
+		movies, err = h.repo.GetByNominations(userID, numberOfAwards, awardType)
 	} else {
+		name = fmt.Sprintf(cfg.WinName, numberOfAwards)
+		movies, err = h.repo.GetByWins(userID, numberOfAwards, awardType)
+	}
 
-		err = db.Client.Select(&movies, `
-SELECT
-    m.id,
-    m.title,
-    m.release_date,
-    (s.id IS NOT NULL) AS "seen"
-FROM
-    award a
-    INNER JOIN movie m ON m.imdb_id = a.imdb_id
-    LEFT JOIN ( SELECT DISTINCT ON (movie_id)
-            movie_id,
-            id
-        FROM
-            public.seen
-        WHERE
-            user_id = $1
-        ORDER BY
-            movie_id,
-            id) AS s ON m.id = s.movie_id
-WHERE
-    winner = TRUE
-    AND type = $3
-GROUP BY
-    a.imdb_id,
-    m.id,
-    s.id
-HAVING
-    count(DISTINCT a.name) = $2
-ORDER BY
-    m.release_date DESC
-`, userId, numberOfAwards, awardType)
-
-		if err != nil {
-			return err
-		}
+	if err != nil {
+		return err
 	}
 
 	return utils.Render(c, views.ListView(views.ListViewProps{
-		EmptyState: emptyState,
+		EmptyState: cfg.EmptyState,
 		Name:       name,
 		Movies:     movies,
 	}))
 }
 
-func GetAwardsByYear(c *fiber.Ctx) error {
+func (h *AwardsHandler) GetAwardsByYear(c *fiber.Ctx) error {
 	year := c.Params("year")
 	sort := c.Query("sort", "Movie")
 	awardType := c.Query("type")
 
-	a := api.New(c)
+	_, err := awardConfigFromQuery(c)
+
+	if err != nil {
+		return err
+	}
+
+	// Only valid types
+	validSorts := map[string]bool{"Movie": true, "Category": true}
+	if !validSorts[sort] {
+		err := fiber.ErrBadRequest
+		err.Message = "Invalid sort value"
+		return err
+	}
 
 	switch sort {
 	case "Movie":
-		awards, err := a.AwardsByMovie(year, awardType)
+		awards, err := h.repo.GetGroupedByMovie(year, awardType)
 
 		if err != nil {
 			return err
@@ -149,7 +90,7 @@ func GetAwardsByYear(c *fiber.Ctx) error {
 			Year:          year,
 		}))
 	case "Category":
-		awards, err := a.AwardsByCategory(year, awardType)
+		awards, err := h.repo.GetGroupedByCategory(year, awardType)
 
 		if err != nil {
 			return err
@@ -164,4 +105,23 @@ func GetAwardsByYear(c *fiber.Ctx) error {
 	}
 
 	return utils.Render(c, views.NotFound())
+}
+
+func awardConfigFromQuery(c *fiber.Ctx) (types.AwardConfig, error) {
+	awardType := c.Query("type")
+
+	if awardType == "" {
+		err := fiber.ErrBadRequest
+		err.Message = "Missing awardType"
+		return types.AwardConfig{}, err
+	}
+
+	cfg, ok := types.GetAwardConfig(awardType)
+	if !ok {
+		err := fiber.ErrBadRequest
+		err.Message = "Incompatible awardType"
+		return types.AwardConfig{}, err
+	}
+
+	return cfg, nil
 }

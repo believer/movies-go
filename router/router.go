@@ -1,6 +1,7 @@
 package router
 
 import (
+	"believer/movies/db"
 	h "believer/movies/handlers"
 
 	"github.com/gofiber/fiber/v2"
@@ -155,9 +156,12 @@ func SetupRoutes(app *fiber.App) {
 	// 	return c.SendStatus(200)
 	// })
 
+	awardsRepo := db.NewAwardsRepository(db.Client)
+	awardsHandler := h.NewAwardsHandler(awardsRepo)
+
 	awardsGroup.Get("/", redirectToHome)
-	awardsGroup.Get("/:awards", h.GetMoviesByNumberOfAwards)
-	awardsGroup.Get("/year/:year", h.GetAwardsByYear)
+	awardsGroup.Get("/:awards", awardsHandler.GetMoviesByNumberOfAwards)
+	awardsGroup.Get("/year/:year", awardsHandler.GetAwardsByYear)
 
 	// Rating
 	// --------------------------
