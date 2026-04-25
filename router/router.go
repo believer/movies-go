@@ -167,8 +167,11 @@ func SetupRoutes(app *fiber.App) {
 	// --------------------------
 	ratingGroup := app.Group("/rating")
 
+	ratingsRepo := db.NewRatingsRepository(db.Client)
+	ratingsHandler := h.NewRatingsHandler(ratingsRepo)
+
 	ratingGroup.Get("/", redirectToHome)
-	ratingGroup.Get("/:rating", h.GetMoviesByRating)
+	ratingGroup.Get("/:rating", ratingsHandler.GetMoviesByRating)
 
 	// Stats
 	// --------------------------

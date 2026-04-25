@@ -11,14 +11,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type handlerTest struct {
+type awardsHandlerTest struct {
 	name         string
 	url          string
 	mockSetup    func(*mocks.MockAwardsQuerier)
 	expectedCode int
 }
 
-func setupApp(h *AwardsHandler) *fiber.App {
+func setupAwardsApp(h *AwardsHandler) *fiber.App {
 	app := fiber.New()
 
 	app.Use(func(c *fiber.Ctx) error {
@@ -33,7 +33,7 @@ func setupApp(h *AwardsHandler) *fiber.App {
 	return app
 }
 
-func runHandlerTests(t *testing.T, tests []handlerTest) {
+func runAwardsHandlerTests(t *testing.T, tests []awardsHandlerTest) {
 	t.Helper()
 
 	for _, tt := range tests {
@@ -41,7 +41,7 @@ func runHandlerTests(t *testing.T, tests []handlerTest) {
 			repo := mocks.NewMockAwardsQuerier(t)
 			tt.mockSetup(repo)
 
-			app := setupApp(NewAwardsHandler(repo))
+			app := setupAwardsApp(NewAwardsHandler(repo))
 			req := httptest.NewRequest(http.MethodGet, tt.url, nil)
 			resp, err := app.Test(req)
 
@@ -55,7 +55,7 @@ func runHandlerTests(t *testing.T, tests []handlerTest) {
 func TestGetMoviesByNumberOfAwards(t *testing.T) {
 	movies := types.Movies{{Title: "Everything Everywhere All at Once"}}
 
-	runHandlerTests(t, []handlerTest{
+	runAwardsHandlerTests(t, []awardsHandlerTest{
 		{
 			name: "returns wins by default",
 			url:  "/awards/2?type=academy-award",
@@ -91,7 +91,7 @@ func TestGetAwardsByYear(t *testing.T) {
 	moviesGrouped := []types.AwardsByYear{{Title: "Titanic"}}
 	categoriesGrouped := []types.AwardsByCategory{{Category: "Test"}}
 
-	runHandlerTests(t, []handlerTest{
+	runAwardsHandlerTests(t, []awardsHandlerTest{
 		{
 			name: "returns sort by movies by default",
 			url:  "/awards/year/2026?type=academy-award",

@@ -21,7 +21,7 @@ type AwardsRepository struct {
 }
 
 func NewAwardsRepository(db *sqlx.DB) *AwardsRepository {
-	return &AwardsRepository{db: db}
+	return &AwardsRepository{db}
 }
 
 func (r *AwardsRepository) GetByNominations(userID string, count int, awardType string) (types.Movies, error) {
