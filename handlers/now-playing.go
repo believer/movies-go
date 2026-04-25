@@ -1,16 +1,24 @@
 package handlers
 
 import (
-	"believer/movies/services/api"
+	"believer/movies/db"
 	"believer/movies/utils"
 	"believer/movies/views"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-func NowPlaying(c *fiber.Ctx) error {
-	api := api.New(c)
-	nowPlaying, err := api.NowPlaying()
+type NowPlayingHandler struct {
+	repo db.NowPlayingQuerier
+}
+
+func NewNowPlayingHandler(repo db.NowPlayingQuerier) *NowPlayingHandler {
+	return &NowPlayingHandler{repo}
+}
+
+func (h *NowPlayingHandler) GetNowPlaying(c *fiber.Ctx) error {
+	userID := c.Locals("UserId").(string)
+	nowPlaying, err := h.repo.GetNowPlaying(userID)
 
 	if err != nil {
 		return err

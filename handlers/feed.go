@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"believer/movies/db"
-	"believer/movies/services/api"
 	"believer/movies/types"
 	"believer/movies/utils"
 	"believer/movies/views"
@@ -22,9 +21,8 @@ func GetFeed(c *fiber.Ctx) error {
 	page := c.QueryInt("page", 1)
 	lastHeader := c.Query("last-header", "0000-00-January")
 	searchQuery := c.Query("search")
-	userID := c.Locals("UserId")
+	userID := c.Locals("UserId").(string)
 	searchQueryType := "movie"
-	api := api.New(c)
 
 	querySearch := `
 SELECT
@@ -161,7 +159,8 @@ LIMIT 20
 		c.Set("HX-Push-Url", "/")
 	}
 
-	nowPlaying, err := api.NowPlaying()
+	nowPlayingRepo := db.NewNowPlayingRepository(db.Client)
+	nowPlaying, err := nowPlayingRepo.GetNowPlaying(userID)
 
 	if err != nil {
 		slog.Error("[Now Playing]", "error", err)

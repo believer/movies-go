@@ -209,7 +209,10 @@ func SetupRoutes(app *fiber.App) {
 	// --------------------------
 	nowPlayingGroup := app.Group("/now-playing")
 
-	nowPlayingGroup.Get("/", h.NowPlaying)
+	nowPlayingRepo := db.NewNowPlayingRepository(db.Client)
+	nowPlayingHandler := h.NewNowPlayingHandler(nowPlayingRepo)
+
+	nowPlayingGroup.Get("/", nowPlayingHandler.GetNowPlaying)
 
 	// Webhooks
 	// --------------------------

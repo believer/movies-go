@@ -290,38 +290,6 @@ func (a *Api) AddCast(tx *sqlx.Tx, imdbId string, movieId int) {
 	}
 }
 
-func (a *Api) NowPlaying() (types.Movies, error) {
-	var nowPlaying types.Movies
-
-	err := db.Client.Select(&nowPlaying, `
-SELECT
-    np.position,
-    m.id,
-    m.title,
-    m.runtime,
-    m.overview,
-    (
-        CASE WHEN m.runtime != 0 THEN
-            np."position" / m.runtime
-        ELSE
-            0
-        END) AS percent
-FROM
-    now_playing np
-    RIGHT JOIN movie m ON m.imdb_id = np.imdb_id
-WHERE
-    user_id = $1
-ORDER BY
-    percent DESC
-			`, a.UserID)
-
-	if err != nil {
-		return nowPlaying, err
-	}
-
-	return nowPlaying, nil
-}
-
 func personExists(arr []NewPerson, id int, job any) (int, bool) {
 	for i, person := range arr {
 		if person.ID == id && person.Job.String == job {
