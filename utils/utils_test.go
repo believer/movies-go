@@ -3,6 +3,8 @@ package utils
 import (
 	"fmt"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestParseImdbId(t *testing.T) {
@@ -20,17 +22,16 @@ func TestParseImdbId(t *testing.T) {
 		{"", "", fmt.Errorf("empty ID")},
 		{"not_a_url", "", fmt.Errorf("invalid ID format: not_a_url")},
 	}
-
 	for _, tc := range tests {
-		got, err := ParseId(tc.url)
-
-		if got != tc.want {
-			t.Errorf("ParseImdbId(%q) = %v; want %v", tc.url, got, tc.want)
-		}
-
-		if (err != nil && tc.err == nil) || (err == nil && tc.err != nil) || (err != nil && err.Error() != tc.err.Error()) {
-			t.Errorf("Expected error: %v, got: %v", tc.err, err)
-		}
+		t.Run(tc.url, func(t *testing.T) {
+			got, err := ParseId(tc.url)
+			assert.Equal(t, tc.want, got)
+			if tc.err != nil {
+				assert.EqualError(t, err, tc.err.Error())
+			} else {
+				assert.NoError(t, err)
+			}
+		})
 	}
 }
 
@@ -39,25 +40,22 @@ func TestFormatRuntime(t *testing.T) {
 		runtime int
 		want    string
 	}{
-		{runtime: 0, want: "0m"},
-		{runtime: 1, want: "1m"},
-		{runtime: 2, want: "2m"},
-		{runtime: 60, want: "1h"},
-		{runtime: 61, want: "1h 1m"},
-		{runtime: 120, want: "2h"},
-		{runtime: 121, want: "2h 1m"},
-		{runtime: 1440, want: "1d"},
-		{runtime: 1441, want: "1d 1m"},
-		{runtime: 1500, want: "1d 1h"},
-		{runtime: 1501, want: "1d 1h 1m"},
+		{0, "0m"},
+		{1, "1m"},
+		{2, "2m"},
+		{60, "1h"},
+		{61, "1h 1m"},
+		{120, "2h"},
+		{121, "2h 1m"},
+		{1440, "1d"},
+		{1441, "1d 1m"},
+		{1500, "1d 1h"},
+		{1501, "1d 1h 1m"},
 	}
-
 	for _, tc := range tests {
-		got := FormatRuntime(tc.runtime)
-
-		if got != tc.want {
-			t.Errorf("FormatRuntime(%d) = %v; want %v", tc.runtime, got, tc.want)
-		}
+		t.Run(tc.want, func(t *testing.T) {
+			assert.Equal(t, tc.want, FormatRuntime(tc.runtime))
+		})
 	}
 }
 
@@ -66,15 +64,12 @@ func TestSlugify(t *testing.T) {
 		text string
 		want string
 	}{
-		{text: "Hugh Jackman", want: "hugh-jackman"},
-		{text: "Alfonso Cuarón", want: "alfonso-cuaron"},
+		{"Hugh Jackman", "hugh-jackman"},
+		{"Alfonso Cuarón", "alfonso-cuaron"},
 	}
-
 	for _, tc := range tests {
-		got := Slugify(tc.text)
-
-		if got != tc.want {
-			t.Errorf("Slugify(%s) = %v; want %v", tc.text, got, tc.want)
-		}
+		t.Run(tc.text, func(t *testing.T) {
+			assert.Equal(t, tc.want, Slugify(tc.text))
+		})
 	}
 }
