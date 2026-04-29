@@ -12,6 +12,10 @@ import (
 )
 
 func AddBaftas(tx *sqlx.Tx, id string) {
+	if id == "" {
+		return
+	}
+
 	f, err := os.Open("baftas.csv")
 
 	if err != nil {

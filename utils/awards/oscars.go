@@ -12,6 +12,10 @@ import (
 )
 
 func AddOscars(tx *sqlx.Tx, id string) {
+	if id == "" {
+		return
+	}
+
 	f, err := os.Open("oscars.csv")
 
 	if err != nil {
