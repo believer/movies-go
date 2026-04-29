@@ -79,7 +79,7 @@ templ Movie(props MovieProps) {
 						}
 					}
 				}
-				if props.Movie.ImdbId != "tt0000000" {
+				if props.Movie.ImdbId != "tt0000000" && props.Movie.ImdbId != "" {
 					@list.DlItem(list.DlProps{Detail: "IMDb"}) {
 						@link.Link(link.Props{
 							Href:  fmt.Sprintf("https://www.imdb.com/title/%s", props.Movie.ImdbId),
