@@ -83,8 +83,11 @@ func SetupRoutes(app *fiber.App) {
 	// --------------------------
 	personGroup := app.Group("/person")
 
+	personRepo := db.NewPersonRepository(db.Client)
+	personHandler := h.NewPersonHandler(personRepo)
+
 	personGroup.Get("/", redirectToHome)
-	personGroup.Get("/:id", h.GetPersonByID)
+	personGroup.Get("/:id", personHandler.GetPersonByID)
 
 	// Genre
 	// --------------------------

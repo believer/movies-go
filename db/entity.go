@@ -32,7 +32,7 @@ type Queries struct {
 	Id     string
 	Page   int
 	Offset int
-	UserId string
+	UserID string
 	Year   string
 	Years  []string
 }
@@ -48,7 +48,7 @@ func MakeQueries(c *fiber.Ctx) *Queries {
 		Id:     id,
 		Page:   page,
 		Offset: (page - 1) * 50,
-		UserId: userId,
+		UserID: userId,
 		Year:   year,
 		Years:  years,
 	}
@@ -96,7 +96,7 @@ func (q *Queries) GetMovies(dest *types.Movies, relation Relation) error {
 	query = strings.ReplaceAll(query, "{{table}}", pq.QuoteIdentifier(relation.ToMovieTable))
 	query = strings.ReplaceAll(query, "{{column}}", relation.Column)
 
-	return Client.Select(dest, query, q.Id, q.UserId, q.Offset)
+	return Client.Select(dest, query, q.Id, q.UserID, q.Offset)
 }
 
 // Get top 10 of a specific entity for the stats page
@@ -128,5 +128,5 @@ LIMIT 10
 	query = strings.ReplaceAll(query, "{{column}}", relation.Column)
 	query = strings.ReplaceAll(query, "{{additional_data}}", relation.AdditionalData)
 
-	return Client.Select(dest, query, q.UserId, q.Year)
+	return Client.Select(dest, query, q.UserID, q.Year)
 }
