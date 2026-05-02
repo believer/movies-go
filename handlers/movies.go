@@ -628,51 +628,6 @@ func HandleSearch(c *fiber.Ctx) error {
 	return utils.Render(c, views.MovieSearch(movies.Results[:maxResults]))
 }
 
-func GetMoviesByYear(c *fiber.Ctx) error {
-	var movies []types.Movie
-
-	year := c.Params("year")
-	userId := c.Locals("UserId").(string)
-	page := c.QueryInt("page", 1)
-
-	err := db.Client.Select(&movies, `
-SELECT
-    m.id,
-    m.title,
-    m.release_date,
-    m.imdb_id,
-    (s.id IS NOT NULL) AS "seen"
-FROM
-    movie AS m
-    LEFT JOIN ( SELECT DISTINCT ON (movie_id)
-            movie_id,
-            id
-        FROM
-            public.seen
-        WHERE
-            user_id = $1
-        ORDER BY
-            movie_id,
-            id) AS s ON m.id = s.movie_id
-WHERE
-    date_part('year', release_date) = $2
-ORDER BY
-    release_date ASC OFFSET $3
-LIMIT 50
-		`, userId, year, (page-1)*50)
-
-	if err != nil {
-		return err
-	}
-
-	return utils.Render(c, views.ListView(views.ListViewProps{
-		EmptyState: "No movies this year",
-		NextPage:   fmt.Sprintf("/year/%s?page=%d", year, page+1),
-		Movies:     movies,
-		Name:       year,
-	}))
-}
-
 func DeleteRating(c *fiber.Ctx) error {
 	isAuth := utils.IsAuthenticated(c)
 	movieId, err := c.ParamsInt("id")

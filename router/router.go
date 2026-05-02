@@ -73,8 +73,11 @@ func SetupRoutes(app *fiber.App) {
 	// --------------------------
 	yearGroup := app.Group("/year")
 
+	yearsRepo := db.NewYearsRepository(db.Client)
+	yearsHandler := h.NewYearsHandler(yearsRepo)
+
 	yearGroup.Get("/", redirectToHome)
-	yearGroup.Get("/:year", h.GetMoviesByYear)
+	yearGroup.Get("/:year", yearsHandler.GetMoviesByYear)
 
 	// Person
 	// --------------------------
