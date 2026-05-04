@@ -2,15 +2,33 @@ package db
 
 import (
 	"believer/movies/types"
+	"believer/movies/utils"
 
 	"github.com/jmoiron/sqlx"
 )
+
+type ProductionCompany struct {
+	ID   string `db:"id"`
+	Name string `db:"name"`
+}
+
+func (p ProductionCompany) Title() string {
+	return p.Name
+}
+
+func (p ProductionCompany) Subtitle() string {
+	return ""
+}
+
+func (p ProductionCompany) Href() string {
+	return utils.CreateSelfHealingUrl("production-company", p.Name, p.ID)
+}
 
 // Repo
 // =====================================================
 
 type ProductionCompanyQuerier interface {
-	ListProductionCompanies(page int) ([]ProductionItem, error)
+	ListProductionCompanies(page int) ([]ProductionCompany, error)
 	GetProductionCompanyName(id string) (TableName, error)
 	GetProductionCompanyMovies(id, userID string, offset int) (types.Movies, error)
 	GetProductionCompanyStats(userID, year string) ([]types.ListItem, error)
@@ -24,8 +42,8 @@ func NewProductionCompanyRepository(db *sqlx.DB) *ProductionCompanyRepository {
 	return &ProductionCompanyRepository{db}
 }
 
-func (r *ProductionCompanyRepository) ListProductionCompanies(page int) ([]ProductionItem, error) {
-	var items []ProductionItem
+func (r *ProductionCompanyRepository) ListProductionCompanies(page int) ([]ProductionCompany, error) {
+	var items []ProductionCompany
 	err := r.db.Select(&items, listProductionCompaniesQuery, (page-1)*50)
 	return items, err
 }

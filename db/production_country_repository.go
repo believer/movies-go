@@ -7,21 +7,21 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-type ProductionItem struct {
+type ProductionCountry struct {
 	ID   string `db:"id"`
 	Name string `db:"name"`
 }
 
-func (p ProductionItem) Title() string {
+func (p ProductionCountry) Title() string {
 	return p.Name
 }
 
-func (p ProductionItem) Subtitle() string {
+func (p ProductionCountry) Subtitle() string {
 	return ""
 }
 
 // TODO: Only supports country
-func (p ProductionItem) Href() string {
+func (p ProductionCountry) Href() string {
 	return utils.CreateSelfHealingUrl("production-country", p.Name, p.ID)
 }
 
@@ -29,7 +29,7 @@ func (p ProductionItem) Href() string {
 // =====================================================
 
 type ProductionCountryQuerier interface {
-	ListProductionCountries() ([]ProductionItem, error)
+	ListProductionCountries() ([]ProductionCountry, error)
 	GetProductionCountryName(id string) (TableName, error)
 	GetProductionCountryMovies(id, userID string, offset int) (types.Movies, error)
 	GetProductionCountryStats(userID, year string) ([]types.ListItem, error)
@@ -43,8 +43,8 @@ func NewProductionCountryRepository(db *sqlx.DB) *ProductionCountryRepository {
 	return &ProductionCountryRepository{db}
 }
 
-func (r *ProductionCountryRepository) ListProductionCountries() ([]ProductionItem, error) {
-	var items []ProductionItem
+func (r *ProductionCountryRepository) ListProductionCountries() ([]ProductionCountry, error) {
+	var items []ProductionCountry
 	err := r.db.Select(&items, listProductionCountriesQuery)
 	return items, err
 }
