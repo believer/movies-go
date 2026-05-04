@@ -101,6 +101,12 @@ func TestSelfHealingUrlString(t *testing.T) {
 	assert.Equal(t, "test", got)
 }
 
+func TestSelfHealingStringOnlyID(t *testing.T) {
+	got := SelfHealingUrlString("/root/sub/1234")
+
+	assert.Equal(t, "1234", got)
+}
+
 func TestAvailableYears(t *testing.T) {
 	fixedTime := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
 	got := AvailableYears(fixedTime)

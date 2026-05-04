@@ -21,9 +21,9 @@ func NewYearsRepository(db *sqlx.DB) *YearsRepository {
 	return &YearsRepository{db}
 }
 
-func (r *YearsRepository) GetMoviesByYear(userID, year string, page int) (types.Movies, error) {
+func (r *YearsRepository) GetMoviesByYear(userID, year string, offset int) (types.Movies, error) {
 	var movies types.Movies
-	err := r.db.Select(&movies, moviesByYearQuery, userID, year, (page-1)*50)
+	err := r.db.Select(&movies, moviesByYearQuery, userID, year, offset)
 	return movies, err
 }
 

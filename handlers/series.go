@@ -20,11 +20,10 @@ func NewSeriesHandler(repo db.SeriesQuerier) *SeriesHandler {
 }
 
 func (h *SeriesHandler) GetSeries(c *fiber.Ctx) error {
-	id, _ := utils.SelfHealingUrl(c.Params("id"))
-	userID := c.Locals("UserId").(string)
+	q := db.MakeQueries(c)
 
 	// Get series information
-	series, err := h.repo.GetSeriesByID(id)
+	series, err := h.repo.GetSeriesByID(q.Id)
 
 	if err != nil {
 		slog.Error("failed to get series", "error", err)
@@ -35,7 +34,7 @@ func (h *SeriesHandler) GetSeries(c *fiber.Ctx) error {
 	}
 
 	// Get series movies
-	movies, err := h.repo.GetSeriesMovies(id, userID)
+	movies, err := h.repo.GetSeriesMovies(q.Id, q.UserID)
 
 	if err != nil {
 		slog.Error("failed to get series movies", "error", err)

@@ -17,6 +17,11 @@ type LoginData struct {
 	ID           string `db:"id"`
 }
 
+type authFormData struct {
+	Password string `form:"password"`
+	Username string `form:"username"`
+}
+
 // Display the login view
 func GetLogin(c *fiber.Ctx) error {
 	return utils.Render(c, views.Login())
@@ -26,10 +31,7 @@ func GetLogin(c *fiber.Ctx) error {
 func Login(c *fiber.Ctx) error {
 	var user LoginData
 
-	data := new(struct {
-		Password string `form:"password"`
-		Username string `form:"username"`
-	})
+	data := new(authFormData)
 
 	// Parse the form data
 	if err := c.BodyParser(data); err != nil {
@@ -40,29 +42,24 @@ func Login(c *fiber.Ctx) error {
 	err := db.Client.Get(&user, "SELECT id, password_hash FROM public.user WHERE username = $1", data.Username)
 
 	if err != nil {
-		c.Set("HX-Retarget", "#error")
-		c.Set("HX-Reswap", "innerHTML")
-		return c.Status(fiber.StatusUnauthorized).SendString("Invalid username or password")
+		return setHXError(c, "Invalid username or password")
 	}
 
 	// Check if the password is correct
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(data.Password))
 
 	if err != nil {
-		c.Set("HX-Retarget", "#error")
-		c.Set("HX-Reswap", "innerHTML")
-		return c.Status(fiber.StatusUnauthorized).SendString("Invalid username or password")
+		return setHXError(c, "Invalid username or password")
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"id": user.ID,
+		"id":  user.ID,
+		"exp": time.Now().Add(30 * 24 * time.Hour).Unix(),
 	})
 	tokenString, err := token.SignedString([]byte(os.Getenv("ADMIN_SECRET")))
 
 	if err != nil {
-		c.Set("HX-Retarget", "#error")
-		c.Set("HX-Reswap", "innerHTML")
-		return c.Status(fiber.StatusUnauthorized).SendString("Something went wrong")
+		return setHXError(c, "Something went wrong")
 	}
 
 	c.Cookie(&fiber.Cookie{
@@ -94,10 +91,7 @@ func Logout(c *fiber.Ctx) error {
 // NOTE: This is not added to the router and should be
 // added whenever you want to create a new account
 func Signup(c *fiber.Ctx) error {
-	data := new(struct {
-		Password string `form:"password"`
-		Username string `form:"username"`
-	})
+	data := new(authFormData)
 
 	// Parse the form data
 	if err := c.BodyParser(data); err != nil {
@@ -118,17 +112,19 @@ func Signup(c *fiber.Ctx) error {
 		return err
 	}
 
-	tx := db.Client.MustBegin()
-
-	tx.MustExec(`INSERT INTO "user" (username, password_hash) VALUES ($1, $2)`, data.Username, string(hash))
-
-	err = tx.Commit()
+	_, err = db.Client.Exec(`INSERT INTO "user" (username, password_hash)
+    VALUES ($1, $2)`, data.Username, string(hash))
 
 	if err != nil {
-		err = tx.Rollback()
-
 		return err
 	}
 
 	return c.SendStatus(fiber.StatusOK)
+}
+
+func setHXError(c *fiber.Ctx, message string) error {
+	c.Set("HX-Retarget", "#error")
+	c.Set("HX-Reswap", "innerHTML")
+
+	return c.Status(fiber.StatusUnauthorized).SendString(message)
 }

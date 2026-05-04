@@ -18,11 +18,8 @@ func NewYearsHandler(repo db.YearsQuerier) *YearsHandler {
 }
 
 func (h *YearsHandler) GetMoviesByYear(c *fiber.Ctx) error {
-	year := c.Params("year")
-	userID := c.Locals("UserId").(string)
-	page := c.QueryInt("page", 1)
-
-	movies, err := h.repo.GetMoviesByYear(userID, year, page)
+	q := db.MakeQueries(c)
+	movies, err := h.repo.GetMoviesByYear(q.UserID, q.Year, q.Offset)
 
 	if err != nil {
 		return err
@@ -30,8 +27,8 @@ func (h *YearsHandler) GetMoviesByYear(c *fiber.Ctx) error {
 
 	return utils.Render(c, views.ListView(views.ListViewProps{
 		EmptyState: "No movies this year",
-		NextPage:   fmt.Sprintf("/year/%s?page=%d", year, page+1),
+		NextPage:   fmt.Sprintf("/year/%s?page=%d", q.Year, q.Page+1),
 		Movies:     movies,
-		Name:       year,
+		Name:       q.Year,
 	}))
 }

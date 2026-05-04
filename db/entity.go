@@ -12,27 +12,30 @@ type TableName struct {
 }
 
 type Queries struct {
-	Id     string
-	Page   int
-	Offset int
-	UserID string
-	Year   string
-	Years  []string
+	Id              string
+	IsAuthenticated bool
+	Page            int
+	Offset          int
+	UserID          string
+	Year            string
+	Years           []string
 }
 
 func MakeQueries(c *fiber.Ctx) *Queries {
 	id := utils.SelfHealingUrlString(c.Params("id"))
+	year := c.Query("year", "All")
 	page := c.QueryInt("page", 1)
 	userId := c.Locals("UserId").(string)
-	year := c.Query("year", "All")
+	isAutheticated := c.Locals("IsAuthenticated").(bool)
 	years := append([]string{"All"}, utils.AvailableYears(time.Now())...)
 
 	return &Queries{
-		Id:     id,
-		Page:   page,
-		Offset: (page - 1) * 50,
-		UserID: userId,
-		Year:   year,
-		Years:  years,
+		Id:              id,
+		IsAuthenticated: isAutheticated,
+		Page:            page,
+		Offset:          (page - 1) * 50,
+		UserID:          userId,
+		Year:            year,
+		Years:           years,
 	}
 }

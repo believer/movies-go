@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"believer/movies/db"
-	"believer/movies/types"
 	"believer/movies/utils"
 	"believer/movies/views"
 	"fmt"
@@ -50,8 +49,6 @@ func (h *ProductionCountryHandler) ListProductionCountries(c *fiber.Ctx) error {
 }
 
 func (h *ProductionCountryHandler) GetProductionCountry(c *fiber.Ctx) error {
-	var movies types.Movies
-
 	q := db.MakeQueries(c)
 	country, err := h.repo.GetProductionCountryName(q.Id)
 
@@ -59,7 +56,7 @@ func (h *ProductionCountryHandler) GetProductionCountry(c *fiber.Ctx) error {
 		return err
 	}
 
-	movies, err = h.repo.GetProductionCountryMovies(q.Id, q.UserID, q.Offset)
+	movies, err := h.repo.GetProductionCountryMovies(q.Id, q.UserID, q.Offset)
 
 	if err != nil {
 		return err
