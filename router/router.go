@@ -25,10 +25,13 @@ func SetupRoutes(app *fiber.App) {
 	// --------------------------
 	watchlistGroup := app.Group("/watchlist")
 
-	watchlistGroup.Get("/", h.GetWatchlist)
-	watchlistGroup.Get("/movies", h.GetWatchlistMovies)
-	watchlistGroup.Get("/unreleased-movies", h.GetWatchlistUnreleasedMovies)
-	watchlistGroup.Delete("/:id", h.DeleteFromWatchlist)
+	watchlistRepo := db.NewWatchlistRepository(db.Client)
+	watchlistHandler := h.NewWatchlistHandler(watchlistRepo)
+
+	watchlistGroup.Get("/", watchlistHandler.GetWatchlist)
+	watchlistGroup.Get("/movies", watchlistHandler.GetWatchlistMovies)
+	watchlistGroup.Get("/unreleased-movies", watchlistHandler.GetWatchlistUnreleasedMovies)
+	watchlistGroup.Delete("/:id", watchlistHandler.DeleteFromWatchlist)
 
 	// Movies
 	// --------------------------
@@ -223,7 +226,7 @@ func SetupRoutes(app *fiber.App) {
 	settingsGroup.Get("/", h.Settings)
 	settingsGroup.Put("/watch-providers", h.SettingsWatchProviders)
 
-	// Webhooks
+	// Now playing
 	// --------------------------
 	nowPlayingGroup := app.Group("/now-playing")
 

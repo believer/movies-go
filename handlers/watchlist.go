@@ -2,103 +2,35 @@ package handlers
 
 import (
 	"believer/movies/db"
-	"believer/movies/types"
 	"believer/movies/utils"
 	"believer/movies/views"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-func released(userId, sortOrder string) (types.Movies, error) {
-	var movies types.Movies
-
-	err := db.Client.Select(&movies, `
-SELECT
-    m.id,
-    m.title,
-    m.imdb_id,
-    m.release_date,
-    w.created_at
-FROM
-    watchlist w
-    INNER JOIN movie m ON m.id = w.movie_id
-WHERE
-    user_id = $1
-    AND m.release_date <= CURRENT_DATE
-ORDER BY
-    CASE WHEN $2 = 'Release date' THEN
-        m.release_date
-    ELSE
-        w.created_at
-    END ASC
-		`, userId, sortOrder)
-
-	return movies, err
+type WatchlistHandler struct {
+	repo db.WatchlistQuerier
 }
 
-func unreleased(userId, sortOrder string) (types.Movies, error) {
-	var movies types.Movies
-
-	err := db.Client.Select(&movies, `
-SELECT
-    m.id,
-    m.title,
-    m.imdb_id,
-    m.release_date,
-    w.created_at
-FROM
-    watchlist w
-    INNER JOIN movie m ON m.id = w.movie_id
-WHERE
-    user_id = $1
-    AND m.release_date > CURRENT_DATE
-ORDER BY
-    CASE WHEN $2 = 'Date added' THEN
-        w.created_at
-    ELSE
-        m.release_date
-    END ASC
-		`, userId, sortOrder)
-
-	return movies, err
+func NewWatchlistHandler(repo db.WatchlistQuerier) *WatchlistHandler {
+	return &WatchlistHandler{repo}
 }
 
-func tbd(userId string) (types.Movies, error) {
-	var movies types.Movies
-
-	err := db.Client.Select(&movies, `
-SELECT
-    m.id,
-    m.title,
-    m.imdb_id,
-    m.release_date,
-    w.created_at
-FROM
-    watchlist w
-    INNER JOIN movie m ON m.id = w.movie_id
-WHERE
-    user_id = $1
-    AND m.release_date IS NULL
-		`, userId)
-
-	return movies, err
-}
-
-func GetWatchlist(c *fiber.Ctx) error {
-	userId := c.Locals("UserId").(string)
-	movies, err := released(userId, "Date added")
+func (h *WatchlistHandler) GetWatchlist(c *fiber.Ctx) error {
+	q := db.MakeQueries(c)
+	movies, err := h.repo.GetReleasedMovies(q.UserID, "Date added")
 
 	if err != nil {
 		return err
 	}
 
-	unreleasedMovies, err := unreleased(userId, "Release date")
+	unreleasedMovies, err := h.repo.GetUnreleasedMovies(q.UserID, "Release date")
 
 	if err != nil {
 		return err
 	}
 
-	moviesWithoutReleaseDate, err := tbd(userId)
+	moviesWithoutReleaseDate, err := h.repo.GetTBDMovies(q.UserID)
 
 	if err != nil {
 		return err
@@ -111,13 +43,11 @@ func GetWatchlist(c *fiber.Ctx) error {
 	}))
 }
 
-func GetWatchlistMovies(c *fiber.Ctx) error {
+func (h *WatchlistHandler) GetWatchlistMovies(c *fiber.Ctx) error {
 	sortOrder := c.Query("sortOrder", "Date added")
-	userId := c.Locals("UserId").(string)
+	q := db.MakeQueries(c)
 
-	var movies types.Movies
-
-	movies, err := released(userId, sortOrder)
+	movies, err := h.repo.GetReleasedMovies(q.UserID, sortOrder)
 
 	if err != nil {
 		return err
@@ -133,11 +63,11 @@ func GetWatchlistMovies(c *fiber.Ctx) error {
 		}))
 }
 
-func GetWatchlistUnreleasedMovies(c *fiber.Ctx) error {
+func (h *WatchlistHandler) GetWatchlistUnreleasedMovies(c *fiber.Ctx) error {
 	sortOrder := c.Query("sortOrder", "Release date")
-	userId := c.Locals("UserId").(string)
+	q := db.MakeQueries(c)
 
-	movies, err := unreleased(userId, sortOrder)
+	movies, err := h.repo.GetUnreleasedMovies(q.UserID, sortOrder)
 
 	if err != nil {
 		return err
@@ -153,20 +83,14 @@ func GetWatchlistUnreleasedMovies(c *fiber.Ctx) error {
 		}))
 }
 
-func DeleteFromWatchlist(c *fiber.Ctx) error {
-	isAuth := utils.IsAuthenticated(c)
-	movieId := c.Params("id")
-	userId := c.Locals("UserId")
+func (h *WatchlistHandler) DeleteFromWatchlist(c *fiber.Ctx) error {
+	q := db.MakeQueries(c)
 
-	if !isAuth {
+	if !q.IsAuthenticated {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	_, err := db.Client.Exec(`
-DELETE FROM watchlist
-WHERE movie_id = $1
-    AND user_id = $2
-		`, movieId, userId)
+	err := h.repo.DeleteFromWatchlist(q.Id, q.UserID)
 
 	if err != nil {
 		return err
