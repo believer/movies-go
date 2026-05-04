@@ -25,7 +25,6 @@ var (
 	GenreTable             = Relation{"genre", "movie_genre", "t.genre_id", ""}
 	LanguageTable          = Relation{"language", "movie_language", "t.language_id", "pc.english_name as link_name,"}
 	ProductionCompanyTable = Relation{"production_company", "movie_company", "t.company_id", ""}
-	ProductionCountryTable = Relation{"production_country", "movie_country", "t.country_id", ""}
 )
 
 type Queries struct {
@@ -56,12 +55,14 @@ func MakeQueries(c *fiber.Ctx) *Queries {
 
 // Get name of an entity
 func (q *Queries) GetNameByID(dest *TableName, relation Relation) error {
-	query := strings.ReplaceAll(`SELECT
+	query := strings.ReplaceAll(`
+SELECT
     name
 FROM
     {{table}}
 WHERE
-    id = $1`, "{{table}}", pq.QuoteIdentifier(relation.Table))
+    id = $1
+		`, "{{table}}", pq.QuoteIdentifier(relation.Table))
 
 	return Client.Get(dest, query, q.Id)
 }

@@ -27,18 +27,16 @@ func (p ProductionItem) Href() string {
 	return utils.CreateSelfHealingUrl("production-country", p.Name, p.ID)
 }
 
-func ListProductionCountries(c *fiber.Ctx) error {
-	var countries []ProductionItem
+type ProductionCountryHandler struct {
+	repo db.ProductionCountryQuerier
+}
 
-	err := db.Client.Select(&countries, `
-		SELECT
-		    id,
-		    name
-		FROM
-		    production_country
-		ORDER BY
-		    name ASC
-		`)
+func NewProductionCountryHandler(repo db.ProductionCountryQuerier) *ProductionCountryHandler {
+	return &ProductionCountryHandler{repo}
+}
+
+func (h *ProductionCountryHandler) ListProductionCountries(c *fiber.Ctx) error {
+	countries, err := h.repo.ListProductionCountries()
 
 	if err != nil {
 		return err
@@ -51,18 +49,17 @@ func ListProductionCountries(c *fiber.Ctx) error {
 	}))
 }
 
-func GetProductionCountry(c *fiber.Ctx) error {
-	var country db.TableName
+func (h *ProductionCountryHandler) GetProductionCountry(c *fiber.Ctx) error {
 	var movies types.Movies
 
 	q := db.MakeQueries(c)
-	err := q.GetNameByID(&country, db.ProductionCountryTable)
+	country, err := h.repo.GetProductionCountryName(q.Id)
 
 	if err != nil {
 		return err
 	}
 
-	err = q.GetMovies(&movies, db.ProductionCountryTable)
+	movies, err = h.repo.GetProductionCountryMovies(q.Id, q.UserID, q.Offset)
 
 	if err != nil {
 		return err
@@ -76,11 +73,9 @@ func GetProductionCountry(c *fiber.Ctx) error {
 	}))
 }
 
-func GetProductionCountryStats(c *fiber.Ctx) error {
-	var productionCountries []types.ListItem
-
+func (h *ProductionCountryHandler) GetProductionCountryStats(c *fiber.Ctx) error {
 	q := db.MakeQueries(c)
-	err := q.GetStats(&productionCountries, db.ProductionCountryTable)
+	productionCountries, err := h.repo.GetProductionCountryStats(q.UserID, q.Year)
 
 	if err != nil {
 		return err
