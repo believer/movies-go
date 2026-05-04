@@ -2,46 +2,23 @@ package handlers
 
 import (
 	"believer/movies/db"
-	"believer/movies/types"
 	"believer/movies/utils"
 	"believer/movies/views"
 	"fmt"
-	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-type Language struct {
-	ID          int    `db:"id"`
-	Name        string `db:"name"`
-	EnglishName string `db:"english_name"`
+type LanguageHandler struct {
+	repo db.LanguageQuerier
 }
 
-func (l Language) Title() string {
-	return l.EnglishName
+func NewLanguageHandler(repo db.LanguageQuerier) *LanguageHandler {
+	return &LanguageHandler{repo}
 }
 
-func (l Language) Subtitle() string {
-	return l.Name
-}
-
-func (l Language) Href() string {
-	return utils.CreateSelfHealingUrl("language", l.EnglishName, strconv.Itoa(l.ID))
-}
-
-func ListLanguages(c *fiber.Ctx) error {
-	var languages []Language
-
-	err := db.Client.Select(&languages, `
-		SELECT
-		    id,
-		    name,
-		    english_name
-		FROM
-		    "language"
-		ORDER BY
-		    english_name ASC
-		`)
+func (h *LanguageHandler) ListLanguages(c *fiber.Ctx) error {
+	languages, err := h.repo.ListLanguages()
 
 	if err != nil {
 		return err
@@ -54,18 +31,15 @@ func ListLanguages(c *fiber.Ctx) error {
 	}))
 }
 
-func GetLanguage(c *fiber.Ctx) error {
-	var language db.TableName
-	var movies types.Movies
-
+func (h *LanguageHandler) GetLanguage(c *fiber.Ctx) error {
 	q := db.MakeQueries(c)
-	err := q.GetNameByID(&language, db.LanguageTable)
+	language, err := h.repo.GetLanguageName(q.Id)
 
 	if err != nil {
 		return err
 	}
 
-	err = q.GetMovies(&movies, db.LanguageTable)
+	movies, err := h.repo.GetLanguageMovies(q.Id, q.UserID, q.Offset)
 
 	if err != nil {
 		return err
@@ -86,11 +60,9 @@ func GetLanguage(c *fiber.Ctx) error {
 	}))
 }
 
-func GetLanguageStats(c *fiber.Ctx) error {
-	var languages []types.ListItem
-
+func (h *LanguageHandler) GetLanguageStats(c *fiber.Ctx) error {
 	q := db.MakeQueries(c)
-	err := q.GetStats(&languages, db.LanguageTable)
+	languages, err := h.repo.GetLanguageStats(q.UserID, q.Year)
 
 	if err != nil {
 		return err

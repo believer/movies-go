@@ -22,8 +22,7 @@ type TableName struct {
 }
 
 var (
-	GenreTable    = Relation{"genre", "movie_genre", "t.genre_id", ""}
-	LanguageTable = Relation{"language", "movie_language", "t.language_id", "pc.english_name as link_name,"}
+	GenreTable = Relation{"genre", "movie_genre", "t.genre_id", ""}
 )
 
 type Queries struct {

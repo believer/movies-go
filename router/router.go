@@ -101,9 +101,12 @@ func SetupRoutes(app *fiber.App) {
 	// --------------------------
 	languageGroup := app.Group("/language")
 
-	languageGroup.Get("/", h.ListLanguages)
-	languageGroup.Get("/stats", h.GetLanguageStats)
-	languageGroup.Get("/:id", h.GetLanguage)
+	languageRepo := db.NewLanguageRepository(db.Client)
+	languageHandler := h.NewLanguageHandler(languageRepo)
+
+	languageGroup.Get("/", languageHandler.ListLanguages)
+	languageGroup.Get("/stats", languageHandler.GetLanguageStats)
+	languageGroup.Get("/:id", languageHandler.GetLanguage)
 
 	// Production companies
 	// --------------------------
