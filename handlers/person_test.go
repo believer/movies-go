@@ -50,6 +50,11 @@ func runPersonHandlerTests(t *testing.T, tests []personHandlerTest) {
 
 			assert.NoError(t, err)
 			assert.Equal(t, tt.expectedCode, resp.StatusCode)
+
+			if tt.mockAssert != nil {
+				tt.mockAssert(repo)
+			}
+
 			repo.AssertExpectations(t)
 		})
 	}
