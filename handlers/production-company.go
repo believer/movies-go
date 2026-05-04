@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"believer/movies/db"
-	"believer/movies/types"
 	"believer/movies/utils"
 	"believer/movies/views"
 	"fmt"
@@ -10,21 +9,17 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func ListProductionCompanies(c *fiber.Ctx) error {
-	var companies []ProductionItem
+type ProductionCompanyHandler struct {
+	repo db.ProductionCompanyQuerier
+}
 
+func NewProductionCompanyHandler(repo db.ProductionCompanyQuerier) *ProductionCompanyHandler {
+	return &ProductionCompanyHandler{repo}
+}
+
+func (h *ProductionCompanyHandler) ListProductionCompanies(c *fiber.Ctx) error {
 	page := c.QueryInt("page", 1)
-
-	err := db.Client.Select(&companies, `
-		SELECT
-		    id,
-		    name
-		FROM
-		    production_company
-		ORDER BY
-		    name ASC OFFSET $1
-		LIMIT 50
-		`, (page-1)*50)
+	companies, err := h.repo.ListProductionCompanies(page)
 
 	if err != nil {
 		return err
@@ -38,18 +33,15 @@ func ListProductionCompanies(c *fiber.Ctx) error {
 	}))
 }
 
-func GetProductionCompany(c *fiber.Ctx) error {
-	var company db.TableName
-	var movies types.Movies
-
+func (h *ProductionCompanyHandler) GetProductionCompany(c *fiber.Ctx) error {
 	q := db.MakeQueries(c)
-	err := q.GetNameByID(&company, db.ProductionCompanyTable)
+	company, err := h.repo.GetProductionCompanyName(q.Id)
 
 	if err != nil {
 		return err
 	}
 
-	err = q.GetMovies(&movies, db.ProductionCompanyTable)
+	movies, err := h.repo.GetProductionCompanyMovies(q.Id, q.UserID, q.Offset)
 
 	if err != nil {
 		return err
@@ -63,11 +55,9 @@ func GetProductionCompany(c *fiber.Ctx) error {
 	}))
 }
 
-func GetProductionCompanyStats(c *fiber.Ctx) error {
-	var productionCompanies []types.ListItem
-
+func (h *ProductionCompanyHandler) GetProductionCompanyStats(c *fiber.Ctx) error {
 	q := db.MakeQueries(c)
-	err := q.GetStats(&productionCompanies, db.ProductionCompanyTable)
+	productionCompanies, err := h.repo.GetProductionCompanyStats(q.UserID, q.Year)
 
 	if err != nil {
 		return err

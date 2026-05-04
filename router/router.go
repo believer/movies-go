@@ -109,9 +109,12 @@ func SetupRoutes(app *fiber.App) {
 	// --------------------------
 	productionCompanyGroup := app.Group("/production-company")
 
-	productionCompanyGroup.Get("/", h.ListProductionCompanies)
-	productionCompanyGroup.Get("/stats", h.GetProductionCompanyStats)
-	productionCompanyGroup.Get("/:id", h.GetProductionCompany)
+	productionCompanyRepo := db.NewProductionCompanyRepository(db.Client)
+	productionCompanyHandler := h.NewProductionCompanyHandler(productionCompanyRepo)
+
+	productionCompanyGroup.Get("/", productionCompanyHandler.ListProductionCompanies)
+	productionCompanyGroup.Get("/stats", productionCompanyHandler.GetProductionCompanyStats)
+	productionCompanyGroup.Get("/:id", productionCompanyHandler.GetProductionCompany)
 
 	// Production countries
 	// --------------------------

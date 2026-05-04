@@ -20,6 +20,7 @@ func (p ProductionItem) Subtitle() string {
 	return ""
 }
 
+// TODO: Only supports country
 func (p ProductionItem) Href() string {
 	return utils.CreateSelfHealingUrl("production-country", p.Name, p.ID)
 }
