@@ -237,10 +237,4 @@ func SetupRoutes(app *fiber.App) {
 	hookGroup := app.Group("/hooks")
 
 	hookGroup.Post("/playback", h.PlaybackProgress)
-
-	// Webhooks
-	// --------------------------
-	usersGroup := app.Group("/users")
-
-	usersGroup.Get("/", h.GetUsers)
 }
