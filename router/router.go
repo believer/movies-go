@@ -93,9 +93,12 @@ func SetupRoutes(app *fiber.App) {
 	// --------------------------
 	genreGroup := app.Group("/genre")
 
-	genreGroup.Get("/", h.ListGenres)
-	genreGroup.Get("/stats", h.GetGenreStats)
-	genreGroup.Get("/:id", h.GetGenre)
+	genreRepo := db.NewGenreRepository(db.Client)
+	genreHandler := h.NewGenreHandler(genreRepo)
+
+	genreGroup.Get("/", genreHandler.ListGenres)
+	genreGroup.Get("/stats", genreHandler.GetGenreStats)
+	genreGroup.Get("/:id", genreHandler.GetGenre)
 
 	// Language
 	// --------------------------

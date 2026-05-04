@@ -2,44 +2,23 @@ package handlers
 
 import (
 	"believer/movies/db"
-	"believer/movies/types"
 	"believer/movies/utils"
 	"believer/movies/views"
 	"fmt"
-	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-type Genre struct {
-	ID   int    `db:"id"`
-	Name string `db:"name"`
+type GenreHandler struct {
+	repo db.GenreQuerier
 }
 
-func (g Genre) Title() string {
-	return g.Name
+func NewGenreHandler(repo db.GenreQuerier) *GenreHandler {
+	return &GenreHandler{repo}
 }
 
-func (g Genre) Subtitle() string {
-	return ""
-}
-
-func (g Genre) Href() string {
-	return utils.CreateSelfHealingUrl("genre", g.Name, strconv.Itoa(g.ID))
-}
-
-func ListGenres(c *fiber.Ctx) error {
-	var genres []Genre
-
-	err := db.Client.Select(&genres, `
-		SELECT
-		    id,
-		    name
-		FROM
-		    genre
-		ORDER BY
-		    name ASC
-		`)
+func (h *GenreHandler) ListGenres(c *fiber.Ctx) error {
+	genres, err := h.repo.ListGenres()
 
 	if err != nil {
 		return err
@@ -52,18 +31,15 @@ func ListGenres(c *fiber.Ctx) error {
 	}))
 }
 
-func GetGenre(c *fiber.Ctx) error {
-	var movies types.Movies
-	var genre db.TableName
-
+func (h *GenreHandler) GetGenre(c *fiber.Ctx) error {
 	q := db.MakeQueries(c)
-	err := q.GetNameByID(&genre, db.GenreTable)
+	genre, err := h.repo.GetGenreName(q.Id)
 
 	if err != nil {
 		return err
 	}
 
-	err = q.GetMovies(&movies, db.GenreTable)
+	movies, err := h.repo.GetGenreMovies(q.Id, q.UserID, q.Offset)
 
 	if err != nil {
 		return err
@@ -84,11 +60,9 @@ func GetGenre(c *fiber.Ctx) error {
 	}))
 }
 
-func GetGenreStats(c *fiber.Ctx) error {
-	var genres []types.ListItem
-
+func (h *GenreHandler) GetGenreStats(c *fiber.Ctx) error {
 	q := db.MakeQueries(c)
-	err := q.GetStats(&genres, db.GenreTable)
+	genres, err := h.repo.GetGenreStats(q.UserID, q.Year)
 
 	if err != nil {
 		return err
