@@ -60,7 +60,7 @@ func TestGetMoviesByYears(t *testing.T) {
 			name: "returns movies by default",
 			url:  "/year/2026",
 			mockSetup: func(m *mocks.MockYearsQuerier) {
-				m.On("GetMoviesByYear", "user-123", "All", 0).Return(movies, nil)
+				m.On("GetMoviesByYear", "user-123", "2026", 0).Return(movies, nil)
 			},
 			expectedCode: http.StatusOK,
 		},
@@ -68,7 +68,7 @@ func TestGetMoviesByYears(t *testing.T) {
 			name: "returns error if request fails",
 			url:  "/year/2026",
 			mockSetup: func(m *mocks.MockYearsQuerier) {
-				m.On("GetMoviesByYear", "user-123", "All", 0).Return(movies, fmt.Errorf("Test"))
+				m.On("GetMoviesByYear", "user-123", "2026", 0).Return(movies, fmt.Errorf("Test"))
 			},
 			expectedCode: http.StatusInternalServerError,
 		},
