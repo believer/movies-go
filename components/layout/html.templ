@@ -53,10 +53,12 @@ templ Html(props ...Props) {
 			<script defer src="/public/htmx.head-support.20240912.js"></script>
 			<script defer src="/public/hyperscript.0.9.14.min.js"></script>
 			<script>
-				const mode = localStorage.getItem("mode")
+				const mode = localStorage.getItem("mode");
 
 				if (mode !== null) {
-					document.querySelector("html").style.setProperty("color-scheme", mode)
+					document
+						.querySelector("html")
+						.style.setProperty("color-scheme", mode);
 				}
 			</script>
 		</head>
