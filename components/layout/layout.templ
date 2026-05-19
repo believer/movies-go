@@ -7,7 +7,7 @@ type Props struct {
 }
 
 templ Layout(p Props) {
-	@Html() {
+	@Html(p) {
 		@Body(BodyProps{Title: p.Title}) {
 			{ children... }
 		}

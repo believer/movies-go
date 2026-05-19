@@ -1123,7 +1123,8 @@ WHERE
 	hasProviders := len(watchProviders.Results.SE.Buy) > 0 || len(watchProviders.Results.SE.Rent) > 0 || len(watchProviders.Results.SE.Subscription) > 0
 
 	if !hasProviders {
-		return c.SendStatus(fiber.StatusNotFound)
+		c.Status(fiber.StatusNotFound)
+		return c.SendString("")
 	}
 
 	// Only Swedish providers supported

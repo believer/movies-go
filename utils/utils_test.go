@@ -95,6 +95,12 @@ func TestCreateSelfHealingUrl(t *testing.T) {
 	assert.Equal(t, want, got)
 }
 
+func TestSelfHealingUrlStringWithNumber(t *testing.T) {
+	got := SelfHealingUrlString("/root/sub/test-test-250-test-1234")
+
+	assert.Equal(t, "1234", got)
+}
+
 func TestSelfHealingUrlString(t *testing.T) {
 	got := SelfHealingUrlString("/root/sub/test-test")
 

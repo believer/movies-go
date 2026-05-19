@@ -124,7 +124,7 @@ func SetupAndRunApp() error {
 	// Setup routes
 	router.SetupRoutes(app)
 
-	app.Use(NotFoundMiddleware)
+	app.Use(notFoundMiddleware)
 
 	// Start the app
 	port := os.Getenv("PORT")
@@ -138,7 +138,7 @@ func SetupAndRunApp() error {
 	return nil
 }
 
-func NotFoundMiddleware(c *fiber.Ctx) error {
+func notFoundMiddleware(c *fiber.Ctx) error {
 	c.Status(fiber.StatusNotFound)
 	return utils.Render(c, views.NotFound())
 }
