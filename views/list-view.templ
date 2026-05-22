@@ -46,7 +46,7 @@ templ ListView(props ...ListViewProps) {
 				if p.NextPage != "" && len(p.Movies) >= 50 {
 					<li
 						hx-get={ p.NextPage }
-						hx-trigger="revealed"
+						hx-trigger="intersect rootMargin:'0px 0px 1000px 0px'"
 						hx-swap="outerHTML"
 						hx-select="li"
 					></li>

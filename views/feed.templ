@@ -137,7 +137,7 @@ templ Feed(props FeedProps) {
 							if props.Query == "" {
 								<li
 									hx-get={ fmt.Sprintf("/?page=%d&last-header=%s", props.NextPage, currentHeader) }
-									hx-trigger="intersect"
+									hx-trigger="intersect rootMargin:'0px 0px 1000px 0px'"
 									hx-swap="outerHTML"
 									hx-select="li:not(.now-playing__movie)"
 								></li>
