@@ -66,11 +66,14 @@ func SetupRoutes(app *fiber.App) {
 	// --------------------------
 	reviewGroup := app.Group("/review")
 
-	reviewGroup.Get("/new", h.AddMovieReview)
-	reviewGroup.Post("/new", h.InsertMovieReview)
-	reviewGroup.Get("/:id/edit", h.EditMovieReview)
-	reviewGroup.Put("/:id", h.UpdateMovieReview)
-	reviewGroup.Delete("/:id", h.DeleteMovieReview)
+	reviewRepo := db.NewReviewRepository(db.Client)
+	reviewHandler := h.NewReviewHandler(reviewRepo)
+
+	reviewGroup.Get("/new", reviewHandler.AddMovieReview)
+	reviewGroup.Post("/new", reviewHandler.InsertMovieReview)
+	reviewGroup.Get("/:id/edit", reviewHandler.EditMovieReview)
+	reviewGroup.Put("/:id", reviewHandler.UpdateMovieReview)
+	reviewGroup.Delete("/:id", reviewHandler.DeleteMovieReview)
 
 	// Year
 	// --------------------------
