@@ -37,30 +37,33 @@ func SetupRoutes(app *fiber.App) {
 	// --------------------------
 	movieGroup := app.Group("/movie")
 
+	movieRepo := db.NewMovieRepository(db.Client)
+	movieHandler := h.NewMovieHandler(movieRepo)
+
 	movieGroup.Get("/", redirectToHome)
-	movieGroup.Get("/imdb", h.GetByImdbId)
-	movieGroup.Get("/search", h.HandleSearch)
-	movieGroup.Get("/new", h.GetMovieNew)
-	movieGroup.Get("/new/series", h.GetMovieNewSeries)
+	movieGroup.Get("/imdb", movieHandler.GetByImdbId)
+	movieGroup.Get("/search", movieHandler.HandleSearch)
+	movieGroup.Get("/new", movieHandler.GetMovieNew)
+	movieGroup.Get("/new/series", movieHandler.GetMovieNewSeries)
 	// TODO: Should really be post to /movie
-	movieGroup.Post("/new", h.PostMovieNew)
+	movieGroup.Post("/new", movieHandler.PostMovieNew)
 
-	movieGroup.Get("/:id", h.GetMovieByID)
-	movieGroup.Patch("/:id", h.UpdateMovieByID)
-	movieGroup.Get("/:imdbId/awards", h.GetMovieAwards)
-	movieGroup.Get("/:id/seen/others", h.GetMovieOthersSeenByID)
-	movieGroup.Post("/:id/seen", h.CreateSeenMovie)
-	movieGroup.Delete("/:id/seen/:seenId", h.DeleteSeenMovie)
-	movieGroup.Get("/:id/seen/:seenId/edit", h.GetSeenMovie)
-	movieGroup.Put("/:id/seen/:seenId/edit", h.UpdateSeenMovie)
+	movieGroup.Get("/:id", movieHandler.GetMovieByID)
+	movieGroup.Patch("/:id", movieHandler.UpdateMovieByID)
+	movieGroup.Get("/:imdbId/awards", movieHandler.GetMovieAwards)
+	movieGroup.Get("/:id/seen/others", movieHandler.GetMovieOthersSeenByID)
+	movieGroup.Post("/:id/seen", movieHandler.CreateSeenMovie)
+	movieGroup.Delete("/:id/seen/:seenId", movieHandler.DeleteSeenMovie)
+	movieGroup.Get("/:id/seen/:seenId/edit", movieHandler.GetSeenMovie)
+	movieGroup.Put("/:id/seen/:seenId/edit", movieHandler.UpdateSeenMovie)
 
-	movieGroup.Get("/:id/rating", h.GetRating)
-	movieGroup.Get("/:id/rating/edit", h.GetEditRating)
-	movieGroup.Post("/:id/rating", h.PostRating)
-	movieGroup.Put("/:id/rating", h.UpdateRating)
-	movieGroup.Delete("/:id/rating", h.DeleteRating)
+	movieGroup.Get("/:id/rating", movieHandler.GetRating)
+	movieGroup.Get("/:id/rating/edit", movieHandler.GetEditRating)
+	movieGroup.Post("/:id/rating", movieHandler.PostRating)
+	movieGroup.Put("/:id/rating", movieHandler.UpdateRating)
+	movieGroup.Delete("/:id/rating", movieHandler.DeleteRating)
 
-	movieGroup.Get("/:id/watch-providers", h.WatchProviders)
+	movieGroup.Get("/:id/watch-providers", movieHandler.WatchProviders)
 
 	// Review
 	// --------------------------
@@ -242,5 +245,5 @@ func SetupRoutes(app *fiber.App) {
 	// --------------------------
 	hookGroup := app.Group("/hooks")
 
-	hookGroup.Post("/playback", h.PlaybackProgress)
+	hookGroup.Post("/playback", movieHandler.PlaybackProgress)
 }

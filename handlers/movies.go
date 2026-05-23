@@ -23,15 +23,24 @@ import (
 	"github.com/lib/pq"
 )
 
-func GetMovieByID(c *fiber.Ctx) error {
+type MovieHandler struct {
+	repo db.MovieQuerier
+}
+
+func NewMovieHandler(repo db.MovieQuerier) *MovieHandler {
+	return &MovieHandler{repo}
+}
+
+func (h *MovieHandler) GetMovieByID(c *fiber.Ctx) error {
 	backParam := c.QueryBool("back", false)
-	movieQueries, err := db.MakeMovieQueries(c)
-
+	movieId := c.Params("id")
+	id, err := utils.SelfHealingUrl(movieId)
 	if err != nil {
-		return c.SendStatus(fiber.StatusInternalServerError)
+		id = "0"
 	}
+	userID := c.Locals("UserId").(string)
 
-	movie, err := movieQueries.GetByID()
+	movieData, err := h.repo.GetByID(id, userID)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -47,38 +56,38 @@ func GetMovieByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	review, err := movieQueries.ReviewByMovieID()
+	reviewData, err := h.repo.GetReviewByMovieID(id, userID)
 
 	if err != nil && err != sql.ErrNoRows {
 		return err
 	}
 
-	isInWatchlist, err := movieQueries.IsWatchlisted()
+	isInWatchlist, err := h.repo.IsWatchlisted(id, userID)
 
 	if err != nil {
 		return err
 	}
 
-	others, err := movieQueries.RatingsByOthers()
+	others, err := h.repo.RatingsByOthers(id)
 
 	if err != nil {
 		return err
 	}
 
-	watchedAt, err := movieQueries.SeenByUser()
+	watchedAt, err := h.repo.SeenByUser(id, userID)
 
 	if err != nil {
 		return err
 	}
 
-	cast, hasCharacters, err := movieQueries.Cast()
+	cast, hasCharacters, err := h.repo.Cast(id)
 
 	if err != nil {
 		return err
 	}
 
 	if c.Get("Accept") == "application/json" {
-		return c.JSON(movie)
+		return c.JSON(movieData)
 	}
 
 	return utils.Render(c, views.Movie(
@@ -87,27 +96,27 @@ func GetMovieByID(c *fiber.Ctx) error {
 			HasCharacters: hasCharacters,
 			WatchedAt:     watchedAt,
 			IsInWatchlist: isInWatchlist,
-			Movie:         movie,
+			Movie:         movieData,
 			Others:        others,
-			Review:        review,
+			Review:        reviewData,
 			Back:          backParam,
 		}))
 }
 
-func GetMovieOthersSeenByID(c *fiber.Ctx) error {
-	movieQueries, err := db.MakeMovieQueries(c)
-
+func (h *MovieHandler) GetMovieOthersSeenByID(c *fiber.Ctx) error {
+	movieId := c.Params("id")
+	id, err := utils.SelfHealingUrl(movieId)
 	if err != nil {
-		return c.SendStatus(fiber.StatusInternalServerError)
+		id = "0"
 	}
 
-	idAsInt, err := strconv.Atoi(movieQueries.Id)
+	idAsInt, err := strconv.Atoi(id)
 
 	if err != nil {
 		return err
 	}
 
-	others, err := movieQueries.RatingsByOthers()
+	others, err := h.repo.RatingsByOthers(id)
 
 	if err != nil {
 		return err
@@ -120,55 +129,43 @@ func GetMovieOthersSeenByID(c *fiber.Ctx) error {
 }
 
 // Render the add movie page
-func GetMovieNew(c *fiber.Ctx) error {
-	var movie types.Movie
+func (h *MovieHandler) GetMovieNew(c *fiber.Ctx) error {
+	var movieData types.Movie
 
-	movieQueries, queryError := db.MakeMovieQueries(c)
+	isAuth := utils.IsAuthenticated(c)
 	id := c.QueryInt("id")
 	imdbId := c.Query("imdbId")
-	userID := c.Locals("UserId")
+	userID, ok := c.Locals("UserId").(string)
+	if !ok {
+		userID = ""
+	}
 
-	if !movieQueries.IsAuthenticated {
+	if !isAuth {
 		return c.Redirect("/")
 	}
 
-	var friends []list.DataListItem
-	err := db.Client.Select(&friends, `
-		SELECT
-		    id AS "value",
-		    name
-		FROM
-		    "user"
-		WHERE
-		    id != $1
-		`, userID)
+	friends, err := h.repo.GetFriends(userID)
 
 	if err != nil {
 		return err
 	}
 
-	if queryError != nil {
+	if id == 0 {
 		return utils.Render(c, views.NewMovie(views.NewMovieProps{
 			Friends:     friends,
 			ImdbID:      imdbId,
 			InWatchlist: false,
-			Movie:       movie,
+			Movie:       movieData,
 		}))
 	}
 
-	isInWatchlist, err := movieQueries.IsWatchlisted()
+	isInWatchlist, err := h.repo.IsWatchlisted(strconv.Itoa(id), userID)
 
 	if err != nil {
 		return err
 	}
 
-	err = db.Client.Get(&movie, `SELECT
-    id,
-    title
-FROM
-    movie
-WHERE
-    id = $1`, id)
+	movieData, err = h.repo.GetMovieByIDSimple(id)
 
 	if err != nil {
 		return err
@@ -178,20 +175,12 @@ WHERE
 		Friends:     friends,
 		ImdbID:      imdbId,
 		InWatchlist: isInWatchlist,
-		Movie:       movie,
+		Movie:       movieData,
 	}))
 }
 
-func GetMovieNewSeries(c *fiber.Ctx) error {
-	var options []list.DataListItem
-
-	err := db.Client.Select(&options, `SELECT
-    id AS "value",
-    name
-FROM
-    series
-ORDER BY
-    name ASC`)
+func (h *MovieHandler) GetMovieNewSeries(c *fiber.Ctx) error {
+	options, err := h.repo.GetAllSeries()
 
 	if err != nil {
 		return err
@@ -200,18 +189,8 @@ ORDER BY
 	return utils.Render(c, list.DataList(options, "series_list"))
 }
 
-type NewPerson struct {
-	ID             int            `db:"id"`
-	Name           string         `db:"name"`
-	Job            sql.NullString `db:"job"`
-	Character      sql.NullString `db:"character"`
-	Popularity     float64        `db:"popularity"`
-	ProfilePicture sql.NullString `db:"profile_picture"`
-	MovieId        int            `db:"movie_id"`
-}
-
 // Handle adding a movie
-func PostMovieNew(c *fiber.Ctx) error {
+func (h *MovieHandler) PostMovieNew(c *fiber.Ctx) error {
 	if c.Locals("IsAuthenticated") == false {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
@@ -243,7 +222,7 @@ func PostMovieNew(c *fiber.Ctx) error {
 
 	api := api.New(c)
 
-	movie, movieId, err := api.AddMovie(imdbId, data.HasWilhelmScream)
+	movieData, movieId, err := api.AddMovie(imdbId, data.HasWilhelmScream)
 	if err != nil {
 		return err
 	}
@@ -265,15 +244,14 @@ func PostMovieNew(c *fiber.Ctx) error {
 	}
 
 	tx := db.Client.MustBegin()
+	defer tx.Rollback()
 
 	// Add review if any
 	if data.Review != "" {
-		tx.MustExec(`
-INSERT INTO review (content, private, user_id, movie_id)
-    VALUES ($1, $2, $3, $4)
-ON CONFLICT
-    DO NOTHING
-			`, data.Review, data.IsPrivateReview, userId, movieId)
+		err = h.repo.InsertReview(tx, data.Review, data.IsPrivateReview, userId, movieId)
+		if err != nil {
+			return err
+		}
 	}
 
 	// Insert series
@@ -282,21 +260,13 @@ ON CONFLICT
 
 		// Series can't be turned into an int, so it's a new series
 		if err != nil {
-			err = tx.Get(&seriesId, `INSERT INTO series (name)
-    VALUES ($1)
-ON CONFLICT
-    DO UPDATE SET
-        name = EXCLUDED.name
-    RETURNING
-        id`, data.Series)
-
+			seriesId, err = h.repo.GetOrInsertSeries(tx, data.Series)
 			if err != nil {
 				return err
 			}
 		}
 
-		_, err = tx.Exec(`INSERT INTO movie_series (movie_id, series_id, number_in_series)
-    VALUES ($1, $2, $3)`, movieId, seriesId, data.NumberInSeries)
+		err = h.repo.InsertMovieSeries(tx, movieId, seriesId, data.NumberInSeries)
 
 		if err != nil {
 			c.Set("HX-Retarget", "#error")
@@ -308,8 +278,7 @@ ON CONFLICT
 
 	if data.IsWatchlist {
 		// Add to watchlist
-		_, err = tx.Exec(`INSERT INTO watchlist (user_id, movie_id)
-    VALUES ($1, $2)`, userId, movieId)
+		err = h.repo.InsertWatchlist(tx, userId, movieId)
 
 		if err != nil {
 			c.Set("HX-Retarget", "#error")
@@ -317,103 +286,72 @@ ON CONFLICT
 		}
 	} else {
 		// Insert a view and delete from watchlist if exists
-		seenID := 0
-
-		err := tx.Get(&seenID, `
-INSERT INTO seen (user_id, movie_id, date)
-    VALUES ($1, $2, $3)
-RETURNING
-    id
-			`, userId, movieId, watchedAt)
+		seenID, err := h.repo.InsertSeenMovie(tx, userId, movieId, watchedAt)
 
 		if err != nil {
 			return err
 		}
 
-		tx.MustExec(`DELETE FROM watchlist
-WHERE user_id = $1
-    AND movie_id = $2`, userId, movieId)
+		err = h.repo.DeleteWatchlist(tx, userId, movieId)
+		if err != nil {
+			return err
+		}
 
 		// Add friends if any
 		if seenID != 0 && len(data.Friend) > 0 {
-			_, err = tx.Exec(`
-			INSERT INTO seen_with (seen_id, other_user_id)
-			SELECT
-			    $1,
-			    UNNEST($2::text[])::int
-			ON CONFLICT
-			    DO NOTHING
-			`, seenID, pq.Array(data.Friend))
+			err = h.repo.InsertSeenWith(tx, seenID, data.Friend)
 
 			if err != nil {
 				return err
 			}
 		}
-
 	}
 
 	// Remove from now playing if exists
-	tx.MustExec(`DELETE FROM now_playing
-WHERE user_id = $1
-    AND imdb_id = $2`, userId, movie.ImdbId)
-
-	// Insert rating
-	if data.Rating != 0 {
-		tx.MustExec(`INSERT INTO rating (user_id, movie_id, rating)
-    VALUES ($1, $2, $3)`, userId, movieId, data.Rating)
-	}
-
-	// Add awards
-	awards.AddOscars(tx, movie.ImdbId)
-	awards.AddBaftas(tx, movie.ImdbId)
-
-	err = tx.Commit()
-
+	err = h.repo.DeleteNowPlaying(tx, userId, movieData.ImdbId)
 	if err != nil {
-		err = tx.Rollback()
-
 		return err
 	}
 
-	c.Set("HX-Redirect", fmt.Sprintf("/movie/%d?back=true", movieId))
+	// Insert rating
+	if data.Rating != 0 {
+		err = h.repo.AddRating(tx, userId, movieId, data.Rating)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Add awards
+	awards.AddOscars(tx, movieData.ImdbId)
+	awards.AddBaftas(tx, movieData.ImdbId)
+
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+
+	c.Set("HX-Redirect", fmt.Sprintf("/movie/%d", movieId))
 
 	return c.SendStatus(fiber.StatusOK)
 }
 
-func GetByImdbId(c *fiber.Ctx) error {
-	var movie types.Movie
+func (h *MovieHandler) GetByImdbId(c *fiber.Ctx) error {
+	imdbId := c.Query("imdbId")
 
-	imdbId, err := utils.ParseId(c.Query("imdb_id"))
+	movieData, err := h.repo.GetMovieByImdbID(imdbId)
 
-	if err != nil {
+	if err != nil || movieData.ID == 0 {
 		return c.SendString("")
 	}
 
-	err = db.Client.Get(&movie, `SELECT
-    id,
-    title
-FROM
-    movie
-WHERE
-    imdb_id = $1`, imdbId)
-
-	if err != nil || movie.ID == 0 {
-		return c.SendString("")
-	}
-
-	return utils.Render(c, views.MovieExists(movie))
+	return utils.Render(c, views.MovieExists(movieData))
 }
 
-func DeleteSeenMovie(c *fiber.Ctx) error {
-	q, err := db.MakeMovieQueries(c)
-
-	if err != nil {
-		return err
-	}
-
+func (h *MovieHandler) DeleteSeenMovie(c *fiber.Ctx) error {
 	movieId, err := c.ParamsInt("id")
 	seenId := c.Params("seenId")
 	isAuth := utils.IsAuthenticated(c)
+	userID := c.Locals("UserId").(string)
 
 	if err != nil {
 		return err
@@ -423,25 +361,21 @@ func DeleteSeenMovie(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	_, err = db.Client.Exec(`
-DELETE FROM seen_with
-WHERE seen_id = $1
-		`, seenId)
+	tx := db.Client.MustBegin()
+	defer tx.Rollback()
+
+	err = h.repo.DeleteSeenMovie(tx, seenId)
 
 	if err != nil {
 		return err
 	}
 
-	_, err = db.Client.Exec(`
-DELETE FROM seen
-WHERE id = $1
-		`, seenId)
-
+	err = tx.Commit()
 	if err != nil {
 		return err
 	}
 
-	watchedAt, err := q.SeenByUser()
+	watchedAt, err := h.repo.SeenByUser(strconv.Itoa(movieId), userID)
 
 	if err != nil {
 		return err
@@ -453,44 +387,22 @@ WHERE id = $1
 	}))
 }
 
-func GetSeenMovie(c *fiber.Ctx) error {
-	var watch views.WatchData
-
+func (h *MovieHandler) GetSeenMovie(c *fiber.Ctx) error {
 	movieId, err := c.ParamsInt("id")
 	seenId := c.Params("seenId")
-	userId := c.Locals("UserId")
+	userId := c.Locals("UserId").(string)
 
 	if err != nil {
 		return err
 	}
 
-	err = db.Client.Get(&watch, `
-SELECT
-    TO_CHAR(date AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/Stockholm', 'YYYY-MM-DD"T"HH24:MI') AS date,
-    COALESCE(ARRAY_AGG(sw.other_user_id) FILTER (WHERE sw.other_user_id IS NOT NULL), '{}') AS seen_with
-FROM
-    seen s
-    LEFT JOIN seen_with sw ON sw.seen_id = s.id
-WHERE
-    id = $1
-GROUP BY
-    id
-`, seenId)
+	watch, err := h.repo.GetSeenMovie(seenId)
 
 	if err != nil {
 		return err
 	}
 
-	var friends []list.DataListItem
-	err = db.Client.Select(&friends, `
-		SELECT
-		    id AS "value",
-		    name
-		FROM
-		    "user"
-		WHERE
-		    id != $1
-		`, userId)
+	friends, err := h.repo.GetFriends(userId)
 
 	if err != nil {
 		return err
@@ -504,7 +416,7 @@ GROUP BY
 	}))
 }
 
-func UpdateSeenMovie(c *fiber.Ctx) error {
+func (h *MovieHandler) UpdateSeenMovie(c *fiber.Ctx) error {
 	movieId, err := c.ParamsInt("id")
 	seenID := c.Params("seenId")
 	isAuth := utils.IsAuthenticated(c)
@@ -541,37 +453,10 @@ func UpdateSeenMovie(c *fiber.Ctx) error {
 		watchedAt = watchedAt.Add(time.Duration(now.Hour()))
 	}
 
-	_, err = db.Client.Exec(`UPDATE
-    seen
-SET
-    date = $1
-WHERE
-    id = $2`, watchedAt, seenID)
+	err = h.repo.UpdateSeenMovie(seenID, watchedAt, data.Friend)
 
 	if err != nil {
 		return err
-	}
-
-	_, err = db.Client.Exec(`DELETE FROM seen_with
-WHERE seen_id = $1`, seenID)
-
-	if err != nil {
-		return err
-	}
-
-	if len(data.Friend) > 0 {
-		_, err = db.Client.Exec(`
-			INSERT INTO seen_with (seen_id, other_user_id)
-			SELECT
-			    $1,
-			    UNNEST($2::text[])::int
-			ON CONFLICT
-			    DO NOTHING
-			`, seenID, pq.Array(data.Friend))
-
-		if err != nil {
-			return err
-		}
 	}
 
 	c.Set("HX-Redirect", fmt.Sprintf("/movie/%d", movieId))
@@ -579,32 +464,27 @@ WHERE seen_id = $1`, seenID)
 	return c.SendStatus(fiber.StatusOK)
 }
 
-func CreateSeenMovie(c *fiber.Ctx) error {
+func (h *MovieHandler) CreateSeenMovie(c *fiber.Ctx) error {
 	isAuth := utils.IsAuthenticated(c)
+	userID := c.Locals("UserId").(string)
+	movieId := c.Params("id")
 
 	if !isAuth {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	tx := db.Client.MustBegin()
-
-	tx.MustExec(`INSERT INTO seen (user_id, movie_id)
-    VALUES ($1, $2)`, c.Locals("UserId"), c.Params("id"))
-
-	err := tx.Commit()
+	err := h.repo.CreateSeenMovieDirect(userID, movieId)
 
 	if err != nil {
-		err = tx.Rollback()
-
 		return err
 	}
 
-	c.Set("HX-Redirect", fmt.Sprintf("/movie/%s?back=true", c.Params("id")))
+	c.Set("HX-Redirect", fmt.Sprintf("/movie/%s?back=true", movieId))
 
 	return c.SendStatus(fiber.StatusOK)
 }
 
-func HandleSearch(c *fiber.Ctx) error {
+func (h *MovieHandler) HandleSearch(c *fiber.Ctx) error {
 	query := c.Query("search")
 
 	if query == "" {
@@ -627,10 +507,10 @@ func HandleSearch(c *fiber.Ctx) error {
 	return utils.Render(c, views.MovieSearch(movies.Results[:maxResults]))
 }
 
-func DeleteRating(c *fiber.Ctx) error {
+func (h *MovieHandler) DeleteRating(c *fiber.Ctx) error {
 	isAuth := utils.IsAuthenticated(c)
 	movieId, err := c.ParamsInt("id")
-	userId := c.Locals("UserId")
+	userId := c.Locals("UserId").(string)
 
 	if err != nil {
 		return err
@@ -640,10 +520,16 @@ func DeleteRating(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	_, err = db.Client.Exec(`DELETE FROM rating
-WHERE movie_id = $1
-    AND user_id = $2`, movieId, userId)
+	tx := db.Client.MustBegin()
+	defer tx.Rollback()
 
+	err = h.repo.DeleteRating(tx, movieId, userId)
+
+	if err != nil {
+		return err
+	}
+
+	err = tx.Commit()
 	if err != nil {
 		return err
 	}
@@ -653,7 +539,7 @@ WHERE movie_id = $1
 	}))
 }
 
-func GetRating(c *fiber.Ctx) error {
+func (h *MovieHandler) GetRating(c *fiber.Ctx) error {
 	isAuth := utils.IsAuthenticated(c)
 	movieId, err := c.ParamsInt("id")
 	currentRating := c.QueryInt("rating")
@@ -672,7 +558,7 @@ func GetRating(c *fiber.Ctx) error {
 	}))
 }
 
-func GetEditRating(c *fiber.Ctx) error {
+func (h *MovieHandler) GetEditRating(c *fiber.Ctx) error {
 	isAuth := utils.IsAuthenticated(c)
 	movieId, err := c.ParamsInt("id")
 
@@ -689,10 +575,10 @@ func GetEditRating(c *fiber.Ctx) error {
 	}))
 }
 
-func PostRating(c *fiber.Ctx) error {
+func (h *MovieHandler) PostRating(c *fiber.Ctx) error {
 	isAuth := utils.IsAuthenticated(c)
 	movieId, err := c.ParamsInt("id")
-	userId := c.Locals("UserId")
+	userId := c.Locals("UserId").(string)
 
 	if err != nil {
 		return err
@@ -710,18 +596,26 @@ func PostRating(c *fiber.Ctx) error {
 		return err
 	}
 
-	_, err = db.Client.Exec(`INSERT INTO rating (user_id, movie_id, rating)
-    VALUES ($1, $2, $3)`, userId, movieId, data.Rating)
+	ratingVal, err := strconv.Atoi(data.Rating)
+	if err != nil {
+		return err
+	}
+
+	tx := db.Client.MustBegin()
+	defer tx.Rollback()
+
+	err = h.repo.AddRating(tx, userId, movieId, ratingVal)
 
 	if err != nil {
 		return err
 	}
 
-	movieRating, err := strconv.ParseInt(data.Rating, 10, 64)
-
+	err = tx.Commit()
 	if err != nil {
 		return err
 	}
+
+	movieRating := int64(ratingVal)
 
 	return utils.Render(c, rating.GetRating(rating.Props{
 		MovieId: movieId,
@@ -730,10 +624,10 @@ func PostRating(c *fiber.Ctx) error {
 	}))
 }
 
-func UpdateRating(c *fiber.Ctx) error {
+func (h *MovieHandler) UpdateRating(c *fiber.Ctx) error {
 	isAuth := utils.IsAuthenticated(c)
 	movieId, err := c.ParamsInt("id")
-	userId := c.Locals("UserId")
+	userId := c.Locals("UserId").(string)
 
 	if err != nil {
 		return err
@@ -751,14 +645,7 @@ func UpdateRating(c *fiber.Ctx) error {
 		return err
 	}
 
-	_, err = db.Client.Exec(`UPDATE
-    rating
-SET
-    rating = $1,
-    updated_at = NOW()
-WHERE
-    movie_id = $2
-    AND user_id = $3`, data.Rating, movieId, userId)
+	err = h.repo.UpdateRating(userId, movieId, data.Rating)
 
 	if err != nil {
 		return err
@@ -773,43 +660,13 @@ WHERE
 	}))
 }
 
-func GetMovieAwards(c *fiber.Ctx) error {
-	var awards []types.Award
+func (h *MovieHandler) GetMovieAwards(c *fiber.Ctx) error {
 	var year string
 
 	imdbId := c.Params("imdbId")
 	awardType := c.Query("type")
 
-	err := db.Client.Select(&awards, `
-SELECT
-    name AS category,
-    year,
-    COALESCE(JSONB_AGG(
-            CASE WHEN person IS NOT NULL
-                AND person_id IS NOT NULL THEN
-                JSONB_BUILD_OBJECT('name', person, 'id', person_id)
-            WHEN person IS NOT NULL THEN
-                JSONB_BUILD_OBJECT('name', person)
-            ELSE
-                JSONB_BUILD_OBJECT('name', 'N/A')
-            END) FILTER (WHERE person IS NOT NULL
-            OR person_id IS NOT NULL), '[]'::jsonb) AS nominees,
-    winner,
-    detail
-FROM
-    award
-WHERE
-    imdb_id = $1
-    AND type = $2
-GROUP BY
-    name,
-    year,
-    winner,
-    detail
-ORDER BY
-    winner DESC,
-    category ASC
-		`, imdbId, awardType)
+	awardsList, err := h.repo.GetMovieAwards(imdbId, awardType)
 
 	if err != nil {
 		return err
@@ -817,7 +674,7 @@ ORDER BY
 
 	won := 0
 
-	for _, award := range awards {
+	for _, award := range awardsList {
 		year = award.Year
 
 		if award.Winner {
@@ -826,15 +683,14 @@ ORDER BY
 	}
 
 	return utils.Render(c, views.MovieAwards(views.MovieAwardsProps{
-		Awards: awards,
+		Awards: awardsList,
 		Type:   awardType,
 		Year:   year,
 		Won:    won,
 	}))
 }
 
-
-func UpdateMovieByID(c *fiber.Ctx) error {
+func (h *MovieHandler) UpdateMovieByID(c *fiber.Ctx) error {
 	isAuth := utils.IsAuthenticated(c)
 
 	if !isAuth {
@@ -853,116 +709,69 @@ func UpdateMovieByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	imdbId := ""
-
-	err = db.Client.Get(&imdbId, "SELECT imdb_id FROM movie WHERE id = $1", id)
+	movieSimple, err := h.repo.GetMovieTitleAndImdbID(strconv.Itoa(id))
 
 	if err != nil {
 		return err
 	}
 
-	tmdbApi := tmdb.New(imdbId)
+	tmdbApi := tmdb.New(movieSimple.ImdbId)
 	api := api.New(c)
-	movie, err := tmdbApi.Movie()
+	movieData, err := tmdbApi.Movie()
 
 	if err != nil {
 		return err
 	}
 
 	tx := db.Client.MustBegin()
+	defer tx.Rollback()
 
-	// Update movie information
-	_, err = tx.Exec(`
-	UPDATE
-	    movie
-	SET
-	    title = $2,
-	    runtime = $3,
-	    release_date = NULLIF ($4, '')::date,
-	    imdb_id = $5,
-	    overview = $6,
-	    poster = $7,
-	    tagline = $8,
-	    updated_at = NOW(),
-	    tmdb_id = $9
-	WHERE
-	    id = $1;
-
-`,
-		id,
-		movie.Title,
-		movie.Runtime,
-		movie.ReleaseDate,
-		movie.ImdbId,
-		movie.Overview,
-		movie.Poster,
-		movie.Tagline,
-		movie.TmdbId,
-	)
-
+	err = h.repo.UpdateMovie(tx, id, movieData.Title, movieData.Runtime, movieData.ReleaseDate, movieData.ImdbId, movieData.Overview, movieData.Poster, movieData.Tagline, movieData.TmdbId)
 	if err != nil {
 		return err
 	}
 
 	slog.Debug("Movie updated")
 
-	api.AddLanguages(tx, id, movie)
-	api.AddGenres(tx, id, movie)
-	api.AddCountries(tx, id, movie)
-	api.AddProductionCompanies(tx, id, movie)
-	api.AddCast(tx, movie.ImdbId, id)
+	api.AddLanguages(tx, id, movieData)
+	api.AddGenres(tx, id, movieData)
+	api.AddCountries(tx, id, movieData)
+	api.AddProductionCompanies(tx, id, movieData)
+	api.AddCast(tx, movieData.ImdbId, id)
 
 	// Add awards
-	awards.AddOscars(tx, movie.ImdbId)
-	awards.AddBaftas(tx, movie.ImdbId)
+	awards.AddOscars(tx, movieData.ImdbId)
+	awards.AddBaftas(tx, movieData.ImdbId)
 
 	err = tx.Commit()
-
 	if err != nil {
-		err = tx.Rollback()
-
 		return err
 	}
 
 	return c.SendStatus(fiber.StatusOK)
 }
 
-func WatchProviders(c *fiber.Ctx) error {
-	movieQueries, err := db.MakeMovieQueries(c)
-
+func (h *MovieHandler) WatchProviders(c *fiber.Ctx) error {
+	movieId := c.Params("id")
+	id, err := utils.SelfHealingUrl(movieId)
 	if err != nil {
-		return c.SendStatus(fiber.StatusInternalServerError)
+		id = "0"
 	}
+	userID := c.Locals("UserId").(string)
 
-	var storedProviders string
-	userId := c.Locals("UserId")
-
-	err = db.Client.Get(&storedProviders, `SELECT
-    watch_providers
-FROM
-    "user"
-WHERE
-    id = $1`, userId)
+	storedProviders, err := h.repo.GetUserWatchProviders(userID)
 
 	if err != nil {
 		return err
 	}
 
-	var movie types.Movie
-
-	err = db.Client.Get(&movie, `SELECT
-    imdb_id,
-    title
-FROM
-    movie
-WHERE
-    id = $1`, movieQueries.Id)
+	movieObj, err := h.repo.GetMovieTitleAndImdbID(id)
 
 	if err != nil {
 		return err
 	}
 
-	t := tmdb.New(movie.ImdbId)
+	t := tmdb.New(movieObj.ImdbId)
 	watchProviders, err := t.WatchProviders()
 
 	if err != nil {
@@ -977,7 +786,7 @@ WHERE
 	}
 
 	// Only Swedish providers supported
-	justWatchUrl := fmt.Sprintf("https://www.justwatch.com/se/film/%s", utils.Slugify(movie.Title))
+	justWatchUrl := fmt.Sprintf("https://www.justwatch.com/se/film/%s", utils.Slugify(movieObj.Title))
 
 	var myProviders views.WatchProviderCategories
 	var otherProviders views.WatchProviderCategories
@@ -1043,3 +852,83 @@ WHERE
 		JustWatchLink:          justWatchUrl,
 	}))
 }
+
+type Progress struct {
+	Completed bool   `form:"completed"`
+	ImdbID    string `form:"imdb_id"`
+	Name      string `json:"name"`
+	Position  string `json:"position"`
+}
+
+func (h *MovieHandler) PlaybackProgress(c *fiber.Ctx) error {
+	var data Progress
+
+	if c.Locals("IsAuthenticated") == false {
+		return c.SendStatus(fiber.StatusUnauthorized)
+	}
+
+	if err := c.BodyParser(&data); err != nil {
+		return err
+	}
+
+	if data.ImdbID == "" {
+		return c.SendStatus(fiber.StatusUnprocessableEntity)
+	}
+
+	if data.Completed {
+		slog.Info("Playback completed", "data", data)
+		return h.PostMovieNew(c)
+	} else {
+		// Convert string position to float
+		positionParts := strings.Split(data.Position, ":")
+		positionAsNumber := 0.0
+
+		for i, p := range positionParts {
+			n, err := strconv.Atoi(p)
+
+			if err != nil {
+				continue
+			}
+
+			switch i {
+			case 0:
+				positionAsNumber += 60 * float64(n)
+			case 1:
+				positionAsNumber += float64(n)
+			case 2:
+				positionAsNumber += float64(n) / 60
+			}
+		}
+
+		userID := c.Locals("UserId").(string)
+		err := h.repo.UpdateNowPlaying(data.ImdbID, positionAsNumber, userID)
+
+		if err != nil {
+			return err
+		}
+
+		// If movie doesn't exist, add it
+		movieExists, err := h.repo.MovieExists(data.ImdbID)
+
+		if err != nil {
+			return err
+		}
+
+		if movieExists {
+			// Try to update existing movie
+			_ = h.UpdateMovieByID(c)
+		} else {
+			api := api.New(c)
+			_, _, err := api.AddMovie(data.ImdbID, false)
+
+			if err != nil {
+				return err
+			}
+		}
+
+		slog.Info("Playback updated", "data", data)
+	}
+
+	return c.SendStatus(fiber.StatusOK)
+}
+
