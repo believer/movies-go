@@ -12,14 +12,22 @@ func redirectToHome(c *fiber.Ctx) error {
 }
 
 func SetupRoutes(app *fiber.App) {
-	app.Get("/health", h.GetHealth)
-	app.Get("/", h.GetFeed)
+	healthHandler := h.NewHealthHandler()
+	app.Get("/health", healthHandler.GetHealth)
+
+	feedRepo := db.NewFeedRepository(db.Client)
+	nowPlayingRepo := db.NewNowPlayingRepository(db.Client)
+	feedHandler := h.NewFeedHandler(feedRepo, nowPlayingRepo)
+	app.Get("/", feedHandler.GetFeed)
 
 	// Auth
 	// --------------------------
-	app.Get("/login", h.GetLogin)
-	app.Post("/login", h.Login)
-	app.Post("/logout", h.Logout)
+	authRepo := db.NewAuthRepository(db.Client)
+	authHandler := h.NewAuthHandler(authRepo)
+
+	app.Get("/login", authHandler.GetLogin)
+	app.Post("/login", authHandler.Login)
+	app.Post("/logout", authHandler.Logout)
 
 	// Watchlist
 	// --------------------------
@@ -204,17 +212,20 @@ func SetupRoutes(app *fiber.App) {
 	// --------------------------
 	statsGroup := app.Group("/stats")
 
-	statsGroup.Get("/", h.GetStats)
-	statsGroup.Get("/ratings", h.GetRatingsByYear)
-	statsGroup.Get("/wilhelm-scream", h.GetWilhelmScream)
-	statsGroup.Get("/ratings/:year", h.GetRatingsForYear)
-	statsGroup.Get("/by-month", h.GetThisYearByMonth)
-	statsGroup.Get("/by-weekday", h.GetThisYearByWeekday)
-	statsGroup.Get("/movies-by-year", h.GetMoviesByYearStat)
-	statsGroup.Get("/highest-ranked-person", h.GetHighestRankedPersonByJob)
-	statsGroup.Get("/best-of-the-year", h.GetBestOfTheYear)
-	statsGroup.Get("/most-watched-person/:job", h.GetMostWatchedByJob)
-	statsGroup.Get("/seen-with", h.GetSeenWith)
+	statsRepo := db.NewStatsRepository(db.Client)
+	statsHandler := h.NewStatsHandler(statsRepo)
+
+	statsGroup.Get("/", statsHandler.GetStats)
+	statsGroup.Get("/ratings", statsHandler.GetRatingsByYear)
+	statsGroup.Get("/wilhelm-scream", statsHandler.GetWilhelmScream)
+	statsGroup.Get("/ratings/:year", statsHandler.GetRatingsForYear)
+	statsGroup.Get("/by-month", statsHandler.GetThisYearByMonth)
+	statsGroup.Get("/by-weekday", statsHandler.GetThisYearByWeekday)
+	statsGroup.Get("/movies-by-year", statsHandler.GetMoviesByYearStat)
+	statsGroup.Get("/highest-ranked-person", statsHandler.GetHighestRankedPersonByJob)
+	statsGroup.Get("/best-of-the-year", statsHandler.GetBestOfTheYear)
+	statsGroup.Get("/most-watched-person/:job", statsHandler.GetMostWatchedByJob)
+	statsGroup.Get("/seen-with", statsHandler.GetSeenWith)
 
 	// Series
 	// --------------------------
@@ -229,14 +240,16 @@ func SetupRoutes(app *fiber.App) {
 	// --------------------------
 	settingsGroup := app.Group("/settings")
 
-	settingsGroup.Get("/", h.Settings)
-	settingsGroup.Put("/watch-providers", h.SettingsWatchProviders)
+	settingsRepo := db.NewSettingsRepository(db.Client)
+	settingsHandler := h.NewSettingsHandler(settingsRepo)
+
+	settingsGroup.Get("/", settingsHandler.Settings)
+	settingsGroup.Put("/watch-providers", settingsHandler.SettingsWatchProviders)
 
 	// Now playing
 	// --------------------------
 	nowPlayingGroup := app.Group("/now-playing")
 
-	nowPlayingRepo := db.NewNowPlayingRepository(db.Client)
 	nowPlayingHandler := h.NewNowPlayingHandler(nowPlayingRepo)
 
 	nowPlayingGroup.Get("/", nowPlayingHandler.GetNowPlaying)

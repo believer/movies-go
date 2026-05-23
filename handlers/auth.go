@@ -12,9 +12,12 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type LoginData struct {
-	PasswordHash string `db:"password_hash"`
-	ID           string `db:"id"`
+type AuthHandler struct {
+	repo db.AuthQuerier
+}
+
+func NewAuthHandler(repo db.AuthQuerier) *AuthHandler {
+	return &AuthHandler{repo}
 }
 
 type authFormData struct {
@@ -23,13 +26,13 @@ type authFormData struct {
 }
 
 // Display the login view
-func GetLogin(c *fiber.Ctx) error {
+func (h *AuthHandler) GetLogin(c *fiber.Ctx) error {
 	return utils.Render(c, views.Login())
 }
 
 // Login
-func Login(c *fiber.Ctx) error {
-	var user LoginData
+func (h *AuthHandler) Login(c *fiber.Ctx) error {
+	var user db.UserAuth
 
 	data := new(authFormData)
 
@@ -39,7 +42,8 @@ func Login(c *fiber.Ctx) error {
 	}
 
 	// Get the password hash of the user from the database
-	err := db.Client.Get(&user, "SELECT id, password_hash FROM public.user WHERE username = $1", data.Username)
+	var err error
+	user, err = h.repo.GetUserForLogin(data.Username)
 
 	if err != nil {
 		return setHXError(c, "Invalid username or password")
@@ -74,7 +78,7 @@ func Login(c *fiber.Ctx) error {
 }
 
 // Logout and remove the token from the cookie
-func Logout(c *fiber.Ctx) error {
+func (h *AuthHandler) Logout(c *fiber.Ctx) error {
 	c.Cookie(&fiber.Cookie{
 		Name:     "token",
 		Value:    "",
@@ -88,9 +92,7 @@ func Logout(c *fiber.Ctx) error {
 }
 
 // Route to create a new account.
-// NOTE: This is not added to the router and should be
-// added whenever you want to create a new account
-func Signup(c *fiber.Ctx) error {
+func (h *AuthHandler) Signup(c *fiber.Ctx) error {
 	data := new(authFormData)
 
 	// Parse the form data
@@ -112,8 +114,7 @@ func Signup(c *fiber.Ctx) error {
 		return err
 	}
 
-	_, err = db.Client.Exec(`INSERT INTO "user" (username, password_hash)
-    VALUES ($1, $2)`, data.Username, string(hash))
+	err = h.repo.CreateUser(data.Username, string(hash))
 
 	if err != nil {
 		return err

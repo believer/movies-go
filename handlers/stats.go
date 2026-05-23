@@ -8,449 +8,45 @@ import (
 	"believer/movies/views"
 	"cmp"
 	"fmt"
-	"log"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
-
-	"slices"
 
 	"github.com/gofiber/fiber/v2"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
 
-func executeQuery(queryType string, target any, query string, args ...any) func() error {
-	return func() error {
-		switch queryType {
-		case "select":
-			return db.Client.Select(target, query, args...)
-		case "get":
-			return db.Client.Get(target, query, args...)
-		default:
-			return fmt.Errorf("unknown query type: %s", queryType)
-		}
-	}
+type StatsHandler struct {
+	repo db.StatsQuerier
 }
 
-type QueryTask struct {
-	queryFunc func() error
-	desc      string
+func NewStatsHandler(repo db.StatsQuerier) *StatsHandler {
+	return &StatsHandler{repo}
 }
-
-var (
-	dataQuery = `
-SELECT
-    COUNT(DISTINCT movie_id) AS unique_movies,
-    COUNT(movie_id) seen_with_rewatches,
-    COALESCE(SUM(m.runtime), 0) AS total_runtime
-FROM
-    seen AS s
-    INNER JOIN movie AS m ON m.id = s.movie_id
-WHERE
-    user_id = $1
-	`
-
-	mostWatchedQuery = `
-SELECT
-    COUNT(*) AS count,
-    m.title AS name,
-    m.id
-FROM
-    seen AS s
-    INNER JOIN movie AS m ON m.id = s.movie_id
-WHERE
-    user_id = $1
-GROUP BY
-    m.id
-ORDER BY
-    count DESC
-LIMIT 20
-`
-
-	ratingsQuery = `
-SELECT
-    COUNT(*) AS value,
-    rating AS label
-FROM
-    rating
-WHERE
-    user_id = $1
-GROUP BY
-    rating
-ORDER BY
-    rating
-	`
-
-	ratingsThisYearQuery = `
-WITH rating_series AS (
-    SELECT
-        generate_series(1, 10) AS rating_value
-)
-SELECT
-    rs.rating_value AS label,
-    COUNT(
-        CASE WHEN s.movie_id IS NOT NULL THEN
-            r.movie_id
-        ELSE
-            NULL
-        END) AS value
-FROM
-    rating_series rs
-    LEFT JOIN rating r ON r.rating = rs.rating_value
-        AND r.user_id = $1
-    LEFT JOIN seen s ON s.movie_id = r.movie_id
-        AND s.user_id = $1
-        AND EXTRACT(YEAR FROM s.date) = EXTRACT(YEAR FROM $2::date)
-GROUP BY
-    rs.rating_value
-ORDER BY
-    rs.rating_value
-`
-
-	mostWatchedByJobQuery = `
-SELECT
-    COUNT(*) AS count,
-    p.name,
-    p.id
-FROM ( SELECT DISTINCT ON (movie_id)
-        movie_id
-    FROM
-        seen
-    WHERE
-        user_id = $2
-        AND ($3 = 'All'
-            OR EXTRACT(YEAR FROM date) = $3::int)) AS s
-    INNER JOIN movie_person AS mp ON mp.movie_id = s.movie_id
-    INNER JOIN person AS p ON p.id = mp.person_id
-WHERE
-    mp.job = $1
-GROUP BY
-    p.id
-ORDER BY
-    count DESC,
-    name ASC
-LIMIT 10
-`
-
-	totalWatchedByJobAndYearQuery = `
-SELECT
-    COUNT(*) AS count
-FROM
-    seen s
-    INNER JOIN movie_person mp ON mp.movie_id = s.movie_id
-WHERE
-    user_id = $1
-    AND mp.job = $2
-    AND ($3 = 'All'
-        OR EXTRACT(YEAR FROM date) = $3::int)
-`
-
-	watchedByYearQuery = `
-SELECT
-    EXTRACT(YEAR FROM date) AS label,
-    COUNT(*) AS value
-FROM
-    seen
-WHERE
-    user_id = $1
-    -- 2011 is where all the data that I hadn't tracked
-    -- before I started ended up. So, there's a bunch of
-    -- movies that year.
-    AND EXTRACT(YEAR FROM date) > 2011
-GROUP BY
-    label
-ORDER BY
-    label
-`
-
-	watchedThisYearByMonth = `
-WITH months (
-    month
-) AS (
-    SELECT
-        generate_series(DATE_TRUNC('year', $2::date), DATE_TRUNC('year', $2::date) + INTERVAL '1 year' - INTERVAL '1 day', INTERVAL '1 month'))
-SELECT
-    TO_CHAR(months.month, 'Mon') AS label,
-    COALESCE(count(seen.id), 0) AS value
-FROM
-    months
-    LEFT JOIN seen ON DATE_TRUNC('month', seen.date) = months.month
-        AND user_id = $1
-WHERE
-    EXTRACT(YEAR FROM seen.date) = EXTRACT(YEAR FROM $2::date)
-    OR seen.date IS NULL
-GROUP BY
-    months.month
-ORDER BY
-    months.month
-`
-
-	bestOfYearQuery = `
-WITH max_rating AS (
-    SELECT DISTINCT
-        s.movie_id,
-        s.user_id,
-        r.rating
-    FROM
-        seen s
-        INNER JOIN rating r ON r.movie_id = s.movie_id
-            AND r.user_id = $1
-    WHERE
-        s.user_id = $1
-        AND date >= make_date($2, 1, 1)
-        AND date < make_date($2 + 1, 1, 1) -- Seen in the given year
-    GROUP BY
-        s.id,
-        r.rating
-    HAVING
-        COUNT(*) = 1 -- Seen exactly once in the given year
-        AND s.movie_id NOT IN (
-            SELECT
-                movie_id
-            FROM
-                seen
-            WHERE
-                user_id = $1
-                AND date < make_date($2, 1, 1) -- Seen before the given year
-                OR date >= make_date($2 + 1, 1, 1) -- Seen after the given year
-))
-SELECT
-    m.title AS "name",
-    m.id AS "id",
-    mr.rating AS "count"
-FROM
-    max_rating mr
-    INNER JOIN movie m ON m.id = mr.movie_id
-WHERE
-    rating = (
-        SELECT
-            max(rating)
-        FROM
-            max_rating)
-`
-
-	moviesByYearQuery = `
-SELECT
-    EXTRACT(YEAR FROM release_date) AS label,
-    COUNT(*) AS value
-FROM ( SELECT DISTINCT
-        movie_id
-    FROM
-        seen
-    WHERE
-        user_id = $1
-        AND ($2 = 'All'
-            OR EXTRACT(YEAR FROM date) = $2::int)) AS s
-    INNER JOIN movie AS m ON m.id = s.movie_id
-GROUP BY
-    label
-ORDER BY
-    label DESC
-`
-
-	shortestLongestQuery = `
-(
-    SELECT
-        m.id,
-        m.title,
-        m.runtime
-    FROM
-        movie m
-        JOIN seen s ON m.id = s.movie_id
-    WHERE
-        s.user_id = $1
-    ORDER BY
-        m.runtime ASC
-    LIMIT 1)
-UNION ALL (
-    SELECT
-        m.id,
-        m.title,
-        m.runtime
-    FROM
-        movie m
-        JOIN seen s ON m.id = s.movie_id
-    WHERE
-        s.user_id = $1
-    ORDER BY
-        m.runtime DESC
-    LIMIT 1)
-`
-
-	highestRankedByJobQuery = `
-WITH person_ratings AS (
-    SELECT
-        p.name,
-        p.id,
-        COUNT(*) AS appearances,
-        SUM(r.rating) AS total_rating
-    FROM
-        rating AS r
-        INNER JOIN movie_person AS mp ON mp.movie_id = r.movie_id
-            AND mp.job = $2
-        INNER JOIN person AS p ON mp.person_id = p.id
-    WHERE
-        r.user_id = $1
-    GROUP BY
-        p.id
-)
-SELECT
-    id,
-    name,
-    total_rating,
-    (total_rating::float / appearances) * LOG(appearances) AS weighted_average_rating,
-    appearances
-FROM
-    person_ratings
-ORDER BY
-    weighted_average_rating DESC
-LIMIT 10
-`
-
-	wilhelmQuery = `
-WITH seen_once AS (
-    SELECT DISTINCT
-        movie_id
-    FROM
-        seen s
-    WHERE
-        user_id = $1
-)
-SELECT
-    COUNT(*)
-FROM
-    seen_once s
-    INNER JOIN movie m ON m.id = s.movie_id
-        AND m.wilhelm = TRUE
-`
-
-	reviewsQuery = `
-SELECT
-    count(*)
-FROM
-    review
-WHERE
-    user_id = $1
-`
-	mostAwardWinsQuery = `
-WITH all_persons AS (
-    SELECT DISTINCT ON (mp.person_id)
-        mp.person_id
-    FROM
-        seen s
-        INNER JOIN movie_person mp ON mp.movie_id = s.movie_id
-    WHERE
-        s.user_id = $1
-)
-SELECT
-    count(*) FILTER (WHERE winner = TRUE) AS COUNT,
-    a.person,
-    a.person_id
-FROM
-    all_persons ap
-    INNER JOIN award a ON ap.person_id = a.person_id
-GROUP BY
-    a.person_id,
-    person
-HAVING
-    count(*) FILTER (WHERE winner = TRUE) > 0
-ORDER BY
-    COUNT DESC
-LIMIT 1
-`
-	mostAwardNominationsQuery = `
-WITH all_persons AS (
-    SELECT DISTINCT ON (mp.person_id)
-        mp.person_id
-    FROM
-        seen s
-        INNER JOIN movie_person mp ON mp.movie_id = s.movie_id
-    WHERE
-        s.user_id = $1
-)
-SELECT
-    count(*) AS COUNT,
-    a.person,
-    a.person_id
-FROM
-    all_persons ap
-    INNER JOIN award a ON ap.person_id = a.person_id
-GROUP BY
-    a.person_id,
-    person
-HAVING
-    count(*) > 0
-ORDER BY
-    COUNT DESC
-LIMIT 1
-`
-
-	topAwardedQuery = `
-WITH movie_awards AS (
-    SELECT
-        m.id,
-        m.title,
-        COUNT(DISTINCT (a.name, a.type)) AS award_count
-    FROM
-        seen s
-        INNER JOIN movie m ON m.id = s.movie_id
-        INNER JOIN award a ON a.imdb_id = m.imdb_id
-    WHERE
-        s.user_id = $1
-        AND a.winner = TRUE
-    GROUP BY
-        m.id,
-        m.title
-)
-SELECT
-    *
-FROM
-    movie_awards
-WHERE
-    award_count = (
-        SELECT
-            MAX(award_count)
-        FROM
-            movie_awards)
-`
-
-	watchedByWeekdayQuery = `
-WITH days (
-    day_val
-) AS (
-    SELECT
-        generate_series(1, 7))
-SELECT
-    TRIM(TO_CHAR(make_date(2023, 1, 1) + (days.day_val * INTERVAL '1 day'), 'Day')) AS label,
-    COALESCE(count(seen.id), 0) AS value
-FROM
-    days
-    LEFT JOIN seen ON EXTRACT(ISODOW FROM seen.date) = days.day_val
-        AND user_id = $1
-        AND ($2 = 'All'
-            OR EXTRACT(YEAR FROM seen.date) = EXTRACT(YEAR FROM $2::date))
-        AND EXTRACT(YEAR FROM seen.date) > 2011
-GROUP BY
-    days.day_val
-ORDER BY
-    days.day_val
-	`
-)
 
 // Handler for /stats.
-// Gets most of the necessary data (some is is loaded onload)
-func GetStats(c *fiber.Ctx) error {
-	var stats types.Stats
-	var shortestAndLongest types.Movies
-	var wilhelms []int
-	var movies, totals, cast []types.ListItem
-	var ratings, yearRatings, watchedByYear, seenThisYearByMonth, moviesByYear, watchedByWeekday []graph.GraphData
-	var awardWins types.AwardPersonStat
-	var awardNominations types.AwardPersonStat
-	var mostAwardedMovies []types.AwardMovieStat
+func (h *StatsHandler) GetStats(c *fiber.Ctx) error {
 	var reviews int
+	var stats types.Stats
+	var cast []types.ListItem
+	var movies []types.ListItem
+	var moviesByYear []graph.GraphData
+	var ratings []graph.GraphData
+	var seenThisYearByMonth []graph.GraphData
+	var shortestAndLongest types.Movies
+	var totals []types.ListItem
+	var watchedByYear []graph.GraphData
+	var watchedByWeekday []graph.GraphData
+	var wilhelms []int
+	var yearRatings []graph.GraphData
+	var awardNominations types.AwardPersonStat
+	var awardWins types.AwardPersonStat
+	var mostAwardedMovies []types.AwardMovieStat
+
+	var errReviews, errStats, errCast, errMovies, errMoviesByYear, errRatings, errSeenThisYearByMonth, errShortestAndLongest, errTotals, errWatchedByYear, errWatchedByWeekday, errWilhelms, errYearRatings, errAwardNominations, errAwardWins, errMostAwardedMovies error
 
 	userId := c.Locals("UserId").(string)
 	now := time.Now()
@@ -458,45 +54,92 @@ func GetStats(c *fiber.Ctx) error {
 	currentYear := now.Format("2006-01-02 15:04:05")
 
 	var wg sync.WaitGroup
-
-	queries := []QueryTask{
-		{executeQuery("get", &reviews, reviewsQuery, userId), "stats-reviews"},
-		{executeQuery("get", &stats, dataQuery, userId), "stats-data"},
-		{executeQuery("select", &cast, mostWatchedByJobQuery, "cast", userId, "All"), "stats-most-watched-by-job"},
-		{executeQuery("select", &movies, mostWatchedQuery, userId), "stats-most-watched-movies"},
-		{executeQuery("select", &moviesByYear, moviesByYearQuery, userId, "All"), "stats-movies-by-year"},
-		{executeQuery("select", &ratings, ratingsQuery, userId), "stats-ratings"},
-		{executeQuery("select", &seenThisYearByMonth, watchedThisYearByMonth, userId, currentYear), "stats-watched-this-year-by-month"},
-		{executeQuery("select", &shortestAndLongest, shortestLongestQuery, userId), "shortest-and-longest-movie"},
-		{executeQuery("select", &totals, totalWatchedByJobAndYearQuery, userId, "cast", "All"), "total-watched-by-job-and-year"},
-		{executeQuery("select", &watchedByYear, watchedByYearQuery, userId), "stats-watched-by-year"},
-		{executeQuery("select", &watchedByWeekday, watchedByWeekdayQuery, userId, "All"), "stats-watched-by-weekday"},
-		{executeQuery("select", &wilhelms, wilhelmQuery, userId), "wilhelm-screams"},
-		{executeQuery("select", &yearRatings, ratingsThisYearQuery, userId, currentYear), "stats-ratings-this-year"},
-		{executeQuery("get", &awardNominations, mostAwardNominationsQuery, userId), "stats-most-award-nominations"},
-		{executeQuery("get", &awardWins, mostAwardWinsQuery, userId), "stats-most-award-wins"},
-		{executeQuery("select", &mostAwardedMovies, topAwardedQuery, userId), "stats-top-awarded-movies"},
-	}
-
-	errChan := make(chan error, len(queries))
-
-	for _, q := range queries {
-		wg.Add(1)
-		go func(queryFunc func() error, desc string) {
-			defer wg.Done()
-			if err := queryFunc(); err != nil {
-				log.Printf("Error getting %s: %v", desc, err)
-				errChan <- err
-			}
-		}(q.queryFunc, q.desc)
-	}
+	wg.Add(16)
 
 	go func() {
-		wg.Wait()
-		close(errChan)
+		defer wg.Done()
+		reviews, errReviews = h.repo.GetReviewsCount(userId)
 	}()
 
-	for err := range errChan {
+	go func() {
+		defer wg.Done()
+		stats, errStats = h.repo.GetStatsData(userId)
+	}()
+
+	go func() {
+		defer wg.Done()
+		cast, errCast = h.repo.GetMostWatchedByJob("cast", userId, "All")
+	}()
+
+	go func() {
+		defer wg.Done()
+		movies, errMovies = h.repo.GetMostWatchedMovies(userId)
+	}()
+
+	go func() {
+		defer wg.Done()
+		moviesByYear, errMoviesByYear = h.repo.GetMoviesByYear(userId, "All")
+	}()
+
+	go func() {
+		defer wg.Done()
+		ratings, errRatings = h.repo.GetRatings(userId)
+	}()
+
+	go func() {
+		defer wg.Done()
+		seenThisYearByMonth, errSeenThisYearByMonth = h.repo.GetWatchedThisYearByMonth(userId, currentYear)
+	}()
+
+	go func() {
+		defer wg.Done()
+		shortestAndLongest, errShortestAndLongest = h.repo.GetShortestAndLongestMovie(userId)
+	}()
+
+	go func() {
+		defer wg.Done()
+		totals, errTotals = h.repo.GetTotalWatchedByJobAndYear(userId, "cast", "All")
+	}()
+
+	go func() {
+		defer wg.Done()
+		watchedByYear, errWatchedByYear = h.repo.GetWatchedByYear(userId)
+	}()
+
+	go func() {
+		defer wg.Done()
+		watchedByWeekday, errWatchedByWeekday = h.repo.GetWatchedByWeekday(userId, "All")
+	}()
+
+	go func() {
+		defer wg.Done()
+		wilhelms, errWilhelms = h.repo.GetWilhelmScreamCount(userId)
+	}()
+
+	go func() {
+		defer wg.Done()
+		yearRatings, errYearRatings = h.repo.GetRatingsThisYear(userId, currentYear)
+	}()
+
+	go func() {
+		defer wg.Done()
+		awardNominations, errAwardNominations = h.repo.GetMostAwardNominations(userId)
+	}()
+
+	go func() {
+		defer wg.Done()
+		awardWins, errAwardWins = h.repo.GetMostAwardWins(userId)
+	}()
+
+	go func() {
+		defer wg.Done()
+		mostAwardedMovies, errMostAwardedMovies = h.repo.GetTopAwardedMovies(userId)
+	}()
+
+	wg.Wait()
+
+	// Check errors
+	for _, err := range []error{errReviews, errStats, errCast, errMovies, errMoviesByYear, errRatings, errSeenThisYearByMonth, errShortestAndLongest, errTotals, errWatchedByYear, errWatchedByWeekday, errWilhelms, errYearRatings, errAwardNominations, errAwardWins, errMostAwardedMovies} {
 		if err != nil {
 			return err
 		}
@@ -509,8 +152,8 @@ func GetStats(c *fiber.Ctx) error {
 	}
 
 	// Process all graph data in parallel
-	errChan = make(chan error, 5)
 	var ratingsBars, yearBars, watchedByYearBar, watchedByWeekdayBar, seenThisYearByMonthBars []graph.Bar
+	var errChan = make(chan error, 5)
 
 	wg.Add(5)
 
@@ -559,13 +202,11 @@ func GetStats(c *fiber.Ctx) error {
 		}
 	}()
 
-	// Close the error channel once all goroutines are done
 	go func() {
 		wg.Wait()
 		close(errChan)
 	}()
 
-	// Check for errors
 	for err := range errChan {
 		if err != nil {
 			return err
@@ -607,24 +248,22 @@ func GetStats(c *fiber.Ctx) error {
 		}))
 }
 
-func GetMostWatchedByJob(c *fiber.Ctx) error {
+func (h *StatsHandler) GetMostWatchedByJob(c *fiber.Ctx) error {
 	var persons []types.ListItem
 	var totals []types.ListItem
 
 	job := c.Params("job")
 	year := c.Query("year", "All")
-	userId := c.Locals("UserId")
+	userId := c.Locals("UserId").(string)
 	years := availableYears()
 	years = append([]string{"All"}, years...)
 
-	err := db.Client.Select(&persons, mostWatchedByJobQuery, job, userId, year)
-
+	persons, err := h.repo.GetMostWatchedByJob(job, userId, year)
 	if err != nil {
 		return err
 	}
 
-	err = db.Client.Select(&totals, totalWatchedByJobAndYearQuery, userId, job, year)
-
+	totals, err = h.repo.GetTotalWatchedByJobAndYear(userId, job, year)
 	if err != nil {
 		return err
 	}
@@ -645,14 +284,14 @@ func GetMostWatchedByJob(c *fiber.Ctx) error {
 		}))
 }
 
-func GetHighestRankedPersonByJob(c *fiber.Ctx) error {
+func (h *StatsHandler) GetHighestRankedPersonByJob(c *fiber.Ctx) error {
 	var persons []types.HighestRated
 
 	job := c.Query("job", "cast")
-	userId := c.Locals("UserId")
+	userId := c.Locals("UserId").(string)
 	title := "Highest ranked " + strings.ToLower(job)
 
-	err := db.Client.Select(&persons, highestRankedByJobQuery, userId, strings.ToLower(job))
+	persons, err := h.repo.GetHighestRankedPersonByJob(userId, strings.ToLower(job))
 
 	if err != nil {
 		return err
@@ -669,26 +308,14 @@ func GetHighestRankedPersonByJob(c *fiber.Ctx) error {
 		}))
 }
 
-func getGraphByYearWithQuery(query string, userId string, year string) ([]graph.Bar, error) {
-	var data []graph.GraphData
-
-	err := db.Client.Select(&data, query, userId, year)
+func (h *StatsHandler) getGraphByYearWithQuery(userID string, year string, queryFunc func(string, string) ([]graph.GraphData, error)) ([]graph.Bar, error) {
+	data, err := queryFunc(userID, year)
 
 	if err != nil {
 		return nil, err
 	}
 
 	return constructGraphFromData(data)
-}
-
-func clamp(val, min, max int) int {
-	if val < min {
-		return min
-	}
-	if val > max {
-		return max
-	}
-	return val
 }
 
 func constructGraphFromData(data []graph.GraphData) ([]graph.Bar, error) {
@@ -752,7 +379,7 @@ func constructGraphFromData(data []graph.GraphData) ([]graph.Bar, error) {
 	return graphData, nil
 }
 
-func GetRatingsByYear(c *fiber.Ctx) error {
+func (h *StatsHandler) GetRatingsByYear(c *fiber.Ctx) error {
 	userId := c.Locals("UserId").(string)
 	year := c.Query("year")
 	currentYear := time.Now().Format("2006")
@@ -762,7 +389,7 @@ func GetRatingsByYear(c *fiber.Ctx) error {
 		return err
 	}
 
-	yearRatings, err := getGraphByYearWithQuery(ratingsThisYearQuery, userId, yearTime)
+	yearRatings, err := h.getGraphByYearWithQuery(userId, yearTime, h.repo.GetRatingsThisYear)
 
 	if err != nil {
 		return err
@@ -788,44 +415,11 @@ func GetRatingsByYear(c *fiber.Ctx) error {
 		}))
 }
 
-func GetRatingsForYear(c *fiber.Ctx) error {
+func (h *StatsHandler) GetRatingsForYear(c *fiber.Ctx) error {
 	userId := c.Locals("UserId").(string)
 	year := c.Params("year")
-	var movies types.Movies
 
-	err := db.Client.Select(&movies, `
-WITH RankedRatings AS (
-    SELECT
-        r.movie_id,
-        r.user_id,
-        r.rating,
-        r.created_at,
-        -- Assigns a rank to each rating for a specific movie and user,
-        -- ordering by the rating date in descending order (latest first).
-        ROW_NUMBER() OVER (PARTITION BY r.movie_id,
-            r.user_id ORDER BY r.created_at DESC) AS rn
-    FROM
-        rating r
-)
-SELECT DISTINCT
-    m.id,
-    m.title,
-    rr.rating,
-    s.date AS "watched_at"
-FROM
-    seen s
-    INNER JOIN movie m ON m.id = s.movie_id
-    INNER JOIN RankedRatings rr ON rr.movie_id = s.movie_id
-        AND rr.user_id = s.user_id
-WHERE
-    EXTRACT('YEAR' FROM s.date) = $1
-    AND s.user_id = $2
-    -- Only keep the latest rating
-    AND rr.rn = 1
-ORDER BY
-    rr.rating DESC,
-    s.date ASC
-		`, year, userId)
+	movies, err := h.repo.GetRatingsForYear(year, userId)
 
 	if err != nil {
 		return err
@@ -846,7 +440,7 @@ ORDER BY
 	}))
 }
 
-func GetThisYearByMonth(c *fiber.Ctx) error {
+func (h *StatsHandler) GetThisYearByMonth(c *fiber.Ctx) error {
 	userId := c.Locals("UserId").(string)
 	year := c.Query("year")
 	currentYear := time.Now().Format("2006")
@@ -856,7 +450,7 @@ func GetThisYearByMonth(c *fiber.Ctx) error {
 		return err
 	}
 
-	yearRatings, err := getGraphByYearWithQuery(watchedThisYearByMonth, userId, yearTime)
+	yearRatings, err := h.getGraphByYearWithQuery(userId, yearTime, h.repo.GetWatchedThisYearByMonth)
 
 	if err != nil {
 		return err
@@ -880,7 +474,7 @@ func GetThisYearByMonth(c *fiber.Ctx) error {
 		}))
 }
 
-func GetThisYearByWeekday(c *fiber.Ctx) error {
+func (h *StatsHandler) GetThisYearByWeekday(c *fiber.Ctx) error {
 	userId := c.Locals("UserId").(string)
 	year := c.Query("year")
 	yearTime, err := pgSelectedYear(year)
@@ -889,7 +483,7 @@ func GetThisYearByWeekday(c *fiber.Ctx) error {
 		return err
 	}
 
-	yearRatings, err := getGraphByYearWithQuery(watchedByWeekdayQuery, userId, yearTime)
+	yearRatings, err := h.getGraphByYearWithQuery(userId, yearTime, h.repo.GetWatchedByWeekday)
 
 	if err != nil {
 		return err
@@ -928,8 +522,6 @@ func pgSelectedYear(year string) (string, error) {
 }
 
 func availableYears() []string {
-	// First year with "real" data
-	// 2011 is used as a catch all for anything before I had the database
 	endYear := 2012
 	currentYear := time.Now().Year()
 
@@ -943,15 +535,13 @@ func availableYears() []string {
 	return years
 }
 
-func GetBestOfTheYear(c *fiber.Ctx) error {
-	var movies []types.ListItem
-
-	userId := c.Locals("UserId")
+func (h *StatsHandler) GetBestOfTheYear(c *fiber.Ctx) error {
+	userId := c.Locals("UserId").(string)
 	currentYear := time.Now().Format("2006")
 	year := c.Query("year", currentYear)
 	years := availableYears()
 
-	err := db.Client.Select(&movies, bestOfYearQuery, userId, year)
+	movies, err := h.repo.GetBestOfTheYear(userId, year)
 
 	if err != nil {
 		return err
@@ -967,44 +557,11 @@ func GetBestOfTheYear(c *fiber.Ctx) error {
 	}))
 }
 
-func GetWilhelmScream(c *fiber.Ctx) error {
+func (h *StatsHandler) GetWilhelmScream(c *fiber.Ctx) error {
 	page := c.QueryInt("page", 1)
-	userId := c.Locals("UserId")
-	var movies types.Movies
+	userId := c.Locals("UserId").(string)
 
-	err := db.Client.Select(&movies, `
-WITH seen_once AS (
-    SELECT DISTINCT
-        movie_id
-    FROM
-        seen s
-    WHERE
-        user_id = $1
-)
-SELECT DISTINCT
-    (m.id),
-    m.title,
-    m.release_date,
-    (s.id IS NOT NULL) AS "seen"
-FROM
-    seen_once so
-    INNER JOIN movie m ON m.id = so.movie_id
-    LEFT JOIN ( SELECT DISTINCT ON (movie_id)
-            movie_id,
-            id
-        FROM
-            public.seen
-        WHERE
-            user_id = $1
-        ORDER BY
-            movie_id,
-            id) AS s ON m.id = s.movie_id
-WHERE
-    m.wilhelm = TRUE
-ORDER BY
-    m.release_date DESC OFFSET $2
-LIMIT 50
-		`, userId, (page-1)*50)
+	movies, err := h.repo.GetWilhelmMovies(userId, (page-1)*50)
 
 	if err != nil {
 		return err
@@ -1018,25 +575,8 @@ LIMIT 50
 	}))
 }
 
-func GetSeenWith(c *fiber.Ctx) error {
-	var items []types.ListItem
-
-	// This includes duplicate watches on a movie with the same person
-	err := db.Client.Select(&items, `
-SELECT
-    u.name,
-    COUNT(*)
-FROM
-    seen s
-    RIGHT JOIN seen_with sw ON sw.seen_id = s.id
-    INNER JOIN "user" u ON u.id = sw.other_user_id
-WHERE
-    user_id = 1
-GROUP BY
-    1
-ORDER BY
-    2 DESC
-`)
+func (h *StatsHandler) GetSeenWith(c *fiber.Ctx) error {
+	items, err := h.repo.GetSeenWith()
 
 	if err != nil {
 		return err
@@ -1048,13 +588,11 @@ ORDER BY
 	}))
 }
 
-func GetMoviesByYearStat(c *fiber.Ctx) error {
-	var moviesByYear []graph.GraphData
-
+func (h *StatsHandler) GetMoviesByYearStat(c *fiber.Ctx) error {
 	userId := c.Locals("UserId").(string)
 	year := c.Query("year", "All")
 
-	err := db.Client.Select(&moviesByYear, moviesByYearQuery, userId, year)
+	moviesByYear, err := h.repo.GetMoviesByYear(userId, year)
 
 	if err != nil {
 		return err

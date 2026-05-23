@@ -10,22 +10,23 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func Settings(c *fiber.Ctx) error {
+type SettingsHandler struct {
+	repo db.SettingsQuerier
+}
+
+func NewSettingsHandler(repo db.SettingsQuerier) *SettingsHandler {
+	return &SettingsHandler{repo}
+}
+
+func (h *SettingsHandler) Settings(c *fiber.Ctx) error {
 	isAuthenticated := utils.IsAuthenticated(c)
 
 	if !isAuthenticated {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	userId := c.Locals("UserId")
-	var storedProviders string
-
-	err := db.Client.Get(&storedProviders, `SELECT
-    watch_providers
-FROM
-    "user"
-WHERE
-    id = $1`, userId)
+	userId := c.Locals("UserId").(string)
+	storedProviders, err := h.repo.GetWatchProviders(userId)
 
 	if err != nil {
 		return err
@@ -36,14 +37,14 @@ WHERE
 	}))
 }
 
-func SettingsWatchProviders(c *fiber.Ctx) error {
+func (h *SettingsHandler) SettingsWatchProviders(c *fiber.Ctx) error {
 	isAuthenticated := utils.IsAuthenticated(c)
 
 	if !isAuthenticated {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	userId := c.Locals("UserId")
+	userId := c.Locals("UserId").(string)
 	formData := new(struct {
 		Providers []string `form:"providers"`
 	})
@@ -54,12 +55,7 @@ func SettingsWatchProviders(c *fiber.Ctx) error {
 
 	selectedProviders := strings.Join(formData.Providers, ",")
 
-	_, err := db.Client.Exec(`UPDATE
-    "user"
-SET
-    watch_providers = $1
-WHERE
-    id = $2`, selectedProviders, userId)
+	err := h.repo.UpdateWatchProviders(userId, selectedProviders)
 
 	if err != nil {
 		return err
