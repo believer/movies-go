@@ -333,6 +333,8 @@ func (h *MovieHandler) PostMovieNew(c *fiber.Ctx) error {
 		return err
 	}
 
+	InvalidateStatsCache(userId)
+
 	c.Set("HX-Redirect", fmt.Sprintf("/movie/%d", movieId))
 
 	return c.SendStatus(fiber.StatusOK)
@@ -380,6 +382,8 @@ func (h *MovieHandler) DeleteSeenMovie(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
+
+	InvalidateStatsCache(userID)
 
 	watchedAt, err := h.repo.SeenByUser(strconv.Itoa(movieId), userID)
 
@@ -465,6 +469,10 @@ func (h *MovieHandler) UpdateSeenMovie(c *fiber.Ctx) error {
 		return err
 	}
 
+	if userID, ok := c.Locals("UserId").(string); ok {
+		InvalidateStatsCache(userID)
+	}
+
 	c.Set("HX-Redirect", fmt.Sprintf("/movie/%d", movieId))
 
 	return c.SendStatus(fiber.StatusOK)
@@ -484,6 +492,8 @@ func (h *MovieHandler) CreateSeenMovie(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
+
+	InvalidateStatsCache(userID)
 
 	c.Set("HX-Redirect", fmt.Sprintf("/movie/%s?back=true", movieId))
 
@@ -542,6 +552,8 @@ func (h *MovieHandler) DeleteRating(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
+
+	InvalidateStatsCache(userId)
 
 	return utils.Render(c, rating.AddRating(rating.AddRatingProps{
 		MovieId: movieId,
@@ -627,6 +639,8 @@ func (h *MovieHandler) PostRating(c *fiber.Ctx) error {
 		return err
 	}
 
+	InvalidateStatsCache(userId)
+
 	movieRating := int64(ratingVal)
 
 	return utils.Render(c, rating.GetRating(rating.Props{
@@ -662,6 +676,8 @@ func (h *MovieHandler) UpdateRating(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
+
+	InvalidateStatsCache(userId)
 
 	movieRating, _ := strconv.ParseInt(data.Rating, 10, 0)
 
@@ -768,6 +784,8 @@ func (h *MovieHandler) UpdateMovieByID(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
+
+	InvalidateStatsCache(userId)
 
 	return c.SendStatus(fiber.StatusOK)
 }

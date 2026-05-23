@@ -29,6 +29,17 @@ func NewStatsHandler(repo db.StatsQuerier) *StatsHandler {
 
 // Handler for /stats.
 func (h *StatsHandler) GetStats(c *fiber.Ctx) error {
+	userId := c.Locals("UserId").(string)
+
+	// Check cache
+	statsCacheMutex.RLock()
+	cached, found := statsCache[userId]
+	statsCacheMutex.RUnlock()
+
+	if found && time.Since(cached.createdAt) < cacheTTL {
+		return utils.Render(c, views.Stats(cached.props))
+	}
+
 	var reviews int
 	var stats types.Stats
 	var cast []types.ListItem
@@ -48,7 +59,6 @@ func (h *StatsHandler) GetStats(c *fiber.Ctx) error {
 
 	var errReviews, errStats, errCast, errMovies, errMoviesByYear, errRatings, errSeenThisYearByMonth, errShortestAndLongest, errTotals, errWatchedByYear, errWatchedByWeekday, errWilhelms, errYearRatings, errAwardNominations, errAwardWins, errMostAwardedMovies error
 
-	userId := c.Locals("UserId").(string)
 	now := time.Now()
 	year := now.Format("2006")
 	currentYear := now.Format("2006-01-02 15:04:05")
@@ -223,29 +233,38 @@ func (h *StatsHandler) GetStats(c *fiber.Ctx) error {
 		}
 	}
 
-	return utils.Render(c, views.Stats(
-		views.StatsProps{
-			AwardNominations:        awardNominations,
-			AwardWins:               awardWins,
-			BestYear:                bestYear,
-			FormattedTotalRuntime:   utils.FormatRuntime(stats.TotalRuntime),
-			MostAwardedMovies:       mostAwardedMovies,
-			MostWatchedCast:         cast,
-			MostWatchedMovies:       movies,
-			MoviesByYear:            moviesByYear,
-			Ratings:                 ratingsBars,
-			Reviews:                 reviews,
-			SeenThisYear:            seenThisYearByMonthBars,
-			Stats:                   stats,
-			TotalCast:               utils.Formatter().Sprintf("%d", totalCast),
-			WatchedByYear:           watchedByYearBar,
-			WatchedByWeekday:        watchedByWeekdayBar,
-			Year:                    year,
-			YearRatings:             yearBars,
-			Years:                   availableYears(),
-			ShortestAndLongestMovie: shortestAndLongest,
-			WilhelmScreams:          wilhelms[0],
-		}))
+	props := views.StatsProps{
+		AwardNominations:        awardNominations,
+		AwardWins:               awardWins,
+		BestYear:                bestYear,
+		FormattedTotalRuntime:   utils.FormatRuntime(stats.TotalRuntime),
+		MostAwardedMovies:       mostAwardedMovies,
+		MostWatchedCast:         cast,
+		MostWatchedMovies:       movies,
+		MoviesByYear:            moviesByYear,
+		Ratings:                 ratingsBars,
+		Reviews:                 reviews,
+		SeenThisYear:            seenThisYearByMonthBars,
+		Stats:                   stats,
+		TotalCast:               utils.Formatter().Sprintf("%d", totalCast),
+		WatchedByYear:           watchedByYearBar,
+		WatchedByWeekday:        watchedByWeekdayBar,
+		Year:                    year,
+		YearRatings:             yearBars,
+		Years:                   availableYears(),
+		ShortestAndLongestMovie: shortestAndLongest,
+		WilhelmScreams:          wilhelms[0],
+	}
+
+	// Cache the result
+	statsCacheMutex.Lock()
+	statsCache[userId] = cachedStats{
+		props:     props,
+		createdAt: time.Now(),
+	}
+	statsCacheMutex.Unlock()
+
+	return utils.Render(c, views.Stats(props))
 }
 
 func (h *StatsHandler) GetMostWatchedByJob(c *fiber.Ctx) error {

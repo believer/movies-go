@@ -54,6 +54,8 @@ func (h *ReviewHandler) InsertMovieReview(c *fiber.Ctx) error {
 		return err
 	}
 
+	InvalidateStatsCache(userID)
+
 	return utils.Render(c, review.Review(reviewData, movieID))
 }
 
@@ -97,6 +99,10 @@ func (h *ReviewHandler) UpdateMovieReview(c *fiber.Ctx) error {
 		return err
 	}
 
+	if userID, ok := c.Locals("UserId").(string); ok {
+		InvalidateStatsCache(userID)
+	}
+
 	return utils.Render(c, review.ReviewContent(reviewData, movieID))
 }
 
@@ -112,6 +118,10 @@ func (h *ReviewHandler) DeleteMovieReview(c *fiber.Ctx) error {
 	err := h.repo.DeleteReview(id)
 	if err != nil {
 		return err
+	}
+
+	if userID, ok := c.Locals("UserId").(string); ok {
+		InvalidateStatsCache(userID)
 	}
 
 	return utils.Render(c, review.Review(types.Review{}, movieID))

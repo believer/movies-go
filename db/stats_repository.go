@@ -64,27 +64,37 @@ WHERE
 func (r *StatsRepository) GetMostWatchedByJob(job string, userID string, year string) ([]types.ListItem, error) {
 	var items []types.ListItem
 	err := r.db.Select(&items, `
+WITH aggregated_cast AS (
+    SELECT
+        mp.person_id,
+        COUNT(*) AS count
+    FROM ( SELECT DISTINCT ON (movie_id)
+            movie_id
+        FROM
+            seen
+        WHERE
+            user_id = $2
+            AND ($3 = 'All'
+                OR EXTRACT(YEAR FROM date) = $3::int)) AS s
+        INNER JOIN movie_person AS mp ON mp.movie_id = s.movie_id
+    WHERE
+        mp.job = $1
+    GROUP BY
+        mp.person_id
+    ORDER BY
+        count DESC
+    LIMIT 50
+)
 SELECT
-    COUNT(*) AS count,
+    ac.count,
     p.name,
     p.id
-FROM ( SELECT DISTINCT ON (movie_id)
-        movie_id
-    FROM
-        seen
-    WHERE
-        user_id = $2
-        AND ($3 = 'All'
-            OR EXTRACT(YEAR FROM date) = $3::int)) AS s
-    INNER JOIN movie_person AS mp ON mp.movie_id = s.movie_id
-    INNER JOIN person AS p ON p.id = mp.person_id
-WHERE
-    mp.job = $1
-GROUP BY
-    p.id
+FROM
+    aggregated_cast ac
+    INNER JOIN person p ON p.id = ac.person_id
 ORDER BY
-    count DESC,
-    name ASC
+    ac.count DESC,
+    p.name ASC
 LIMIT 10
 	`, job, userID, year)
 	return items, err
@@ -330,27 +340,25 @@ ORDER BY
 func (r *StatsRepository) GetMostAwardNominations(userID string) (types.AwardPersonStat, error) {
 	var stat types.AwardPersonStat
 	err := r.db.Get(&stat, `
-WITH all_persons AS (
-    SELECT DISTINCT ON (mp.person_id)
-        mp.person_id
-    FROM
-        seen s
-        INNER JOIN movie_person mp ON mp.movie_id = s.movie_id
-    WHERE
-        s.user_id = $1
+WITH seen_movies AS (
+    SELECT movie_id FROM seen WHERE user_id = $1
 )
 SELECT
     count(*) AS COUNT,
     a.person,
     a.person_id
 FROM
-    all_persons ap
-    INNER JOIN award a ON ap.person_id = a.person_id
+    award a
+WHERE
+    EXISTS (
+        SELECT 1
+        FROM movie_person mp
+        WHERE mp.person_id = a.person_id
+          AND mp.movie_id IN (SELECT movie_id FROM seen_movies)
+    )
 GROUP BY
     a.person_id,
     person
-HAVING
-    count(*) > 0
 ORDER BY
     COUNT DESC
 LIMIT 1
@@ -361,27 +369,26 @@ LIMIT 1
 func (r *StatsRepository) GetMostAwardWins(userID string) (types.AwardPersonStat, error) {
 	var stat types.AwardPersonStat
 	err := r.db.Get(&stat, `
-WITH all_persons AS (
-    SELECT DISTINCT ON (mp.person_id)
-        mp.person_id
-    FROM
-        seen s
-        INNER JOIN movie_person mp ON mp.movie_id = s.movie_id
-    WHERE
-        s.user_id = $1
+WITH seen_movies AS (
+    SELECT movie_id FROM seen WHERE user_id = $1
 )
 SELECT
-    count(*) FILTER (WHERE winner = TRUE) AS COUNT,
+    count(*) AS COUNT,
     a.person,
     a.person_id
 FROM
-    all_persons ap
-    INNER JOIN award a ON ap.person_id = a.person_id
+    award a
+WHERE
+    winner = TRUE
+    AND EXISTS (
+        SELECT 1
+        FROM movie_person mp
+        WHERE mp.person_id = a.person_id
+          AND mp.movie_id IN (SELECT movie_id FROM seen_movies)
+    )
 GROUP BY
     a.person_id,
     person
-HAVING
-    count(*) FILTER (WHERE winner = TRUE) > 0
 ORDER BY
     COUNT DESC
 LIMIT 1
