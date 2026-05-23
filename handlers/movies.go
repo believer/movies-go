@@ -243,7 +243,10 @@ func (h *MovieHandler) PostMovieNew(c *fiber.Ctx) error {
 		watchedAt = watchedAt.Add(time.Duration(now.Hour()))
 	}
 
-	tx := db.Client.MustBegin()
+	tx, err := h.repo.Begin()
+	if err != nil {
+		return err
+	}
 	defer tx.Rollback()
 
 	// Add review if any
@@ -361,7 +364,10 @@ func (h *MovieHandler) DeleteSeenMovie(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	tx := db.Client.MustBegin()
+	tx, err := h.repo.Begin()
+	if err != nil {
+		return err
+	}
 	defer tx.Rollback()
 
 	err = h.repo.DeleteSeenMovie(tx, seenId)
@@ -520,7 +526,10 @@ func (h *MovieHandler) DeleteRating(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	tx := db.Client.MustBegin()
+	tx, err := h.repo.Begin()
+	if err != nil {
+		return err
+	}
 	defer tx.Rollback()
 
 	err = h.repo.DeleteRating(tx, movieId, userId)
@@ -601,7 +610,10 @@ func (h *MovieHandler) PostRating(c *fiber.Ctx) error {
 		return err
 	}
 
-	tx := db.Client.MustBegin()
+	tx, err := h.repo.Begin()
+	if err != nil {
+		return err
+	}
 	defer tx.Rollback()
 
 	err = h.repo.AddRating(tx, userId, movieId, ratingVal)
@@ -723,7 +735,16 @@ func (h *MovieHandler) UpdateMovieByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	tx := db.Client.MustBegin()
+	movieCast, err := tmdbApi.Credits()
+
+	if err != nil {
+		return err
+	}
+
+	tx, err := h.repo.Begin()
+	if err != nil {
+		return err
+	}
 	defer tx.Rollback()
 
 	err = h.repo.UpdateMovie(tx, id, movieData.Title, movieData.Runtime, movieData.ReleaseDate, movieData.ImdbId, movieData.Overview, movieData.Poster, movieData.Tagline, movieData.TmdbId)
@@ -737,7 +758,7 @@ func (h *MovieHandler) UpdateMovieByID(c *fiber.Ctx) error {
 	api.AddGenres(tx, id, movieData)
 	api.AddCountries(tx, id, movieData)
 	api.AddProductionCompanies(tx, id, movieData)
-	api.AddCast(tx, movieData.ImdbId, id)
+	api.AddCast(tx, movieCast, id)
 
 	// Add awards
 	awards.AddOscars(tx, movieData.ImdbId)

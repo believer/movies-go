@@ -111,6 +111,61 @@ func (_c *MockMovieQuerier_AddRating_Call) RunAndReturn(run func(tx *sqlx.Tx, us
 	return _c
 }
 
+// Begin provides a mock function for the type MockMovieQuerier
+func (_mock *MockMovieQuerier) Begin() (*sqlx.Tx, error) {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for Begin")
+	}
+
+	var r0 *sqlx.Tx
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func() (*sqlx.Tx, error)); ok {
+		return returnFunc()
+	}
+	if returnFunc, ok := ret.Get(0).(func() *sqlx.Tx); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*sqlx.Tx)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func() error); ok {
+		r1 = returnFunc()
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockMovieQuerier_Begin_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Begin'
+type MockMovieQuerier_Begin_Call struct {
+	*mock.Call
+}
+
+// Begin is a helper method to define mock.On call
+func (_e *MockMovieQuerier_Expecter) Begin() *MockMovieQuerier_Begin_Call {
+	return &MockMovieQuerier_Begin_Call{Call: _e.mock.On("Begin")}
+}
+
+func (_c *MockMovieQuerier_Begin_Call) Run(run func()) *MockMovieQuerier_Begin_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *MockMovieQuerier_Begin_Call) Return(tx *sqlx.Tx, err error) *MockMovieQuerier_Begin_Call {
+	_c.Call.Return(tx, err)
+	return _c
+}
+
+func (_c *MockMovieQuerier_Begin_Call) RunAndReturn(run func() (*sqlx.Tx, error)) *MockMovieQuerier_Begin_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // Cast provides a mock function for the type MockMovieQuerier
 func (_mock *MockMovieQuerier) Cast(id string) ([]views.CastDTO, bool, error) {
 	ret := _mock.Called(id)

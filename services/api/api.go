@@ -34,6 +34,12 @@ func (a *Api) AddMovie(imdbId string, hasWilhelmScream bool) (types.MovieDetails
 		return types.MovieDetailsResponse{}, 0, err
 	}
 
+	movieCast, err := tmdbApi.Credits()
+
+	if err != nil {
+		return types.MovieDetailsResponse{}, 0, err
+	}
+
 	tx := db.Client.MustBegin()
 
 	slog.Info("Inserting movie")
@@ -73,7 +79,7 @@ ON CONFLICT (imdb_id)
 	}
 
 	slog.Info("Inserting cast and crew")
-	a.AddCast(tx, imdbId, id)
+	a.AddCast(tx, movieCast, id)
 	slog.Info("Inserting language")
 	a.AddLanguages(tx, id, movie)
 	slog.Info("Inserting genres")
@@ -110,15 +116,8 @@ type NewPerson struct {
 	MovieId        int            `db:"movie_id"`
 }
 
-func (a *Api) AddCast(tx *sqlx.Tx, imdbId string, movieId int) {
-	tmdbApi := tmdb.New(imdbId)
-	movieCast, err := tmdbApi.Credits()
-
-	if err != nil {
-		slog.Error("Could not get TMDb credits")
-		return
-	}
-
+func (a *Api) AddCast(tx *sqlx.Tx, movieCast types.MovieCreditsResponse, movieId int) {
+	var err error
 	var castStructs []NewPerson
 	var crewStructs []NewPerson
 

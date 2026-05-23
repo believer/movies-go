@@ -8,7 +8,12 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"time"
 )
+
+var httpClient = &http.Client{
+	Timeout: 10 * time.Second,
+}
 
 type Tmdb struct {
 	ID string
@@ -48,9 +53,7 @@ func (t *Tmdb) WatchProviders() (types.MovieWatchProvidersResponse, error) {
 	)
 }
 
-func fetchJSON[T any](path []string, additionalParams map[string]string) (T, error) {
-	var result T
-
+func fetchJSON[T any](path []string, additionalParams map[string]string) (result T, err error) {
 	// Construct URL
 	tmdbKey := os.Getenv("TMDB_API_KEY")
 	baseUrl := "https://api.themoviedb.org/3"
@@ -72,7 +75,7 @@ func fetchJSON[T any](path []string, additionalParams map[string]string) (T, err
 	u = u + "?" + params.Encode()
 
 	// Fetch data
-	resp, err := http.Get(u)
+	resp, err := httpClient.Get(u)
 
 	if err != nil {
 		return result, err
@@ -81,7 +84,7 @@ func fetchJSON[T any](path []string, additionalParams map[string]string) (T, err
 	defer func() {
 		cerr := resp.Body.Close()
 
-		if err != nil {
+		if err == nil {
 			err = cerr
 		}
 	}()

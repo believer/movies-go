@@ -10,14 +10,15 @@ import (
 	"strings"
 )
 
-func setVariables(filename string) error {
+func setVariables(filename string) (err error) {
 	_, file, _, ok := runtime.Caller(1)
 
 	if !ok {
 		return fmt.Errorf("no calling file")
 	}
 
-	f, err := os.Open(filepath.Join(filepath.Dir(file), "..", filename))
+	var f *os.File
+	f, err = os.Open(filepath.Join(filepath.Dir(file), "..", filename))
 
 	if err != nil {
 		return err
@@ -26,7 +27,7 @@ func setVariables(filename string) error {
 	defer func() {
 		cerr := f.Close()
 
-		if err != nil {
+		if err == nil {
 			err = cerr
 		}
 	}()

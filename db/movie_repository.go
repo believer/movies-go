@@ -52,6 +52,7 @@ type MovieQuerier interface {
 	UpdateMovie(tx *sqlx.Tx, id int, title string, runtime int, releaseDate string, imdbID string, overview string, poster string, tagline string, tmdbID int) error
 	UpdateNowPlaying(imdbID string, position float64, userID string) error
 	MovieExists(imdbID string) (bool, error)
+	Begin() (*sqlx.Tx, error)
 }
 
 type MovieRepository struct {
@@ -60,6 +61,10 @@ type MovieRepository struct {
 
 func NewMovieRepository(db *sqlx.DB) *MovieRepository {
 	return &MovieRepository{db}
+}
+
+func (r *MovieRepository) Begin() (*sqlx.Tx, error) {
+	return r.db.Beginx()
 }
 
 type CastDB struct {

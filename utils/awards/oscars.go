@@ -4,6 +4,7 @@ import (
 	"believer/movies/types"
 	"encoding/csv"
 	"fmt"
+	"io"
 	"log/slog"
 	"os"
 	"strings"
@@ -22,16 +23,10 @@ func AddOscars(tx *sqlx.Tx, id string) {
 		panic(err)
 	}
 
-	defer func() {
-		cerr := f.Close()
-
-		if err != nil {
-			err = cerr
-		}
-	}()
+	defer f.Close()
 
 	csvReader := csv.NewReader(f)
-	records, err := csvReader.ReadAll()
+	headers, err := csvReader.Read()
 
 	if err != nil {
 		panic(err)
@@ -39,11 +34,19 @@ func AddOscars(tx *sqlx.Tx, id string) {
 
 	// Gather indexes to headers for easier mapping
 	fields := make(map[string]int)
-	for i, name := range records[0] {
+	for i, name := range headers {
 		fields[name] = i
 	}
 
-	for _, r := range records {
+	for {
+		r, err := csvReader.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			panic(err)
+		}
+
 		year := r[fields["Year"]]
 		category := r[fields["Category"]]
 		imdbId := r[fields["FilmId"]]
@@ -65,7 +68,7 @@ func AddOscars(tx *sqlx.Tx, id string) {
 		// We can only add where movie exists in database, otherwise
 		// we get a violation on the foreign key to the movie table
 		var movie types.Movie
-		err := tx.Get(&movie, `SELECT
+		err = tx.Get(&movie, `SELECT
     id
 FROM
     movie
