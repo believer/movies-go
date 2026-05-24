@@ -19,14 +19,15 @@ func NewAwardsHandler(repo db.AwardsQuerier) *AwardsHandler {
 }
 
 func (h *AwardsHandler) GetMoviesByNumberOfAwards(c *fiber.Ctx) error {
-	userID := c.Locals("UserId").(string)
-	numberOfAwards, err := c.ParamsInt("awards")
+	req := utils.NewRequest(c)
+	userID := req.UserID()
+	numberOfAwards, err := req.ParamsInt("awards")
 	if err != nil {
 		return err
 	}
 
-	includeNominations := c.QueryBool("nominations")
-	awardType := c.Query("type")
+	includeNominations := req.QueryBool("nominations")
+	awardType := req.Query("type")
 
 	cfg, err := awardConfigFromQuery(c)
 
@@ -57,9 +58,10 @@ func (h *AwardsHandler) GetMoviesByNumberOfAwards(c *fiber.Ctx) error {
 }
 
 func (h *AwardsHandler) GetAwardsByYear(c *fiber.Ctx) error {
-	year := c.Params("year")
-	sort := c.Query("sort", "Movie")
-	awardType := c.Query("type")
+	req := utils.NewRequest(c)
+	year := req.Params("year")
+	sort := req.QueryDefault("sort", "Movie")
+	awardType := req.Query("type")
 
 	_, err := awardConfigFromQuery(c)
 
@@ -108,7 +110,8 @@ func (h *AwardsHandler) GetAwardsByYear(c *fiber.Ctx) error {
 }
 
 func awardConfigFromQuery(c *fiber.Ctx) (types.AwardConfig, error) {
-	awardType := c.Query("type")
+	req := utils.NewRequest(c)
+	awardType := req.Query("type")
 
 	if awardType == "" {
 		err := fiber.ErrBadRequest

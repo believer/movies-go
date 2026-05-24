@@ -18,8 +18,9 @@ func NewPersonHandler(repo db.PersonQuerier) *PersonHandler {
 }
 
 func (h *PersonHandler) GetPersonByID(c *fiber.Ctx) error {
-	q := db.MakeQueries(c)
-	person, err := h.repo.GetPersonByID(q.Id, q.UserID)
+	req := utils.NewRequest(c)
+	id := req.IDString()
+	person, err := h.repo.GetPersonByID(id, req.UserID())
 
 	if err != nil {
 		// TODO: Display 404 page
@@ -30,13 +31,13 @@ func (h *PersonHandler) GetPersonByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	academyAwards, academyWins, academyOrder, err := h.repo.GetGroupedAwards(q.Id, db.AcademyAward)
+	academyAwards, academyWins, academyOrder, err := h.repo.GetGroupedAwards(id, db.AcademyAward)
 
 	if err != nil {
 		return err
 	}
 
-	baftas, baftaWins, baftaOrder, err := h.repo.GetGroupedAwards(q.Id, db.Bafta)
+	baftas, baftaWins, baftaOrder, err := h.repo.GetGroupedAwards(id, db.Bafta)
 
 	if err != nil {
 		return err

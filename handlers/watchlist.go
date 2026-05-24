@@ -17,20 +17,20 @@ func NewWatchlistHandler(repo db.WatchlistQuerier) *WatchlistHandler {
 }
 
 func (h *WatchlistHandler) GetWatchlist(c *fiber.Ctx) error {
-	q := db.MakeQueries(c)
-	movies, err := h.repo.GetReleasedMovies(q.UserID, "Date added")
+	req := utils.NewRequest(c)
+	movies, err := h.repo.GetReleasedMovies(req.UserID(), "Date added")
 
 	if err != nil {
 		return err
 	}
 
-	unreleasedMovies, err := h.repo.GetUnreleasedMovies(q.UserID, "Release date")
+	unreleasedMovies, err := h.repo.GetUnreleasedMovies(req.UserID(), "Release date")
 
 	if err != nil {
 		return err
 	}
 
-	moviesWithoutReleaseDate, err := h.repo.GetTBDMovies(q.UserID)
+	moviesWithoutReleaseDate, err := h.repo.GetTBDMovies(req.UserID())
 
 	if err != nil {
 		return err
@@ -44,10 +44,10 @@ func (h *WatchlistHandler) GetWatchlist(c *fiber.Ctx) error {
 }
 
 func (h *WatchlistHandler) GetWatchlistMovies(c *fiber.Ctx) error {
-	sortOrder := c.Query("sortOrder", "Date added")
-	q := db.MakeQueries(c)
+	req := utils.NewRequest(c)
+	sortOrder := req.QueryDefault("sortOrder", "Date added")
 
-	movies, err := h.repo.GetReleasedMovies(q.UserID, sortOrder)
+	movies, err := h.repo.GetReleasedMovies(req.UserID(), sortOrder)
 
 	if err != nil {
 		return err
@@ -64,10 +64,10 @@ func (h *WatchlistHandler) GetWatchlistMovies(c *fiber.Ctx) error {
 }
 
 func (h *WatchlistHandler) GetWatchlistUnreleasedMovies(c *fiber.Ctx) error {
-	sortOrder := c.Query("sortOrder", "Release date")
-	q := db.MakeQueries(c)
+	req := utils.NewRequest(c)
+	sortOrder := req.QueryDefault("sortOrder", "Release date")
 
-	movies, err := h.repo.GetUnreleasedMovies(q.UserID, sortOrder)
+	movies, err := h.repo.GetUnreleasedMovies(req.UserID(), sortOrder)
 
 	if err != nil {
 		return err
@@ -84,13 +84,13 @@ func (h *WatchlistHandler) GetWatchlistUnreleasedMovies(c *fiber.Ctx) error {
 }
 
 func (h *WatchlistHandler) DeleteFromWatchlist(c *fiber.Ctx) error {
-	q := db.MakeQueries(c)
+	req := utils.NewRequest(c)
 
-	if !q.IsAuthenticated {
+	if !req.IsAuthenticated() {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	err := h.repo.DeleteFromWatchlist(q.Id, q.UserID)
+	err := h.repo.DeleteFromWatchlist(req.IDString(), req.UserID())
 
 	if err != nil {
 		return err

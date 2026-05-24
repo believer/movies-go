@@ -18,7 +18,8 @@ func NewProductionCompanyHandler(repo db.ProductionCompanyQuerier) *ProductionCo
 }
 
 func (h *ProductionCompanyHandler) ListProductionCompanies(c *fiber.Ctx) error {
-	page := c.QueryInt("page", 1)
+	req := utils.NewRequest(c)
+	page := req.Page()
 	companies, err := h.repo.ListProductionCompanies(page)
 
 	if err != nil {
@@ -34,14 +35,15 @@ func (h *ProductionCompanyHandler) ListProductionCompanies(c *fiber.Ctx) error {
 }
 
 func (h *ProductionCompanyHandler) GetProductionCompany(c *fiber.Ctx) error {
-	q := db.MakeQueries(c)
-	company, err := h.repo.GetProductionCompanyName(q.Id)
+	req := utils.NewRequest(c)
+	id := req.IDString()
+	company, err := h.repo.GetProductionCompanyName(id)
 
 	if err != nil {
 		return err
 	}
 
-	movies, err := h.repo.GetProductionCompanyMovies(q.Id, q.UserID, q.Offset)
+	movies, err := h.repo.GetProductionCompanyMovies(id, req.UserID(), req.Offset())
 
 	if err != nil {
 		return err
@@ -50,14 +52,14 @@ func (h *ProductionCompanyHandler) GetProductionCompany(c *fiber.Ctx) error {
 	return utils.Render(c, views.ListView(views.ListViewProps{
 		EmptyState: "No movies for this production company",
 		Name:       company.Name,
-		NextPage:   fmt.Sprintf("/production-company/%s?page=%d", q.Id, q.Page+1),
+		NextPage:   fmt.Sprintf("/production-company/%s?page=%d", id, req.Page()+1),
 		Movies:     movies,
 	}))
 }
 
 func (h *ProductionCompanyHandler) GetProductionCompanyStats(c *fiber.Ctx) error {
-	q := db.MakeQueries(c)
-	productionCompanies, err := h.repo.GetProductionCompanyStats(q.UserID, q.Year)
+	req := utils.NewRequest(c)
+	productionCompanies, err := h.repo.GetProductionCompanyStats(req.UserID(), req.Year())
 
 	if err != nil {
 		return err
@@ -69,7 +71,7 @@ func (h *ProductionCompanyHandler) GetProductionCompanyStats(c *fiber.Ctx) error
 		Route: "/production-company/stats",
 		Root:  "production-company",
 		Title: "Production companies",
-		Year:  q.Year,
-		Years: q.Years,
+		Year:  req.Year(),
+		Years: req.AvailableYears(),
 	}))
 }

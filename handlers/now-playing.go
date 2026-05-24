@@ -17,8 +17,8 @@ func NewNowPlayingHandler(repo db.NowPlayingQuerier) *NowPlayingHandler {
 }
 
 func (h *NowPlayingHandler) GetNowPlaying(c *fiber.Ctx) error {
-	q := db.MakeQueries(c)
-	nowPlaying, err := h.repo.GetNowPlaying(q.UserID)
+	req := utils.NewRequest(c)
+	nowPlaying, err := h.repo.GetNowPlaying(req.UserID())
 
 	if err != nil {
 		return err

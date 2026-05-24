@@ -18,14 +18,14 @@ func NewRatingsHandler(repo db.RatingsQuerier) *RatingsHandler {
 }
 
 func (h *RatingsHandler) GetMoviesByRating(c *fiber.Ctx) error {
-	q := db.MakeQueries(c)
-	rating, err := c.ParamsInt("rating")
+	req := utils.NewRequest(c)
+	rating, err := req.ParamsInt("rating")
 
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).SendString("Invalid rating")
 	}
 
-	movies, err := h.repo.GetMoviesByRating(q.UserID, rating, q.Offset)
+	movies, err := h.repo.GetMoviesByRating(req.UserID(), rating, req.Offset())
 
 	if err != nil {
 		return fiber.ErrInternalServerError
@@ -34,14 +34,14 @@ func (h *RatingsHandler) GetMoviesByRating(c *fiber.Ctx) error {
 	// When there are no more movies to show, just return 200. Otherwise we
 	// would display the "No movies seen" empty state which should only be
 	// shown at the start.
-	if len(movies) == 0 && q.Page > 1 {
+	if len(movies) == 0 && req.Page() > 1 {
 		return c.SendStatus(fiber.StatusOK)
 	}
 
 	return utils.Render(c, views.ListView(views.ListViewProps{
 		EmptyState: "No movies for this rating",
 		Name:       fmt.Sprintf("Movies rated %d", rating),
-		NextPage:   fmt.Sprintf("/rating/%d?page=%d", rating, q.Page+1),
+		NextPage:   fmt.Sprintf("/rating/%d?page=%d", rating, req.Page()+1),
 		Movies:     movies,
 	}))
 }

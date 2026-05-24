@@ -32,14 +32,15 @@ func (h *GenreHandler) ListGenres(c *fiber.Ctx) error {
 }
 
 func (h *GenreHandler) GetGenre(c *fiber.Ctx) error {
-	q := db.MakeQueries(c)
-	genre, err := h.repo.GetGenreName(q.Id)
+	req := utils.NewRequest(c)
+	id := req.IDString()
+	genre, err := h.repo.GetGenreName(id)
 
 	if err != nil {
 		return err
 	}
 
-	movies, err := h.repo.GetGenreMovies(q.Id, q.UserID, q.Offset)
+	movies, err := h.repo.GetGenreMovies(id, req.UserID(), req.Offset())
 
 	if err != nil {
 		return err
@@ -48,21 +49,21 @@ func (h *GenreHandler) GetGenre(c *fiber.Ctx) error {
 	// When there are no more movies to show, just return 200. Otherwise we
 	// would display the "No movies seen" empty state which should only be
 	// shown at the start.
-	if len(movies) == 0 && q.Page > 1 {
+	if len(movies) == 0 && req.Page() > 1 {
 		return c.SendStatus(fiber.StatusOK)
 	}
 
 	return utils.Render(c, views.ListView(views.ListViewProps{
 		EmptyState: "No movies for this genre",
 		Name:       genre.Name,
-		NextPage:   fmt.Sprintf("/genre/%s?page=%d", q.Id, q.Page+1),
+		NextPage:   fmt.Sprintf("/genre/%s?page=%d", id, req.Page()+1),
 		Movies:     movies,
 	}))
 }
 
 func (h *GenreHandler) GetGenreStats(c *fiber.Ctx) error {
-	q := db.MakeQueries(c)
-	genres, err := h.repo.GetGenreStats(q.UserID, q.Year)
+	req := utils.NewRequest(c)
+	genres, err := h.repo.GetGenreStats(req.UserID(), req.Year())
 
 	if err != nil {
 		return err
@@ -74,7 +75,7 @@ func (h *GenreHandler) GetGenreStats(c *fiber.Ctx) error {
 		Href:  "/genre",
 		Route: "/genre/stats",
 		Root:  "genre",
-		Year:  q.Year,
-		Years: q.Years,
+		Year:  req.Year(),
+		Years: req.AvailableYears(),
 	}))
 }

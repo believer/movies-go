@@ -18,8 +18,9 @@ func NewReviewHandler(repo db.ReviewQuerier) *ReviewHandler {
 }
 
 func (h *ReviewHandler) AddMovieReview(c *fiber.Ctx) error {
-	isAuth := utils.IsAuthenticated(c)
-	movieID := c.Query("movieId")
+	req := utils.NewRequest(c)
+	isAuth := req.IsAuthenticated()
+	movieID := req.Query("movieId")
 
 	if !isAuth {
 		return c.SendStatus(fiber.StatusUnauthorized)
@@ -29,12 +30,10 @@ func (h *ReviewHandler) AddMovieReview(c *fiber.Ctx) error {
 }
 
 func (h *ReviewHandler) InsertMovieReview(c *fiber.Ctx) error {
-	isAuth := utils.IsAuthenticated(c)
-	movieID := c.QueryInt("movieId")
-	userID, ok := c.Locals("UserId").(string)
-	if !ok {
-		userID = ""
-	}
+	req := utils.NewRequest(c)
+	isAuth := req.IsAuthenticated()
+	movieID := req.QueryInt("movieId")
+	userID := req.UserID()
 
 	if !isAuth {
 		return c.SendStatus(fiber.StatusUnauthorized)
@@ -60,14 +59,15 @@ func (h *ReviewHandler) InsertMovieReview(c *fiber.Ctx) error {
 }
 
 func (h *ReviewHandler) EditMovieReview(c *fiber.Ctx) error {
-	isAuth := utils.IsAuthenticated(c)
-	movieID := c.QueryInt("movieId")
+	req := utils.NewRequest(c)
+	isAuth := req.IsAuthenticated()
+	movieID := req.QueryInt("movieId")
 
 	if !isAuth {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	id := c.Params("id")
+	id := req.Params("id")
 	reviewData, err := h.repo.GetReviewByID(id)
 	if err != nil {
 		return err
@@ -77,9 +77,10 @@ func (h *ReviewHandler) EditMovieReview(c *fiber.Ctx) error {
 }
 
 func (h *ReviewHandler) UpdateMovieReview(c *fiber.Ctx) error {
-	movieID := c.QueryInt("movieId")
-	id := c.Params("id")
-	isAuth := utils.IsAuthenticated(c)
+	req := utils.NewRequest(c)
+	movieID := req.QueryInt("movieId")
+	id := req.Params("id")
+	isAuth := req.IsAuthenticated()
 
 	if !isAuth {
 		return c.SendStatus(fiber.StatusUnauthorized)
@@ -99,7 +100,7 @@ func (h *ReviewHandler) UpdateMovieReview(c *fiber.Ctx) error {
 		return err
 	}
 
-	if userID, ok := c.Locals("UserId").(string); ok {
+	if userID := req.UserID(); userID != "" {
 		InvalidateStatsCache(userID)
 	}
 
@@ -107,9 +108,10 @@ func (h *ReviewHandler) UpdateMovieReview(c *fiber.Ctx) error {
 }
 
 func (h *ReviewHandler) DeleteMovieReview(c *fiber.Ctx) error {
-	id := c.Params("id")
-	isAuth := utils.IsAuthenticated(c)
-	movieID := c.QueryInt("movieId")
+	req := utils.NewRequest(c)
+	id := req.Params("id")
+	isAuth := req.IsAuthenticated()
+	movieID := req.QueryInt("movieId")
 
 	if !isAuth {
 		return c.SendStatus(fiber.StatusUnauthorized)
@@ -120,7 +122,7 @@ func (h *ReviewHandler) DeleteMovieReview(c *fiber.Ctx) error {
 		return err
 	}
 
-	if userID, ok := c.Locals("UserId").(string); ok {
+	if userID := req.UserID(); userID != "" {
 		InvalidateStatsCache(userID)
 	}
 

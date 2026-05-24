@@ -32,14 +32,15 @@ func (h *LanguageHandler) ListLanguages(c *fiber.Ctx) error {
 }
 
 func (h *LanguageHandler) GetLanguage(c *fiber.Ctx) error {
-	q := db.MakeQueries(c)
-	language, err := h.repo.GetLanguageName(q.Id)
+	req := utils.NewRequest(c)
+	id := req.IDString()
+	language, err := h.repo.GetLanguageName(id)
 
 	if err != nil {
 		return err
 	}
 
-	movies, err := h.repo.GetLanguageMovies(q.Id, q.UserID, q.Offset)
+	movies, err := h.repo.GetLanguageMovies(id, req.UserID(), req.Offset())
 
 	if err != nil {
 		return err
@@ -48,21 +49,21 @@ func (h *LanguageHandler) GetLanguage(c *fiber.Ctx) error {
 	// When there are no more movies to show, just return 200. Otherwise we
 	// would display the "No movies seen" empty state which should only be
 	// shown at the start.
-	if len(movies) == 0 && q.Page > 1 {
+	if len(movies) == 0 && req.Page() > 1 {
 		return c.SendStatus(fiber.StatusOK)
 	}
 
 	return utils.Render(c, views.ListView(views.ListViewProps{
 		EmptyState: "No movies for this language",
 		Name:       language.Name,
-		NextPage:   fmt.Sprintf("/language/%s?page=%d", q.Id, q.Page+1),
+		NextPage:   fmt.Sprintf("/language/%s?page=%d", id, req.Page()+1),
 		Movies:     movies,
 	}))
 }
 
 func (h *LanguageHandler) GetLanguageStats(c *fiber.Ctx) error {
-	q := db.MakeQueries(c)
-	languages, err := h.repo.GetLanguageStats(q.UserID, q.Year)
+	req := utils.NewRequest(c)
+	languages, err := h.repo.GetLanguageStats(req.UserID(), req.Year())
 
 	if err != nil {
 		return err
@@ -74,7 +75,7 @@ func (h *LanguageHandler) GetLanguageStats(c *fiber.Ctx) error {
 		Root:  "language",
 		Href:  "/language",
 		Route: "/language/stats",
-		Year:  q.Year,
-		Years: q.Years,
+		Year:  req.Year(),
+		Years: req.AvailableYears(),
 	}))
 }

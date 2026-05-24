@@ -32,13 +32,10 @@ func NewMovieHandler(repo db.MovieQuerier) *MovieHandler {
 }
 
 func (h *MovieHandler) GetMovieByID(c *fiber.Ctx) error {
-	backParam := c.QueryBool("back", false)
-	movieId := c.Params("id")
-	id, err := utils.SelfHealingUrl(movieId)
-	if err != nil {
-		id = "0"
-	}
-	userID := c.Locals("UserId").(string)
+	req := utils.NewRequest(c)
+	backParam := req.QueryBool("back", false)
+	id := req.MovieID()
+	userID := req.UserID()
 
 	movieData, err := h.repo.GetByID(id, userID)
 
@@ -104,11 +101,8 @@ func (h *MovieHandler) GetMovieByID(c *fiber.Ctx) error {
 }
 
 func (h *MovieHandler) GetMovieOthersSeenByID(c *fiber.Ctx) error {
-	movieId := c.Params("id")
-	id, err := utils.SelfHealingUrl(movieId)
-	if err != nil {
-		id = "0"
-	}
+	req := utils.NewRequest(c)
+	id := req.MovieID()
 
 	idAsInt, err := strconv.Atoi(id)
 
@@ -130,15 +124,13 @@ func (h *MovieHandler) GetMovieOthersSeenByID(c *fiber.Ctx) error {
 
 // Render the add movie page
 func (h *MovieHandler) GetMovieNew(c *fiber.Ctx) error {
+	req := utils.NewRequest(c)
 	var movieData types.Movie
 
-	isAuth := utils.IsAuthenticated(c)
-	id := c.QueryInt("id")
-	imdbId := c.Query("imdbId")
-	userID, ok := c.Locals("UserId").(string)
-	if !ok {
-		userID = ""
-	}
+	isAuth := req.IsAuthenticated()
+	id := req.QueryInt("id")
+	imdbId := req.Query("imdbId")
+	userID := req.UserID()
 
 	if !isAuth {
 		return c.Redirect("/")
@@ -191,7 +183,8 @@ func (h *MovieHandler) GetMovieNewSeries(c *fiber.Ctx) error {
 
 // Handle adding a movie
 func (h *MovieHandler) PostMovieNew(c *fiber.Ctx) error {
-	if c.Locals("IsAuthenticated") == false {
+	req := utils.NewRequest(c)
+	if !req.IsAuthenticated() {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
@@ -213,7 +206,7 @@ func (h *MovieHandler) PostMovieNew(c *fiber.Ctx) error {
 	}
 
 	imdbId, err := utils.ParseId(data.ImdbID)
-	userId := c.Locals("UserId").(string)
+	userId := req.UserID()
 
 	if err != nil {
 		c.Set("HX-Retarget", "#error")
@@ -341,7 +334,8 @@ func (h *MovieHandler) PostMovieNew(c *fiber.Ctx) error {
 }
 
 func (h *MovieHandler) GetByImdbId(c *fiber.Ctx) error {
-	imdbId := c.Query("imdbId")
+	req := utils.NewRequest(c)
+	imdbId := req.Query("imdbId")
 
 	movieData, err := h.repo.GetMovieByImdbID(imdbId)
 
@@ -353,10 +347,11 @@ func (h *MovieHandler) GetByImdbId(c *fiber.Ctx) error {
 }
 
 func (h *MovieHandler) DeleteSeenMovie(c *fiber.Ctx) error {
-	movieId, err := c.ParamsInt("id")
-	seenId := c.Params("seenId")
-	isAuth := utils.IsAuthenticated(c)
-	userID := c.Locals("UserId").(string)
+	req := utils.NewRequest(c)
+	movieId, err := req.ParamsInt("id")
+	seenId := req.Params("seenId")
+	isAuth := req.IsAuthenticated()
+	userID := req.UserID()
 
 	if err != nil {
 		return err
@@ -398,9 +393,10 @@ func (h *MovieHandler) DeleteSeenMovie(c *fiber.Ctx) error {
 }
 
 func (h *MovieHandler) GetSeenMovie(c *fiber.Ctx) error {
-	movieId, err := c.ParamsInt("id")
-	seenId := c.Params("seenId")
-	userId := c.Locals("UserId").(string)
+	req := utils.NewRequest(c)
+	movieId, err := req.ParamsInt("id")
+	seenId := req.Params("seenId")
+	userId := req.UserID()
 
 	if err != nil {
 		return err
@@ -427,9 +423,10 @@ func (h *MovieHandler) GetSeenMovie(c *fiber.Ctx) error {
 }
 
 func (h *MovieHandler) UpdateSeenMovie(c *fiber.Ctx) error {
-	movieId, err := c.ParamsInt("id")
-	seenID := c.Params("seenId")
-	isAuth := utils.IsAuthenticated(c)
+	req := utils.NewRequest(c)
+	movieId, err := req.ParamsInt("id")
+	seenID := req.Params("seenId")
+	isAuth := req.IsAuthenticated()
 
 	if err != nil {
 		return err
@@ -469,7 +466,7 @@ func (h *MovieHandler) UpdateSeenMovie(c *fiber.Ctx) error {
 		return err
 	}
 
-	if userID, ok := c.Locals("UserId").(string); ok {
+	if userID := req.UserID(); userID != "" {
 		InvalidateStatsCache(userID)
 	}
 
@@ -479,9 +476,10 @@ func (h *MovieHandler) UpdateSeenMovie(c *fiber.Ctx) error {
 }
 
 func (h *MovieHandler) CreateSeenMovie(c *fiber.Ctx) error {
-	isAuth := utils.IsAuthenticated(c)
-	userID := c.Locals("UserId").(string)
-	movieId := c.Params("id")
+	req := utils.NewRequest(c)
+	isAuth := req.IsAuthenticated()
+	userID := req.UserID()
+	movieId := req.Params("id")
 
 	if !isAuth {
 		return c.SendStatus(fiber.StatusUnauthorized)
@@ -501,7 +499,8 @@ func (h *MovieHandler) CreateSeenMovie(c *fiber.Ctx) error {
 }
 
 func (h *MovieHandler) HandleSearch(c *fiber.Ctx) error {
-	query := c.Query("search")
+	req := utils.NewRequest(c)
+	query := req.Query("search")
 
 	if query == "" {
 		return utils.Render(c, views.MovieSearch([]types.SearchResult{}))
@@ -524,9 +523,10 @@ func (h *MovieHandler) HandleSearch(c *fiber.Ctx) error {
 }
 
 func (h *MovieHandler) DeleteRating(c *fiber.Ctx) error {
-	isAuth := utils.IsAuthenticated(c)
-	movieId, err := c.ParamsInt("id")
-	userId := c.Locals("UserId").(string)
+	req := utils.NewRequest(c)
+	isAuth := req.IsAuthenticated()
+	movieId, err := req.ParamsInt("id")
+	userId := req.UserID()
 
 	if err != nil {
 		return err
@@ -561,9 +561,10 @@ func (h *MovieHandler) DeleteRating(c *fiber.Ctx) error {
 }
 
 func (h *MovieHandler) GetRating(c *fiber.Ctx) error {
-	isAuth := utils.IsAuthenticated(c)
-	movieId, err := c.ParamsInt("id")
-	currentRating := c.QueryInt("rating")
+	req := utils.NewRequest(c)
+	isAuth := req.IsAuthenticated()
+	movieId, err := req.ParamsInt("id")
+	currentRating := req.QueryInt("rating")
 
 	if err != nil {
 		return err
@@ -580,8 +581,9 @@ func (h *MovieHandler) GetRating(c *fiber.Ctx) error {
 }
 
 func (h *MovieHandler) GetEditRating(c *fiber.Ctx) error {
-	isAuth := utils.IsAuthenticated(c)
-	movieId, err := c.ParamsInt("id")
+	req := utils.NewRequest(c)
+	isAuth := req.IsAuthenticated()
+	movieId, err := req.ParamsInt("id")
 
 	if err != nil {
 		return err
@@ -597,9 +599,10 @@ func (h *MovieHandler) GetEditRating(c *fiber.Ctx) error {
 }
 
 func (h *MovieHandler) PostRating(c *fiber.Ctx) error {
-	isAuth := utils.IsAuthenticated(c)
-	movieId, err := c.ParamsInt("id")
-	userId := c.Locals("UserId").(string)
+	req := utils.NewRequest(c)
+	isAuth := req.IsAuthenticated()
+	movieId, err := req.ParamsInt("id")
+	userId := req.UserID()
 
 	if err != nil {
 		return err
@@ -651,9 +654,10 @@ func (h *MovieHandler) PostRating(c *fiber.Ctx) error {
 }
 
 func (h *MovieHandler) UpdateRating(c *fiber.Ctx) error {
-	isAuth := utils.IsAuthenticated(c)
-	movieId, err := c.ParamsInt("id")
-	userId := c.Locals("UserId").(string)
+	req := utils.NewRequest(c)
+	isAuth := req.IsAuthenticated()
+	movieId, err := req.ParamsInt("id")
+	userId := req.UserID()
 
 	if err != nil {
 		return err
@@ -689,10 +693,11 @@ func (h *MovieHandler) UpdateRating(c *fiber.Ctx) error {
 }
 
 func (h *MovieHandler) GetMovieAwards(c *fiber.Ctx) error {
+	req := utils.NewRequest(c)
 	var year string
 
-	imdbId := c.Params("imdbId")
-	awardType := c.Query("type")
+	imdbId := req.Params("imdbId")
+	awardType := req.Query("type")
 
 	awardsList, err := h.repo.GetMovieAwards(imdbId, awardType)
 
@@ -719,19 +724,20 @@ func (h *MovieHandler) GetMovieAwards(c *fiber.Ctx) error {
 }
 
 func (h *MovieHandler) UpdateMovieByID(c *fiber.Ctx) error {
-	isAuth := utils.IsAuthenticated(c)
+	req := utils.NewRequest(c)
+	isAuth := req.IsAuthenticated()
 
 	if !isAuth {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	userId := c.Locals("UserId").(string)
+	userId := req.UserID()
 
 	if userId != "1" {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	id, err := c.ParamsInt("id")
+	id, err := req.ParamsInt("id")
 
 	if err != nil {
 		return err
@@ -791,12 +797,9 @@ func (h *MovieHandler) UpdateMovieByID(c *fiber.Ctx) error {
 }
 
 func (h *MovieHandler) WatchProviders(c *fiber.Ctx) error {
-	movieId := c.Params("id")
-	id, err := utils.SelfHealingUrl(movieId)
-	if err != nil {
-		id = "0"
-	}
-	userID := c.Locals("UserId").(string)
+	req := utils.NewRequest(c)
+	id := req.MovieID()
+	userID := req.UserID()
 
 	storedProviders, err := h.repo.GetUserWatchProviders(userID)
 

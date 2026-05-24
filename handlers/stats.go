@@ -29,7 +29,8 @@ func NewStatsHandler(repo db.StatsQuerier) *StatsHandler {
 
 // Handler for /stats.
 func (h *StatsHandler) GetStats(c *fiber.Ctx) error {
-	userId := c.Locals("UserId").(string)
+	req := utils.NewRequest(c)
+	userId := req.UserID()
 
 	// Check cache
 	statsCacheMutex.RLock()
@@ -268,12 +269,13 @@ func (h *StatsHandler) GetStats(c *fiber.Ctx) error {
 }
 
 func (h *StatsHandler) GetMostWatchedByJob(c *fiber.Ctx) error {
+	req := utils.NewRequest(c)
 	var persons []types.ListItem
 	var totals []types.ListItem
 
-	job := c.Params("job")
-	year := c.Query("year", "All")
-	userId := c.Locals("UserId").(string)
+	job := req.Params("job")
+	year := req.Year()
+	userId := req.UserID()
 	years := availableYears()
 	years = append([]string{"All"}, years...)
 
@@ -304,10 +306,11 @@ func (h *StatsHandler) GetMostWatchedByJob(c *fiber.Ctx) error {
 }
 
 func (h *StatsHandler) GetHighestRankedPersonByJob(c *fiber.Ctx) error {
+	req := utils.NewRequest(c)
 	var persons []types.HighestRated
 
-	job := c.Query("job", "cast")
-	userId := c.Locals("UserId").(string)
+	job := req.QueryDefault("job", "cast")
+	userId := req.UserID()
 	title := "Highest ranked " + strings.ToLower(job)
 
 	persons, err := h.repo.GetHighestRankedPersonByJob(userId, strings.ToLower(job))
@@ -399,8 +402,9 @@ func constructGraphFromData(data []graph.GraphData) ([]graph.Bar, error) {
 }
 
 func (h *StatsHandler) GetRatingsByYear(c *fiber.Ctx) error {
-	userId := c.Locals("UserId").(string)
-	year := c.Query("year")
+	req := utils.NewRequest(c)
+	userId := req.UserID()
+	year := req.Query("year")
 	currentYear := time.Now().Format("2006")
 	yearTime, err := pgSelectedYear(year)
 
@@ -435,8 +439,9 @@ func (h *StatsHandler) GetRatingsByYear(c *fiber.Ctx) error {
 }
 
 func (h *StatsHandler) GetRatingsForYear(c *fiber.Ctx) error {
-	userId := c.Locals("UserId").(string)
-	year := c.Params("year")
+	req := utils.NewRequest(c)
+	userId := req.UserID()
+	year := req.Params("year")
 
 	movies, err := h.repo.GetRatingsForYear(year, userId)
 
@@ -460,8 +465,9 @@ func (h *StatsHandler) GetRatingsForYear(c *fiber.Ctx) error {
 }
 
 func (h *StatsHandler) GetThisYearByMonth(c *fiber.Ctx) error {
-	userId := c.Locals("UserId").(string)
-	year := c.Query("year")
+	req := utils.NewRequest(c)
+	userId := req.UserID()
+	year := req.Query("year")
 	currentYear := time.Now().Format("2006")
 	yearTime, err := pgSelectedYear(year)
 
@@ -494,8 +500,9 @@ func (h *StatsHandler) GetThisYearByMonth(c *fiber.Ctx) error {
 }
 
 func (h *StatsHandler) GetThisYearByWeekday(c *fiber.Ctx) error {
-	userId := c.Locals("UserId").(string)
-	year := c.Query("year")
+	req := utils.NewRequest(c)
+	userId := req.UserID()
+	year := req.Query("year")
 	yearTime, err := pgSelectedYear(year)
 
 	if err != nil {
@@ -555,9 +562,10 @@ func availableYears() []string {
 }
 
 func (h *StatsHandler) GetBestOfTheYear(c *fiber.Ctx) error {
-	userId := c.Locals("UserId").(string)
+	req := utils.NewRequest(c)
+	userId := req.UserID()
 	currentYear := time.Now().Format("2006")
-	year := c.Query("year", currentYear)
+	year := req.QueryDefault("year", currentYear)
 	years := availableYears()
 
 	movies, err := h.repo.GetBestOfTheYear(userId, year)
@@ -577,10 +585,11 @@ func (h *StatsHandler) GetBestOfTheYear(c *fiber.Ctx) error {
 }
 
 func (h *StatsHandler) GetWilhelmScream(c *fiber.Ctx) error {
-	page := c.QueryInt("page", 1)
-	userId := c.Locals("UserId").(string)
+	req := utils.NewRequest(c)
+	page := req.Page()
+	userId := req.UserID()
 
-	movies, err := h.repo.GetWilhelmMovies(userId, (page-1)*50)
+	movies, err := h.repo.GetWilhelmMovies(userId, req.Offset())
 
 	if err != nil {
 		return err
@@ -608,8 +617,9 @@ func (h *StatsHandler) GetSeenWith(c *fiber.Ctx) error {
 }
 
 func (h *StatsHandler) GetMoviesByYearStat(c *fiber.Ctx) error {
-	userId := c.Locals("UserId").(string)
-	year := c.Query("year", "All")
+	req := utils.NewRequest(c)
+	userId := req.UserID()
+	year := req.Year()
 
 	moviesByYear, err := h.repo.GetMoviesByYear(userId, year)
 

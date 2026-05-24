@@ -20,10 +20,11 @@ func NewSeriesHandler(repo db.SeriesQuerier) *SeriesHandler {
 }
 
 func (h *SeriesHandler) GetSeries(c *fiber.Ctx) error {
-	q := db.MakeQueries(c)
+	req := utils.NewRequest(c)
+	id := req.IDString()
 
 	// Get series information
-	series, err := h.repo.GetSeriesByID(q.Id)
+	series, err := h.repo.GetSeriesByID(id)
 
 	if err != nil {
 		slog.Error("failed to get series", "error", err)
@@ -34,7 +35,7 @@ func (h *SeriesHandler) GetSeries(c *fiber.Ctx) error {
 	}
 
 	// Get series movies
-	movies, err := h.repo.GetSeriesMovies(q.Id, q.UserID)
+	movies, err := h.repo.GetSeriesMovies(id, req.UserID())
 
 	if err != nil {
 		slog.Error("failed to get series movies", "error", err)

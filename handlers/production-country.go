@@ -49,14 +49,15 @@ func (h *ProductionCountryHandler) ListProductionCountries(c *fiber.Ctx) error {
 }
 
 func (h *ProductionCountryHandler) GetProductionCountry(c *fiber.Ctx) error {
-	q := db.MakeQueries(c)
-	country, err := h.repo.GetProductionCountryName(q.Id)
+	req := utils.NewRequest(c)
+	id := req.IDString()
+	country, err := h.repo.GetProductionCountryName(id)
 
 	if err != nil {
 		return err
 	}
 
-	movies, err := h.repo.GetProductionCountryMovies(q.Id, q.UserID, q.Offset)
+	movies, err := h.repo.GetProductionCountryMovies(id, req.UserID(), req.Offset())
 
 	if err != nil {
 		return err
@@ -65,14 +66,14 @@ func (h *ProductionCountryHandler) GetProductionCountry(c *fiber.Ctx) error {
 	return utils.Render(c, views.ListView(views.ListViewProps{
 		EmptyState: "No movies for this production country",
 		Name:       country.Name,
-		NextPage:   fmt.Sprintf("/production-country/%s?page=%d", q.Id, q.Page+1),
+		NextPage:   fmt.Sprintf("/production-country/%s?page=%d", id, req.Page()+1),
 		Movies:     movies,
 	}))
 }
 
 func (h *ProductionCountryHandler) GetProductionCountryStats(c *fiber.Ctx) error {
-	q := db.MakeQueries(c)
-	productionCountries, err := h.repo.GetProductionCountryStats(q.UserID, q.Year)
+	req := utils.NewRequest(c)
+	productionCountries, err := h.repo.GetProductionCountryStats(req.UserID(), req.Year())
 
 	if err != nil {
 		return err
@@ -84,7 +85,7 @@ func (h *ProductionCountryHandler) GetProductionCountryStats(c *fiber.Ctx) error
 		Route: "/production-country/stats",
 		Root:  "production-country",
 		Title: "Production countries",
-		Year:  q.Year,
-		Years: q.Years,
+		Year:  req.Year(),
+		Years: req.AvailableYears(),
 	}))
 }
