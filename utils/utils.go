@@ -24,7 +24,12 @@ var (
 )
 
 func IsAuthenticated(c *fiber.Ctx) bool {
-	return c.Cookies("token") != ""
+	if val := c.Locals("IsAuthenticated"); val != nil {
+		if b, ok := val.(bool); ok {
+			return b
+		}
+	}
+	return false
 }
 
 func ParseId(s string) (string, error) {

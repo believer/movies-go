@@ -26,7 +26,12 @@ func (r Request) UserID() string {
 
 // IsAuthenticated returns true if the user is authenticated, otherwise false.
 func (r Request) IsAuthenticated() bool {
-	return r.Cookies("token") != ""
+	if val := r.Locals("IsAuthenticated"); val != nil {
+		if b, ok := val.(bool); ok {
+			return b
+		}
+	}
+	return false
 }
 
 // MovieID returns the self-healed movie ID or "0" if parsing fails.

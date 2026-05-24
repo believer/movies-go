@@ -100,10 +100,8 @@ func SetupAndRunApp() error {
 			})
 
 			if err != nil {
-				log.Fatal(err)
-			}
-
-			if claims, ok := token.Claims.(jwt.MapClaims); ok {
+				utils.Log.Debug(c.UserContext()).Emit(fmt.Sprintf("Invalid JWT token: %v", err))
+			} else if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 				userId = claims["id"].(string)
 				c.Locals("IsAuthenticated", true)
 			}

@@ -26,7 +26,7 @@ func setupSeriesApp(h *SeriesHandler) *fiber.App {
 
 	app.Use(func(c *fiber.Ctx) error {
 		c.Locals("UserId", "user-123")
-		c.Locals("IsAuthenticated", true)
+		c.Locals("IsAuthenticated", c.Cookies("token") != "")
 		return c.Next()
 	})
 

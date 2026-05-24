@@ -14,7 +14,10 @@ var (
 
 func InitializeConnection() error {
 	connectionString := os.Getenv("DATABASE_URL")
-	db := sqlx.MustConnect("postgres", connectionString)
+	db, err := sqlx.Connect("postgres", connectionString)
+	if err != nil {
+		return err
+	}
 
 	if err := db.Ping(); err != nil {
 		return err
