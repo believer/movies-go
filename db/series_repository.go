@@ -81,8 +81,16 @@ FROM
     series_hierarchy sh
     LEFT JOIN movie_series ms ON ms.series_id = sh.series_id
     LEFT JOIN movie m ON m.id = ms.movie_id
-    LEFT JOIN rating r ON r.movie_id = m.id
-        AND r.user_id = $2
+    LEFT JOIN ( SELECT DISTINCT ON (movie_id)
+            movie_id,
+            rating
+        FROM
+            rating
+        WHERE
+            user_id = $2
+        ORDER BY
+            movie_id,
+            created_at DESC) AS r ON r.movie_id = m.id
     LEFT JOIN ( SELECT DISTINCT ON (movie_id)
             movie_id,
             id
