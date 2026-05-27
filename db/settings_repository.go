@@ -19,11 +19,21 @@ func NewSettingsRepository(db *sqlx.DB) *SettingsRepository {
 
 func (r *SettingsRepository) GetWatchProviders(userID string) (string, error) {
 	var storedProviders string
-	err := r.db.Get(&storedProviders, `SELECT watch_providers FROM "user" WHERE id = $1`, userID)
+	err := r.db.Get(&storedProviders, `SELECT
+    watch_providers
+FROM
+    "user"
+WHERE
+    id = $1`, userID)
 	return storedProviders, err
 }
 
 func (r *SettingsRepository) UpdateWatchProviders(userID string, providers string) error {
-	_, err := r.db.Exec(`UPDATE "user" SET watch_providers = $1 WHERE id = $2`, providers, userID)
+	_, err := r.db.Exec(`UPDATE
+    "user"
+SET
+    watch_providers = $1
+WHERE
+    id = $2`, providers, userID)
 	return err
 }

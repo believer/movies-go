@@ -41,7 +41,7 @@ type MovieQuerier interface {
 	GetUserWatchProviders(userID string) (string, error)
 	GetAllSeries() ([]list.DataListItem, error)
 	GetMovieAwards(imdbID string, awardType string) ([]types.Award, error)
-	
+
 	// Create/Update Movie from post form
 	InsertReview(tx *sqlx.Tx, content string, private bool, userID string, movieID int) error
 	GetOrInsertSeries(tx *sqlx.Tx, name string) (int, error)
@@ -94,31 +94,31 @@ SELECT
     MIN(se.id) AS "series_id",
     MIN(ms.number_in_series) AS "number_in_series",
     COALESCE(ARRAY_TO_JSON(ARRAY (
-        SELECT
-            jsonb_build_object('id', s2.id::text, 'name', s2.name, 'number_in_series', ms2.number_in_series)
-        FROM movie_series ms2
-        JOIN series s2 ON s2.id = ms2.series_id
-        WHERE ms2.movie_id = m.id
-        ORDER BY s2.name ASC
-    )), '[]') AS all_series,
+                SELECT
+                    jsonb_build_object('id', s2.id::text, 'name', s2.name, 'number_in_series', ms2.number_in_series)
+                FROM movie_series ms2
+                JOIN series s2 ON s2.id = ms2.series_id
+                WHERE
+                    ms2.movie_id = m.id ORDER BY s2.name ASC)), '[]') AS all_series,
     r.rating,
     COALESCE(ARRAY_TO_JSON(ARRAY (
                 SELECT
                     jsonb_build_object('id', id::text, 'name', name)
                 FROM ( SELECT DISTINCT ON (pc.id)
-                    pc.id, pc.name FROM production_company pc
+                        pc.id, pc.name
+                    FROM production_company pc
                     JOIN movie_company mc2 ON mc2.company_id = pc.id
                     WHERE
                         mc2.movie_id = m.id ORDER BY pc.id, pc.name) AS uniq_pc ORDER BY name ASC)), '[]') AS production_companies,
     COALESCE(ARRAY_TO_JSON(ARRAY (
                 SELECT
                     jsonb_build_object('id', id::text, 'name', name)
-                FROM ( SELECT DISTINCT ON (pc.id)
-                        pc.id, pc.name
-                    FROM production_country pc
-                    JOIN movie_country mc2 ON mc2.country_id = pc.id
-                    WHERE
-                        mc2.movie_id = m.id ORDER BY pc.id, pc.name) AS uniq_pc ORDER BY name ASC)), '[]') AS production_countries,
+            FROM ( SELECT DISTINCT ON (pc.id)
+                    pc.id, pc.name
+                FROM production_country pc
+                JOIN movie_country mc2 ON mc2.country_id = pc.id
+                WHERE
+                    mc2.movie_id = m.id ORDER BY pc.id, pc.name) AS uniq_pc ORDER BY name ASC)), '[]') AS production_countries,
     r.created_at at time zone 'UTC' at time zone 'Europe/Stockholm' AS "rated_at",
     COALESCE(ARRAY_TO_JSON(ARRAY_AGG(DISTINCT jsonb_build_object('name', g.name, 'id', g.id::text)) FILTER (WHERE g.name IS NOT NULL)), '[]') AS genres,
     COALESCE(ARRAY_TO_JSON(ARRAY_AGG(DISTINCT jsonb_build_object('name', l.english_name, 'id', l.id::text)) FILTER (WHERE l.english_name IS NOT NULL)), '[]') AS languages
@@ -375,12 +375,14 @@ GROUP BY
 }
 
 func (r *MovieRepository) DeleteSeenMovie(tx *sqlx.Tx, seenID string) error {
-	_, err := tx.Exec(`DELETE FROM seen_with WHERE seen_id = $1`, seenID)
+	_, err := tx.Exec(`DELETE FROM seen_with
+WHERE seen_id = $1`, seenID)
 	if err != nil {
 		return err
 	}
 
-	_, err = tx.Exec(`DELETE FROM seen WHERE id = $1`, seenID)
+	_, err = tx.Exec(`DELETE FROM seen
+WHERE id = $1`, seenID)
 	return err
 }
 
@@ -408,7 +410,8 @@ func (r *MovieRepository) InsertSeenWith(tx *sqlx.Tx, seenID int, friends []stri
 }
 
 func (r *MovieRepository) CreateSeenMovieDirect(userID string, movieID string) error {
-	_, err := r.db.Exec(`INSERT INTO seen (user_id, movie_id) VALUES ($1, $2)`, userID, movieID)
+	_, err := r.db.Exec(`INSERT INTO seen (user_id, movie_id)
+    VALUES ($1, $2)`, userID, movieID)
 	return err
 }
 
@@ -419,12 +422,18 @@ func (r *MovieRepository) UpdateSeenMovie(seenID string, watchedAt time.Time, fr
 	}
 	defer tx.Rollback()
 
-	_, err = tx.Exec(`UPDATE seen SET date = $1 WHERE id = $2`, watchedAt, seenID)
+	_, err = tx.Exec(`UPDATE
+    seen
+SET
+    date = $1
+WHERE
+    id = $2`, watchedAt, seenID)
 	if err != nil {
 		return err
 	}
 
-	_, err = tx.Exec(`DELETE FROM seen_with WHERE seen_id = $1`, seenID)
+	_, err = tx.Exec(`DELETE FROM seen_with
+WHERE seen_id = $1`, seenID)
 	if err != nil {
 		return err
 	}
@@ -450,12 +459,15 @@ func (r *MovieRepository) UpdateSeenMovie(seenID string, watchedAt time.Time, fr
 // =====================================================
 
 func (r *MovieRepository) DeleteRating(tx *sqlx.Tx, movieID int, userID string) error {
-	_, err := tx.Exec(`DELETE FROM rating WHERE movie_id = $1 AND user_id = $2`, movieID, userID)
+	_, err := tx.Exec(`DELETE FROM rating
+WHERE movie_id = $1
+    AND user_id = $2`, movieID, userID)
 	return err
 }
 
 func (r *MovieRepository) AddRating(tx *sqlx.Tx, userID string, movieID int, rating int) error {
-	_, err := tx.Exec(`INSERT INTO rating (user_id, movie_id, rating) VALUES ($1, $2, $3)`, userID, movieID, rating)
+	_, err := tx.Exec(`INSERT INTO rating (user_id, movie_id, rating)
+    VALUES ($1, $2, $3)`, userID, movieID, rating)
 	return err
 }
 
@@ -477,7 +489,13 @@ WHERE
 
 func (r *MovieRepository) GetMovieByIDSimple(movieID int) (types.Movie, error) {
 	var movie types.Movie
-	err := r.db.Get(&movie, `SELECT id, title FROM movie WHERE id = $1`, movieID)
+	err := r.db.Get(&movie, `SELECT
+    id,
+    title
+FROM
+    movie
+WHERE
+    id = $1`, movieID)
 	return movie, err
 }
 
@@ -514,7 +532,13 @@ WHERE
 
 func (r *MovieRepository) GetAllSeries() ([]list.DataListItem, error) {
 	var options []list.DataListItem
-	err := r.db.Select(&options, `SELECT id AS "value", name FROM series ORDER BY name ASC`)
+	err := r.db.Select(&options, `SELECT
+    id AS "value",
+    name
+FROM
+    series
+ORDER BY
+    name ASC`)
 	return options, err
 }
 
@@ -625,7 +649,8 @@ SET
     tmdb_id = $9
 WHERE
     id = $1;
-	`, id, title, runtime, releaseDate, imdbID, overview, poster, tagline, tmdbID)
+
+`, id, title, runtime, releaseDate, imdbID, overview, poster, tagline, tmdbID)
 	return err
 }
 

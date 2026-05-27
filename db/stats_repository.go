@@ -41,7 +41,12 @@ func NewStatsRepository(db *sqlx.DB) *StatsRepository {
 
 func (r *StatsRepository) GetReviewsCount(userID string) (int, error) {
 	var count int
-	err := r.db.Get(&count, `SELECT count(*) FROM review WHERE user_id = $1`, userID)
+	err := r.db.Get(&count, `SELECT
+    count(*)
+FROM
+    review
+WHERE
+    user_id = $1`, userID)
 	return count, err
 }
 
@@ -341,7 +346,12 @@ func (r *StatsRepository) GetMostAwardNominations(userID string) (types.AwardPer
 	var stat types.AwardPersonStat
 	err := r.db.Get(&stat, `
 WITH seen_movies AS (
-    SELECT movie_id FROM seen WHERE user_id = $1
+    SELECT
+        movie_id
+    FROM
+        seen
+    WHERE
+        user_id = $1
 )
 SELECT
     count(*) AS COUNT,
@@ -351,17 +361,23 @@ FROM
     award a
 WHERE
     EXISTS (
-        SELECT 1
-        FROM movie_person mp
-        WHERE mp.person_id = a.person_id
-          AND mp.movie_id IN (SELECT movie_id FROM seen_movies)
-    )
-GROUP BY
-    a.person_id,
-    person
-ORDER BY
-    COUNT DESC
-LIMIT 1
+        SELECT
+            1
+        FROM
+            movie_person mp
+        WHERE
+            mp.person_id = a.person_id
+            AND mp.movie_id IN (
+                SELECT
+                    movie_id
+                FROM
+                    seen_movies))
+    GROUP BY
+        a.person_id,
+        person
+    ORDER BY
+        COUNT DESC
+    LIMIT 1
 	`, userID)
 	return stat, err
 }
@@ -370,7 +386,12 @@ func (r *StatsRepository) GetMostAwardWins(userID string) (types.AwardPersonStat
 	var stat types.AwardPersonStat
 	err := r.db.Get(&stat, `
 WITH seen_movies AS (
-    SELECT movie_id FROM seen WHERE user_id = $1
+    SELECT
+        movie_id
+    FROM
+        seen
+    WHERE
+        user_id = $1
 )
 SELECT
     count(*) AS COUNT,
@@ -381,17 +402,23 @@ FROM
 WHERE
     winner = TRUE
     AND EXISTS (
-        SELECT 1
-        FROM movie_person mp
-        WHERE mp.person_id = a.person_id
-          AND mp.movie_id IN (SELECT movie_id FROM seen_movies)
-    )
-GROUP BY
-    a.person_id,
-    person
-ORDER BY
-    COUNT DESC
-LIMIT 1
+        SELECT
+            1
+        FROM
+            movie_person mp
+        WHERE
+            mp.person_id = a.person_id
+            AND mp.movie_id IN (
+                SELECT
+                    movie_id
+                FROM
+                    seen_movies))
+    GROUP BY
+        a.person_id,
+        person
+    ORDER BY
+        COUNT DESC
+    LIMIT 1
 	`, userID)
 	return stat, err
 }

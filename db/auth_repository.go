@@ -1,8 +1,6 @@
 package db
 
-import (
-	"github.com/jmoiron/sqlx"
-)
+import "github.com/jmoiron/sqlx"
 
 type UserAuth struct {
 	PasswordHash string `db:"password_hash"`
@@ -29,6 +27,7 @@ func (r *AuthRepository) GetUserForLogin(username string) (UserAuth, error) {
 }
 
 func (r *AuthRepository) CreateUser(username string, passwordHash string) error {
-	_, err := r.db.Exec(`INSERT INTO "user" (username, password_hash) VALUES ($1, $2)`, username, passwordHash)
+	_, err := r.db.Exec(`INSERT INTO "user" (username, password_hash)
+    VALUES ($1, $2)`, username, passwordHash)
 	return err
 }
