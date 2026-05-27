@@ -90,9 +90,17 @@ SELECT
     m.overview,
     m.original_title,
     m.tagline,
-    se.name AS "series",
-    se.id AS "series_id",
-    ms.number_in_series,
+    MIN(se.name) AS "series",
+    MIN(se.id) AS "series_id",
+    MIN(ms.number_in_series) AS "number_in_series",
+    COALESCE(ARRAY_TO_JSON(ARRAY (
+        SELECT
+            jsonb_build_object('id', s2.id::text, 'name', s2.name, 'number_in_series', ms2.number_in_series)
+        FROM movie_series ms2
+        JOIN series s2 ON s2.id = ms2.series_id
+        WHERE ms2.movie_id = m.id
+        ORDER BY s2.name ASC
+    )), '[]') AS all_series,
     r.rating,
     COALESCE(ARRAY_TO_JSON(ARRAY (
                 SELECT
@@ -128,9 +136,7 @@ WHERE
     m.id = $1
 GROUP BY
     1,
-    r.id,
-    se.id,
-    ms.number_in_series
+    r.id
 		`, id, userID)
 
 	return movie, err

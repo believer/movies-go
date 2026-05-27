@@ -67,6 +67,22 @@ func (u *MovieProductionCountries) Scan(v any) error {
 	return utils.ScanJSON(v, u)
 }
 
+type MovieSeries struct {
+	ID             string `json:"id" db:"id"`
+	Name           string `json:"name" db:"name"`
+	NumberInSeries int    `json:"number_in_series" db:"number_in_series"`
+}
+
+func (s MovieSeries) LinkTo() string {
+	return fmt.Sprintf("/series/%s-%s", utils.Slugify(s.Name), s.ID)
+}
+
+type MovieSeriesList []MovieSeries
+
+func (s *MovieSeriesList) Scan(v any) error {
+	return utils.ScanJSON(v, s)
+}
+
 // Movie
 // ======================================================
 
@@ -79,6 +95,7 @@ type Movie struct {
 	ImdbRating          sql.NullFloat64          `db:"imdb_rating" json:"imdbRating"`
 	Languages           MovieLanguages           `db:"languages" json:"languages"`
 	NumberInSeries      utils.NullInt64          `db:"number_in_series" json:"numberInSeries"`
+	AllSeries           MovieSeriesList          `db:"all_series" json:"allSeries"`
 	OriginalTitle       sql.NullString           `db:"original_title" json:"originaTitle"`
 	Overview            string                   `db:"overview" json:"overview"`
 	Percent             string                   `db:"percent"`

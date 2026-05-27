@@ -67,15 +67,22 @@ templ Movie(props MovieProps) {
 						{ props.Movie.RuntimeFormatted() }
 					}
 				}
-				if props.Movie.Series.Valid && props.Movie.NumberInSeries.Valid {
-					@list.DlItem(list.DlProps{Detail: "Series", ID: "series"}) {
-						@link.Link(link.Props{
-							Href: props.Movie.LinkToSeries(),
-							Attrs: templ.Attributes{
-								"aria-labelledby": "series",
-							},
-						}) {
-							{ props.Movie.Series.String } #{  props.Movie.NumberInSeries.Int64 }
+				if len(props.Movie.AllSeries) > 0 {
+					@list.DlItem(list.DlProps{
+						Detail:    "Series",
+						ID:        "series",
+						IsColumn:  true,
+						IsTabular: false,
+					}) {
+						for _, s := range props.Movie.AllSeries {
+							@link.Link(link.Props{
+								Href: s.LinkTo(),
+								Attrs: templ.Attributes{
+									"aria-labelledby": "series",
+								},
+							}) {
+								{ s.Name } #{ fmt.Sprintf("%d", s.NumberInSeries) }
+							}
 						}
 					}
 				}
