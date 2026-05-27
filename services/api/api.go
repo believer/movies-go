@@ -40,7 +40,11 @@ func (a *Api) AddMovie(imdbId string, hasWilhelmScream bool) (types.MovieDetails
 		return types.MovieDetailsResponse{}, 0, err
 	}
 
-	tx := db.Client.MustBegin()
+	tx, err := db.Client.Beginx()
+	if err != nil {
+		return types.MovieDetailsResponse{}, 0, err
+	}
+	defer tx.Rollback()
 
 	slog.Info("Inserting movie")
 
@@ -74,20 +78,30 @@ ON CONFLICT (imdb_id)
 	)
 
 	if err != nil {
-		slog.Error("No movie")
+		slog.Error("No movie", "err", err)
 		return movie, 0, err
 	}
 
 	slog.Info("Inserting cast and crew")
-	a.AddCast(tx, movieCast, id)
+	if err := a.AddCast(tx, movieCast, id); err != nil {
+		return movie, 0, err
+	}
 	slog.Info("Inserting language")
-	a.AddLanguages(tx, id, movie)
+	if err := a.AddLanguages(tx, id, movie); err != nil {
+		return movie, 0, err
+	}
 	slog.Info("Inserting genres")
-	a.AddGenres(tx, id, movie)
+	if err := a.AddGenres(tx, id, movie); err != nil {
+		return movie, 0, err
+	}
 	slog.Info("Inserting countries")
-	a.AddCountries(tx, id, movie)
+	if err := a.AddCountries(tx, id, movie); err != nil {
+		return movie, 0, err
+	}
 	slog.Info("Inserting ProductionCompanies")
-	a.AddProductionCompanies(tx, id, movie)
+	if err := a.AddProductionCompanies(tx, id, movie); err != nil {
+		return movie, 0, err
+	}
 	awards.AddOscars(tx, imdbId)
 	awards.AddBaftas(tx, imdbId)
 
@@ -95,9 +109,7 @@ ON CONFLICT (imdb_id)
 	err = tx.Commit()
 
 	if err != nil {
-		slog.Error("Could not commit movie")
-		err = tx.Rollback()
-
+		slog.Error("Could not commit movie", "err", err)
 		return movie, 0, err
 	}
 
@@ -116,7 +128,7 @@ type NewPerson struct {
 	MovieId        int            `db:"movie_id"`
 }
 
-func (a *Api) AddCast(tx *sqlx.Tx, movieCast types.MovieCreditsResponse, movieId int) {
+func (a *Api) AddCast(tx *sqlx.Tx, movieCast types.MovieCreditsResponse, movieId int) error {
 	var err error
 	var castStructs []NewPerson
 	var crewStructs []NewPerson
@@ -229,7 +241,8 @@ func (a *Api) AddCast(tx *sqlx.Tx, movieCast types.MovieCreditsResponse, movieId
 	`, castStructs)
 
 		if err != nil {
-			slog.Error("Could not insert person")
+			slog.Error("Could not insert person", "err", err)
+			return err
 		}
 
 		_, err = tx.NamedExec(`
@@ -249,7 +262,8 @@ func (a *Api) AddCast(tx *sqlx.Tx, movieCast types.MovieCreditsResponse, movieId
 	`, castStructs)
 
 		if err != nil {
-			slog.Error("Could not insert movie_person")
+			slog.Error("Could not insert movie_person", "err", err)
+			return err
 		}
 	}
 
@@ -264,7 +278,8 @@ func (a *Api) AddCast(tx *sqlx.Tx, movieCast types.MovieCreditsResponse, movieId
 	`, crewStructs)
 
 		if err != nil {
-			slog.Error("Could not insert crew")
+			slog.Error("Could not insert crew", "err", err)
+			return err
 		}
 
 		_, err = tx.NamedExec(`
@@ -284,9 +299,12 @@ func (a *Api) AddCast(tx *sqlx.Tx, movieCast types.MovieCreditsResponse, movieId
 	`, crewStructs)
 
 		if err != nil {
-			slog.Error("Could not insert movie_person crew")
+			slog.Error("Could not insert movie_person crew", "err", err)
+			return err
 		}
 	}
+
+	return nil
 }
 
 func personExists(arr []NewPerson, id int, job any) (int, bool) {
@@ -299,7 +317,7 @@ func personExists(arr []NewPerson, id int, job any) (int, bool) {
 	return 0, false
 }
 
-func (a *Api) AddLanguages(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse) {
+func (a *Api) AddLanguages(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse) error {
 	type Language struct {
 		ISO639      string `db:"iso_639_1"`
 		EnglishName string `db:"english_name"`
@@ -328,7 +346,8 @@ ON CONFLICT
 		)
 
 		if err != nil {
-			slog.Error("Could not insert language")
+			slog.Error("Could not insert language", "err", err)
+			return err
 		}
 
 		_, err = tx.NamedExec(
@@ -345,12 +364,15 @@ ON CONFLICT
 		)
 
 		if err != nil {
-			slog.Error("Could not insert movie_language")
+			slog.Error("Could not insert movie_language", "err", err)
+			return err
 		}
 	}
+
+	return nil
 }
 
-func (a *Api) AddGenres(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse) {
+func (a *Api) AddGenres(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse) error {
 	type Genre struct {
 		Name    string `db:"name"`
 		MovieId int    `db:"movie_id"`
@@ -372,7 +394,8 @@ ON CONFLICT (name)
     DO NOTHING`, genres)
 
 		if err != nil {
-			slog.Error("Could not insert genre")
+			slog.Error("Could not insert genre", "err", err)
+			return err
 		}
 
 		_, err = tx.NamedExec(`INSERT INTO movie_genre (movie_id, genre_id)
@@ -387,24 +410,31 @@ ON CONFLICT
     DO NOTHING`, genres)
 
 		if err != nil {
-			slog.Error("Could not insert movie_genre")
+			slog.Error("Could not insert movie_genre", "err", err)
+			return err
 		}
 	}
+
+	return nil
 }
 
-func (a *Api) AddCountries(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse) {
-
+func (a *Api) AddCountries(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse) error {
 	for _, c := range movie.ProductionCountries {
-		tx.MustExec(`
+		_, err := tx.Exec(`
 			INSERT INTO movie_country (movie_id, country_id)
 			    VALUES ($1, $2)
 			ON CONFLICT
 			    DO NOTHING
     `, id, c.ID)
+		if err != nil {
+			slog.Error("Could not insert movie country", "err", err)
+			return err
+		}
 	}
+	return nil
 }
 
-func (a *Api) AddProductionCompanies(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse) {
+func (a *Api) AddProductionCompanies(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse) error {
 	for _, c := range movie.ProductionCompanies {
 		var pcID int
 
@@ -420,6 +450,7 @@ func (a *Api) AddProductionCompanies(tx *sqlx.Tx, id int, movie types.MovieDetai
 
 		if err != nil {
 			slog.Error("Could not add company", "err", err)
+			return err
 		}
 
 		_, err = tx.Exec(`
@@ -430,9 +461,11 @@ func (a *Api) AddProductionCompanies(tx *sqlx.Tx, id int, movie types.MovieDetai
 		`, id, pcID)
 
 		if err != nil {
-			slog.Error("Could not add", "err", err)
+			slog.Error("Could not add movie company mapping", "err", err)
+			return err
 		}
 	}
 
 	slog.Info("Inserted production companies")
+	return nil
 }

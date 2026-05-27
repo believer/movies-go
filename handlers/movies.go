@@ -776,11 +776,21 @@ func (h *MovieHandler) UpdateMovieByID(c *fiber.Ctx) error {
 
 	slog.Debug("Movie updated")
 
-	api.AddLanguages(tx, id, movieData)
-	api.AddGenres(tx, id, movieData)
-	api.AddCountries(tx, id, movieData)
-	api.AddProductionCompanies(tx, id, movieData)
-	api.AddCast(tx, movieCast, id)
+	if err = api.AddLanguages(tx, id, movieData); err != nil {
+		return err
+	}
+	if err = api.AddGenres(tx, id, movieData); err != nil {
+		return err
+	}
+	if err = api.AddCountries(tx, id, movieData); err != nil {
+		return err
+	}
+	if err = api.AddProductionCompanies(tx, id, movieData); err != nil {
+		return err
+	}
+	if err = api.AddCast(tx, movieCast, id); err != nil {
+		return err
+	}
 
 	// Add awards
 	awards.AddOscars(tx, movieData.ImdbId)

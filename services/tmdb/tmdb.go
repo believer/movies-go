@@ -3,6 +3,7 @@ package tmdb
 import (
 	"believer/movies/types"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -89,7 +90,11 @@ func fetchJSON[T any](path []string, additionalParams map[string]string) (result
 		}
 	}()
 
-	if resp.StatusCode == 404 {
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusNotFound {
+		return result, fmt.Errorf("TMDB API returned unexpected status code %d: %s", resp.StatusCode, resp.Status)
+	}
+
+	if resp.StatusCode == http.StatusNotFound {
 		log.Printf("Movie watch providers not found")
 	}
 
@@ -100,7 +105,7 @@ func fetchJSON[T any](path []string, additionalParams map[string]string) (result
 		return result, err
 	}
 
-	if err := json.Unmarshal([]byte(body), &result); err != nil {
+	if err := json.Unmarshal(body, &result); err != nil {
 		return result, err
 	}
 
