@@ -127,6 +127,7 @@
   }
 
   body {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 20px);
     margin: 0;
     color: var(--color-content-primary);
     background-color: var(--color-background-primary);
