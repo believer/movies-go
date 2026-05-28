@@ -28,9 +28,14 @@ SELECT
     m.id,
     m.title,
     m.overview,
-    se.name AS "series",
-    ms.number_in_series,
-    m.release_date AS watched_at
+    m.release_date AS watched_at,
+    COALESCE(ARRAY_TO_JSON(ARRAY (
+                SELECT
+                    jsonb_build_object('id', s2.id::text, 'name', s2.name, 'number_in_series', ms2.number_in_series)
+                FROM movie_series ms2
+                JOIN series s2 ON s2.id = ms2.series_id
+                WHERE
+                    ms2.movie_id = m.id ORDER BY s2.name ASC)), '[]') AS all_series
 FROM
     movie AS m
     LEFT JOIN movie_series AS ms ON ms.movie_id = m.id
@@ -74,9 +79,13 @@ SELECT
     m.id,
     m.title,
     m.overview,
-    se.name AS "series",
-    ms.number_in_series,
-    m.release_date AS watched_at
+    m.release_date AS watched_at COALESCE(ARRAY_TO_JSON(ARRAY (
+                SELECT
+                    jsonb_build_object('id', s2.id::text, 'name', s2.name, 'number_in_series', ms2.number_in_series)
+                FROM movie_series ms2
+                JOIN series s2 ON s2.id = ms2.series_id
+                WHERE
+                    ms2.movie_id = m.id ORDER BY s2.name ASC)), '[]') AS all_series
 FROM
     movie AS m
     LEFT JOIN movie_series AS ms ON ms.movie_id = m.id
@@ -99,9 +108,14 @@ SELECT
     m.title,
     m.overview,
     m.release_date,
-    se.name AS "series",
-    ms.number_in_series,
-    s.date at time zone 'UTC' at time zone 'Europe/Stockholm' AS watched_at
+    s.date at time zone 'UTC' at time zone 'Europe/Stockholm' AS watched_at,
+    COALESCE(ARRAY_TO_JSON(ARRAY (
+                SELECT
+                    jsonb_build_object('id', s2.id::text, 'name', s2.name, 'number_in_series', ms2.number_in_series)
+                FROM movie_series ms2
+                JOIN series s2 ON s2.id = ms2.series_id
+                WHERE
+                    ms2.movie_id = m.id ORDER BY s2.name ASC)), '[]') AS all_series
 FROM
     seen AS s
     INNER JOIN movie AS m ON m.id = s.movie_id

@@ -87,6 +87,7 @@ func (s *MovieSeriesList) Scan(v any) error {
 // ======================================================
 
 type Movie struct {
+	AllSeries           MovieSeriesList          `db:"all_series" json:"allSeries"`
 	Cast                []CastAndCrew            `db:"cast" json:"cast"`
 	CreatedAt           time.Time                `db:"created_at" json:"createdAt"`
 	Genres              MovieGenres              `db:"genres" json:"genres"`
@@ -94,22 +95,18 @@ type Movie struct {
 	ImdbId              string                   `db:"imdb_id" json:"imdbId"`
 	ImdbRating          sql.NullFloat64          `db:"imdb_rating" json:"imdbRating"`
 	Languages           MovieLanguages           `db:"languages" json:"languages"`
-	NumberInSeries      utils.NullInt64          `db:"number_in_series" json:"numberInSeries"`
-	AllSeries           MovieSeriesList          `db:"all_series" json:"allSeries"`
 	OriginalTitle       sql.NullString           `db:"original_title" json:"originaTitle"`
 	Overview            string                   `db:"overview" json:"overview"`
 	Percent             string                   `db:"percent"`
+	Position            float64                  `db:"position"`
 	Poster              string                   `db:"poster" json:"poster"`
 	ProductionCompanies MovieProductionCompanies `db:"production_companies"`
 	ProductionCountries MovieProductionCountries `db:"production_countries"`
-	Position            float64                  `db:"position"`
 	RatedAt             sql.NullTime             `db:"rated_at" json:"ratedAt"`
 	Rating              utils.NullInt64          `db:"rating" json:"rating"`
 	ReleaseDate         utils.NullTime           `db:"release_date" json:"releaseDate"`
 	Runtime             int                      `db:"runtime" json:"runtime"`
 	Seen                bool                     `db:"seen" json:"seen"`
-	Series              sql.NullString           `db:"series" json:"series"`
-	SeriesID            sql.NullInt64            `db:"series_id" json:"seriesId"`
 	Tagline             string                   `db:"tagline" json:"tagline"`
 	Title               string                   `db:"title" json:"title"`
 	UpdatedAt           time.Time                `db:"updated_at" json:"updatedAt"`
@@ -204,15 +201,6 @@ func (m Movie) LinkToYear() string {
 // Link to the movie's watchlist add
 func (m Movie) LinkToWatchlistAdd() string {
 	return fmt.Sprintf("/movie/new?imdbId=%s&id=%d", m.ImdbId, m.ID)
-}
-
-// Link to the movie's series
-func (m Movie) LinkToSeries() string {
-	if m.SeriesID.Valid && m.Series.Valid {
-		return fmt.Sprintf("/series/%s-%d", utils.Slugify(m.Series.String), m.SeriesID.Int64)
-	}
-
-	return ""
 }
 
 // Movies

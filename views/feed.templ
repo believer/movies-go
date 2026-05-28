@@ -119,9 +119,13 @@ templ Feed(props FeedProps) {
 														{ movie.WatchedAt.Time.Format("January 2 2006") }
 													</time>
 												}
-												if movie.Series.Valid && movie.NumberInSeries.Valid {
+												if len(movie.AllSeries) == 1 {
 													<span>
-														- { movie.Series.String } #{  movie.NumberInSeries.Int64 }
+														- { movie.AllSeries[0].Name } #{  movie.AllSeries[0].NumberInSeries }
+													</span>
+												} else if len(movie.AllSeries) > 1 {
+													<span>
+														- { len(movie.AllSeries) } series
 													</span>
 												}
 											</div>

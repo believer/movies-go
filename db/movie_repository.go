@@ -90,9 +90,6 @@ SELECT
     m.overview,
     m.original_title,
     m.tagline,
-    MIN(se.name) AS "series",
-    MIN(se.id) AS "series_id",
-    MIN(ms.number_in_series) AS "number_in_series",
     COALESCE(ARRAY_TO_JSON(ARRAY (
                 SELECT
                     jsonb_build_object('id', s2.id::text, 'name', s2.name, 'number_in_series', ms2.number_in_series)
