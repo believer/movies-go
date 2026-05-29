@@ -1,9 +1,9 @@
 .list {
-  container-type: inline-size;
   display: flex;
   flex: 1;
   flex-direction: column;
   row-gap: var(--spacing-2);
+  container-type: inline-size;
   counter-reset: count;
 
   li:not(:has(.row)),
@@ -36,6 +36,10 @@
         text-align: right;
         content: counter(count);
       }
+    }
+
+    &.numbered-with-value::before {
+      content: attr(data-number);
     }
 
     .trailing {
