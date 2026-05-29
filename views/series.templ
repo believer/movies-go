@@ -21,7 +21,7 @@ type SeriesProps struct {
 templ seriesList(movies types.MoviesInSeries) {
 	@list.Ol() {
 		for _, movie := range movies {
-			@list.Li(list.LiProps{Items: len(movies), Style: list.Numbered}) {
+			@list.Li(list.LiProps{Items: len(movies), Style: list.NumberedWithValue, Number: movie.NumberInSeries}) {
 				@link.Link(link.Props{Href: movie.LinkTo()}) {
 					{ movie.Title }
 				}

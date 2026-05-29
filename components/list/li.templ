@@ -3,14 +3,16 @@ package list
 type ListStyle string
 
 const (
-	Numbered ListStyle = "numbered"
-	Plain    ListStyle = "plain"
+	Numbered          ListStyle = "numbered"
+	NumberedWithValue ListStyle = "numbered-with-value"
+	Plain             ListStyle = "plain"
 )
 
 type LiProps struct {
-	Class string
-	Items int
-	Style ListStyle
+	Class  string
+	Items  int
+	Number int
+	Style  ListStyle
 }
 
 templ Li(props ...LiProps) {
@@ -20,10 +22,13 @@ templ Li(props ...LiProps) {
 	}
 	<li
 		if p.Class != "" || p.Style != "" {
-			class={ p.Class, templ.KV("numbered", p.Style == Numbered) }
+			class={ p.Class, templ.KV("numbered", p.Style == Numbered || p.Style == NumberedWithValue), templ.KV("numbered-with-value", p.Style == NumberedWithValue) }
 		}
 		if p.Style != "" {
 			style={ templ.KV("--number-col: 2ch", p.Items >= 10 && p.Style == Numbered), }
+		}
+		if p.Number != 0 {
+			data-number={ p.Number }
 		}
 	>
 		{ children... }

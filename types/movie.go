@@ -112,6 +112,9 @@ type Movie struct {
 	UpdatedAt           time.Time                `db:"updated_at" json:"updatedAt"`
 	WatchedAt           utils.NullTime           `db:"watched_at" json:"watchedAt"`
 	WilhelmScream       sql.NullBool             `db:"wilhelm" json:"wilhelm"`
+
+	// Used on series page for numbering
+	NumberInSeries int `json:"numberInSeries"`
 }
 
 // Format runtime in hours and minutes from minutes
