@@ -45,7 +45,7 @@ SELECT
         END) AS percent
 FROM
     now_playing np
-    RIGHT JOIN movie m ON m.imdb_id = np.imdb_id
+    RIGHT JOIN movie m ON m.id = np.movie_id
 WHERE
     user_id = $1
 ORDER BY

@@ -48,10 +48,10 @@ type MovieQuerier interface {
 	InsertMovieSeries(tx *sqlx.Tx, movieID int, seriesID int, numberInSeries int) error
 	InsertWatchlist(tx *sqlx.Tx, userID string, movieID int) error
 	DeleteWatchlist(tx *sqlx.Tx, userID string, movieID int) error
-	DeleteNowPlaying(tx *sqlx.Tx, userID string, imdbID string) error
-	DeleteNowPlayingDirect(userID string, imdbID string) error
+	DeleteNowPlaying(tx *sqlx.Tx, userID string, movieID int) error
+	DeleteNowPlayingDirect(userID string, movieID int) error
 	UpdateMovie(tx *sqlx.Tx, id int, title string, runtime int, releaseDate string, imdbID string, overview string, poster string, tagline string, tmdbID int) error
-	UpdateNowPlaying(imdbID string, position float64, userID string) error
+	UpdateNowPlaying(movieID int, position float64, userID string) error
 	MovieExists(imdbID string) (bool, error)
 	Begin() (*sqlx.Tx, error)
 }
@@ -92,7 +92,7 @@ SELECT
     m.original_title,
     m.tagline,
     COALESCE(MAX(np.position), 0) AS position,
-    (MAX(np.imdb_id) IS NOT NULL) AS now_playing,
+    (MAX(np.movie_id) IS NOT NULL) AS now_playing,
     COALESCE(ARRAY_TO_JSON(ARRAY (
                 SELECT
                     jsonb_build_object('id', s2.id::text, 'name', s2.name, 'number_in_series', ms2.number_in_series)
@@ -132,7 +132,7 @@ FROM
     LEFT JOIN series AS se ON se.id = ms.series_id
     LEFT JOIN movie_language AS ml ON ml.movie_id = m.id
     LEFT JOIN "language" AS l ON l.id = ml.language_id
-    LEFT JOIN now_playing AS np ON np.imdb_id = m.imdb_id
+    LEFT JOIN now_playing AS np ON np.movie_id = m.id
         AND np.user_id = $2
 WHERE
     m.id = $1
@@ -627,19 +627,19 @@ WHERE user_id = $1
 	return err
 }
 
-func (r *MovieRepository) DeleteNowPlaying(tx *sqlx.Tx, userID string, imdbID string) error {
+func (r *MovieRepository) DeleteNowPlaying(tx *sqlx.Tx, userID string, movieID int) error {
 	_, err := tx.Exec(`
 DELETE FROM now_playing
 WHERE user_id = $1
-    AND imdb_id = $2`, userID, imdbID)
+    AND movie_id = $2`, userID, movieID)
 	return err
 }
 
-func (r *MovieRepository) DeleteNowPlayingDirect(userID string, imdbID string) error {
+func (r *MovieRepository) DeleteNowPlayingDirect(userID string, movieID int) error {
 	_, err := r.db.Exec(`
 DELETE FROM now_playing
 WHERE user_id = $1
-    AND imdb_id = $2`, userID, imdbID)
+    AND movie_id = $2`, userID, movieID)
 	return err
 }
 
@@ -664,14 +664,14 @@ WHERE
 	return err
 }
 
-func (r *MovieRepository) UpdateNowPlaying(imdbID string, position float64, userID string) error {
+func (r *MovieRepository) UpdateNowPlaying(movieID int, position float64, userID string) error {
 	_, err := r.db.Exec(`
-		INSERT INTO now_playing (imdb_id, position, user_id)
+		INSERT INTO now_playing (movie_id, position, user_id)
 		    VALUES ($1, $2, $3)
-		ON CONFLICT (imdb_id, user_id)
+		ON CONFLICT (movie_id, user_id)
 		    DO UPDATE SET
 		        position = excluded.position
-	`, imdbID, position, userID)
+	`, movieID, position, userID)
 	return err
 }
 

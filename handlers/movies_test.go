@@ -109,7 +109,7 @@ func TestDeleteNowPlaying(t *testing.T) {
 		repo := mocks.NewMockMovieQuerier(t)
 		mockMovie := types.Movie{ID: 456, Title: "Inception", ImdbId: "tt1375666"}
 		repo.On("GetMovieTitleAndImdbID", "456").Return(mockMovie, nil)
-		repo.On("DeleteNowPlayingDirect", "user-123", "tt1375666").Return(nil)
+		repo.On("DeleteNowPlayingDirect", "user-123", 456).Return(nil)
 		repo.On("SeenByUser", "456", "user-123").Return([]movie.WatchedAt{}, nil)
 		repo.On("IsWatchlisted", "456", "user-123").Return(true, nil)
 

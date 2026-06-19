@@ -304,7 +304,7 @@ func (h *MovieHandler) PostMovieNew(c *fiber.Ctx) error {
 	}
 
 	// Remove from now playing if exists
-	err = h.repo.DeleteNowPlaying(tx, userId, movieData.ImdbId)
+	err = h.repo.DeleteNowPlaying(tx, userId, movieId)
 	if err != nil {
 		return err
 	}
@@ -411,7 +411,7 @@ func (h *MovieHandler) DeleteNowPlaying(c *fiber.Ctx) error {
 		return err
 	}
 
-	err = h.repo.DeleteNowPlayingDirect(userID, movieSimple.ImdbId)
+	err = h.repo.DeleteNowPlayingDirect(userID, movieId)
 	if err != nil {
 		return err
 	}
@@ -999,13 +999,6 @@ func (h *MovieHandler) PlaybackProgress(c *fiber.Ctx) error {
 			}
 		}
 
-		userID := c.Locals("UserId").(string)
-		err := h.repo.UpdateNowPlaying(data.ImdbID, positionAsNumber, userID)
-
-		if err != nil {
-			return err
-		}
-
 		// If movie doesn't exist, add it
 		movieExists, err := h.repo.MovieExists(data.ImdbID)
 
@@ -1013,16 +1006,32 @@ func (h *MovieHandler) PlaybackProgress(c *fiber.Ctx) error {
 			return err
 		}
 
+		var movieId int
 		if movieExists {
 			// Try to update existing movie
 			_ = h.UpdateMovieByID(c)
+
+			// Retrieve the movie's ID
+			movieObj, err := h.repo.GetMovieByImdbID(data.ImdbID)
+			if err != nil {
+				return err
+			}
+			movieId = movieObj.ID
 		} else {
 			api := api.New(c)
-			_, _, err := api.AddMovie(data.ImdbID, false)
+			_, insertedMovieId, err := api.AddMovie(data.ImdbID, false)
 
 			if err != nil {
 				return err
 			}
+			movieId = insertedMovieId
+		}
+
+		userID := c.Locals("UserId").(string)
+		err = h.repo.UpdateNowPlaying(movieId, positionAsNumber, userID)
+
+		if err != nil {
+			return err
 		}
 
 		slog.Info("Playback updated", "data", data)

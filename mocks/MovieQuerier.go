@@ -292,16 +292,16 @@ func (_c *MockMovieQuerier_CreateSeenMovieDirect_Call) RunAndReturn(run func(use
 }
 
 // DeleteNowPlaying provides a mock function for the type MockMovieQuerier
-func (_mock *MockMovieQuerier) DeleteNowPlaying(tx *sqlx.Tx, userID string, imdbID string) error {
-	ret := _mock.Called(tx, userID, imdbID)
+func (_mock *MockMovieQuerier) DeleteNowPlaying(tx *sqlx.Tx, userID string, movieID int) error {
+	ret := _mock.Called(tx, userID, movieID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for DeleteNowPlaying")
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(*sqlx.Tx, string, string) error); ok {
-		r0 = returnFunc(tx, userID, imdbID)
+	if returnFunc, ok := ret.Get(0).(func(*sqlx.Tx, string, int) error); ok {
+		r0 = returnFunc(tx, userID, movieID)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -316,12 +316,12 @@ type MockMovieQuerier_DeleteNowPlaying_Call struct {
 // DeleteNowPlaying is a helper method to define mock.On call
 //   - tx *sqlx.Tx
 //   - userID string
-//   - imdbID string
-func (_e *MockMovieQuerier_Expecter) DeleteNowPlaying(tx interface{}, userID interface{}, imdbID interface{}) *MockMovieQuerier_DeleteNowPlaying_Call {
-	return &MockMovieQuerier_DeleteNowPlaying_Call{Call: _e.mock.On("DeleteNowPlaying", tx, userID, imdbID)}
+//   - movieID int
+func (_e *MockMovieQuerier_Expecter) DeleteNowPlaying(tx interface{}, userID interface{}, movieID interface{}) *MockMovieQuerier_DeleteNowPlaying_Call {
+	return &MockMovieQuerier_DeleteNowPlaying_Call{Call: _e.mock.On("DeleteNowPlaying", tx, userID, movieID)}
 }
 
-func (_c *MockMovieQuerier_DeleteNowPlaying_Call) Run(run func(tx *sqlx.Tx, userID string, imdbID string)) *MockMovieQuerier_DeleteNowPlaying_Call {
+func (_c *MockMovieQuerier_DeleteNowPlaying_Call) Run(run func(tx *sqlx.Tx, userID string, movieID int)) *MockMovieQuerier_DeleteNowPlaying_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 *sqlx.Tx
 		if args[0] != nil {
@@ -331,9 +331,9 @@ func (_c *MockMovieQuerier_DeleteNowPlaying_Call) Run(run func(tx *sqlx.Tx, user
 		if args[1] != nil {
 			arg1 = args[1].(string)
 		}
-		var arg2 string
+		var arg2 int
 		if args[2] != nil {
-			arg2 = args[2].(string)
+			arg2 = args[2].(int)
 		}
 		run(
 			arg0,
@@ -349,22 +349,22 @@ func (_c *MockMovieQuerier_DeleteNowPlaying_Call) Return(err error) *MockMovieQu
 	return _c
 }
 
-func (_c *MockMovieQuerier_DeleteNowPlaying_Call) RunAndReturn(run func(tx *sqlx.Tx, userID string, imdbID string) error) *MockMovieQuerier_DeleteNowPlaying_Call {
+func (_c *MockMovieQuerier_DeleteNowPlaying_Call) RunAndReturn(run func(tx *sqlx.Tx, userID string, movieID int) error) *MockMovieQuerier_DeleteNowPlaying_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // DeleteNowPlayingDirect provides a mock function for the type MockMovieQuerier
-func (_mock *MockMovieQuerier) DeleteNowPlayingDirect(userID string, imdbID string) error {
-	ret := _mock.Called(userID, imdbID)
+func (_mock *MockMovieQuerier) DeleteNowPlayingDirect(userID string, movieID int) error {
+	ret := _mock.Called(userID, movieID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for DeleteNowPlayingDirect")
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(string, string) error); ok {
-		r0 = returnFunc(userID, imdbID)
+	if returnFunc, ok := ret.Get(0).(func(string, int) error); ok {
+		r0 = returnFunc(userID, movieID)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -378,20 +378,20 @@ type MockMovieQuerier_DeleteNowPlayingDirect_Call struct {
 
 // DeleteNowPlayingDirect is a helper method to define mock.On call
 //   - userID string
-//   - imdbID string
-func (_e *MockMovieQuerier_Expecter) DeleteNowPlayingDirect(userID interface{}, imdbID interface{}) *MockMovieQuerier_DeleteNowPlayingDirect_Call {
-	return &MockMovieQuerier_DeleteNowPlayingDirect_Call{Call: _e.mock.On("DeleteNowPlayingDirect", userID, imdbID)}
+//   - movieID int
+func (_e *MockMovieQuerier_Expecter) DeleteNowPlayingDirect(userID interface{}, movieID interface{}) *MockMovieQuerier_DeleteNowPlayingDirect_Call {
+	return &MockMovieQuerier_DeleteNowPlayingDirect_Call{Call: _e.mock.On("DeleteNowPlayingDirect", userID, movieID)}
 }
 
-func (_c *MockMovieQuerier_DeleteNowPlayingDirect_Call) Run(run func(userID string, imdbID string)) *MockMovieQuerier_DeleteNowPlayingDirect_Call {
+func (_c *MockMovieQuerier_DeleteNowPlayingDirect_Call) Run(run func(userID string, movieID int)) *MockMovieQuerier_DeleteNowPlayingDirect_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 string
 		if args[0] != nil {
 			arg0 = args[0].(string)
 		}
-		var arg1 string
+		var arg1 int
 		if args[1] != nil {
-			arg1 = args[1].(string)
+			arg1 = args[1].(int)
 		}
 		run(
 			arg0,
@@ -406,7 +406,7 @@ func (_c *MockMovieQuerier_DeleteNowPlayingDirect_Call) Return(err error) *MockM
 	return _c
 }
 
-func (_c *MockMovieQuerier_DeleteNowPlayingDirect_Call) RunAndReturn(run func(userID string, imdbID string) error) *MockMovieQuerier_DeleteNowPlayingDirect_Call {
+func (_c *MockMovieQuerier_DeleteNowPlayingDirect_Call) RunAndReturn(run func(userID string, movieID int) error) *MockMovieQuerier_DeleteNowPlayingDirect_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -1985,16 +1985,16 @@ func (_c *MockMovieQuerier_UpdateMovie_Call) RunAndReturn(run func(tx *sqlx.Tx, 
 }
 
 // UpdateNowPlaying provides a mock function for the type MockMovieQuerier
-func (_mock *MockMovieQuerier) UpdateNowPlaying(imdbID string, position float64, userID string) error {
-	ret := _mock.Called(imdbID, position, userID)
+func (_mock *MockMovieQuerier) UpdateNowPlaying(movieID int, position float64, userID string) error {
+	ret := _mock.Called(movieID, position, userID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for UpdateNowPlaying")
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(string, float64, string) error); ok {
-		r0 = returnFunc(imdbID, position, userID)
+	if returnFunc, ok := ret.Get(0).(func(int, float64, string) error); ok {
+		r0 = returnFunc(movieID, position, userID)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -2007,18 +2007,18 @@ type MockMovieQuerier_UpdateNowPlaying_Call struct {
 }
 
 // UpdateNowPlaying is a helper method to define mock.On call
-//   - imdbID string
+//   - movieID int
 //   - position float64
 //   - userID string
-func (_e *MockMovieQuerier_Expecter) UpdateNowPlaying(imdbID interface{}, position interface{}, userID interface{}) *MockMovieQuerier_UpdateNowPlaying_Call {
-	return &MockMovieQuerier_UpdateNowPlaying_Call{Call: _e.mock.On("UpdateNowPlaying", imdbID, position, userID)}
+func (_e *MockMovieQuerier_Expecter) UpdateNowPlaying(movieID interface{}, position interface{}, userID interface{}) *MockMovieQuerier_UpdateNowPlaying_Call {
+	return &MockMovieQuerier_UpdateNowPlaying_Call{Call: _e.mock.On("UpdateNowPlaying", movieID, position, userID)}
 }
 
-func (_c *MockMovieQuerier_UpdateNowPlaying_Call) Run(run func(imdbID string, position float64, userID string)) *MockMovieQuerier_UpdateNowPlaying_Call {
+func (_c *MockMovieQuerier_UpdateNowPlaying_Call) Run(run func(movieID int, position float64, userID string)) *MockMovieQuerier_UpdateNowPlaying_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 string
+		var arg0 int
 		if args[0] != nil {
-			arg0 = args[0].(string)
+			arg0 = args[0].(int)
 		}
 		var arg1 float64
 		if args[1] != nil {
@@ -2042,7 +2042,7 @@ func (_c *MockMovieQuerier_UpdateNowPlaying_Call) Return(err error) *MockMovieQu
 	return _c
 }
 
-func (_c *MockMovieQuerier_UpdateNowPlaying_Call) RunAndReturn(run func(imdbID string, position float64, userID string) error) *MockMovieQuerier_UpdateNowPlaying_Call {
+func (_c *MockMovieQuerier_UpdateNowPlaying_Call) RunAndReturn(run func(movieID int, position float64, userID string) error) *MockMovieQuerier_UpdateNowPlaying_Call {
 	_c.Call.Return(run)
 	return _c
 }
