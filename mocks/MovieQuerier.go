@@ -354,6 +354,63 @@ func (_c *MockMovieQuerier_DeleteNowPlaying_Call) RunAndReturn(run func(tx *sqlx
 	return _c
 }
 
+// DeleteNowPlayingDirect provides a mock function for the type MockMovieQuerier
+func (_mock *MockMovieQuerier) DeleteNowPlayingDirect(userID string, imdbID string) error {
+	ret := _mock.Called(userID, imdbID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for DeleteNowPlayingDirect")
+	}
+
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(string, string) error); ok {
+		r0 = returnFunc(userID, imdbID)
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+// MockMovieQuerier_DeleteNowPlayingDirect_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DeleteNowPlayingDirect'
+type MockMovieQuerier_DeleteNowPlayingDirect_Call struct {
+	*mock.Call
+}
+
+// DeleteNowPlayingDirect is a helper method to define mock.On call
+//   - userID string
+//   - imdbID string
+func (_e *MockMovieQuerier_Expecter) DeleteNowPlayingDirect(userID interface{}, imdbID interface{}) *MockMovieQuerier_DeleteNowPlayingDirect_Call {
+	return &MockMovieQuerier_DeleteNowPlayingDirect_Call{Call: _e.mock.On("DeleteNowPlayingDirect", userID, imdbID)}
+}
+
+func (_c *MockMovieQuerier_DeleteNowPlayingDirect_Call) Run(run func(userID string, imdbID string)) *MockMovieQuerier_DeleteNowPlayingDirect_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		var arg1 string
+		if args[1] != nil {
+			arg1 = args[1].(string)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockMovieQuerier_DeleteNowPlayingDirect_Call) Return(err error) *MockMovieQuerier_DeleteNowPlayingDirect_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *MockMovieQuerier_DeleteNowPlayingDirect_Call) RunAndReturn(run func(userID string, imdbID string) error) *MockMovieQuerier_DeleteNowPlayingDirect_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // DeleteRating provides a mock function for the type MockMovieQuerier
 func (_mock *MockMovieQuerier) DeleteRating(tx *sqlx.Tx, movieID int, userID string) error {
 	ret := _mock.Called(tx, movieID, userID)

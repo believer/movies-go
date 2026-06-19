@@ -136,13 +136,25 @@ templ Movie(props MovieProps) {
 				})
 			}
 		}
-		@movie.Watched(movie.WatchedProps{
-			WatchedAt:   props.WatchedAt,
-			IsUnseen:    len(props.WatchedAt) == 0,
-			InWatchlist: props.IsInWatchlist,
-			ImdbId:      props.Movie.ImdbId,
-			ID:          props.Movie.ID,
-		})
+		if props.Movie.NowPlaying {
+			@movie.Watched(movie.WatchedProps{
+				WatchedAt:   props.WatchedAt,
+				IsUnseen:    len(props.WatchedAt) == 0,
+				InWatchlist: props.IsInWatchlist,
+				ImdbId:      props.Movie.ImdbId,
+				ID:          props.Movie.ID,
+				NowPlaying:  &props.Movie,
+			})
+		} else {
+			@movie.Watched(movie.WatchedProps{
+				WatchedAt:   props.WatchedAt,
+				IsUnseen:    len(props.WatchedAt) == 0,
+				InWatchlist: props.IsInWatchlist,
+				ImdbId:      props.Movie.ImdbId,
+				ID:          props.Movie.ID,
+				NowPlaying:  nil,
+			})
+		}
 		@CastList(props.Cast, props.HasCharacters)
 		if len(props.Movie.ProductionCompanies) > 0 {
 			@section.Section(section.Props{Title: "Production companies"}) {

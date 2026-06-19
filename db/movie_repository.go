@@ -49,6 +49,7 @@ type MovieQuerier interface {
 	InsertWatchlist(tx *sqlx.Tx, userID string, movieID int) error
 	DeleteWatchlist(tx *sqlx.Tx, userID string, movieID int) error
 	DeleteNowPlaying(tx *sqlx.Tx, userID string, imdbID string) error
+	DeleteNowPlayingDirect(userID string, imdbID string) error
 	UpdateMovie(tx *sqlx.Tx, id int, title string, runtime int, releaseDate string, imdbID string, overview string, poster string, tagline string, tmdbID int) error
 	UpdateNowPlaying(imdbID string, position float64, userID string) error
 	MovieExists(imdbID string) (bool, error)
@@ -90,6 +91,8 @@ SELECT
     m.overview,
     m.original_title,
     m.tagline,
+    COALESCE(MAX(np.position), 0) AS position,
+    (MAX(np.imdb_id) IS NOT NULL) AS now_playing,
     COALESCE(ARRAY_TO_JSON(ARRAY (
                 SELECT
                     jsonb_build_object('id', s2.id::text, 'name', s2.name, 'number_in_series', ms2.number_in_series)
@@ -129,6 +132,8 @@ FROM
     LEFT JOIN series AS se ON se.id = ms.series_id
     LEFT JOIN movie_language AS ml ON ml.movie_id = m.id
     LEFT JOIN "language" AS l ON l.id = ml.language_id
+    LEFT JOIN now_playing AS np ON np.imdb_id = m.imdb_id
+        AND np.user_id = $2
 WHERE
     m.id = $1
 GROUP BY
@@ -624,6 +629,14 @@ WHERE user_id = $1
 
 func (r *MovieRepository) DeleteNowPlaying(tx *sqlx.Tx, userID string, imdbID string) error {
 	_, err := tx.Exec(`
+DELETE FROM now_playing
+WHERE user_id = $1
+    AND imdb_id = $2`, userID, imdbID)
+	return err
+}
+
+func (r *MovieRepository) DeleteNowPlayingDirect(userID string, imdbID string) error {
+	_, err := r.db.Exec(`
 DELETE FROM now_playing
 WHERE user_id = $1
     AND imdb_id = $2`, userID, imdbID)

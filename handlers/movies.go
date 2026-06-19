@@ -392,6 +392,53 @@ func (h *MovieHandler) DeleteSeenMovie(c *fiber.Ctx) error {
 	}))
 }
 
+func (h *MovieHandler) DeleteNowPlaying(c *fiber.Ctx) error {
+	req := utils.NewRequest(c)
+	movieIdStr := req.Params("id")
+	movieId, err := strconv.Atoi(movieIdStr)
+	if err != nil {
+		return err
+	}
+	isAuth := req.IsAuthenticated()
+	userID := req.UserID()
+
+	if !isAuth {
+		return c.SendStatus(fiber.StatusUnauthorized)
+	}
+
+	movieSimple, err := h.repo.GetMovieTitleAndImdbID(movieIdStr)
+	if err != nil {
+		return err
+	}
+
+	err = h.repo.DeleteNowPlayingDirect(userID, movieSimple.ImdbId)
+	if err != nil {
+		return err
+	}
+
+	InvalidateStatsCache(userID)
+
+	watchedAt, err := h.repo.SeenByUser(movieIdStr, userID)
+	if err != nil {
+		return err
+	}
+
+	isInWatchlist, err := h.repo.IsWatchlisted(movieIdStr, userID)
+	if err != nil {
+		return err
+	}
+
+	return utils.Render(c, movie.Watched(movie.WatchedProps{
+		WatchedAt:   watchedAt,
+		IsUnseen:    len(watchedAt) == 0,
+		InWatchlist: isInWatchlist,
+		ImdbId:      movieSimple.ImdbId,
+		ID:          movieId,
+		NowPlaying:  nil,
+	}))
+}
+
+
 func (h *MovieHandler) GetSeenMovie(c *fiber.Ctx) error {
 	req := utils.NewRequest(c)
 	movieId, err := req.ParamsInt("id")

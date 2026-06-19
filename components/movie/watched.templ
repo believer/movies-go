@@ -7,6 +7,7 @@ import (
 	"believer/movies/components/list"
 	"believer/movies/components/section"
 	"believer/movies/components/separator"
+	"believer/movies/types"
 	"fmt"
 	"github.com/lib/pq"
 	"strings"
@@ -25,11 +26,19 @@ type WatchedProps struct {
 	InWatchlist bool
 	ImdbId      string
 	ID          int
+	NowPlaying  *types.Movie
 }
 
-templ addWatch(id int, isUnseen bool) {
+func itemsCount(watchedCount int, nowPlaying bool) int {
+	if nowPlaying {
+		return watchedCount + 1
+	}
+	return watchedCount
+}
+
+templ addWatch(id int, isUnseen bool, isNowPlaying bool) {
 	@auth.IsAuthenticated() {
-		if !isUnseen {
+		if !isUnseen || isNowPlaying {
 			<a
 				href="#"
 				hx-post={ fmt.Sprintf("/movie/%d/seen", id) }
@@ -45,13 +54,43 @@ templ Watched(props WatchedProps) {
 	@section.Section(section.Props{
 		Title:         "Watched",
 		NumberOfItems: len(props.WatchedAt),
-		Action:        addWatch(props.ID, props.IsUnseen),
+		Action:        addWatch(props.ID, props.IsUnseen, props.NowPlaying != nil),
 	}) {
-		if len(props.WatchedAt) > 0 {
+		if len(props.WatchedAt) > 0 || props.NowPlaying != nil {
 			@list.Ol() {
+				if props.NowPlaying != nil {
+					@list.Li(list.LiProps{
+						Items: itemsCount(len(props.WatchedAt), true),
+					}) {
+						<div>
+							<div class="watched__primary">
+								Currently watching
+							</div>
+							<div class="watched__secondary">
+								{ props.NowPlaying.PositionFormatted() } ({ fmt.Sprintf("%.0f", (props.NowPlaying.Position / float64(props.NowPlaying.Runtime)) * 100) }%)
+							</div>
+						</div>
+						@auth.IsAuthenticated() {
+							@separator.Separator()
+							<div class="trailing">
+								@button.Button(button.Props{
+									Rank: button.Secondary,
+									Attrs: templ.Attributes{
+										"hx-confirm": "Delete this in-progress watch?",
+										"hx-delete":  fmt.Sprintf("/movie/%d/now-playing", props.ID),
+										"hx-swap":    "outerHTML",
+										"hx-target":  "closest section",
+									},
+								}) {
+									Delete
+								}
+							</div>
+						}
+					}
+				}
 				for _, w := range props.WatchedAt {
 					@list.Li(list.LiProps{
-						Items: len(props.WatchedAt),
+						Items: itemsCount(len(props.WatchedAt), props.NowPlaying != nil),
 					}) {
 						<div>
 							<time
@@ -116,3 +155,4 @@ templ Watched(props WatchedProps) {
 		}
 	}
 }
+
