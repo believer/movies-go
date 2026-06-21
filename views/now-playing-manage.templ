@@ -1,0 +1,162 @@
+package views
+
+import (
+	"believer/movies/components/button"
+	"believer/movies/components/icon"
+	"believer/movies/components/input"
+	"believer/movies/components/layout"
+	"believer/movies/components/link"
+	"believer/movies/components/section"
+	"believer/movies/types"
+	"fmt"
+)
+
+type NowPlayingManageProps struct {
+	Movies types.Movies
+}
+
+templ NowPlayingManage(props NowPlayingManageProps) {
+	@layout.Layout(layout.Props{Title: "Manage Now Watching"}) {
+		<div hx-get="/now-playing/manage" hx-trigger="update-now-playing from:body" id="now-playing" hx-swap="outerHTML" hx-select="#now-playing">
+			@section.Section(section.Props{Title: "Currently Watching", NumberOfItems: len(props.Movies)}) {
+				if len(props.Movies) == 0 {
+					<p class="secondary">No movies currently being watched.</p>
+				} else {
+					<ul class="list">
+						for _, movie := range props.Movies {
+							@NowPlayingManageItem(movie)
+						}
+					</ul>
+				}
+			}
+		</div>
+		@section.Section(section.Props{Title: "Add Movie to Now Watching"}) {
+			<form
+				hx-post="/now-playing/manage"
+				hx-indicator="button[type='submit']"
+				class="form full"
+				style="padding-inline: 0; padding-bottom: 0;"
+			>
+				<div class="input">
+					@input.Label("search", "Search Movie")
+					<input
+						type="text"
+						hx-get="/movie/search"
+						hx-trigger="keyup changed delay:500ms"
+						hx-target="next .search-results"
+						hx-validate="true"
+						minlength="3"
+						name="search"
+						id="search"
+					/>
+					<div class="search-results"></div>
+				</div>
+				<div class="input">
+					@input.Label("imdb_id", "IMDb ID or TMDB ID")
+					<input
+						required
+						type="text"
+						hx-get="/movie/imdb"
+						hx-trigger="input changed"
+						hx-target="next .search-results"
+						hx-validate="true"
+						name="imdb_id"
+						id="imdb_id"
+					/>
+					@input.Help("Will automatically populate when clicking a search result.")
+					<div class="search-results"></div>
+				</div>
+				@input.Number(input.NumberProps{
+					Name:     "position",
+					Label:    "Position (minutes)",
+					Min:      0,
+					Required: true,
+				})
+				<footer>
+					<div id="error" class="form__error"></div>
+					@button.Button(button.Props{Type: button.TypeSubmit}) {
+						Add Movie
+					}
+				</footer>
+			</form>
+		}
+	}
+}
+
+templ NowPlayingManageItem(movie types.Movie) {
+	<li class="now-playing-manage__item">
+		<div>
+			<h3 style="margin: 0; font-size: var(--text-base);">
+				<a href={ movie.LinkTo() } class="focus">
+					{ movie.Title }
+				</a>
+			</h3>
+			<p style="margin: 0; font-size: var(--text-xs); color: var(--color-content-secondary);">
+				Progress: { movie.PositionFormatted() } / { movie.RuntimeFormatted() } ({ movie.PositionPercent() })
+			</p>
+		</div>
+		@button.Button(button.Props{
+			Rank: button.Secondary,
+			Type: button.TypeButton,
+			Attrs: templ.Attributes{
+				"_": fmt.Sprintf("on click call #edit-dialog-%d.showModal()", movie.ID),
+			},
+		}) {
+			Edit
+		}
+		<dialog id={ fmt.Sprintf("edit-dialog-%d", movie.ID) } class="now-playing-dialog" closedby="any">
+			<div style="display: flex; flex-direction: column; gap: var(--spacing-4);">
+				<header style="display: flex; justify-content: space-between; align-items: center; padding-bottom: var(--spacing-2);">
+					<h2 style="margin: 0; font-size: var(--text-lg);">{ movie.Title }</h2>
+					@link.Link(link.Props{
+						Class: "link--button link--new",
+						Href:  "#",
+						Attrs: templ.Attributes{
+							"aria-label": "Close modal",
+							"_":          fmt.Sprintf("on click call #edit-dialog-%d.close()", movie.ID),
+						},
+					}) {
+						@icon.Icon(icon.Props{Name: icon.Close})
+					}
+				</header>
+				<form
+					hx-put={ fmt.Sprintf("/now-playing/%d", movie.ID) }
+					hx-target="closest li"
+					hx-swap="outerHTML"
+					style="display: flex; flex-direction: column; gap: var(--spacing-4);"
+					_={ fmt.Sprintf("on submit call #edit-dialog-%d.close()", movie.ID) }
+				>
+					@input.Number(input.NumberProps{
+						Name:     "position",
+						Label:    "Position (minutes)",
+						HelpText: fmt.Sprintf("Total runtime: %s", movie.RuntimeFormatted()),
+						Min:      0,
+						Max:      movie.Runtime,
+						Value:    int(movie.Position),
+						Required: true,
+					})
+					<div style="display: flex; justify-content: flex-end; gap: var(--spacing-4);">
+						@button.Button(button.Props{
+							Rank: button.Secondary,
+							Type: button.TypeButton,
+							Attrs: templ.Attributes{
+								"hx-target":            "closest li",
+								"hx-swap":              "outerHTML",
+								"hx-on::after:request": "document.body.dispatchEvent(new Event('update-now-playing'))",
+								"hx-delete":            fmt.Sprintf("/now-playing/%d", movie.ID),
+								"hx-confirm":           fmt.Sprintf("Delete %s from now playing?", movie.Title),
+								"style":                "color: var(--color-content-negative);",
+								"_":                    fmt.Sprintf("on click call #edit-dialog-%d.close()", movie.ID),
+							},
+						}) {
+							Delete Watch
+						}
+						@button.Button(button.Props{Type: button.TypeSubmit}) {
+							Save Changes
+						}
+					</div>
+				</form>
+			</div>
+		</dialog>
+	</li>
+}

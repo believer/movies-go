@@ -493,7 +493,8 @@ func (r *MovieRepository) GetMovieByIDSimple(movieID int) (types.Movie, error) {
 	var movie types.Movie
 	err := r.db.Get(&movie, `SELECT
     id,
-    title
+    title,
+		runtime
 FROM
     movie
 WHERE

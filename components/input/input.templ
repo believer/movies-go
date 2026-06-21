@@ -104,8 +104,12 @@ templ Number(props NumberProps) {
 			type="number"
 			name={ props.Name }
 			id={ props.Name }
-			min={ props.Min }
-			max={ props.Max }
+			if props.Min > 0 {
+				min={ props.Min }
+			}
+			if props.Max > 0 {
+				max={ props.Max }
+			}
 			if props.Value > 0 {
 				value={ props.Value }
 			}

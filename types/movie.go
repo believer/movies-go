@@ -132,7 +132,21 @@ func (m Movie) RemainingRuntimeFormatted() string {
 func (m Movie) PositionFormatted() string {
 	minutes := int(m.Position)
 
+	if minutes >= m.Runtime {
+		return utils.FormatRuntime(m.Runtime)
+	}
+
 	return fmt.Sprintf("%s %ds", utils.FormatRuntime(minutes), seconds(m.Position))
+}
+
+func (m Movie) PositionPercent() string {
+	minutes := int(m.Position)
+
+	if minutes >= m.Runtime {
+		return "100%"
+	}
+
+	return fmt.Sprintf("%.0f%%", (m.Position/float64(m.Runtime))*100)
 }
 
 func seconds(position float64) int {

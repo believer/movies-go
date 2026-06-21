@@ -251,9 +251,13 @@ func SetupRoutes(app *fiber.App) {
 	// --------------------------
 	nowPlayingGroup := app.Group("/now-playing")
 
-	nowPlayingHandler := h.NewNowPlayingHandler(nowPlayingRepo)
+	nowPlayingHandler := h.NewNowPlayingHandler(nowPlayingRepo, movieRepo)
 
 	nowPlayingGroup.Get("/", nowPlayingHandler.GetNowPlaying)
+	nowPlayingGroup.Get("/manage", nowPlayingHandler.GetManage)
+	nowPlayingGroup.Post("/manage", nowPlayingHandler.PostManage)
+	nowPlayingGroup.Put("/:id", nowPlayingHandler.PutNowPlaying)
+	nowPlayingGroup.Delete("/:id", nowPlayingHandler.DeleteNowPlaying)
 
 	// Webhooks
 	// --------------------------
