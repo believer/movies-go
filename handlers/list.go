@@ -47,6 +47,7 @@ func (h *ListHandler) GetListById(c *fiber.Ctx) error {
 	}
 
 	return utils.Render(c, views.ListView(views.ListViewProps{
+		EmptyState:    "No movies in list",
 		ListStyle:     list.Numbered,
 		Name:          listData.Name,
 		NumberColumns: 3,
