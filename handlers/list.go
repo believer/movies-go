@@ -5,6 +5,7 @@ import (
 	"believer/movies/db"
 	"believer/movies/utils"
 	"believer/movies/views"
+	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -47,9 +48,10 @@ func (h *ListHandler) GetListById(c *fiber.Ctx) error {
 	}
 
 	return utils.Render(c, views.ListView(views.ListViewProps{
+		Description:   listData.Description,
 		EmptyState:    "No movies in list",
 		ListStyle:     list.Numbered,
-		Name:          listData.Name,
+		Name:          fmt.Sprintf("%s - %s", listData.Source, listData.Name),
 		NumberColumns: 3,
 		Movies:        movies,
 	}))

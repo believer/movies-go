@@ -10,6 +10,7 @@ import "believer/movies/components/layout"
 import "believer/movies/components/seen"
 
 type ListViewProps struct {
+	Description   string
 	EmptyState    string
 	ListStyle     list.ListStyle
 	Name          string
@@ -24,6 +25,11 @@ templ ListView(props ...ListViewProps) {
 		{{ p = props[0] }}
 	}
 	@layout.Layout(layout.Props{Title: p.Name}) {
+		if p.Description != "" {
+			<p>
+				{ p.Description }
+			</p>
+		}
 		if len(p.Movies) > 0 {
 			@list.Ol() {
 				for _, movie := range p.Movies {

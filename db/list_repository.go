@@ -8,9 +8,10 @@ import (
 )
 
 type List struct {
-	ID     string `db:"id"`
-	Name   string `db:"name"`
-	Source string `db:"source"`
+	Description string `db:"description"`
+	ID          string `db:"id"`
+	Name        string `db:"name"`
+	Source      string `db:"source"`
 }
 
 func (l List) Title() string {
@@ -63,7 +64,7 @@ func (r *ListRepository) GetListMovies(id, userID string) (types.Movies, error) 
 // =====================================================
 
 const listsQuery = `SELECT id, name, source FROM official_list ORDER BY name ASC`
-const listQuery = `SELECT id, name, source FROM official_list WHERE id = $1`
+const listQuery = `SELECT id, name, description, source FROM official_list WHERE id = $1`
 
 const listMoviesQuery = `
 SELECT
