@@ -73,6 +73,9 @@ templ Html(props ...Props) {
 				@link.Link(link.Props{Href: "/watchlist"}) {
 					Watchlist
 				}
+				@link.Link(link.Props{Href: "/list"}) {
+					Lists
+				}
 			</section>
 			@auth.IsAuthenticated() {
 				<section>

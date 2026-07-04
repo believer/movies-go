@@ -18,10 +18,12 @@ import "believer/movies/components/layout"
 import "believer/movies/components/seen"
 
 type ListViewProps struct {
-	EmptyState string
-	Name       string
-	NextPage   string
-	Movies     types.Movies
+	EmptyState    string
+	ListStyle     list.ListStyle
+	Name          string
+	NextPage      string
+	NumberColumns int
+	Movies        types.Movies
 }
 
 func ListView(props ...ListViewProps) templ.Component {
@@ -102,7 +104,7 @@ func ListView(props ...ListViewProps) templ.Component {
 								var templ_7745c5c3_Var6 string
 								templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(movie.Title)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/list-view.templ`, Line: 30, Col: 20}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/list-view.templ`, Line: 36, Col: 20}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 								if templ_7745c5c3_Err != nil {
@@ -153,7 +155,7 @@ func ListView(props ...ListViewProps) templ.Component {
 									var templ_7745c5c3_Var9 string
 									templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(movie.ISOReleaseDate())
 									if templ_7745c5c3_Err != nil {
-										return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/list-view.templ`, Line: 35, Col: 32}
+										return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/list-view.templ`, Line: 41, Col: 32}
 									}
 									_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 									if templ_7745c5c3_Err != nil {
@@ -186,7 +188,11 @@ func ListView(props ...ListViewProps) templ.Component {
 							}
 							return nil
 						})
-						templ_7745c5c3_Err = list.Li().Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
+						templ_7745c5c3_Err = list.Li(list.LiProps{
+							Items:         len(p.Movies),
+							NumberColumns: p.NumberColumns,
+							Style:         p.ListStyle,
+						}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
@@ -203,7 +209,7 @@ func ListView(props ...ListViewProps) templ.Component {
 						var templ_7745c5c3_Var10 string
 						templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.ResolveAttributeValue(p.NextPage)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/list-view.templ`, Line: 48, Col: 25}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/list-view.templ`, Line: 54, Col: 25}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
 						if templ_7745c5c3_Err != nil {
@@ -236,7 +242,7 @@ func ListView(props ...ListViewProps) templ.Component {
 					var templ_7745c5c3_Var12 string
 					templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(p.EmptyState)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/list-view.templ`, Line: 57, Col: 18}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/list-view.templ`, Line: 63, Col: 18}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 					if templ_7745c5c3_Err != nil {

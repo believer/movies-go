@@ -97,11 +97,12 @@ type Movie struct {
 	Languages           MovieLanguages           `db:"languages" json:"languages"`
 	OriginalTitle       sql.NullString           `db:"original_title" json:"originaTitle"`
 	Overview            string                   `db:"overview" json:"overview"`
-	Percent             string                   `db:"percent"`
-	Position            float64                  `db:"position"`
+	Percent             string                   `db:"percent" json:"percent"`
+	Position            float64                  `db:"position" json:"position"`
 	Poster              string                   `db:"poster" json:"poster"`
-	ProductionCompanies MovieProductionCompanies `db:"production_companies"`
-	ProductionCountries MovieProductionCountries `db:"production_countries"`
+	ProductionCompanies MovieProductionCompanies `db:"production_companies" json:"productionCompanies"`
+	ProductionCountries MovieProductionCountries `db:"production_countries" json:"productionCountries"`
+	Rank                int                      `db:"rank" json:"rank"`
 	RatedAt             sql.NullTime             `db:"rated_at" json:"ratedAt"`
 	Rating              utils.NullInt64          `db:"rating" json:"rating"`
 	ReleaseDate         utils.NullTime           `db:"release_date" json:"releaseDate"`
@@ -112,7 +113,7 @@ type Movie struct {
 	UpdatedAt           time.Time                `db:"updated_at" json:"updatedAt"`
 	WatchedAt           utils.NullTime           `db:"watched_at" json:"watchedAt"`
 	WilhelmScream       sql.NullBool             `db:"wilhelm" json:"wilhelm"`
-	NowPlaying          bool                     `db:"now_playing"`
+	NowPlaying          bool                     `db:"now_playing" json:"nowPlaying"`
 
 	// Used on series page for numbering
 	NumberInSeries int `json:"numberInSeries"`

@@ -10,10 +10,12 @@ import "believer/movies/components/layout"
 import "believer/movies/components/seen"
 
 type ListViewProps struct {
-	EmptyState string
-	Name       string
-	NextPage   string
-	Movies     types.Movies
+	EmptyState    string
+	ListStyle     list.ListStyle
+	Name          string
+	NextPage      string
+	NumberColumns int
+	Movies        types.Movies
 }
 
 templ ListView(props ...ListViewProps) {
@@ -25,7 +27,11 @@ templ ListView(props ...ListViewProps) {
 		if len(p.Movies) > 0 {
 			@list.Ol() {
 				for _, movie := range p.Movies {
-					@list.Li() {
+					@list.Li(list.LiProps{
+						Items:         len(p.Movies),
+						NumberColumns: p.NumberColumns,
+						Style:         p.ListStyle,
+					}) {
 						@link.Link(link.Props{Href: movie.LinkTo()}) {
 							{ movie.Title }
 						}

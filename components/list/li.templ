@@ -1,5 +1,7 @@
 package list
 
+import "fmt"
+
 type ListStyle string
 
 const (
@@ -9,10 +11,11 @@ const (
 )
 
 type LiProps struct {
-	Class  string
-	Items  int
-	Number int
-	Style  ListStyle
+	Class         string
+	Items         int
+	Number        int
+	NumberColumns int
+	Style         ListStyle
 }
 
 templ Li(props ...LiProps) {
@@ -25,7 +28,10 @@ templ Li(props ...LiProps) {
 			class={ p.Class, templ.KV("numbered", p.Style == Numbered || p.Style == NumberedWithValue), templ.KV("numbered-with-value", p.Style == NumberedWithValue) }
 		}
 		if p.Style != "" {
-			style={ templ.KV("--number-col: 2ch", p.Items >= 10 && p.Style == Numbered), }
+			style={
+				templ.KV("--number-col: 2ch", p.Items >= 10 && p.Style == Numbered && p.NumberColumns == 0),
+				templ.KV(fmt.Sprintf("--number-col: %dch", p.NumberColumns), p.Items >= 10 && p.Style == Numbered && p.NumberColumns != 0),
+			}
 		}
 		if p.Number != 0 {
 			data-number={ p.Number }

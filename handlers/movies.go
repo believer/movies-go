@@ -189,6 +189,7 @@ func (h *MovieHandler) PostMovieNew(c *fiber.Ctx) error {
 	}
 
 	data := new(struct {
+		DryRun           bool     `form:"dry_run"`
 		HasWilhelmScream bool     `form:"wilhelm_scream"`
 		ImdbID           string   `form:"imdb_id"`
 		IsPrivateReview  bool     `form:"review_private"`
@@ -280,7 +281,7 @@ func (h *MovieHandler) PostMovieNew(c *fiber.Ctx) error {
 			c.Set("HX-Retarget", "#error")
 			return c.SendString("Movie already added to watchlist")
 		}
-	} else {
+	} else if data.DryRun != true {
 		// Insert a view and delete from watchlist if exists
 		seenID, err := h.repo.InsertSeenMovie(tx, userId, movieId, watchedAt)
 
@@ -304,13 +305,15 @@ func (h *MovieHandler) PostMovieNew(c *fiber.Ctx) error {
 	}
 
 	// Remove from now playing if exists
-	err = h.repo.DeleteNowPlaying(tx, userId, movieId)
-	if err != nil {
-		return err
+	if !data.DryRun {
+		err = h.repo.DeleteNowPlaying(tx, userId, movieId)
+		if err != nil {
+			return err
+		}
 	}
 
 	// Insert rating
-	if data.Rating != 0 {
+	if data.Rating != 0 && !data.DryRun {
 		err = h.repo.AddRating(tx, userId, movieId, data.Rating)
 		if err != nil {
 			return err
@@ -327,6 +330,10 @@ func (h *MovieHandler) PostMovieNew(c *fiber.Ctx) error {
 	}
 
 	InvalidateStatsCache(userId)
+
+	if c.Get("Accept") == "text/plain" {
+		return c.SendString(strconv.Itoa(movieId))
+	}
 
 	c.Set("HX-Redirect", fmt.Sprintf("/movie/%d", movieId))
 
@@ -437,7 +444,6 @@ func (h *MovieHandler) DeleteNowPlaying(c *fiber.Ctx) error {
 		NowPlaying:  nil,
 	}))
 }
-
 
 func (h *MovieHandler) GetSeenMovie(c *fiber.Ctx) error {
 	req := utils.NewRequest(c)
@@ -1039,4 +1045,3 @@ func (h *MovieHandler) PlaybackProgress(c *fiber.Ctx) error {
 
 	return c.SendStatus(fiber.StatusOK)
 }
-

@@ -259,6 +259,16 @@ func SetupRoutes(app *fiber.App) {
 	nowPlayingGroup.Put("/:id", nowPlayingHandler.PutNowPlaying)
 	nowPlayingGroup.Delete("/:id", nowPlayingHandler.DeleteNowPlaying)
 
+	// Lists
+	// --------------------------
+	listGroup := app.Group("/list")
+
+	listRepo := db.NewListRepository(db.Client)
+	listHandler := h.NewListHandler(listRepo)
+
+	listGroup.Get("/", listHandler.GetLists)
+	listGroup.Get("/:id", listHandler.GetListById)
+
 	// Webhooks
 	// --------------------------
 	hookGroup := app.Group("/hooks")
