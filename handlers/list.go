@@ -47,7 +47,16 @@ func (h *ListHandler) GetListById(c *fiber.Ctx) error {
 		return utils.Render(c, views.NotFound())
 	}
 
+	seen := 0
+	for _, m := range movies {
+		if m.Seen {
+			seen += 1
+		}
+	}
+	percentage := (float64(seen) / float64(len(movies))) * 100
+
 	return utils.Render(c, views.ListView(views.ListViewProps{
+		Completion:    fmt.Sprintf("Completed %.0f%% (%d / %d)", percentage, seen, len(movies)),
 		Description:   listData.Description,
 		EmptyState:    "No movies in list",
 		ListStyle:     list.Numbered,
