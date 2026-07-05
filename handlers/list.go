@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"believer/movies/components/list"
 	"believer/movies/db"
 	"believer/movies/utils"
 	"believer/movies/views"
@@ -35,7 +34,8 @@ func (h *ListHandler) GetLists(c *fiber.Ctx) error {
 func (h *ListHandler) GetListById(c *fiber.Ctx) error {
 	req := utils.NewRequest(c)
 	id := req.IDString()
-	listData, err := h.repo.GetList(id)
+	sort := req.QueryDefault("sort", "seen")
+	l, err := h.repo.GetList(id)
 
 	if err != nil {
 		return utils.Render(c, views.NotFound())
@@ -53,15 +53,14 @@ func (h *ListHandler) GetListById(c *fiber.Ctx) error {
 			seen += 1
 		}
 	}
-	percentage := (float64(seen) / float64(len(movies))) * 100
 
-	return utils.Render(c, views.ListView(views.ListViewProps{
-		Completion:    fmt.Sprintf("Completed %.0f%% (%d / %d)", percentage, seen, len(movies)),
-		Description:   listData.Description,
-		EmptyState:    "No movies in list",
-		ListStyle:     list.Numbered,
-		Name:          fmt.Sprintf("%s - %s", listData.Source, listData.Name),
-		NumberColumns: 3,
-		Movies:        movies,
+	return utils.Render(c, views.ListPage(views.ListPageProps{
+		Description: l.Description,
+		Name:        fmt.Sprintf("%s - %s", l.Source, l.Name),
+		Movies:      movies,
+		Slug:        utils.CreateSelfHealingUrl("list", l.Slug, l.ID),
+		Sort:        views.ToListSort(sort),
+		Seen:        seen,
+		Unseen:      len(movies) - seen,
 	}))
 }

@@ -11,6 +11,7 @@ type List struct {
 	Description string `db:"description"`
 	ID          string `db:"id"`
 	Name        string `db:"name"`
+	Slug        string `db:"slug"`
 	Source      string `db:"source"`
 }
 
@@ -23,7 +24,7 @@ func (l List) Subtitle() string {
 }
 
 func (l List) Href() string {
-	return utils.CreateSelfHealingUrl("list", l.Name, l.ID)
+	return utils.CreateSelfHealingUrl("list", l.Slug, l.ID)
 }
 
 // Repo
@@ -63,8 +64,8 @@ func (r *ListRepository) GetListMovies(id, userID string) (types.Movies, error) 
 // Queries
 // =====================================================
 
-const listsQuery = `SELECT id, name, source FROM official_list ORDER BY name ASC`
-const listQuery = `SELECT id, name, description, source FROM official_list WHERE id = $1`
+const listsQuery = `SELECT id, name, source, slug FROM official_list ORDER BY name ASC`
+const listQuery = `SELECT id, name, description, slug, source FROM official_list WHERE id = $1`
 
 const listMoviesQuery = `
 SELECT

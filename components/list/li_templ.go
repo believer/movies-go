@@ -85,8 +85,8 @@ func Li(props ...LiProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
-			templ_7745c5c3_Var4, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues(templ.KV("--number-col: 2ch", p.Items >= 10 && p.Style == Numbered && p.NumberColumns == 0),
-				templ.KV(fmt.Sprintf("--number-col: %dch", p.NumberColumns), p.Items >= 10 && p.Style == Numbered && p.NumberColumns != 0),
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues(templ.KV("--number-col: 2ch", p.Items >= 10 && (p.Style == Numbered || p.Style == NumberedWithValue) && p.NumberColumns == 0),
+				templ.KV(fmt.Sprintf("--number-col: %dch", p.NumberColumns), p.Items >= 10 && (p.Style == Numbered || p.Style == NumberedWithValue) && p.NumberColumns != 0),
 			)
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/list/li.templ`, Line: 34, Col: 3}

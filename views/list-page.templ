@@ -1,0 +1,157 @@
+package views
+
+import (
+	"believer/movies/components/dropdown"
+	"believer/movies/components/input"
+	"believer/movies/components/layout"
+	"believer/movies/components/link"
+	"believer/movies/components/list"
+	"believer/movies/components/section"
+	"believer/movies/components/seen"
+	"believer/movies/components/separator"
+	"believer/movies/types"
+	"fmt"
+)
+
+type ListSort string
+
+const (
+	Seen ListSort = "Seen"
+	Rank ListSort = "Rank"
+)
+
+func ToListSort(s string) ListSort {
+	switch s {
+	case "Seen":
+		return Seen
+	case "Rank":
+		return Rank
+	default:
+		return Seen
+	}
+}
+
+type ListPageProps struct {
+	Description string
+	Movies      types.Movies
+	Name        string
+	Seen        int
+	Slug        string
+	Sort        ListSort
+	Unseen      int
+}
+
+func (l *ListPageProps) Percentage() float64 {
+	return (float64(l.Seen) / float64(len(l.Movies))) * 100
+}
+
+func (l *ListPageProps) Progress() string {
+	return fmt.Sprintf("width: %f%%", l.Percentage())
+}
+
+func (l *ListPageProps) Completion() string {
+	return fmt.Sprintf("%.0f%% (%d / %d)", l.Percentage(), l.Seen, len(l.Movies))
+}
+
+templ listPageHeader(p ListPageProps) {
+	<section class="section" style="--gap: var(--spacing-2);">
+		if p.Description != "" {
+			if p.Description != "" {
+				<p>
+					{ p.Description }
+				</p>
+			}
+		}
+		<div class="position">
+			<div>Completed</div>
+			<div class="progress-bar">
+				<div style={ p.Progress() }></div>
+			</div>
+			<div>{ p.Completion() }</div>
+		</div>
+	</section>
+	<div class="sort">
+		@input.Label("sort", "Sort")
+		@dropdown.Dropdown(dropdown.Props{
+			Name:    "sort",
+			Route:   p.Slug,
+			Options: []string{"Seen", "Rank"},
+			Value:   string(p.Sort),
+			Attrs: templ.Attributes{
+				"hx-select":   ".layout",
+				"hx-push-url": "true",
+			},
+		})
+	</div>
+}
+
+templ listPageRow(m types.Movie, items int) {
+	@list.Li(list.LiProps{
+		Items:         items,
+		Number:        m.Rank,
+		NumberColumns: 3,
+		Style:         list.NumberedWithValue,
+	}) {
+		@link.Link(link.Props{Href: m.LinkTo()}) {
+			{ m.Title }
+		}
+		@separator.Separator()
+		@list.Trailing() {
+			@link.Link(link.Props{Href: m.LinkToYear()}) {
+				{ m.ISOReleaseDate() }
+			}
+			@seen.Seen(seen.Props{
+				Title:  "id",
+				Seen:   m.Seen,
+				ImdbId: m.ImdbId,
+				ID:     m.ID,
+			})
+		}
+	}
+}
+
+templ ListPage(props ...ListPageProps) {
+	{{ var p ListPageProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	if p.Sort == Rank {
+		@ListView(ListViewProps{
+			EmptyState:    "No movies in list",
+			ListStyle:     list.Numbered,
+			Movies:        p.Movies,
+			Name:          p.Name,
+			NumberColumns: 3,
+		}) {
+			@listPageHeader(p)
+		}
+	} else {
+		@layout.Layout(layout.Props{Title: p.Name}) {
+			@listPageHeader(p)
+			@section.Section(section.Props{
+				NumberOfItems: p.Unseen,
+				Title:         "Unseen",
+			}) {
+				@list.Ol() {
+					for _, m := range p.Movies {
+						if !m.Seen {
+							@listPageRow(m, p.Unseen)
+						}
+					}
+				}
+			}
+			@section.Section(section.Props{
+				NumberOfItems: p.Seen,
+				Title:         "Seen",
+			}) {
+				@list.Ol() {
+					for _, m := range p.Movies {
+						if m.Seen {
+							@listPageRow(m, p.Seen)
+						}
+					}
+				}
+			}
+		}
+	}
+}
