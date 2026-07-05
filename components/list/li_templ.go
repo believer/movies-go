@@ -51,7 +51,10 @@ func Li(props ...LiProps) templ.Component {
 		if len(props) > 0 {
 			p = props[0]
 		}
-		var templ_7745c5c3_Var2 = []any{p.Class, templ.KV("numbered", p.Style == Numbered || p.Style == NumberedWithValue), templ.KV("numbered-with-value", p.Style == NumberedWithValue)}
+		var templ_7745c5c3_Var2 = []any{p.Class,
+			templ.KV("numbered", p.Style == Numbered || p.Style == NumberedWithValue),
+			templ.KV("numbered-with-value", p.Style == NumberedWithValue),
+		}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -86,10 +89,10 @@ func Li(props ...LiProps) templ.Component {
 			}
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues(templ.KV("--number-col: 2ch", p.Items >= 10 && (p.Style == Numbered || p.Style == NumberedWithValue) && p.NumberColumns == 0),
-				templ.KV(fmt.Sprintf("--number-col: %dch", p.NumberColumns), p.Items >= 10 && (p.Style == Numbered || p.Style == NumberedWithValue) && p.NumberColumns != 0),
+				templ.KV(fmt.Sprintf("--number-col: %dch", p.NumberColumns), (p.Style == Numbered || p.Style == NumberedWithValue) && p.NumberColumns != 0),
 			)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/list/li.templ`, Line: 34, Col: 3}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/list/li.templ`, Line: 38, Col: 3}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -108,7 +111,7 @@ func Li(props ...LiProps) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(p.Number)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/list/li.templ`, Line: 37, Col: 25}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/list/li.templ`, Line: 41, Col: 25}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 			if templ_7745c5c3_Err != nil {

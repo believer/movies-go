@@ -25,12 +25,16 @@ templ Li(props ...LiProps) {
 	}
 	<li
 		if p.Class != "" || p.Style != "" {
-			class={ p.Class, templ.KV("numbered", p.Style == Numbered || p.Style == NumberedWithValue), templ.KV("numbered-with-value", p.Style == NumberedWithValue) }
+			class={
+				p.Class,
+				templ.KV("numbered", p.Style == Numbered || p.Style == NumberedWithValue),
+				templ.KV("numbered-with-value", p.Style == NumberedWithValue),
+			}
 		}
 		if p.Style != "" {
 			style={
 				templ.KV("--number-col: 2ch", p.Items >= 10 && (p.Style == Numbered || p.Style == NumberedWithValue) && p.NumberColumns == 0),
-				templ.KV(fmt.Sprintf("--number-col: %dch", p.NumberColumns), p.Items >= 10 && (p.Style == Numbered || p.Style == NumberedWithValue) && p.NumberColumns != 0),
+				templ.KV(fmt.Sprintf("--number-col: %dch", p.NumberColumns), (p.Style == Numbered || p.Style == NumberedWithValue) && p.NumberColumns != 0),
 			}
 		}
 		if p.Number != 0 {
