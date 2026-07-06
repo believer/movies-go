@@ -41,7 +41,7 @@ func setVariables(filename string) (err error) {
 			continue
 		}
 
-		if k, v, ok := strings.Cut(sc.Text(), "="); ok {
+		if k, v, ok := strings.Cut(line, "="); ok {
 			err := os.Setenv(k, strings.Trim(v, `"`))
 
 			if err != nil {
@@ -60,6 +60,10 @@ func setVariables(filename string) (err error) {
 }
 
 func LoadEnv() {
-	setVariables(".env")
-	setVariables(".env.local")
+	if err := setVariables(".env"); err != nil {
+		slog.Warn("Could not load .env file", "error", err)
+	}
+	if err := setVariables(".env.local"); err != nil {
+		slog.Warn("Could not load .env.local file", "error", err)
+	}
 }
