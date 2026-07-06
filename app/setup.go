@@ -10,7 +10,6 @@ import (
 	"os"
 	"strings"
 
-	sentryfiber "github.com/getsentry/sentry-go/fiber"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
@@ -26,16 +25,8 @@ func SetupAndRunApp() error {
 	utils.LoadEnv()
 	appEnv := os.Getenv("APP_ENV")
 
-	err := utils.InitLogger(os.Getenv("SENTRY_DSN"))
-
-	if err != nil {
-		return err
-	}
-
-	defer utils.SyncLogger()
-
 	// Initialize database connection
-	err = db.InitializeConnection()
+	err := db.InitializeConnection()
 
 	if err != nil {
 		return err
@@ -44,18 +35,10 @@ func SetupAndRunApp() error {
 	// Close database connection when the app exits
 	defer db.CloseConnection()
 
-	sentryHandler := sentryfiber.New(sentryfiber.Options{
-		Repanic:         true,
-		WaitForDelivery: true,
-	})
-
 	// Setup the app
 	app := fiber.New(fiber.Config{
 		DisableStartupMessage: true,
 	})
-
-	// Add Sentry
-	app.Use(sentryHandler)
 
 	// Recover middleware recovers from panics anywhere in
 	// the chain and handles the control to the centralized ErrorHandler.
@@ -69,9 +52,6 @@ func SetupAndRunApp() error {
 		secret := os.Getenv("ADMIN_SECRET")
 		tokenString := c.Cookies("token")
 		c.Locals("IsAuthenticated", false)
-
-		userAgent := c.Get("User-Agent")
-		utils.Log.Debug(c.UserContext()).Emit(userAgent)
 
 		h := new(Headers)
 
@@ -100,8 +80,10 @@ func SetupAndRunApp() error {
 			})
 
 			if err != nil {
-				utils.Log.Debug(c.UserContext()).Emit(fmt.Sprintf("Invalid JWT token: %v", err))
-			} else if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+				return err
+			}
+
+			if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 				userId = claims["id"].(string)
 				c.Locals("IsAuthenticated", true)
 			}
