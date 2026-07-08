@@ -268,6 +268,7 @@ func SetupRoutes(app *fiber.App) {
 
 	listGroup.Get("/", listHandler.GetLists)
 	listGroup.Get("/:id", listHandler.GetListById)
+	movieGroup.Get("/:id/lists", listHandler.GetListsByMovieId)
 
 	// Webhooks
 	// --------------------------

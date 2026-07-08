@@ -1,0 +1,34 @@
+package views
+
+import (
+	"believer/movies/components/link"
+	"believer/movies/components/list"
+	"believer/movies/components/section"
+
+	"believer/movies/components/separator"
+	t "believer/movies/types"
+)
+
+type MovieListsProps struct {
+	Lists []t.List
+}
+
+templ MovieLists(props MovieListsProps) {
+	if len(props.Lists) > 0 {
+		@section.Section(section.Props{Title: "Lists"}) {
+			@list.Ol() {
+				for _, l := range props.Lists {
+					@list.Li() {
+						@link.Link(link.Props{Href: l.Href()}) {
+							{ l.Title() }
+						}
+						@separator.Separator()
+						@list.Trailing() {
+							#{ l.Rank }
+						}
+					}
+				}
+			}
+		}
+	}
+}

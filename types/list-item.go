@@ -5,6 +5,27 @@ import (
 	"fmt"
 )
 
+type List struct {
+	Description string `db:"description"`
+	ID          string `db:"id"`
+	Name        string `db:"name"`
+	Rank        int    `db:"rank"`
+	Slug        string `db:"slug"`
+	Source      string `db:"source"`
+}
+
+func (l List) Title() string {
+	return l.Name
+}
+
+func (l List) Subtitle() string {
+	return l.Source
+}
+
+func (l List) Href() string {
+	return utils.CreateSelfHealingUrl("list", l.Slug, l.ID)
+}
+
 type ListItem struct {
 	Name     string `db:"name"`
 	LinkName string `db:"link_name"`

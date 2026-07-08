@@ -182,6 +182,11 @@ templ Movie(props MovieProps) {
 				}
 			}
 		}
+		<div
+			hx-swap="outerHTML"
+			hx-get={ props.Movie.LinkToLists() }
+			hx-trigger="load"
+		></div>
 		if props.Movie.ImdbId != "" {
 			<div
 				hx-swap="outerHTML"

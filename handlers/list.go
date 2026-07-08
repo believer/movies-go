@@ -42,6 +42,7 @@ func (h *ListHandler) GetListById(c *fiber.Ctx) error {
 	}
 
 	movies, err := h.repo.GetListMovies(id, req.UserID())
+	println(movies)
 
 	if err != nil {
 		return utils.Render(c, views.NotFound())
@@ -62,5 +63,20 @@ func (h *ListHandler) GetListById(c *fiber.Ctx) error {
 		Sort:        views.ToListSort(sort),
 		Seen:        seen,
 		Unseen:      len(movies) - seen,
+	}))
+}
+
+func (h *ListHandler) GetListsByMovieId(c *fiber.Ctx) error {
+	req := utils.NewRequest(c)
+	movieID := req.IDString()
+
+	lists, err := h.repo.GetListsByMovieID(movieID)
+
+	if err != nil {
+		return err
+	}
+
+	return utils.Render(c, views.MovieLists(views.MovieListsProps{
+		Lists: lists,
 	}))
 }
