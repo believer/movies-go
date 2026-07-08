@@ -448,9 +448,11 @@
       top: 48px;
       z-index: 10;
       margin-block: 0;
+      margin-block-end: var(--spacing-2);
 
       @media (width >= 1024px) {
         top: 96px;
+        margin-block-end: 0;
       }
     }
 
@@ -484,6 +486,12 @@
         content: "";
       }
 
+      &:has(:focus-visible) {
+        outline: 1px dashed var(--color-content-secondary);
+        outline-offset: var(--spacing-1);
+        border-radius: var(--border-radius, 1px);
+      }
+
       header {
         display: flex;
         flex-direction: column;
@@ -500,6 +508,10 @@
         .subtitle {
           font-size: var(--text-xs);
           color: var(--color-content-secondary);
+        }
+
+        a:focus-visible {
+          outline: 0;
         }
       }
     }
