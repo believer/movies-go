@@ -42,7 +42,6 @@ func (h *ListHandler) GetListById(c *fiber.Ctx) error {
 	}
 
 	movies, err := h.repo.GetListMovies(id, req.UserID())
-	println(movies)
 
 	if err != nil {
 		return utils.Render(c, views.NotFound())
