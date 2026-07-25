@@ -13,6 +13,7 @@ import (
 	"believer/movies/components/seen"
 	"believer/movies/types"
 	"fmt"
+	"strconv"
 )
 
 // TODO: View transition of elements doesn't work because we can't have a
@@ -81,7 +82,7 @@ templ Movie(props MovieProps) {
 									"aria-labelledby": "series",
 								},
 							}) {
-								{ s.Name } #{ fmt.Sprintf("%d", s.NumberInSeries) }
+								{ s.Name } #{ strconv.FormatFloat(s.NumberInSeries, 'f', -1, 64) }
 							}
 						}
 					}

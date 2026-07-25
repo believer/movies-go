@@ -68,9 +68,9 @@ func (u *MovieProductionCountries) Scan(v any) error {
 }
 
 type MovieSeries struct {
-	ID             string `json:"id" db:"id"`
-	Name           string `json:"name" db:"name"`
-	NumberInSeries int    `json:"number_in_series" db:"number_in_series"`
+	ID             string  `json:"id" db:"id"`
+	Name           string  `json:"name" db:"name"`
+	NumberInSeries float64 `json:"number_in_series" db:"number_in_series"`
 }
 
 func (s MovieSeries) LinkTo() string {
