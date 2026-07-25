@@ -12,16 +12,22 @@ import (
 )
 
 type SeriesProps struct {
-	TotalMovies int
-	Seen        int
-	Series      types.Series
-	Movies      []types.SeriesMovies
+	TotalMovies   int
+	LongestNumber int
+	Seen          int
+	Series        types.Series
+	Movies        []types.SeriesMovies
 }
 
-templ seriesList(movies types.MoviesInSeries) {
+templ seriesList(movies types.MoviesInSeries, longestNumber int) {
 	@list.Ol() {
 		for _, movie := range movies {
-			@list.Li(list.LiProps{Items: len(movies), Style: list.NumberedWithValue, Number: movie.NumberInSeries}) {
+			@list.Li(list.LiProps{
+				Items:         len(movies),
+				Style:         list.NumberedWithValue,
+				Number:        movie.NumberInSeries,
+				NumberColumns: longestNumber,
+			}) {
 				@link.Link(link.Props{Href: movie.LinkTo()}) {
 					{ movie.Title }
 				}
@@ -42,9 +48,9 @@ templ seriesList(movies types.MoviesInSeries) {
 	}
 }
 
-templ seriesSection(series types.SeriesMovies) {
+templ seriesSection(series types.SeriesMovies, longestNumber int) {
 	<section class="section">
-		@seriesList(series.Movies)
+		@seriesList(series.Movies, longestNumber)
 		<div class="note">
 			{ series.SeenInSeries() }
 			{ series.Runtime() }
@@ -72,7 +78,7 @@ templ Series(props SeriesProps) {
 				if len(props.Movies) == 1 {
 					// A leaf node, the last series in a parent/child relationship
 					// Example: MCU: Phase Six
-					@seriesSection(series)
+					@seriesSection(series, props.LongestNumber)
 				} else if len(series.Movies) > 0 {
 					// Sectioned content when inside a parent series
 					// Example: MCU: The Multiverse Saga
@@ -81,7 +87,7 @@ templ Series(props SeriesProps) {
 						Href:          series.LinkTo(),
 						NumberOfItems: len(series.Movies),
 					}) {
-						@seriesSection(series)
+						@seriesSection(series, props.LongestNumber)
 					}
 				} else if series.Name != props.Series.Name {
 					// Section without any movies, a parent series that only contains child series

@@ -21,7 +21,7 @@ const (
 type LiProps struct {
 	Class         string
 	Items         int
-	Number        int
+	Number        float64
 	NumberColumns int
 	Style         ListStyle
 }

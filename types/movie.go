@@ -116,7 +116,7 @@ type Movie struct {
 	NowPlaying          bool                     `db:"now_playing" json:"nowPlaying"`
 
 	// Used on series page for numbering
-	NumberInSeries int `json:"numberInSeries"`
+	NumberInSeries float64 `json:"numberInSeries"`
 }
 
 // Format runtime in hours and minutes from minutes

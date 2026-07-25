@@ -7,6 +7,7 @@ import (
 	"believer/movies/views"
 	"database/sql"
 	"log/slog"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -47,10 +48,25 @@ func (h *SeriesHandler) GetSeries(c *fiber.Ctx) error {
 
 	totalMovies, movies := calculateSeriesStats(movies)
 
+	// Find the longest number in the series to set the correct
+	// number of columns for the digits. Most times, a series doesn't
+	// have more than one digit in the series, i.e., more than 9 movies.
+	// But, there are cases, like MCU with more than 10 or Jackass with 2.5.
+	longestNumber := 1
+
+	for _, sm := range movies {
+		for _, m := range sm.Movies {
+			// -1 only includes the decimal if it's larger than zero
+			seriesNumber := len(strconv.FormatFloat(m.NumberInSeries, 'f', -1, 64))
+			longestNumber = max(seriesNumber, longestNumber)
+		}
+	}
+
 	return utils.Render(c, views.Series(views.SeriesProps{
-		TotalMovies: totalMovies,
-		Movies:      movies,
-		Series:      series,
+		LongestNumber: int(longestNumber),
+		TotalMovies:   totalMovies,
+		Movies:        movies,
+		Series:        series,
 	}))
 }
 

@@ -296,7 +296,7 @@ func listPageRow(m types.Movie, items int) templ.Component {
 		})
 		templ_7745c5c3_Err = list.Li(list.LiProps{
 			Items:         items,
-			Number:        m.Rank,
+			Number:        float64(m.Rank),
 			NumberColumns: 3,
 			Style:         list.NumberedWithValue,
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)

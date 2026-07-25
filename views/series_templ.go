@@ -20,13 +20,14 @@ import (
 )
 
 type SeriesProps struct {
-	TotalMovies int
-	Seen        int
-	Series      types.Series
-	Movies      []types.SeriesMovies
+	TotalMovies   int
+	LongestNumber int
+	Seen          int
+	Series        types.Series
+	Movies        []types.SeriesMovies
 }
 
-func seriesList(movies types.MoviesInSeries) templ.Component {
+func seriesList(movies types.MoviesInSeries, longestNumber int) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -87,7 +88,7 @@ func seriesList(movies types.MoviesInSeries) templ.Component {
 						var templ_7745c5c3_Var5 string
 						templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(movie.Title)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/series.templ`, Line: 26, Col: 18}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/series.templ`, Line: 32, Col: 18}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 						if templ_7745c5c3_Err != nil {
@@ -138,7 +139,7 @@ func seriesList(movies types.MoviesInSeries) templ.Component {
 							var templ_7745c5c3_Var8 string
 							templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(movie.ISOReleaseDate())
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/series.templ`, Line: 31, Col: 30}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/series.templ`, Line: 37, Col: 30}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 							if templ_7745c5c3_Err != nil {
@@ -171,7 +172,12 @@ func seriesList(movies types.MoviesInSeries) templ.Component {
 					}
 					return nil
 				})
-				templ_7745c5c3_Err = list.Li(list.LiProps{Items: len(movies), Style: list.NumberedWithValue, Number: movie.NumberInSeries}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = list.Li(list.LiProps{
+					Items:         len(movies),
+					Style:         list.NumberedWithValue,
+					Number:        movie.NumberInSeries,
+					NumberColumns: longestNumber,
+				}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -186,7 +192,7 @@ func seriesList(movies types.MoviesInSeries) templ.Component {
 	})
 }
 
-func seriesSection(series types.SeriesMovies) templ.Component {
+func seriesSection(series types.SeriesMovies, longestNumber int) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -211,7 +217,7 @@ func seriesSection(series types.SeriesMovies) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = seriesList(series.Movies).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = seriesList(series.Movies, longestNumber).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -222,7 +228,7 @@ func seriesSection(series types.SeriesMovies) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(series.SeenInSeries())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/series.templ`, Line: 49, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/series.templ`, Line: 55, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -235,7 +241,7 @@ func seriesSection(series types.SeriesMovies) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(series.Runtime())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/series.templ`, Line: 50, Col: 21}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/series.templ`, Line: 56, Col: 21}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -248,7 +254,7 @@ func seriesSection(series types.SeriesMovies) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(series.AverageRating())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/series.templ`, Line: 51, Col: 27}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/series.templ`, Line: 57, Col: 27}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -328,7 +334,7 @@ func Series(props SeriesProps) templ.Component {
 						var templ_7745c5c3_Var16 string
 						templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(parent.Name)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/series.templ`, Line: 64, Col: 26}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/series.templ`, Line: 70, Col: 26}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 						if templ_7745c5c3_Err != nil {
@@ -365,7 +371,7 @@ func Series(props SeriesProps) templ.Component {
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
-						templ_7745c5c3_Err = seriesSection(series).Render(ctx, templ_7745c5c3_Buffer)
+						templ_7745c5c3_Err = seriesSection(series, props.LongestNumber).Render(ctx, templ_7745c5c3_Buffer)
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
@@ -386,7 +392,7 @@ func Series(props SeriesProps) templ.Component {
 								}()
 							}
 							ctx = templ.InitializeContext(ctx)
-							templ_7745c5c3_Err = seriesSection(series).Render(ctx, templ_7745c5c3_Buffer)
+							templ_7745c5c3_Err = seriesSection(series, props.LongestNumber).Render(ctx, templ_7745c5c3_Buffer)
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
 							}

@@ -88,7 +88,7 @@ templ listPageHeader(p ListPageProps) {
 templ listPageRow(m types.Movie, items int) {
 	@list.Li(list.LiProps{
 		Items:         items,
-		Number:        m.Rank,
+		Number:        float64(m.Rank),
 		NumberColumns: 3,
 		Style:         list.NumberedWithValue,
 	}) {
