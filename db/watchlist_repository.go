@@ -43,7 +43,7 @@ func (r *WatchlistRepository) GetTBDMovies(userID string) (types.Movies, error) 
 }
 
 func (r *WatchlistRepository) DeleteFromWatchlist(id, userID string) error {
-	if _, err := r.db.Exec(deleteFromWatchlistQuery); err != nil {
+	if _, err := r.db.Exec(deleteFromWatchlistQuery, id, userID); err != nil {
 		return err
 	}
 
