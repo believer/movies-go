@@ -10,6 +10,7 @@ type RootViewItem interface {
 	Href() string
 	Title() string
 	Subtitle() string
+	Trailing() string
 }
 
 func ToViewItems[T RootViewItem](items []T) []RootViewItem {
@@ -29,11 +30,16 @@ type RootViewProps struct {
 
 templ rootViewRow(item RootViewItem) {
 	@list.Li() {
-		<div class="row">
+		<div class="row" style="--align-items:baseline;">
 			@link.Link(link.Props{Href: item.Href()}) {
 				{ item.Title() }
 			}
 			@separator.Separator()
+			if item.Trailing() != "" {
+				<span>
+					{ item.Trailing() }
+				</span>
+			}
 		</div>
 		if item.Subtitle() != "" {
 			<div class="detail">

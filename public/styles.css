@@ -1313,6 +1313,8 @@
 	  }
 	
 	  li .row {
+	    font-size: var(--text-sm);
+	
 	    > :first-child {
 	      color: var(--color-content-primary);
 	    }

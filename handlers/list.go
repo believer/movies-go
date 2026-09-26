@@ -17,7 +17,8 @@ func NewListHandler(repo db.ListQuerier) *ListHandler {
 }
 
 func (h *ListHandler) GetLists(c *fiber.Ctx) error {
-	listData, err := h.repo.GetLists()
+	req := utils.NewRequest(c)
+	listData, err := h.repo.GetLists(req.UserID())
 
 	if err != nil {
 		return utils.Render(c, views.NotFound())

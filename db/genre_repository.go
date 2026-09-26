@@ -21,6 +21,10 @@ func (g Genre) Subtitle() string {
 	return ""
 }
 
+func (g Genre) Trailing() string {
+	return ""
+}
+
 func (g Genre) Href() string {
 	return utils.CreateSelfHealingUrl("genre", g.Name, strconv.Itoa(g.ID))
 }

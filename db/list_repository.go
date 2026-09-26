@@ -11,7 +11,7 @@ import (
 
 type ListQuerier interface {
 	GetList(id string) (t.List, error)
-	GetLists() ([]t.List, error)
+	GetLists(userID string) ([]t.List, error)
 	GetListMovies(id, userID string) (t.Movies, error)
 	GetListsByMovieID(movieID string) ([]t.List, error)
 }
@@ -23,9 +23,9 @@ type ListRepository struct {
 func NewListRepository(db *sqlx.DB) *ListRepository {
 	return &ListRepository{db}
 }
-func (r *ListRepository) GetLists() ([]t.List, error) {
+func (r *ListRepository) GetLists(userID string) ([]t.List, error) {
 	var lists []t.List
-	err := r.db.Select(&lists, listsQuery)
+	err := r.db.Select(&lists, listsQuery, userID)
 	return lists, err
 }
 
@@ -50,46 +50,81 @@ func (r *ListRepository) GetListsByMovieID(movieID string) ([]t.List, error) {
 // Queries
 // =====================================================
 
-const listsQuery = `SELECT id, name, source, slug FROM official_list ORDER BY name ASC`
-const listQuery = `SELECT id, name, description, slug, source FROM official_list WHERE id = $1`
+const listsQuery = `
+SELECT
+    ol.id,
+    ol.name,
+    ol.source,
+    ol.slug,
+    COUNT(*) AS total_movies,
+    COUNT(s.id) AS seen_movies,
+    ROUND(100.0 * COUNT(s.id) / COUNT(*), 2) AS percent_seen
+FROM
+    official_list ol
+    INNER JOIN official_list_movie l ON l.list_id = ol.id
+    INNER JOIN movie m ON m.id = l.movie_id
+    LEFT JOIN ( SELECT DISTINCT ON (movie_id)
+            movie_id,
+            id
+        FROM
+            public.seen
+        WHERE
+            user_id = $1
+        ORDER BY
+            movie_id,
+            id) AS s ON m.id = s.movie_id
+GROUP BY
+    ol.id,
+    ol.name
+ORDER BY
+    percent_seen DESC`
+
+const listQuery = `SELECT
+    id,
+    name,
+    description,
+    slug,
+    source
+FROM
+    official_list
+WHERE
+    id = $1`
 
 const listMoviesQuery = `
 SELECT
-	l.rank,
-	m.id,
-	m.title,
-	(s.id IS NOT NULL) AS "seen"
+    l.rank,
+    m.id,
+    m.title,
+    (s.id IS NOT NULL) AS "seen"
 FROM
-	official_list_movie l
-	INNER JOIN movie m ON m.id = l.movie_id
-	LEFT JOIN (
-		SELECT DISTINCT
-			ON (movie_id) movie_id,
-			id
-		FROM
-			public.seen
-		WHERE
-			user_id = $2
-		ORDER BY
-			movie_id,
-			id
-	) AS s ON m.id = s.movie_id
+    official_list_movie l
+    INNER JOIN movie m ON m.id = l.movie_id
+    LEFT JOIN ( SELECT DISTINCT ON (movie_id)
+            movie_id,
+            id
+        FROM
+            public.seen
+        WHERE
+            user_id = $2
+        ORDER BY
+            movie_id,
+            id) AS s ON m.id = s.movie_id
 WHERE
-	list_id = $1
+    list_id = $1
 ORDER BY
-	RANK ASC
+    RANK ASC
 `
 
 const listsByMovieQuery = `
 SELECT
-	official_list.id,
-	official_list.name,
-	official_list.slug,
-	official_list.source,
-	official_list_movie.rank
+    official_list.id,
+    official_list.name,
+    official_list.slug,
+    official_list.source,
+    official_list_movie.rank
 FROM
-	official_list_movie
-	INNER JOIN official_list ON official_list_movie.list_id = official_list.id
+    official_list_movie
+    INNER JOIN official_list ON official_list_movie.list_id = official_list.id
 WHERE
-	official_list_movie.movie_id = $1
+    official_list_movie.movie_id = $1
 `

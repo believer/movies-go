@@ -22,6 +22,10 @@ func (l Language) Subtitle() string {
 	return l.Name
 }
 
+func (l Language) Trailing() string {
+	return l.Name
+}
+
 func (l Language) Href() string {
 	return utils.CreateSelfHealingUrl("language", l.EnglishName, strconv.Itoa(l.ID))
 }

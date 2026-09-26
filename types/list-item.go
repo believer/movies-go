@@ -6,12 +6,15 @@ import (
 )
 
 type List struct {
-	Description string `db:"description"`
-	ID          string `db:"id"`
-	Name        string `db:"name"`
-	Rank        int    `db:"rank"`
-	Slug        string `db:"slug"`
-	Source      string `db:"source"`
+	Description string  `db:"description"`
+	ID          string  `db:"id"`
+	Name        string  `db:"name"`
+	Rank        int     `db:"rank"`
+	Slug        string  `db:"slug"`
+	Source      string  `db:"source"`
+	PercentSeen float64 `db:"percent_seen"`
+	SeenMovies  int     `db:"seen_movies"`
+	TotalMovies int     `db:"total_movies"`
 }
 
 func (l List) Title() string {
@@ -20,6 +23,10 @@ func (l List) Title() string {
 
 func (l List) Subtitle() string {
 	return l.Source
+}
+
+func (l List) Trailing() string {
+	return fmt.Sprintf("%.0f%% (%d/%d)", l.PercentSeen, l.SeenMovies, l.TotalMovies)
 }
 
 func (l List) Href() string {

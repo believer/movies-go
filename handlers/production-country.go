@@ -22,6 +22,10 @@ func (p ProductionItem) Subtitle() string {
 	return ""
 }
 
+func (p ProductionItem) Trailing() string {
+	return ""
+}
+
 func (p ProductionItem) Href() string {
 	return utils.CreateSelfHealingUrl("production-country", p.Name, p.ID)
 }

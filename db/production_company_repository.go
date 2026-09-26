@@ -20,6 +20,10 @@ func (p ProductionCompany) Subtitle() string {
 	return ""
 }
 
+func (p ProductionCompany) Trailing() string {
+	return ""
+}
+
 func (p ProductionCompany) Href() string {
 	return utils.CreateSelfHealingUrl("production-company", p.Name, p.ID)
 }
