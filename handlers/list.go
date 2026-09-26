@@ -4,7 +4,6 @@ import (
 	"believer/movies/db"
 	"believer/movies/utils"
 	"believer/movies/views"
-	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -56,7 +55,8 @@ func (h *ListHandler) GetListById(c *fiber.Ctx) error {
 
 	return utils.Render(c, views.ListPage(views.ListPageProps{
 		Description: l.Description,
-		Name:        fmt.Sprintf("%s - %s", l.Source, l.Name),
+		Title:       l.Name,
+		Subtitle:    l.Source,
 		Movies:      movies,
 		Slug:        utils.CreateSelfHealingUrl("list", l.Slug, l.ID),
 		Sort:        views.ToListSort(sort),

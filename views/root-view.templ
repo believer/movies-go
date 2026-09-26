@@ -29,13 +29,17 @@ type RootViewProps struct {
 
 templ rootViewRow(item RootViewItem) {
 	@list.Li() {
-		@link.Link(link.Props{Href: item.Href()}) {
-			{ item.Title() }
-			if item.Subtitle() != "" {
-				({ item.Subtitle() })
+		<div class="row">
+			@link.Link(link.Props{Href: item.Href()}) {
+				{ item.Title() }
 			}
+			@separator.Separator()
+		</div>
+		if item.Subtitle() != "" {
+			<div class="detail">
+				{ item.Subtitle() }
+			</div>
 		}
-		@separator.Separator()
 	}
 }
 

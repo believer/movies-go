@@ -42,7 +42,8 @@ func ToListSort(s string) ListSort {
 type ListPageProps struct {
 	Description string
 	Movies      types.Movies
-	Name        string
+	Title       string
+	Subtitle    string
 	Seen        int
 	Slug        string
 	Sort        ListSort
@@ -95,7 +96,7 @@ func listPageHeader(p ListPageProps) templ.Component {
 				var templ_7745c5c3_Var2 string
 				templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(p.Description)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/list-page.templ`, Line: 61, Col: 20}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/list-page.templ`, Line: 62, Col: 20}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 				if templ_7745c5c3_Err != nil {
@@ -114,7 +115,7 @@ func listPageHeader(p ListPageProps) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues(p.Progress())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/list-page.templ`, Line: 68, Col: 29}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/list-page.templ`, Line: 69, Col: 29}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -127,7 +128,7 @@ func listPageHeader(p ListPageProps) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(p.Completion())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/list-page.templ`, Line: 70, Col: 24}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/list-page.templ`, Line: 71, Col: 24}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -210,7 +211,7 @@ func listPageRow(m types.Movie, items int) templ.Component {
 				var templ_7745c5c3_Var8 string
 				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(m.Title)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/list-page.templ`, Line: 96, Col: 12}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/list-page.templ`, Line: 97, Col: 12}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {
@@ -261,7 +262,7 @@ func listPageRow(m types.Movie, items int) templ.Component {
 					var templ_7745c5c3_Var11 string
 					templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(m.ISOReleaseDate())
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/list-page.templ`, Line: 101, Col: 24}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/list-page.templ`, Line: 102, Col: 24}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 					if templ_7745c5c3_Err != nil {
@@ -355,7 +356,7 @@ func ListPage(props ...ListPageProps) templ.Component {
 				EmptyState:    "No movies in list",
 				ListStyle:     list.Numbered,
 				Movies:        p.Movies,
-				Name:          p.Name,
+				Name:          p.Title,
 				NumberColumns: 3,
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var13), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -482,7 +483,7 @@ func ListPage(props ...ListPageProps) templ.Component {
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = layout.Layout(layout.Props{Title: p.Name}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var14), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = layout.Layout(layout.Props{Title: p.Title, Subtitle: p.Subtitle}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var14), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

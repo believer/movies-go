@@ -2,13 +2,14 @@ package layout
 
 type Props struct {
 	DisplayAdd  bool
+	Subtitle    string
 	Title       string
 	Description string
 }
 
 templ Layout(p Props) {
 	@Html(p) {
-		@Body(BodyProps{Title: p.Title}) {
+		@Body(BodyProps{Title: p.Title, Subtitle: p.Subtitle}) {
 			{ children... }
 		}
 	}

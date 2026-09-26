@@ -2,7 +2,15 @@ package typography
 
 import "believer/movies/components/link"
 
-templ H1() {
+type H1Props struct {
+	Subtitle string
+}
+
+templ H1(props ...H1Props) {
+	{{ var p H1Props }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
 	<header class="page-header">
 		@link.Link(link.Props{
 			Href: "#",
@@ -14,8 +22,15 @@ templ H1() {
 			..
 		}
 		<span class="page-header__divider">/</span>
-		<h1>
-			{ children... }
-		</h1>
+		<div class="title">
+			<h1>
+				{ children... }
+			</h1>
+			if p.Subtitle != "" {
+				<div class="subtitle">
+					{ p.Subtitle }
+				</div>
+			}
+		</div>
 	</header>
 }

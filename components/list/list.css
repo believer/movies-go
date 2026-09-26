@@ -82,6 +82,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     font-size: var(--text-xs);
+    color: var(--color-content-secondary);
     white-space: nowrap;
 
     .comma {

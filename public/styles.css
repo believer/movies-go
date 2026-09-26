@@ -1324,6 +1324,7 @@
 	    overflow: hidden;
 	    text-overflow: ellipsis;
 	    font-size: var(--text-xs);
+	    color: var(--color-content-secondary);
 	    white-space: nowrap;
 	
 	    .comma {
@@ -1449,6 +1450,12 @@
 	  font-weight: 600;
 	
 	  .page-header__divider {
+	    color: var(--color-content-secondary);
+	  }
+	
+	  .subtitle {
+	    font-size: var(--text-sm);
+	    font-weight: 400;
 	    color: var(--color-content-secondary);
 	  }
 	}

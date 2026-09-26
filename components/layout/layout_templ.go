@@ -10,6 +10,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 type Props struct {
 	DisplayAdd  bool
+	Subtitle    string
 	Title       string
 	Description string
 }
@@ -65,7 +66,7 @@ func Layout(p Props) templ.Component {
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = Body(BodyProps{Title: p.Title}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = Body(BodyProps{Title: p.Title, Subtitle: p.Subtitle}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

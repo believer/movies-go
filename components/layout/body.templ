@@ -3,13 +3,14 @@ package layout
 import "believer/movies/components/typography"
 
 type BodyProps struct {
-	Title string
+	Subtitle string
+	Title    string
 }
 
 templ Body(p BodyProps) {
 	<main>
 		<section class="layout">
-			@typography.H1() {
+			@typography.H1(typography.H1Props{Subtitle: p.Subtitle}) {
 				{ p.Title }
 			}
 			{ children... }

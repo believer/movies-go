@@ -8,4 +8,10 @@
   .page-header__divider {
     color: var(--color-content-secondary);
   }
+
+  .subtitle {
+    font-size: var(--text-sm);
+    font-weight: 400;
+    color: var(--color-content-secondary);
+  }
 }

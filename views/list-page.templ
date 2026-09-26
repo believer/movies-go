@@ -34,7 +34,8 @@ func ToListSort(s string) ListSort {
 type ListPageProps struct {
 	Description string
 	Movies      types.Movies
-	Name        string
+	Title       string
+	Subtitle    string
 	Seen        int
 	Slug        string
 	Sort        ListSort
@@ -120,13 +121,13 @@ templ ListPage(props ...ListPageProps) {
 			EmptyState:    "No movies in list",
 			ListStyle:     list.Numbered,
 			Movies:        p.Movies,
-			Name:          p.Name,
+			Name:          p.Title,
 			NumberColumns: 3,
 		}) {
 			@listPageHeader(p)
 		}
 	} else {
-		@layout.Layout(layout.Props{Title: p.Name}) {
+		@layout.Layout(layout.Props{Title: p.Title, Subtitle: p.Subtitle}) {
 			@listPageHeader(p)
 			@section.Section(section.Props{
 				NumberOfItems: p.Unseen,
