@@ -21,15 +21,15 @@ type Award struct {
 	Category string           `db:"category" json:"category"`
 	Detail   utils.NullString `db:"detail" json:"detail"`
 	ID       string           `db:"id" json:"id"`
-	ImdbID   string           `db:"imdb_id"`
-	MovieID  utils.NullInt64  `db:"movie_id" json:"movie_id"`
-	Nominees Nominees         `db:"nominees"`
+	ImdbID   string           `db:"imdb_id" json:"imdbId"`
+	MovieID  utils.NullInt64  `db:"movie_id" json:"movieId"`
+	Nominees Nominees         `db:"nominees" json:"nominees"`
 	Person   utils.NullString `db:"person" json:"person"`
-	PersonId utils.NullInt64  `db:"person_id" json:"person_id"`
-	Title    utils.NullString `db:"title"`
-	Type     string           `db:"type"`
+	PersonId utils.NullInt64  `db:"person_id" json:"personId"`
+	Title    utils.NullString `db:"title" json:"title"`
+	Type     string           `db:"type" json:"type"`
 	Winner   bool             `db:"winner" json:"winner"`
-	Year     string           `db:"year"`
+	Year     string           `db:"year" json:"year"`
 }
 
 type Awards []Award

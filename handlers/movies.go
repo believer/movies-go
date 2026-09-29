@@ -84,7 +84,10 @@ func (h *MovieHandler) GetMovieByID(c *fiber.Ctx) error {
 	}
 
 	if c.Get("Accept") == "application/json" {
-		return c.JSON(movieData)
+		return c.JSON(map[string]any{
+			"movie": movieData,
+			"cast":  cast,
+		})
 	}
 
 	return utils.Render(c, views.Movie(

@@ -36,6 +36,14 @@ func (h *WatchlistHandler) GetWatchlist(c *fiber.Ctx) error {
 		return err
 	}
 
+	if c.Get("Accept") == "application/json" {
+		return c.JSON(map[string]any{
+			"movies":        movies,
+			"unreleased":    unreleasedMovies,
+			"noReleaseDate": moviesWithoutReleaseDate,
+		})
+	}
+
 	return utils.Render(c, views.Watchlist(views.WatchlistProps{
 		Movies:                   movies,
 		UnreleasedMovies:         unreleasedMovies,

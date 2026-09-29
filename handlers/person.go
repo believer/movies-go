@@ -58,6 +58,16 @@ func (h *PersonHandler) GetPersonByID(c *fiber.Ctx) error {
 		totalCredits += field
 	}
 
+	if c.Get("Accept") == "application/json" {
+		return c.JSON(map[string]any{
+			"awards": map[string]any{
+				"academyAwards": academyAwards,
+				"baftas":        baftas,
+			},
+			"person": person,
+		})
+	}
+
 	return utils.Render(c, views.Person(views.PersonProps{
 		AcademyAwards:      academyAwards,
 		AcademyAwardsOrder: academyOrder,

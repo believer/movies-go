@@ -18,9 +18,9 @@ import (
 )
 
 type CastAndCrewDTO struct {
-	Name      string
-	ID        int32
-	Character string
+	Name      string `json:"name"`
+	ID        int32  `json:"id"`
+	Character string `json:"character"`
 }
 
 func (p CastAndCrewDTO) LinkTo() string {
@@ -28,8 +28,8 @@ func (p CastAndCrewDTO) LinkTo() string {
 }
 
 type CastDTO struct {
-	Job    string
-	People []CastAndCrewDTO
+	Job    string           `json:"job"`
+	People []CastAndCrewDTO `json:"people"`
 }
 
 func CastList(castOrCrew []CastDTO, hasCharacters bool) templ.Component {
