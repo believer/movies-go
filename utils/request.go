@@ -75,3 +75,8 @@ func (r Request) QueryDefault(key, defaultValue string) string {
 	}
 	return defaultValue
 }
+
+// Is the request for JSON?
+func (r Request) IsJson() bool {
+	return r.Get("Accept") == "application/json"
+}

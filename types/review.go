@@ -5,9 +5,9 @@ import (
 )
 
 type Review struct {
-	ID      int    `db:"id"`
-	Content string `db:"content"`
-	Private bool   `db:"private"`
+	ID      int    `db:"id" json:"id"`
+	Content string `db:"content" json:"content"`
+	Private bool   `db:"private" json:"isPrivate"`
 }
 
 func (r *Review) Edit(id int) string {

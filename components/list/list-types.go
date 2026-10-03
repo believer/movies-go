@@ -1,6 +1,6 @@
 package list
 
 type DataListItem struct {
-	Label string `db:"name"`
-	Value string `db:"value"`
+	Label string `db:"name" json:"label"`
+	Value string `db:"value" json:"value"`
 }

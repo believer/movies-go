@@ -38,6 +38,10 @@ func (h *StatsHandler) GetStats(c *fiber.Ctx) error {
 	statsCacheMutex.RUnlock()
 
 	if found && time.Since(cached.createdAt) < cacheTTL {
+		if req.IsJson() {
+			return c.JSON(cached.props)
+		}
+
 		return utils.Render(c, views.Stats(cached.props))
 	}
 
@@ -255,6 +259,10 @@ func (h *StatsHandler) GetStats(c *fiber.Ctx) error {
 		Years:                   availableYears(),
 		ShortestAndLongestMovie: shortestAndLongest,
 		WilhelmScreams:          wilhelms[0],
+	}
+
+	if req.IsJson() {
+		return c.JSON(props)
 	}
 
 	// Cache the result

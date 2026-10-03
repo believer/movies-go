@@ -62,9 +62,9 @@ func (a *Award) LinkToYear() string {
 // ======================================================
 
 type AwardPersonStat struct {
-	Count int    `db:"count"`
-	ID    int    `db:"person_id"`
-	Name  string `db:"person"`
+	Count int    `db:"count" json:"count"`
+	ID    int    `db:"person_id" json:"id"`
+	Name  string `db:"person" json:"name"`
 }
 
 func (a AwardPersonStat) LinkTo() string {
@@ -75,9 +75,9 @@ func (a AwardPersonStat) LinkTo() string {
 // ======================================================
 
 type AwardMovieStat struct {
-	Count int    `db:"award_count"`
-	ID    int    `db:"id"`
-	Title string `db:"title"`
+	Count int    `db:"award_count" json:"count"`
+	ID    int    `db:"id" json:"id"`
+	Title string `db:"title" json:"title"`
 }
 
 func (a AwardMovieStat) LinkTo() string {
@@ -88,9 +88,9 @@ func (a AwardMovieStat) LinkTo() string {
 // ======================================================
 
 type GroupedAward struct {
-	Name     string
-	Winner   bool
-	Nominees Awards
+	Name     string `json:"name"`
+	Winner   bool   `json:"winner"`
+	Nominees Awards `json:"nominees"`
 }
 
 type GroupedAwards map[string]GroupedAward
@@ -99,9 +99,9 @@ type GroupedAwards map[string]GroupedAward
 // ======================================================
 
 type AwardsByYear struct {
-	MovieID int    `db:"movie_id"`
-	Title   string `db:"title"`
-	Awards  Awards `db:"awards"`
+	MovieID int    `db:"movie_id" json:"movieId"`
+	Title   string `db:"title" json:"title"`
+	Awards  Awards `db:"awards" json:"awards"`
 }
 
 func (g *AwardsByYear) LinkToMovie() string {
@@ -112,8 +112,8 @@ func (g *AwardsByYear) LinkToMovie() string {
 // ======================================================
 
 type AwardsByCategory struct {
-	Category string `db:"category"`
-	Nominees Awards `db:"nominees"`
+	Category string `db:"category" json:"category"`
+	Nominees Awards `db:"nominees" json:"nominees"`
 }
 
 // Award texts

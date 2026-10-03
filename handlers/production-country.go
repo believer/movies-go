@@ -39,10 +39,15 @@ func NewProductionCountryHandler(repo db.ProductionCountryQuerier) *ProductionCo
 }
 
 func (h *ProductionCountryHandler) ListProductionCountries(c *fiber.Ctx) error {
+	req := utils.NewRequest(c)
 	countries, err := h.repo.ListProductionCountries()
 
 	if err != nil {
 		return err
+	}
+
+	if req.IsJson() {
+		return c.JSON(countries)
 	}
 
 	return utils.Render(c, views.RootView(views.RootViewProps{
@@ -65,6 +70,13 @@ func (h *ProductionCountryHandler) GetProductionCountry(c *fiber.Ctx) error {
 
 	if err != nil {
 		return err
+	}
+
+	if req.IsJson() {
+		return c.JSON(map[string]any{
+			"country": country,
+			"movies":  movies,
+		})
 	}
 
 	return utils.Render(c, views.ListView(views.ListViewProps{

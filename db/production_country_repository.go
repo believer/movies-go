@@ -8,8 +8,8 @@ import (
 )
 
 type ProductionCountry struct {
-	ID   string `db:"id"`
-	Name string `db:"name"`
+	ID   string `db:"id" json:"id"`
+	Name string `db:"name" json:"name"`
 }
 
 func (p ProductionCountry) Title() string {

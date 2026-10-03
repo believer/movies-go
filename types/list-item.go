@@ -34,10 +34,10 @@ func (l List) Href() string {
 }
 
 type ListItem struct {
-	Name     string `db:"name"`
-	LinkName string `db:"link_name"`
-	ID       string `db:"id"`
-	Count    int    `db:"count"`
+	Name     string `db:"name" json:"name"`
+	LinkName string `db:"link_name" json:"linkName"`
+	ID       string `db:"id" json:"id"`
+	Count    int    `db:"count" json:"count"`
 }
 
 func (l ListItem) LinkTo(root string) string {

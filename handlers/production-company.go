@@ -26,6 +26,10 @@ func (h *ProductionCompanyHandler) ListProductionCompanies(c *fiber.Ctx) error {
 		return err
 	}
 
+	if req.IsJson() {
+		return c.JSON(companies)
+	}
+
 	return utils.Render(c, views.RootView(views.RootViewProps{
 		EmptyState: "No production companies",
 		NextPage:   fmt.Sprintf("/production-company?page=%d", page+1),
@@ -47,6 +51,13 @@ func (h *ProductionCompanyHandler) GetProductionCompany(c *fiber.Ctx) error {
 
 	if err != nil {
 		return err
+	}
+
+	if req.IsJson() {
+		return c.JSON(map[string]any{
+			"company": company,
+			"movies":  movies,
+		})
 	}
 
 	return utils.Render(c, views.ListView(views.ListViewProps{

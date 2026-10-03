@@ -63,27 +63,27 @@ func statsSection(job string) templ.Component {
 }
 
 type StatsProps struct {
-	AwardNominations        types.AwardPersonStat
-	AwardWins               types.AwardPersonStat
-	BestOfTheYear           types.Movie
-	BestYear                string
-	FormattedTotalRuntime   string
-	MostAwardedMovies       []types.AwardMovieStat
-	MostWatchedCast         []types.ListItem
-	MostWatchedMovies       []types.ListItem
-	MoviesByYear            []graph.GraphData
-	Ratings                 []graph.Bar
-	Reviews                 int
-	SeenThisYear            []graph.Bar
-	ShortestAndLongestMovie types.Movies
-	Stats                   types.Stats
-	TotalCast               string
-	WatchedByYear           []graph.Bar
-	WatchedByWeekday        []graph.Bar
-	WilhelmScreams          int
-	Year                    string
-	YearRatings             []graph.Bar
-	Years                   []string
+	AwardNominations        types.AwardPersonStat  `json:"awardNominations"`
+	AwardWins               types.AwardPersonStat  `json:"awardWins"`
+	BestOfTheYear           types.Movie            `json:"bestOfTheYear"`
+	BestYear                string                 `json:"bestYear"`
+	FormattedTotalRuntime   string                 `json:"formattedTotalRuntime"`
+	MostAwardedMovies       []types.AwardMovieStat `json:"MostAwardedMovies"`
+	MostWatchedCast         []types.ListItem       `json:"mostWatchedCast"`
+	MostWatchedMovies       []types.ListItem       `json:"mostWatchedMovies"`
+	MoviesByYear            []graph.GraphData      `json:"moviesThisYear"`
+	Ratings                 []graph.Bar            `json:"ratings"`
+	Reviews                 int                    `json:"reviews"`
+	SeenThisYear            []graph.Bar            `json:"seenThisYear"`
+	ShortestAndLongestMovie types.Movies           `json:"shortestAndLongestMovie"`
+	Stats                   types.Stats            `json:"stats"`
+	TotalCast               string                 `json:"totalCast"`
+	WatchedByYear           []graph.Bar            `json:"watchedByYear"`
+	WatchedByWeekday        []graph.Bar            `json:"watchedByWeekday"`
+	WilhelmScreams          int                    `json:"wilhelmScreams"`
+	Year                    string                 `json:"year"`
+	YearRatings             []graph.Bar            `json:"yearRatings"`
+	Years                   []string               `json:"years"`
 }
 
 func Stats(props StatsProps) templ.Component {

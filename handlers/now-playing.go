@@ -27,6 +27,10 @@ func (h *NowPlayingHandler) GetNowPlaying(c *fiber.Ctx) error {
 		return err
 	}
 
+	if req.IsJson() {
+		return c.JSON(nowPlaying)
+	}
+
 	return utils.Render(c, views.NowPlaying(views.NowPlayingProps{
 		Movies: nowPlaying,
 	}))

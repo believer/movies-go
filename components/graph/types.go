@@ -1,19 +1,19 @@
 package graph
 
 type GraphData struct {
-	Label string `db:"label"`
-	Value int    `db:"value"`
+	Label string `db:"label" json:"label"`
+	Value int    `db:"value" json:"value"`
 }
 
 type Bar struct {
-	Label     string
-	Value     int
-	BarHeight int
-	BarWidth  int
-	BarX      int
-	BarY      int
-	LabelX    float64
-	LabelY    float64
-	ValueX    float64
-	ValueY    int
+	Label     string  `json:"label"`
+	Value     int     `json:"value"`
+	BarHeight int     `json:"barHeight"`
+	BarWidth  int     `json:"barWidth"`
+	BarX      int     `json:"barX"`
+	BarY      int     `json:"barY"`
+	LabelX    float64 `json:"labelX"`
+	LabelY    float64 `json:"labelY"`
+	ValueX    float64 `json:"valueX"`
+	ValueY    int     `json:"valueY"`
 }
