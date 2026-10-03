@@ -23,9 +23,9 @@ import (
 )
 
 type WatchedAt struct {
-	ID       int            `db:"id"`
-	Date     time.Time      `db:"date"`
-	SeenWith pq.StringArray `db:"seen_with"`
+	ID       int            `db:"id" json:"id"`
+	Date     time.Time      `db:"date" json:"date"`
+	SeenWith pq.StringArray `db:"seen_with" json:"seenWith"`
 }
 
 type WatchedProps struct {
