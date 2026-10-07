@@ -23,7 +23,7 @@ templ Button(props ...Props) {
 		{{ p = props[0] }}
 	}
 	<button
-		class={ "button focus", templ.KV("button--secondary", p.Rank == Secondary) }
+		class={ "button focus", templ.KV("secondary", p.Rank == Secondary) }
 		if p.Type == TypeSubmit {
 			type="submit"
 		} else {
@@ -31,11 +31,11 @@ templ Button(props ...Props) {
 		}
 		{ p.Attrs... }
 	>
-		<div class="button__state">
-			<div class="button__content">
+		<div class="state">
+			<div class="content">
 				{ children... }
 			</div>
-			<div class="button__loading">Sending...</div>
+			<div class="loading">Sending...</div>
 		</div>
 	</button>
 }

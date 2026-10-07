@@ -31,7 +31,7 @@ func TestButton_Primary(t *testing.T) {
 
 	hasFocusClass := btn.HasClass("focus")
 	hasBtnClass := btn.HasClass("button")
-	isSecondary := btn.HasClass("button--secondary")
+	isSecondary := btn.HasClass("secondary")
 
 	if !hasBtnClass || !hasFocusClass {
 		t.Error("missing default classes")
@@ -47,7 +47,7 @@ func TestButton_Primary(t *testing.T) {
 	}
 
 	// Loading text is alwayas present, but hidden
-	if btn.Find(".button__loading").Text() != "Sending..." {
+	if btn.Find(".loading").Text() != "Sending..." {
 		t.Error("expected loading text")
 	}
 }
@@ -60,8 +60,8 @@ func TestButton_Secondary(t *testing.T) {
 
 	btn := doc.Find("button[type='button']")
 
-	if !btn.HasClass("button--secondary") {
-		t.Error("expected button--secondary class")
+	if !btn.HasClass("secondary") {
+		t.Error("expected secondary class")
 	}
 }
 
