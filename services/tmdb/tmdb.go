@@ -3,9 +3,9 @@ package tmdb
 import (
 	"believer/movies/types"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -14,6 +14,34 @@ import (
 
 var httpClient = &http.Client{
 	Timeout: 10 * time.Second,
+}
+
+var baseURL = "https://api.themoviedb.org/3"
+
+// ErrNotFound is returned when TMDB responds with 404.
+var ErrNotFound = errors.New("tmdb: not found")
+
+// Client fetches movies from TMDB over HTTP.
+type Client struct{}
+
+// Fetch returns a movie's details and credits. The id is an IMDb or TMDB ID.
+// It returns ErrNotFound when TMDB doesn't know the movie.
+func (Client) Fetch(id string) (types.MovieDetailsResponse, types.MovieCreditsResponse, error) {
+	t := New(id)
+
+	details, err := t.Movie()
+
+	if err != nil {
+		return types.MovieDetailsResponse{}, types.MovieCreditsResponse{}, fmt.Errorf("fetch movie %s: %w", id, err)
+	}
+
+	credits, err := t.Credits()
+
+	if err != nil {
+		return types.MovieDetailsResponse{}, types.MovieCreditsResponse{}, fmt.Errorf("fetch credits %s: %w", id, err)
+	}
+
+	return details, credits, nil
 }
 
 type Tmdb struct {
@@ -47,19 +75,25 @@ func (t *Tmdb) Search(query string) (types.SearchMovieResponse, error) {
 	)
 }
 
+// WatchProviders returns an empty response when TMDB has no providers.
 func (t *Tmdb) WatchProviders() (types.MovieWatchProvidersResponse, error) {
-	return fetchJSON[types.MovieWatchProvidersResponse](
+	providers, err := fetchJSON[types.MovieWatchProvidersResponse](
 		[]string{"movie", t.ID, "watch", "providers"},
 		map[string]string{},
 	)
+
+	if errors.Is(err, ErrNotFound) {
+		return types.MovieWatchProvidersResponse{}, nil
+	}
+
+	return providers, err
 }
 
 func fetchJSON[T any](path []string, additionalParams map[string]string) (result T, err error) {
 	// Construct URL
 	tmdbKey := os.Getenv("TMDB_API_KEY")
-	baseUrl := "https://api.themoviedb.org/3"
 
-	u, err := url.JoinPath(baseUrl, path...)
+	u, err := url.JoinPath(baseURL, path...)
 
 	if err != nil {
 		return result, err
@@ -90,12 +124,12 @@ func fetchJSON[T any](path []string, additionalParams map[string]string) (result
 		}
 	}()
 
-	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusNotFound {
-		return result, fmt.Errorf("TMDB API returned unexpected status code %d: %s", resp.StatusCode, resp.Status)
+	if resp.StatusCode == http.StatusNotFound {
+		return result, ErrNotFound
 	}
 
-	if resp.StatusCode == http.StatusNotFound {
-		log.Printf("Movie watch providers not found")
+	if resp.StatusCode != http.StatusOK {
+		return result, fmt.Errorf("TMDB API returned unexpected status code %d: %s", resp.StatusCode, resp.Status)
 	}
 
 	// Unmarshal JSON
