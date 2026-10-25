@@ -6,13 +6,13 @@ import (
 	"believer/movies/components/rating"
 	"believer/movies/components/seen"
 	"believer/movies/db"
-	"believer/movies/services/api"
+	"believer/movies/services/intake"
 	"believer/movies/services/tmdb"
 	"believer/movies/types"
 	"believer/movies/utils"
-	"believer/movies/utils/awards"
 	"believer/movies/views"
 	"database/sql"
+	"errors"
 	"fmt"
 	"log/slog"
 	"strconv"
@@ -24,11 +24,12 @@ import (
 )
 
 type MovieHandler struct {
-	repo db.MovieQuerier
+	repo   db.MovieQuerier
+	intake *intake.Intake
 }
 
-func NewMovieHandler(repo db.MovieQuerier) *MovieHandler {
-	return &MovieHandler{repo}
+func NewMovieHandler(repo db.MovieQuerier, intake *intake.Intake) *MovieHandler {
+	return &MovieHandler{repo, intake}
 }
 
 func (h *MovieHandler) GetMovieByID(c *fiber.Ctx) error {
@@ -237,118 +238,54 @@ func (h *MovieHandler) PostMovieNew(c *fiber.Ctx) error {
 		return c.SendString(err.Error())
 	}
 
-	api := api.New(c)
+	opts := intake.MovieOptions{WilhelmScream: data.HasWilhelmScream}
 
-	movieData, movieId, err := api.AddMovie(imdbId, data.HasWilhelmScream)
-	if err != nil {
-		return err
-	}
-
-	slog.Debug("Movie inserted")
-
-	watchedAt, err := time.Parse("2006-01-02T15:04", data.WatchedAt)
-
-	if err != nil {
-		now := time.Now()
-		watchedAt, err = time.Parse("2006-01-02", data.WatchedAt)
-
-		if err != nil {
-			watchedAt = now
-		}
-
-		// Set the current time
-		watchedAt = watchedAt.Add(time.Duration(now.Hour()))
-	}
-
-	tx, err := h.repo.Begin()
-	if err != nil {
-		return err
-	}
-	defer tx.Rollback()
-
-	// Add review if any
-	if data.Review != "" {
-		err = h.repo.InsertReview(tx, data.Review, data.IsPrivateReview, userId, movieId)
-		if err != nil {
-			return err
-		}
-	}
-
-	// Insert series
 	if data.Series != "" && data.NumberInSeries != 0 {
-		seriesId, err := strconv.Atoi(data.Series)
+		series := intake.SeriesEntry{Number: float64(data.NumberInSeries)}
 
 		// Series can't be turned into an int, so it's a new series
-		if err != nil {
-			seriesId, err = h.repo.GetOrInsertSeries(tx, data.Series)
-			if err != nil {
-				return err
-			}
+		if seriesId, err := strconv.Atoi(data.Series); err == nil {
+			series.ID = seriesId
+		} else {
+			series.Name = data.Series
 		}
 
-		err = h.repo.InsertMovieSeries(tx, movieId, seriesId, data.NumberInSeries)
-
-		if err != nil {
-			c.Set("HX-Retarget", "#error")
-			return c.SendString(fmt.Sprintf("Movie #%d already exists in series", data.NumberInSeries))
-		}
-
-		slog.Debug("Series inserted")
+		opts.Series = &series
 	}
 
-	if data.IsWatchlist {
-		// Add to watchlist
-		err = h.repo.InsertWatchlist(tx, userId, movieId)
+	ref := intake.ByExternalID(imdbId)
+	var movieId int
 
-		if err != nil {
-			c.Set("HX-Retarget", "#error")
-			return c.SendString("Movie already added to watchlist")
-		}
-	} else if data.DryRun != true {
-		// Insert a view and delete from watchlist if exists
-		seenID, err := h.repo.InsertSeenMovie(tx, userId, movieId, watchedAt)
-
-		if err != nil {
-			return err
-		}
-
-		err = h.repo.DeleteWatchlist(tx, userId, movieId)
-		if err != nil {
-			return err
+	switch {
+	case data.DryRun:
+		movieId, err = h.intake.EnsureMovie(ref, opts)
+	case data.IsWatchlist:
+		movieId, err = h.intake.AddToWatchlist(userId, ref, opts)
+	default:
+		watch := intake.Watch{
+			WatchedAt: utils.ParseWatchedAt(data.WatchedAt, time.Now()),
+			Friends:   data.Friend,
+			Rating:    data.Rating,
 		}
 
-		// Add friends if any
-		if seenID != 0 && len(data.Friend) > 0 {
-			err = h.repo.InsertSeenWith(tx, seenID, data.Friend)
-
-			if err != nil {
-				return err
-			}
+		if data.Review != "" {
+			watch.Review = &intake.Review{Content: data.Review, Private: data.IsPrivateReview}
 		}
+
+		movieId, err = h.intake.LogWatch(userId, ref, opts, watch)
 	}
 
-	// Remove from now playing if exists
-	if !data.DryRun {
-		err = h.repo.DeleteNowPlaying(tx, userId, movieId)
-		if err != nil {
-			return err
-		}
-	}
-
-	// Insert rating
-	if data.Rating != 0 && !data.DryRun {
-		err = h.repo.AddRating(tx, userId, movieId, data.Rating)
-		if err != nil {
-			return err
-		}
-	}
-
-	// Add awards
-	awards.AddOscars(tx, movieData.ImdbId)
-	awards.AddBaftas(tx, movieData.ImdbId)
-
-	err = tx.Commit()
-	if err != nil {
+	switch {
+	case errors.Is(err, intake.ErrAlreadyInSeries):
+		c.Set("HX-Retarget", "#error")
+		return c.SendString(fmt.Sprintf("Movie #%d already exists in series", data.NumberInSeries))
+	case errors.Is(err, intake.ErrAlreadyWatchlisted):
+		c.Set("HX-Retarget", "#error")
+		return c.SendString("Movie already added to watchlist")
+	case errors.Is(err, intake.ErrMovieNotFound):
+		c.Set("HX-Retarget", "#error")
+		return c.SendString("Movie not found on TMDB")
+	case err != nil:
 		return err
 	}
 
@@ -522,19 +459,7 @@ func (h *MovieHandler) UpdateSeenMovie(c *fiber.Ctx) error {
 		return err
 	}
 
-	watchedAt, err := time.Parse("2006-01-02T15:04", data.WatchedAt)
-
-	if err != nil {
-		now := time.Now()
-		watchedAt, err = time.Parse("2006-01-02", data.WatchedAt)
-
-		if err != nil {
-			watchedAt = now
-		}
-
-		// Set the current time
-		watchedAt = watchedAt.Add(time.Duration(now.Hour()))
-	}
+	watchedAt := utils.ParseWatchedAt(data.WatchedAt, time.Now())
 
 	err = h.repo.UpdateSeenMovie(seenID, watchedAt, data.Friend)
 
@@ -561,7 +486,17 @@ func (h *MovieHandler) CreateSeenMovie(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	err := h.repo.CreateSeenMovieDirect(userID, movieId)
+	id, err := strconv.Atoi(movieId)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = h.intake.LogWatch(userID, intake.ByID(id), intake.MovieOptions{}, intake.Watch{WatchedAt: time.Now()})
+
+	if errors.Is(err, intake.ErrMovieNotFound) {
+		return c.SendStatus(fiber.StatusNotFound)
+	}
 
 	if err != nil {
 		return err
@@ -823,60 +758,12 @@ func (h *MovieHandler) UpdateMovieByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	movieSimple, err := h.repo.GetMovieTitleAndImdbID(strconv.Itoa(id))
+	err = h.intake.RefreshMovie(id)
 
-	if err != nil {
-		return err
+	if errors.Is(err, intake.ErrMovieNotFound) {
+		return c.SendStatus(fiber.StatusNotFound)
 	}
 
-	tmdbApi := tmdb.New(movieSimple.ImdbId)
-	api := api.New(c)
-	movieData, err := tmdbApi.Movie()
-
-	if err != nil {
-		return err
-	}
-
-	movieCast, err := tmdbApi.Credits()
-
-	if err != nil {
-		return err
-	}
-
-	tx, err := h.repo.Begin()
-	if err != nil {
-		return err
-	}
-	defer tx.Rollback()
-
-	err = h.repo.UpdateMovie(tx, id, movieData.Title, movieData.Runtime, movieData.ReleaseDate, movieData.ImdbId, movieData.Overview, movieData.Poster, movieData.Tagline, movieData.TmdbId)
-	if err != nil {
-		return err
-	}
-
-	slog.Debug("Movie updated")
-
-	if err = api.AddLanguages(tx, id, movieData); err != nil {
-		return err
-	}
-	if err = api.AddGenres(tx, id, movieData); err != nil {
-		return err
-	}
-	if err = api.AddCountries(tx, id, movieData); err != nil {
-		return err
-	}
-	if err = api.AddProductionCompanies(tx, id, movieData); err != nil {
-		return err
-	}
-	if err = api.AddCast(tx, movieCast, id); err != nil {
-		return err
-	}
-
-	// Add awards
-	awards.AddOscars(tx, movieData.ImdbId)
-	awards.AddBaftas(tx, movieData.ImdbId)
-
-	err = tx.Commit()
 	if err != nil {
 		return err
 	}
@@ -1003,13 +890,24 @@ func (h *MovieHandler) PlaybackProgress(c *fiber.Ctx) error {
 		return err
 	}
 
-	if data.ImdbID == "" {
+	imdbID, err := utils.ParseId(data.ImdbID)
+
+	if err != nil {
 		return c.SendStatus(fiber.StatusUnprocessableEntity)
 	}
 
+	userID := c.Locals("UserId").(string)
+	ref := intake.ByExternalID(imdbID)
+
 	if data.Completed {
+		_, err := h.intake.LogWatch(userID, ref, intake.MovieOptions{}, intake.Watch{WatchedAt: time.Now()})
+
+		if err != nil {
+			return err
+		}
+
+		InvalidateStatsCache(userID)
 		slog.Info("Playback completed", "data", data)
-		return h.PostMovieNew(c)
 	} else {
 		// Convert string position to float
 		positionParts := strings.Split(data.Position, ":")
@@ -1032,35 +930,12 @@ func (h *MovieHandler) PlaybackProgress(c *fiber.Ctx) error {
 			}
 		}
 
-		// If movie doesn't exist, add it
-		movieExists, err := h.repo.MovieExists(data.ImdbID)
+		movieId, err := h.intake.EnsureMovie(ref, intake.MovieOptions{})
 
 		if err != nil {
 			return err
 		}
 
-		var movieId int
-		if movieExists {
-			// Try to update existing movie
-			_ = h.UpdateMovieByID(c)
-
-			// Retrieve the movie's ID
-			movieObj, err := h.repo.GetMovieByImdbID(data.ImdbID)
-			if err != nil {
-				return err
-			}
-			movieId = movieObj.ID
-		} else {
-			api := api.New(c)
-			_, insertedMovieId, err := api.AddMovie(data.ImdbID, false)
-
-			if err != nil {
-				return err
-			}
-			movieId = insertedMovieId
-		}
-
-		userID := c.Locals("UserId").(string)
 		err = h.repo.UpdateNowPlaying(movieId, positionAsNumber, userID)
 
 		if err != nil {

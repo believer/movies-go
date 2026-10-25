@@ -24,9 +24,6 @@ type MovieQuerier interface {
 	GetFriends(userID string) ([]list.DataListItem, error)
 	GetSeenMovie(seenID string) (views.WatchData, error)
 	DeleteSeenMovie(tx *sqlx.Tx, seenID string) error
-	InsertSeenMovie(tx *sqlx.Tx, userID string, movieID int, watchedAt time.Time) (int, error)
-	InsertSeenWith(tx *sqlx.Tx, seenID int, friends []string) error
-	CreateSeenMovieDirect(userID string, movieID string) error
 	UpdateSeenMovie(seenID string, watchedAt time.Time, friends []string) error
 
 	// Ratings Queries
@@ -42,17 +39,10 @@ type MovieQuerier interface {
 	GetAllSeries() ([]list.DataListItem, error)
 	GetMovieAwards(imdbID string, awardType string) ([]types.Award, error)
 
-	// Create/Update Movie from post form
-	InsertReview(tx *sqlx.Tx, content string, private bool, userID string, movieID int) error
-	GetOrInsertSeries(tx *sqlx.Tx, name string) (int, error)
-	InsertMovieSeries(tx *sqlx.Tx, movieID int, seriesID int, numberInSeries int) error
-	InsertWatchlist(tx *sqlx.Tx, userID string, movieID int) error
-	DeleteWatchlist(tx *sqlx.Tx, userID string, movieID int) error
-	DeleteNowPlaying(tx *sqlx.Tx, userID string, movieID int) error
+	// Now Playing Queries
 	DeleteNowPlayingDirect(userID string, movieID int) error
-	UpdateMovie(tx *sqlx.Tx, id int, title string, runtime int, releaseDate string, imdbID string, overview string, poster string, tagline string, tmdbID int) error
 	UpdateNowPlaying(movieID int, position float64, userID string) error
-	MovieExists(imdbID string) (bool, error)
+
 	Begin() (*sqlx.Tx, error)
 }
 
@@ -388,35 +378,6 @@ WHERE id = $1`, seenID)
 	return err
 }
 
-func (r *MovieRepository) InsertSeenMovie(tx *sqlx.Tx, userID string, movieID int, watchedAt time.Time) (int, error) {
-	var id int
-	err := tx.Get(&id, `
-INSERT INTO seen (user_id, movie_id, date)
-    VALUES ($1, $2, $3)
-RETURNING
-    id
-	`, userID, movieID, watchedAt)
-	return id, err
-}
-
-func (r *MovieRepository) InsertSeenWith(tx *sqlx.Tx, seenID int, friends []string) error {
-	_, err := tx.Exec(`
-		INSERT INTO seen_with (seen_id, other_user_id)
-		SELECT
-		    $1,
-		    UNNEST($2::text[])::int
-		ON CONFLICT
-		    DO NOTHING
-	`, seenID, pq.Array(friends))
-	return err
-}
-
-func (r *MovieRepository) CreateSeenMovieDirect(userID string, movieID string) error {
-	_, err := r.db.Exec(`INSERT INTO seen (user_id, movie_id)
-    VALUES ($1, $2)`, userID, movieID)
-	return err
-}
-
 func (r *MovieRepository) UpdateSeenMovie(seenID string, watchedAt time.Time, friends []string) error {
 	tx, err := r.db.Beginx()
 	if err != nil {
@@ -580,88 +541,14 @@ ORDER BY
 	return awards, err
 }
 
-// Create/Update Movie queries
+// Now Playing Queries
 // =====================================================
-
-func (r *MovieRepository) InsertReview(tx *sqlx.Tx, content string, private bool, userID string, movieID int) error {
-	_, err := tx.Exec(`
-INSERT INTO review (content, private, user_id, movie_id)
-    VALUES ($1, $2, $3, $4)
-ON CONFLICT
-    DO NOTHING
-	`, content, private, userID, movieID)
-	return err
-}
-
-func (r *MovieRepository) GetOrInsertSeries(tx *sqlx.Tx, name string) (int, error) {
-	var seriesID int
-	err := tx.Get(&seriesID, `
-INSERT INTO series (name)
-    VALUES ($1)
-ON CONFLICT
-    DO UPDATE SET
-        name = EXCLUDED.name
-    RETURNING
-        id`, name)
-	return seriesID, err
-}
-
-func (r *MovieRepository) InsertMovieSeries(tx *sqlx.Tx, movieID int, seriesID int, numberInSeries int) error {
-	_, err := tx.Exec(`
-INSERT INTO movie_series (movie_id, series_id, number_in_series)
-    VALUES ($1, $2, $3)`, movieID, seriesID, numberInSeries)
-	return err
-}
-
-func (r *MovieRepository) InsertWatchlist(tx *sqlx.Tx, userID string, movieID int) error {
-	_, err := tx.Exec(`
-INSERT INTO watchlist (user_id, movie_id)
-    VALUES ($1, $2)`, userID, movieID)
-	return err
-}
-
-func (r *MovieRepository) DeleteWatchlist(tx *sqlx.Tx, userID string, movieID int) error {
-	_, err := tx.Exec(`
-DELETE FROM watchlist
-WHERE user_id = $1
-    AND movie_id = $2`, userID, movieID)
-	return err
-}
-
-func (r *MovieRepository) DeleteNowPlaying(tx *sqlx.Tx, userID string, movieID int) error {
-	_, err := tx.Exec(`
-DELETE FROM now_playing
-WHERE user_id = $1
-    AND movie_id = $2`, userID, movieID)
-	return err
-}
 
 func (r *MovieRepository) DeleteNowPlayingDirect(userID string, movieID int) error {
 	_, err := r.db.Exec(`
 DELETE FROM now_playing
 WHERE user_id = $1
     AND movie_id = $2`, userID, movieID)
-	return err
-}
-
-func (r *MovieRepository) UpdateMovie(tx *sqlx.Tx, id int, title string, runtime int, releaseDate string, imdbID string, overview string, poster string, tagline string, tmdbID int) error {
-	_, err := tx.Exec(`
-UPDATE
-    movie
-SET
-    title = $2,
-    runtime = $3,
-    release_date = NULLIF ($4, '')::date,
-    imdb_id = $5,
-    overview = $6,
-    poster = $7,
-    tagline = $8,
-    updated_at = NOW(),
-    tmdb_id = $9
-WHERE
-    id = $1;
-
-`, id, title, runtime, releaseDate, imdbID, overview, poster, tagline, tmdbID)
 	return err
 }
 
@@ -674,19 +561,4 @@ func (r *MovieRepository) UpdateNowPlaying(movieID int, position float64, userID
 		        position = excluded.position
 	`, movieID, position, userID)
 	return err
-}
-
-func (r *MovieRepository) MovieExists(imdbID string) (bool, error) {
-	var movieExists bool
-	err := r.db.Get(&movieExists, `
-		SELECT
-		    EXISTS (
-		        SELECT
-		            1
-		        FROM
-		            movie
-		        WHERE
-		            imdb_id = $1)
-	`, imdbID)
-	return movieExists, err
 }

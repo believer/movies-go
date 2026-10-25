@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"believer/movies/db"
-	"believer/movies/services/api"
+	"believer/movies/services/intake"
 	"believer/movies/utils"
 	"believer/movies/views"
 	"strconv"
@@ -13,10 +13,11 @@ import (
 type NowPlayingHandler struct {
 	repo      db.NowPlayingQuerier
 	movieRepo db.MovieQuerier
+	intake    *intake.Intake
 }
 
-func NewNowPlayingHandler(repo db.NowPlayingQuerier, movieRepo db.MovieQuerier) *NowPlayingHandler {
-	return &NowPlayingHandler{repo, movieRepo}
+func NewNowPlayingHandler(repo db.NowPlayingQuerier, movieRepo db.MovieQuerier, intake *intake.Intake) *NowPlayingHandler {
+	return &NowPlayingHandler{repo, movieRepo, intake}
 }
 
 func (h *NowPlayingHandler) GetNowPlaying(c *fiber.Ctx) error {
@@ -76,25 +77,9 @@ func (h *NowPlayingHandler) PostManage(c *fiber.Ctx) error {
 		return c.SendString(err.Error())
 	}
 
-	movieExists, err := h.movieRepo.MovieExists(imdbIDClean)
+	movieID, err := h.intake.EnsureMovie(intake.ByExternalID(imdbIDClean), intake.MovieOptions{})
 	if err != nil {
 		return err
-	}
-
-	var movieID int
-	if movieExists {
-		movieObj, err := h.movieRepo.GetMovieByImdbID(imdbIDClean)
-		if err != nil {
-			return err
-		}
-		movieID = movieObj.ID
-	} else {
-		apiInstance := api.New(c)
-		_, insertedMovieID, err := apiInstance.AddMovie(imdbIDClean, false)
-		if err != nil {
-			return err
-		}
-		movieID = insertedMovieID
 	}
 
 	err = h.movieRepo.UpdateNowPlaying(movieID, position, userID)

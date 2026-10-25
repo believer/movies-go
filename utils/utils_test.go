@@ -121,3 +121,23 @@ func TestAvailableYears(t *testing.T) {
 
 	assert.Equal(t, want, got)
 }
+
+func TestParseWatchedAt(t *testing.T) {
+	now := time.Date(2026, 10, 25, 21, 15, 30, 0, time.UTC)
+
+	tests := []struct {
+		value string
+		want  time.Time
+	}{
+		{"2026-10-20T19:45", time.Date(2026, 10, 20, 19, 45, 0, 0, time.UTC)},
+		{"2026-10-20", time.Date(2026, 10, 20, 21, 15, 30, 0, time.UTC)},
+		{"", now},
+		{"yesterday", now},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.value, func(t *testing.T) {
+			assert.Equal(t, tc.want, ParseWatchedAt(tc.value, now))
+		})
+	}
+}

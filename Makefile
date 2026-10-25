@@ -40,8 +40,12 @@ dev: css
 		--ignore-pattern='playwright-report' \
 		--cmd='go run .'
 
+TEST_DATABASE_URL ?= postgres://admin:password@localhost:5433/movies_test?sslmode=disable
+
+# Packages share the test database, so run them one at a time
 test:
-	@go test ./...
+	@docker-compose up -d --wait postgres_test
+	@TEST_DATABASE_URL="$(TEST_DATABASE_URL)" go test -p 1 ./...
 
 smoke: test e2e
 
@@ -64,3 +68,13 @@ db-up:
 
 db-down:
 	@docker-compose down -v
+
+# Refresh db/schema.sql from the database in .env (production). pg_dump runs
+# in a Postgres 15 container to match production, so the dump loads on 15.
+# The restrict lines carry a random token per dump, so they are dropped to
+# keep diffs clean.
+schema:
+	@set -a && . ./.env && set +a && \
+		docker run --rm postgres:15 pg_dump "$${DATABASE_URL%\?*}" --schema-only --no-owner --no-privileges \
+		| sed -e '/^\\restrict /d' -e '/^\\unrestrict /d' > db/schema.sql
+	@echo "\033[0;32m(✓)\033[0;37m Dumped db/schema.sql"

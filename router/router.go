@@ -3,6 +3,8 @@ package router
 import (
 	"believer/movies/db"
 	h "believer/movies/handlers"
+	"believer/movies/services/intake"
+	"believer/movies/services/tmdb"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -12,6 +14,8 @@ func redirectToHome(c *fiber.Ctx) error {
 }
 
 func SetupRoutes(app *fiber.App) {
+	movieIntake := intake.New(db.Client, tmdb.Client{})
+
 	healthHandler := h.NewHealthHandler()
 	app.Get("/health", healthHandler.GetHealth)
 
@@ -46,7 +50,7 @@ func SetupRoutes(app *fiber.App) {
 	movieGroup := app.Group("/movie")
 
 	movieRepo := db.NewMovieRepository(db.Client)
-	movieHandler := h.NewMovieHandler(movieRepo)
+	movieHandler := h.NewMovieHandler(movieRepo, movieIntake)
 
 	movieGroup.Get("/", redirectToHome)
 	movieGroup.Get("/imdb", movieHandler.GetByImdbId)
@@ -251,7 +255,7 @@ func SetupRoutes(app *fiber.App) {
 	// --------------------------
 	nowPlayingGroup := app.Group("/now-playing")
 
-	nowPlayingHandler := h.NewNowPlayingHandler(nowPlayingRepo, movieRepo)
+	nowPlayingHandler := h.NewNowPlayingHandler(nowPlayingRepo, movieRepo, movieIntake)
 
 	nowPlayingGroup.Get("/", nowPlayingHandler.GetNowPlaying)
 	nowPlayingGroup.Get("/manage", nowPlayingHandler.GetManage)
