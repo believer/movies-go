@@ -12,5 +12,26 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  # Empty database with the current schema, used by tests that need Postgres
+  postgres_test:
+    image: postgres:15
+    container_name: postgres_test
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: movies_test
+    ports:
+      - "5433:5432"
+    healthcheck:
+      # Over TCP: during init the server only listens on the socket
+      test: ["CMD", "pg_isready", "-h", "127.0.0.1", "-U", "admin", "-d", "movies_test"]
+      interval: 1s
+      retries: 30
+    tmpfs:
+      - /var/lib/postgresql/data
+    volumes:
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+
 volumes:
   postgres_data:

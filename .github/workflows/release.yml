@@ -14,13 +14,31 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: movies_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -h 127.0.0.1 -U admin -d movies_test"
+          --health-interval 2s
+          --health-retries 15
+    env:
+      TEST_DATABASE_URL: postgres://admin:password@localhost:5432/movies_test?sslmode=disable
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-go@v6
         with:
           go-version-file: "go.mod"
+      - name: Load schema
+        run: psql "$TEST_DATABASE_URL" -v ON_ERROR_STOP=1 -q -f db/schema.sql
       - name: Run tests
-        run: go test ./...
+        # Packages share the test database, so run them one at a time
+        run: go test -p 1 ./...
 
   deploy:
     name: Deploy app
