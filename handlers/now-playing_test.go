@@ -39,7 +39,7 @@ func TestNowPlayingHandlerGet(t *testing.T) {
 		movieRepo := mocks.NewMockMovieQuerier(t)
 		repo.On("GetNowPlaying", "user-123").Return(movies, nil)
 
-		app := setupNowPlayingApp(NewNowPlayingHandler(repo, movieRepo))
+		app := setupNowPlayingApp(NewNowPlayingHandler(repo, movieRepo, nil))
 		req := httptest.NewRequest(http.MethodGet, "/now-playing", nil)
 		resp, err := app.Test(req)
 
@@ -54,7 +54,7 @@ func TestNowPlayingHandlerGetManage(t *testing.T) {
 	t.Run("redirects to login when unauthenticated", func(t *testing.T) {
 		repo := mocks.NewMockNowPlayingQuerier(t)
 		movieRepo := mocks.NewMockMovieQuerier(t)
-		app := setupNowPlayingApp(NewNowPlayingHandler(repo, movieRepo))
+		app := setupNowPlayingApp(NewNowPlayingHandler(repo, movieRepo, nil))
 
 		req := httptest.NewRequest(http.MethodGet, "/now-playing/manage", nil)
 		resp, err := app.Test(req)
@@ -69,7 +69,7 @@ func TestNowPlayingHandlerGetManage(t *testing.T) {
 		movieRepo := mocks.NewMockMovieQuerier(t)
 		repo.On("GetNowPlaying", "user-123").Return(movies, nil)
 
-		app := setupNowPlayingApp(NewNowPlayingHandler(repo, movieRepo))
+		app := setupNowPlayingApp(NewNowPlayingHandler(repo, movieRepo, nil))
 		req := httptest.NewRequest(http.MethodGet, "/now-playing/manage", nil)
 		req.AddCookie(&http.Cookie{Name: "token", Value: "active"})
 		resp, err := app.Test(req)
@@ -84,12 +84,13 @@ func TestNowPlayingHandlerPostManage(t *testing.T) {
 		repo := mocks.NewMockNowPlayingQuerier(t)
 		movieRepo := mocks.NewMockMovieQuerier(t)
 
-		movieRepo.On("MovieExists", "tt0111161").Return(true, nil)
-		movieRepo.On("GetMovieByImdbID", "tt0111161").Return(types.Movie{ID: 1, Title: "The Shawshank Redemption"}, nil)
+		movies := setupIntake(t)
+		movies.tmdb.Add(types.MovieDetailsResponse{ImdbId: "tt0111161", TmdbId: 278, Title: "The Shawshank Redemption"}, types.MovieCreditsResponse{}, "tt0111161")
+
 		movieRepo.On("UpdateNowPlaying", 1, 10.0, "user-123").Return(nil)
 
-		app := setupNowPlayingApp(NewNowPlayingHandler(repo, movieRepo))
-		
+		app := setupNowPlayingApp(NewNowPlayingHandler(repo, movieRepo, movies.intake))
+
 		form := url.Values{}
 		form.Add("imdb_id", "tt0111161")
 		form.Add("position", "10")
@@ -114,7 +115,7 @@ func TestNowPlayingHandlerPut(t *testing.T) {
 		movieRepo.On("UpdateNowPlaying", 1, 45.0, "user-123").Return(nil)
 		movieRepo.On("GetMovieByIDSimple", 1).Return(types.Movie{ID: 1, Title: "The Shawshank Redemption", Runtime: 142}, nil)
 
-		app := setupNowPlayingApp(NewNowPlayingHandler(repo, movieRepo))
+		app := setupNowPlayingApp(NewNowPlayingHandler(repo, movieRepo, nil))
 
 		form := url.Values{}
 		form.Add("position", "45")
@@ -137,7 +138,7 @@ func TestNowPlayingHandlerDelete(t *testing.T) {
 
 		movieRepo.On("DeleteNowPlayingDirect", "user-123", 1).Return(nil)
 
-		app := setupNowPlayingApp(NewNowPlayingHandler(repo, movieRepo))
+		app := setupNowPlayingApp(NewNowPlayingHandler(repo, movieRepo, nil))
 
 		req := httptest.NewRequest(http.MethodDelete, "/now-playing/1", nil)
 		req.AddCookie(&http.Cookie{Name: "token", Value: "active"})

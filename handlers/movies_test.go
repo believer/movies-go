@@ -50,7 +50,7 @@ func TestGetMovieByID(t *testing.T) {
 		repo.On("SeenByUser", "456", "user-123").Return(mockSeen, nil)
 		repo.On("Cast", "456").Return(mockCast, false, nil)
 
-		app := setupMovieApp(NewMovieHandler(repo))
+		app := setupMovieApp(NewMovieHandler(repo, nil))
 
 		req := httptest.NewRequest(http.MethodGet, "/movie/inception-456", nil)
 		req.AddCookie(&http.Cookie{Name: "token", Value: "active"})
@@ -67,7 +67,7 @@ func TestGetMovieOthersSeenByID(t *testing.T) {
 		mockOthers := types.OthersStats{Seen: 2, AverageRating: 8.5}
 		repo.On("RatingsByOthers", "456").Return(mockOthers, nil)
 
-		app := setupMovieApp(NewMovieHandler(repo))
+		app := setupMovieApp(NewMovieHandler(repo, nil))
 
 		req := httptest.NewRequest(http.MethodGet, "/movie/inception-456/seen/others", nil)
 		resp, err := app.Test(req)
@@ -83,7 +83,7 @@ func TestGetByImdbId(t *testing.T) {
 		mockMovie := types.Movie{ID: 456, Title: "Inception"}
 		repo.On("GetMovieByImdbID", "tt1375666").Return(mockMovie, nil)
 
-		app := setupMovieApp(NewMovieHandler(repo))
+		app := setupMovieApp(NewMovieHandler(repo, nil))
 
 		req := httptest.NewRequest(http.MethodGet, "/movie/imdb?imdbId=tt1375666", nil)
 		resp, err := app.Test(req)
@@ -96,7 +96,7 @@ func TestGetByImdbId(t *testing.T) {
 func TestDeleteNowPlaying(t *testing.T) {
 	t.Run("unauthorized", func(t *testing.T) {
 		repo := mocks.NewMockMovieQuerier(t)
-		app := setupMovieApp(NewMovieHandler(repo))
+		app := setupMovieApp(NewMovieHandler(repo, nil))
 
 		req := httptest.NewRequest(http.MethodDelete, "/movie/456/now-playing", nil)
 		resp, err := app.Test(req)
@@ -113,7 +113,7 @@ func TestDeleteNowPlaying(t *testing.T) {
 		repo.On("SeenByUser", "456", "user-123").Return([]movie.WatchedAt{}, nil)
 		repo.On("IsWatchlisted", "456", "user-123").Return(true, nil)
 
-		app := setupMovieApp(NewMovieHandler(repo))
+		app := setupMovieApp(NewMovieHandler(repo, nil))
 
 		req := httptest.NewRequest(http.MethodDelete, "/movie/456/now-playing", nil)
 		req.AddCookie(&http.Cookie{Name: "token", Value: "active"})

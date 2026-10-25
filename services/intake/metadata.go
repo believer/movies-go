@@ -1,124 +1,14 @@
-package api
+package intake
 
 import (
-	"believer/movies/db"
-	"believer/movies/services/tmdb"
 	"believer/movies/types"
-	"believer/movies/utils/awards"
 	"database/sql"
 	"log/slog"
 
-	"github.com/gofiber/fiber/v2"
 	"github.com/jmoiron/sqlx"
 )
 
-type Api struct {
-	UserID string
-}
-
-func New(c *fiber.Ctx) *Api {
-	userId := c.Locals("UserId").(string)
-
-	return &Api{
-		UserID: userId,
-	}
-}
-
-func (a *Api) AddMovie(imdbId string, hasWilhelmScream bool) (types.MovieDetailsResponse, int, error) {
-	var id int
-
-	tmdbApi := tmdb.New(imdbId)
-	movie, err := tmdbApi.Movie()
-
-	if err != nil {
-		return types.MovieDetailsResponse{}, 0, err
-	}
-
-	movieCast, err := tmdbApi.Credits()
-
-	if err != nil {
-		return types.MovieDetailsResponse{}, 0, err
-	}
-
-	tx, err := db.Client.Beginx()
-	if err != nil {
-		return types.MovieDetailsResponse{}, 0, err
-	}
-	defer tx.Rollback()
-
-	slog.Info("Inserting movie")
-
-	err = tx.Get(
-		&id,
-		`
-INSERT INTO movie (title, runtime, release_date, imdb_id, overview, poster, tagline, tmdb_id, wilhelm)
-    VALUES ($1, $2, NULLIF ($3, '')::date, $4, $5, $6, $7, $8, $9)
-ON CONFLICT (imdb_id)
-    DO UPDATE SET
-        title = excluded.title,
-        runtime = excluded.runtime,
-        release_date = excluded.release_date,
-        imdb_id = excluded.imdb_id,
-        overview = excluded.overview,
-        poster = excluded.poster,
-        tagline = excluded.tagline,
-        tmdb_id = excluded.tmdb_id
-    RETURNING
-        id
-		`,
-		movie.Title,
-		movie.Runtime,
-		movie.ReleaseDate,
-		movie.ImdbId,
-		movie.Overview,
-		movie.Poster,
-		movie.Tagline,
-		movie.TmdbId,
-		hasWilhelmScream,
-	)
-
-	if err != nil {
-		slog.Error("No movie", "err", err)
-		return movie, 0, err
-	}
-
-	slog.Info("Inserting cast and crew")
-	if err := a.AddCast(tx, movieCast, id); err != nil {
-		return movie, 0, err
-	}
-	slog.Info("Inserting language")
-	if err := a.AddLanguages(tx, id, movie); err != nil {
-		return movie, 0, err
-	}
-	slog.Info("Inserting genres")
-	if err := a.AddGenres(tx, id, movie); err != nil {
-		return movie, 0, err
-	}
-	slog.Info("Inserting countries")
-	if err := a.AddCountries(tx, id, movie); err != nil {
-		return movie, 0, err
-	}
-	slog.Info("Inserting ProductionCompanies")
-	if err := a.AddProductionCompanies(tx, id, movie); err != nil {
-		return movie, 0, err
-	}
-	awards.AddOscars(tx, imdbId)
-	awards.AddBaftas(tx, imdbId)
-
-	slog.Info("Commiting")
-	err = tx.Commit()
-
-	if err != nil {
-		slog.Error("Could not commit movie", "err", err)
-		return movie, 0, err
-	}
-
-	slog.Info("Movie", movie.Title, id)
-
-	return movie, id, nil
-}
-
-type NewPerson struct {
+type newPerson struct {
 	ID             int            `db:"id"`
 	Name           string         `db:"name"`
 	Job            sql.NullString `db:"job"`
@@ -128,10 +18,10 @@ type NewPerson struct {
 	MovieId        int            `db:"movie_id"`
 }
 
-func (a *Api) AddCast(tx *sqlx.Tx, movieCast types.MovieCreditsResponse, movieId int) error {
+func addCast(tx *sqlx.Tx, movieCast types.MovieCreditsResponse, movieId int) error {
 	var err error
-	var castStructs []NewPerson
-	var crewStructs []NewPerson
+	var castStructs []newPerson
+	var crewStructs []newPerson
 
 	// Insert cast
 	for _, cast := range movieCast.Cast {
@@ -161,7 +51,7 @@ func (a *Api) AddCast(tx *sqlx.Tx, movieCast types.MovieCreditsResponse, movieId
 			continue
 		}
 
-		castStructs = append(castStructs, NewPerson{
+		castStructs = append(castStructs, newPerson{
 			ID:             cast.ID,
 			Name:           cast.Name,
 			Popularity:     cast.Popularity,
@@ -222,7 +112,7 @@ func (a *Api) AddCast(tx *sqlx.Tx, movieCast types.MovieCreditsResponse, movieId
 			continue
 		}
 
-		crewStructs = append(crewStructs, NewPerson{
+		crewStructs = append(crewStructs, newPerson{
 			ID:             crew.Id,
 			Name:           crew.Name,
 			Popularity:     crew.Popularity,
@@ -307,7 +197,7 @@ func (a *Api) AddCast(tx *sqlx.Tx, movieCast types.MovieCreditsResponse, movieId
 	return nil
 }
 
-func personExists(arr []NewPerson, id int, job any) (int, bool) {
+func personExists(arr []newPerson, id int, job any) (int, bool) {
 	for i, person := range arr {
 		if person.ID == id && person.Job.String == job {
 			return i, true
@@ -317,7 +207,7 @@ func personExists(arr []NewPerson, id int, job any) (int, bool) {
 	return 0, false
 }
 
-func (a *Api) AddLanguages(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse) error {
+func addLanguages(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse) error {
 	type Language struct {
 		ISO639      string `db:"iso_639_1"`
 		EnglishName string `db:"english_name"`
@@ -372,7 +262,7 @@ ON CONFLICT
 	return nil
 }
 
-func (a *Api) AddGenres(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse) error {
+func addGenres(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse) error {
 	type Genre struct {
 		Name    string `db:"name"`
 		MovieId int    `db:"movie_id"`
@@ -418,7 +308,7 @@ ON CONFLICT
 	return nil
 }
 
-func (a *Api) AddCountries(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse) error {
+func addCountries(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse) error {
 	for _, c := range movie.ProductionCountries {
 		_, err := tx.Exec(`
 			INSERT INTO movie_country (movie_id, country_id)
@@ -434,7 +324,7 @@ func (a *Api) AddCountries(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse
 	return nil
 }
 
-func (a *Api) AddProductionCompanies(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse) error {
+func addProductionCompanies(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse) error {
 	for _, c := range movie.ProductionCompanies {
 		var pcID int
 
