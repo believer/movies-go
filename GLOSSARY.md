@@ -13,7 +13,7 @@ A single viewing of a movie by a user on a date, possibly with friends.
 _Avoid_: seen, view
 
 **Rating**:
-A user's score for a movie. One per user and movie, regardless of how many watches.
+A user's score for a movie. A user can rate a movie again, and the latest rating is the one that counts.
 
 **Review**:
 A user's written opinion of a movie, public or private. One per user and movie.

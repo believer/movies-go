@@ -37,7 +37,7 @@ func setup(t *testing.T) (*Intake, *tmdbtest.Fake, *sqlx.DB) {
 	t.Helper()
 
 	db := dbtest.Open(t)
-	dbtest.Truncate(t, db, "movie", "person", "genre", "language", "production_company", "production_country", "series")
+	dbtest.Truncate(t, db, "movie", "person", "genre", "language", "production_company", "production_country", "series", "user", "watchlist", "now_playing")
 
 	_, err := db.Exec(`INSERT INTO production_country (id, name) VALUES ('US', 'United States of America')`)
 	require.NoError(t, err)

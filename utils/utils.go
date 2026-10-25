@@ -160,3 +160,18 @@ func AvailableYears(now time.Time) []string {
 
 	return years
 }
+
+// ParseWatchedAt parses the watched_at form value, either a date and time
+// ("2006-01-02T15:04") or a date. A date gets the time of day from now, and
+// anything else falls back to now.
+func ParseWatchedAt(value string, now time.Time) time.Time {
+	if t, err := time.Parse("2006-01-02T15:04", value); err == nil {
+		return t
+	}
+
+	if d, err := time.Parse("2006-01-02", value); err == nil {
+		return time.Date(d.Year(), d.Month(), d.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location())
+	}
+
+	return now
+}
