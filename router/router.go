@@ -16,7 +16,7 @@ func redirectToHome(c *fiber.Ctx) error {
 func SetupRoutes(app *fiber.App) {
 	movieIntake := intake.New(db.Client, tmdb.Client{})
 
-	healthHandler := h.NewHealthHandler()
+	healthHandler := h.NewHealthHandler(db.Client)
 	app.Get("/health", healthHandler.GetHealth)
 
 	feedRepo := db.NewFeedRepository(db.Client)
