@@ -612,7 +612,8 @@ func (h *StatsHandler) GetWilhelmScream(c *fiber.Ctx) error {
 }
 
 func (h *StatsHandler) GetSeenWith(c *fiber.Ctx) error {
-	items, err := h.repo.GetSeenWith()
+	req := utils.NewRequest(c)
+	items, err := h.repo.GetSeenWith(req.UserID())
 
 	if err != nil {
 		return err

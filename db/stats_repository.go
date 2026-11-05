@@ -27,7 +27,7 @@ type StatsQuerier interface {
 	GetRatingsForYear(year string, userID string) (types.Movies, error)
 	GetBestOfTheYear(userID string, year string) ([]types.ListItem, error)
 	GetWilhelmMovies(userID string, offset int) (types.Movies, error)
-	GetSeenWith() ([]types.ListItem, error)
+	GetSeenWith(usedID string) ([]types.ListItem, error)
 	GetHighestRankedPersonByJob(userID string, job string) ([]types.HighestRated, error)
 }
 
@@ -577,7 +577,7 @@ LIMIT 50
 	return movies, err
 }
 
-func (r *StatsRepository) GetSeenWith() ([]types.ListItem, error) {
+func (r *StatsRepository) GetSeenWith(userID string) ([]types.ListItem, error) {
 	var items []types.ListItem
 	err := r.db.Select(&items, `
 SELECT
@@ -588,12 +588,12 @@ FROM
     RIGHT JOIN seen_with sw ON sw.seen_id = s.id
     INNER JOIN "user" u ON u.id = sw.other_user_id
 WHERE
-    user_id = 1
+    user_id = $1
 GROUP BY
     1
 ORDER BY
     2 DESC
-`)
+`, userID)
 	return items, err
 }
 
