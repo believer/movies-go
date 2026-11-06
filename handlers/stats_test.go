@@ -91,7 +91,7 @@ func TestGetWilhelmScream(t *testing.T) {
 
 func TestGetSeenWith(t *testing.T) {
 	repo := mocks.NewMockStatsQuerier(t)
-	repo.On("GetSeenWith").Return([]types.ListItem{}, nil)
+	repo.On("GetSeenWith", "user-123").Return([]types.ListItem{}, nil)
 
 	app := setupStatsApp(NewStatsHandler(repo))
 

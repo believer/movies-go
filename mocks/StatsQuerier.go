@@ -757,8 +757,8 @@ func (_c *MockStatsQuerier_GetReviewsCount_Call) RunAndReturn(run func(userID st
 }
 
 // GetSeenWith provides a mock function for the type MockStatsQuerier
-func (_mock *MockStatsQuerier) GetSeenWith() ([]types.ListItem, error) {
-	ret := _mock.Called()
+func (_mock *MockStatsQuerier) GetSeenWith(usedID string) ([]types.ListItem, error) {
+	ret := _mock.Called(usedID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetSeenWith")
@@ -766,18 +766,18 @@ func (_mock *MockStatsQuerier) GetSeenWith() ([]types.ListItem, error) {
 
 	var r0 []types.ListItem
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() ([]types.ListItem, error)); ok {
-		return returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(string) ([]types.ListItem, error)); ok {
+		return returnFunc(usedID)
 	}
-	if returnFunc, ok := ret.Get(0).(func() []types.ListItem); ok {
-		r0 = returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(string) []types.ListItem); ok {
+		r0 = returnFunc(usedID)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]types.ListItem)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
+	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
+		r1 = returnFunc(usedID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -790,13 +790,20 @@ type MockStatsQuerier_GetSeenWith_Call struct {
 }
 
 // GetSeenWith is a helper method to define mock.On call
-func (_e *MockStatsQuerier_Expecter) GetSeenWith() *MockStatsQuerier_GetSeenWith_Call {
-	return &MockStatsQuerier_GetSeenWith_Call{Call: _e.mock.On("GetSeenWith")}
+//   - usedID string
+func (_e *MockStatsQuerier_Expecter) GetSeenWith(usedID interface{}) *MockStatsQuerier_GetSeenWith_Call {
+	return &MockStatsQuerier_GetSeenWith_Call{Call: _e.mock.On("GetSeenWith", usedID)}
 }
 
-func (_c *MockStatsQuerier_GetSeenWith_Call) Run(run func()) *MockStatsQuerier_GetSeenWith_Call {
+func (_c *MockStatsQuerier_GetSeenWith_Call) Run(run func(usedID string)) *MockStatsQuerier_GetSeenWith_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run()
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		run(
+			arg0,
+		)
 	})
 	return _c
 }
@@ -806,7 +813,7 @@ func (_c *MockStatsQuerier_GetSeenWith_Call) Return(listItems []types.ListItem, 
 	return _c
 }
 
-func (_c *MockStatsQuerier_GetSeenWith_Call) RunAndReturn(run func() ([]types.ListItem, error)) *MockStatsQuerier_GetSeenWith_Call {
+func (_c *MockStatsQuerier_GetSeenWith_Call) RunAndReturn(run func(usedID string) ([]types.ListItem, error)) *MockStatsQuerier_GetSeenWith_Call {
 	_c.Call.Return(run)
 	return _c
 }
