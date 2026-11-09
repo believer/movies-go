@@ -3,12 +3,14 @@ package layout
 import "believer/movies/components/auth"
 import "believer/movies/components/icon"
 import "believer/movies/components/link"
+import "os"
 
 templ Html(props ...Props) {
 	{{ var p Props }}
 	if len(props) > 0 {
 		{{ p = props[0] }}
 	}
+	{{ umamiWebsiteID := os.Getenv("UMAMI_WEBSITE_ID") }}
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
@@ -52,6 +54,9 @@ templ Html(props ...Props) {
 			<script type="module" defer src="/public/htmx.4.0.0.esm.min.js"></script>
 			<script defer src="/public/htmx.head-support.20260522.js"></script>
 			<script defer type="module" src="/public/hyperscript.0.9.91.esm.min.js"></script>
+			if umamiWebsiteID != "" {
+				<script defer src="https://analytics.willcodefor.beer/script.js" data-website-id={ umamiWebsiteID } data-performance="true" data-errors="true"></script>
+			}
 			<script>
 				const mode = localStorage.getItem("mode");
 
