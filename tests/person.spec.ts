@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test"
+import { section } from "./section"
 
 test("a person page lists credits and awards", async ({ page }) => {
 	await page.goto("/person/hans-zimmer-5")
@@ -8,13 +9,7 @@ test("a person page lists credits and awards", async ({ page }) => {
 	).toBeVisible()
 	await expect(page.getByText("6 credits")).toBeVisible()
 
-	const awards = (name: string) =>
-		page.locator("section").filter({
-			has: page
-				.locator(":scope > .section__title")
-				.getByRole("heading", { name }),
-		})
-	const academyAwards = awards("Academy Awards")
+	const academyAwards = section(page, "Academy Awards")
 
 	await expect(
 		page.getByRole("heading", { name: "Academy Awards", level: 2 })
@@ -26,7 +21,7 @@ test("a person page lists credits and awards", async ({ page }) => {
 		academyAwards.getByRole("listitem").filter({ hasText: "Interstellar" })
 	).toHaveText(/Nominated\s*2014/)
 
-	const bafta = awards("BAFTA")
+	const bafta = section(page, "BAFTA")
 
 	await expect(
 		bafta.getByRole("listitem").filter({ hasText: "Dune" })

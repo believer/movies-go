@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test"
+import { section } from "./section"
 
 test("stats count Watches", async ({ page }) => {
 	await page.goto("/")
@@ -34,13 +35,7 @@ test("ratings for a past year are grouped by Rating", async ({ page }) => {
 	).toBeVisible()
 
 	const ratingGroup = (rating: string) =>
-		page
-			.locator("section")
-			.filter({
-				has: page
-					.locator(":scope > .section__title")
-					.getByRole("heading", { name: rating, exact: true }),
-			})
+		section(page, rating, true)
 			.getByRole("listitem")
 			.getByRole("link", { name: /^\D/ })
 
