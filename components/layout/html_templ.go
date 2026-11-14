@@ -121,7 +121,7 @@ func Html(props ...Props) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<meta property=\"og:type\" content=\"website\"><meta property=\"og:url\" content=\"https://movies.willcodefor.beer/\"><meta name=\"twitter:card\" content=\"summary\"><meta name=\"twitter:site\" content=\"@rnattochdag\"><meta name=\"twitter:creator\" content=\"@rnattochdag\"><link rel=\"icon\" type=\"image/png\" href=\"/public/favicon.png\"><link href=\"/public/styles.e491b4.css\" rel=\"stylesheet\"><link rel=\"manifest\" href=\"/public/manifest.webmanifest\"><script type=\"module\" defer src=\"/public/htmx.4.0.0.esm.min.js\"></script><script defer src=\"/public/htmx.head-support.20260522.js\"></script><script defer type=\"module\" src=\"/public/hyperscript.0.9.91.esm.min.js\"></script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<meta property=\"og:type\" content=\"website\"><meta property=\"og:url\" content=\"https://movies.willcodefor.beer/\"><meta name=\"twitter:card\" content=\"summary\"><meta name=\"twitter:site\" content=\"@rnattochdag\"><meta name=\"twitter:creator\" content=\"@rnattochdag\"><link rel=\"icon\" type=\"image/png\" href=\"/public/favicon.png\"><link href=\"/public/styles.cf5d94.css\" rel=\"stylesheet\"><link rel=\"manifest\" href=\"/public/manifest.webmanifest\"><script type=\"module\" defer src=\"/public/htmx.4.0.0.esm.min.js\"></script><script defer src=\"/public/htmx.head-support.20260522.js\"></script><script defer type=\"module\" src=\"/public/hyperscript.0.9.91.esm.min.js\"></script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

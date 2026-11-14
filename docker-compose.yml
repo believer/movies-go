@@ -25,7 +25,17 @@ services:
       - "5433:5432"
     healthcheck:
       # Over TCP: during init the server only listens on the socket
-      test: ["CMD", "pg_isready", "-h", "127.0.0.1", "-U", "admin", "-d", "movies_test"]
+      test:
+        [
+          "CMD",
+          "pg_isready",
+          "-h",
+          "127.0.0.1",
+          "-U",
+          "admin",
+          "-d",
+          "movies_test",
+        ]
       interval: 1s
       retries: 30
     tmpfs:

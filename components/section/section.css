@@ -1,10 +1,10 @@
 .section {
-  color: var(--color-content-secondary);
-  container-type: inline-size;
   display: flex;
   flex-direction: column;
-  font-size: var(--text-sm);
   row-gap: var(--gap, var(--spacing-4));
+  container-type: inline-size;
+  font-size: var(--text-sm);
+  color: var(--color-content-secondary);
 
   .section__title {
     display: flex;

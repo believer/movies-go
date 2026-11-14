@@ -1,15 +1,15 @@
 .popover {
-  background-color: var(--color-background-secondary);
-  border-radius: var(--spacing-1);
-  color: var(--color-content-primary);
-  font-size: var(--text-xs);
-  margin: var(--spacing-1);
-  opacity: 0;
   padding: var(--spacing-3);
+  margin: var(--spacing-1);
   position-area: top;
   position-try-fallbacks: flip-block;
   position-visibility: anchors-visible;
+  font-size: var(--text-xs);
+  color: var(--color-content-primary);
   text-align: left;
+  background-color: var(--color-background-secondary);
+  border-radius: var(--spacing-1);
+  opacity: 0;
   transition:
     opacity 500ms,
     translate 400ms;
