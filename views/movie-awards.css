@@ -1,0 +1,4 @@
+.movie-awards__meta {
+  display: flex;
+  column-gap: var(--spacing-1);
+}

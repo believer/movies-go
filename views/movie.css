@@ -1,0 +1,9 @@
+.movie__overview {
+  color: var(--color-content-secondary);
+}
+
+.movie {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--spacing-8);
+}

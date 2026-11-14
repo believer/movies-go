@@ -12,3 +12,14 @@
   row-gap: var(--spacing-2);
   font-size: var(--text-sm);
 }
+
+.global-rating {
+  display: flex;
+  column-gap: var(--spacing-2);
+  align-items: center;
+
+  .global-rating__users {
+    font-size: var(--text-xs);
+    color: var(--color-content-secondary);
+  }
+}

@@ -1,32 +1,7 @@
-.PHONY: css
-
 # Build the application
 all: build
 
-CSS_SRC := $(shell find components -type f -name '*.css' | sort)
-TARGET := public/styles.css
-
-css:
-	@awk 'BEGIN {in_section=0} \
-	{ \
-		if ($$0 ~ /\/\* *START:GENERATED *\*\//) { \
-			in_section=1; \
-			print; \
-			system("sed \"s/^/	/\" $(CSS_SRC)"); \
-			next \
-		} \
-		if ($$0 ~ /\/\* *END:GENERATED *\*\//) { \
-			in_section=0; \
-			print; \
-			next \
-		} \
-		if (in_section) { next } \
-		print \
-	}' $(TARGET) > $(TARGET).new
-	@mv $(TARGET).new $(TARGET)
-	@echo "\033[0;32m(✓)\033[0;37m Copied component CSS"
-
-build: css
+build:
 	@templ generate
 	@go build -o main main.go
 
@@ -35,8 +10,8 @@ PROXY_PORT ?= 7331
 
 # Override PORT and PROXY_PORT to run beside another checkout, e.g.
 # make dev PORT=8099 PROXY_PORT=7399. A change to any watched file restarts
-# --cmd, so startup state like the stylesheet hash is worked out again.
-dev: css
+# --cmd, which rebuilds the embedded stylesheet and works out its hash again.
+dev:
 	@PORT=$(PORT) templ generate --watch \
 		--open-browser=false \
 		--proxy=http://localhost:$(PORT) \
@@ -78,9 +53,6 @@ e2e:
 
 e2e-ui:
 	@E2E_URL=http://localhost:$(PORT) pnpm exec playwright test --ui
-
-clean:
-	rm -f $(CSS_OUTPUT)
 
 db-up:
 	@docker-compose up -d

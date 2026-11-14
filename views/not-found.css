@@ -1,0 +1,15 @@
+.not-found {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100dvh;
+
+  > div {
+    text-align: center;
+  }
+
+  h1 {
+    font-size: var(--text-xl);
+    font-weight: 700;
+  }
+}

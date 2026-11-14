@@ -1,0 +1,14 @@
+.highest-rating__rank {
+  display: flex;
+  column-gap: var(--spacing-1);
+  align-items: baseline;
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  color: var(--color-content-secondary);
+}
+
+.highest-rating__movies {
+  font-size: var(--text-xs);
+  color: var(--color-content-tertiary);
+}

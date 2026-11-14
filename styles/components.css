@@ -1,0 +1,119 @@
+@layer components {
+  .form__settings > * + * {
+    margin-top: var(--spacing-6);
+  }
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    row-gap: var(--spacing-6);
+    max-width: 36rem;
+    padding-inline: var(--spacing-5);
+    padding-bottom: var(--spacing-8);
+    margin-inline: auto;
+
+    &.full {
+      max-width: 100%;
+      margin-inline: 0;
+    }
+
+    .form__error {
+      padding: var(--spacing-4);
+      color: var(--color-content-negative);
+      border: 1px dashed var(--color-content-negative);
+      border-radius: var(--rounded-sm);
+
+      &:empty {
+        display: none;
+      }
+    }
+
+    header .link {
+      font-size: 1rem;
+    }
+
+    footer {
+      display: flex;
+      flex-direction: column;
+      row-gap: var(--spacing-4);
+    }
+  }
+
+  .now-playing {
+    h2,
+    h3 {
+      font-weight: 500;
+    }
+
+    > * + * {
+      margin-top: var(--spacing-4);
+    }
+
+    ol {
+      > * + * {
+        margin-top: var(--spacing-4);
+      }
+    }
+
+    li {
+      position: relative;
+      padding: var(--spacing-4);
+      background-color: var(--color-background-secondary);
+      border-radius: var(--rounded-sm);
+      transition: background-color 150ms ease-in-out;
+
+      &:hover {
+        background-color: lch(
+          from var(--color-background-tertiary) calc(l - 5) c h
+        );
+      }
+
+      a::after {
+        position: absolute;
+        inset: 0;
+        content: "";
+      }
+
+      > * + * {
+        margin-top: var(--spacing-2);
+      }
+    }
+  }
+
+  .position {
+    display: flex;
+    column-gap: var(--spacing-2);
+    align-items: center;
+    font-size: var(--text-xs);
+    color: var(--color-content-secondary);
+
+    button {
+      position: relative;
+      z-index: 10;
+      color: inherit;
+    }
+  }
+
+  .progress-bar {
+    position: relative;
+    flex: 1;
+    height: var(--spacing-2);
+    padding: 1px;
+    background-color: var(--color-background-tertiary);
+    border-radius: var(--rounded-sm);
+
+    > div {
+      position: absolute;
+      left: 1;
+      height: calc(var(--spacing-2) - 2px);
+      background-color: var(--color-background-secondary);
+      border-radius: var(--rounded-sm);
+    }
+  }
+
+  .sort {
+    display: flex;
+    column-gap: var(--spacing-2);
+    align-items: center;
+  }
+}
