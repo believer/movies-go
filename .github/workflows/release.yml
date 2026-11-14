@@ -30,12 +30,14 @@ jobs:
     name: Production smoke check
     timeout-minutes: 15
     needs: [deploy]
-    runs-on: ubuntu-latest
+    # Playwright 1.56 can't install Chromium on ubuntu-latest (26.04), see #77
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
-          node-version: lts/*
+          # Playwright 1.56 hangs extracting Chromium on Node 26, see #77
+          node-version: 22
       - name: Install dependencies
         run: npm install -g pnpm && pnpm install
       - name: Install Playwright Browsers
