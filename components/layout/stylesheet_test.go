@@ -14,11 +14,8 @@ func renderStylesheetHref(t *testing.T) string {
 
 	r, w := io.Pipe()
 
-	// The layout's auth components read this, as set by the app's middleware
-	ctx := context.WithValue(context.Background(), "IsAuthenticated", false)
-
 	go func() {
-		_ = Html().Render(ctx, w)
+		_ = Html().Render(context.Background(), w)
 		_ = w.Close()
 	}()
 

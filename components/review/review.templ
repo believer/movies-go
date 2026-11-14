@@ -1,5 +1,6 @@
 package review
 
+import "believer/movies/components/auth"
 import "believer/movies/types"
 import "fmt"
 import "believer/movies/components/section"
@@ -13,13 +14,13 @@ templ Review(props types.Review, id int) {
 			@ReviewContent(props, id)
 		}
 	} else if (props.Private == true && props.Content != "") {
-		if ctx.Value("IsAuthenticated").(bool) {
+		if auth.Authenticated(ctx) {
 			@section.Section(section.Props{Title: "Review"}) {
 				@ReviewContent(props, id)
 			}
 		}
 	} else {
-		if ctx.Value("IsAuthenticated").(bool) {
+		if auth.Authenticated(ctx) {
 			<div>
 				@button.Button(button.Props{
 					Rank: button.Secondary,
@@ -39,7 +40,7 @@ templ Review(props types.Review, id int) {
 templ ReviewContent(props types.Review, id int) {
 	<div class="section">
 		{ props.Content }
-		if ctx.Value("IsAuthenticated").(bool) {
+		if auth.Authenticated(ctx) {
 			<footer>
 				@button.Button(button.Props{
 					Rank: button.Secondary,

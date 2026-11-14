@@ -30,10 +30,17 @@ build: css
 	@templ generate
 	@go build -o main main.go
 
+PORT ?= 8080
+PROXY_PORT ?= 7331
+
+# Override PORT and PROXY_PORT to run beside another checkout, e.g.
+# make dev PORT=8099 PROXY_PORT=7399. A change to any watched file restarts
+# --cmd, so startup state like the stylesheet hash is worked out again.
 dev: css
-	@templ generate --watch \
+	@PORT=$(PORT) templ generate --watch \
 		--open-browser=false \
-		--proxy=http://localhost:8080 \
+		--proxy=http://localhost:$(PORT) \
+		--proxyport=$(PROXY_PORT) \
 		--watch-pattern='.+\.(css|go|sql|templ)$$' \
 		--ignore-pattern='playwright-report' \
 		--cmd='go run .'
@@ -51,7 +58,7 @@ TEMPL := go run github.com/a-h/templ/cmd/templ@$(shell go list -m -f '{{.Version
 TEMPL_SUMS = find . -name '*_templ.go' -not -path './node_modules/*' | sort | xargs shasum
 
 # Fast checks that need no database: generated templ files are fresh, go vet
-# and biome pass
+# and biome pass, and tests pass with database tests skipped
 check:
 	@before=$$($(TEMPL_SUMS)); \
 		$(TEMPL) generate > /dev/null 2>&1; \
@@ -60,16 +67,17 @@ check:
 			exit 1; \
 		fi
 	@go vet ./...
+	@out=$$(TEST_DATABASE_URL= go test ./... 2>&1) || { echo "$$out"; exit 1; }
 	@pnpm exec biome check .
 	@echo "\033[0;32m(✓)\033[0;37m Checks passed"
 
 smoke: test e2e
 
 e2e:
-	@E2E_URL=http://localhost:8080 pnpm exec playwright test
+	@E2E_URL=http://localhost:$(PORT) pnpm exec playwright test
 
 e2e-ui:
-	@E2E_URL=http://localhost:8080 pnpm exec playwright test --ui
+	@E2E_URL=http://localhost:$(PORT) pnpm exec playwright test --ui
 
 clean:
 	rm -f $(CSS_OUTPUT)

@@ -8,6 +8,7 @@ package review
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+import "believer/movies/components/auth"
 import "believer/movies/types"
 import "fmt"
 import "believer/movies/components/section"
@@ -60,7 +61,7 @@ func Review(props types.Review, id int) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else if props.Private == true && props.Content != "" {
-			if ctx.Value("IsAuthenticated").(bool) {
+			if auth.Authenticated(ctx) {
 				templ_7745c5c3_Var3 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 					templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 					templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
@@ -85,7 +86,7 @@ func Review(props types.Review, id int) templ.Component {
 				}
 			}
 		} else {
-			if ctx.Value("IsAuthenticated").(bool) {
+			if auth.Authenticated(ctx) {
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -157,7 +158,7 @@ func ReviewContent(props types.Review, id int) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(props.Content)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/review/review.templ`, Line: 41, Col: 17}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/review/review.templ`, Line: 42, Col: 17}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -167,7 +168,7 @@ func ReviewContent(props types.Review, id int) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if ctx.Value("IsAuthenticated").(bool) {
+		if auth.Authenticated(ctx) {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<footer>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -242,7 +243,7 @@ func EditReview(props types.Review, id int) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("/review/%d?movieId=%d", props.ID, id))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/review/review.templ`, Line: 60, Col: 66}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/review/review.templ`, Line: 61, Col: 66}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 		if templ_7745c5c3_Err != nil {
@@ -386,7 +387,7 @@ func AddReview(id string) templ.Component {
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("/review/new?movieId=%s", id))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/review/review.templ`, Line: 94, Col: 54}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/review/review.templ`, Line: 95, Col: 54}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var15)
 			if templ_7745c5c3_Err != nil {
