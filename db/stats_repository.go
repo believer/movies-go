@@ -494,47 +494,48 @@ ORDER BY
 func (r *StatsRepository) GetBestOfTheYear(userID string, year string) ([]types.ListItem, error) {
 	var movies []types.ListItem
 	err := r.db.Select(&movies, `
-WITH max_rating AS (
-    SELECT DISTINCT
-        s.movie_id,
-        s.user_id,
-        r.rating
+WITH watched_once AS (
+    SELECT
+        movie_id,
+        MIN(date) AS date
     FROM
-        seen s
-        INNER JOIN rating r ON r.movie_id = s.movie_id
-            AND r.user_id = $1
+        seen
     WHERE
-        s.user_id = $1
-        AND date >= make_date($2, 1, 1)
-        AND date < make_date($2 + 1, 1, 1) -- Seen in the given year
+        user_id = $1
     GROUP BY
-        s.id,
-        r.rating
+        movie_id
     HAVING
-        COUNT(*) = 1 -- Seen exactly once in the given year
-        AND s.movie_id NOT IN (
-            SELECT
-                movie_id
-            FROM
-                seen
-            WHERE
-                user_id = $1
-                AND date < make_date($2, 1, 1) -- Seen before the given year
-                OR date >= make_date($2 + 1, 1, 1) -- Seen after the given year
-))
+        -- Watched exactly once, and that watch is in the given year
+        COUNT(*) = 1
+        AND MIN(date) >= make_date($2, 1, 1)
+        AND MIN(date) < make_date($2 + 1, 1, 1)
+),
+latest_rating AS (
+    SELECT DISTINCT ON (movie_id)
+        movie_id,
+        rating
+    FROM
+        rating
+    WHERE
+        user_id = $1
+    ORDER BY
+        movie_id,
+        created_at DESC,
+        id DESC
+)
 SELECT
     m.title AS "name",
     m.id AS "id",
-    mr.rating AS "count"
+    lr.rating AS "count"
 FROM
-    max_rating mr
-    INNER JOIN movie m ON m.id = mr.movie_id
-WHERE
-    rating = (
-        SELECT
-            max(rating)
-        FROM
-            max_rating)
+    watched_once wo
+    INNER JOIN latest_rating lr ON lr.movie_id = wo.movie_id
+    INNER JOIN movie m ON m.id = wo.movie_id
+ORDER BY
+    lr.rating DESC,
+    wo.date ASC,
+    m.id ASC
+LIMIT 10
 	`, userID, year)
 	return movies, err
 }
