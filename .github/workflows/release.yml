@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  pull_request:
 
 # Cancel previously running workflows
 concurrency:
@@ -34,6 +35,22 @@ jobs:
       - uses: actions/setup-go@v6
         with:
           go-version-file: "go.mod"
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Check
+        run: make check
+      - name: Check CSS is hashed
+        # make dev points html.templ at the unhashed styles.css; make build hashes it
+        run: |
+          if git grep -Fq '/public/styles.css' -- components/layout/html.templ components/layout/html_templ.go; then
+            echo "❌ CSS needs to be hashed, run make build"
+            exit 1
+          fi
       - name: Load schema
         run: psql "$TEST_DATABASE_URL" -v ON_ERROR_STOP=1 -q -f db/schema.sql
       - name: Run tests
@@ -43,6 +60,7 @@ jobs:
   deploy:
     name: Deploy app
     needs: [test]
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6

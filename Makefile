@@ -47,6 +47,22 @@ test:
 	@docker-compose up -d --wait postgres_test
 	@TEST_DATABASE_URL="$(TEST_DATABASE_URL)" go test -p 1 ./...
 
+TEMPL := go run github.com/a-h/templ/cmd/templ@$(shell go list -m -f '{{.Version}}' github.com/a-h/templ)
+TEMPL_SUMS = find . -name '*_templ.go' -not -path './node_modules/*' | sort | xargs shasum
+
+# Fast checks that need no database: generated templ files are fresh, go vet
+# and biome pass
+check:
+	@before=$$($(TEMPL_SUMS)); \
+		$(TEMPL) generate > /dev/null 2>&1; \
+		if [ "$$before" != "$$($(TEMPL_SUMS))" ]; then \
+			echo "❌ *_templ.go files were stale and have been regenerated, commit them"; \
+			exit 1; \
+		fi
+	@go vet ./...
+	@pnpm exec biome check .
+	@echo "\033[0;32m(✓)\033[0;37m Checks passed"
+
 smoke: test e2e
 
 e2e:
