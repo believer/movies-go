@@ -4,7 +4,7 @@ Run `make check` before finishing a change: it regenerates stale `*_templ.go` fi
 
 ### Issue tracker
 
-Issues live in Linear team NAT, scoped to this repo by the `Movies` label. See `docs/agents/issue-tracker.md`.
+Issues live in GitHub Issues on `believer/movies-go`, managed with the `gh` CLI. See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 
