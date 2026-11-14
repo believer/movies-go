@@ -34,16 +34,14 @@ test:
 # container isn't started.
 PSQL ?= docker exec -i postgres_test psql -U admin
 
-# Rebuild movies_e2e from db/schema.sql and db/seed.sql. Playwright starts the
-# E2E server before its global setup runs this, so the database is emptied in
-# place rather than dropped: dropping it would cut off the server's
-# connections.
-e2e-db:
+# Start postgres_test, unless PSQL points elsewhere
+e2e-postgres:
 	$(if $(filter default,$(origin PSQL)),@docker-compose up -d --wait postgres_test)
-	@echo "SELECT 'CREATE DATABASE movies_e2e' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'movies_e2e') \gexec" \
-		| $(PSQL) -v ON_ERROR_STOP=1 -q -d postgres
-	@{ echo 'SET client_min_messages = warning; DROP SCHEMA public CASCADE; CREATE SCHEMA public;'; \
-		cat db/schema.sql db/seed.sql; } | $(PSQL) -v ON_ERROR_STOP=1 -q -d movies_e2e > /dev/null
+
+# Rebuild movies_e2e from db/schema.sql and db/seed.sql, as postgres_test does
+# when it starts
+e2e-db: e2e-postgres
+	@PSQL="$(PSQL)" SCHEMA=db/schema.sql SEED=db/seed.sql ./db/e2e.sh
 	@echo "\033[0;32m(✓)\033[0;37m Rebuilt movies_e2e"
 
 TEMPL := go run github.com/a-h/templ/cmd/templ@$(shell go list -m -f '{{.Version}}' github.com/a-h/templ)
@@ -77,12 +75,10 @@ smoke:
 # rebuilds the database first, so this runs beside make dev. The server starts
 # before the rebuild, so postgres_test has to be up already. Pass PSQL to use
 # another Postgres, as for e2e-db.
-e2e:
-	$(if $(filter default,$(origin PSQL)),@docker-compose up -d --wait postgres_test)
+e2e: e2e-postgres
 	@pnpm exec playwright test
 
-e2e-ui:
-	$(if $(filter default,$(origin PSQL)),@docker-compose up -d --wait postgres_test)
+e2e-ui: e2e-postgres
 	@pnpm exec playwright test --ui
 
 db-up:
