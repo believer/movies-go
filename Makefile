@@ -29,6 +29,21 @@ test:
 	@docker-compose up -d --wait postgres_test
 	@TEST_DATABASE_URL="$(TEST_DATABASE_URL)" go test -p 1 $(if $(RUN),-run '$(RUN)') $(PKG)
 
+# Runs psql in the postgres_test container. Override it to reach another
+# server, e.g. make e2e-db PSQL="psql -h localhost -U admin", and the
+# container isn't started.
+PSQL ?= docker exec -i postgres_test psql -U admin
+
+# Start postgres_test, unless PSQL points elsewhere
+e2e-postgres:
+	$(if $(filter default,$(origin PSQL)),@docker-compose up -d --wait postgres_test)
+
+# Rebuild movies_e2e from db/schema.sql and db/seed.sql, as postgres_test does
+# when it starts
+e2e-db: e2e-postgres
+	@PSQL="$(PSQL)" SCHEMA=db/schema.sql SEED=db/seed.sql ./db/e2e.sh
+	@echo "\033[0;32m(✓)\033[0;37m Rebuilt movies_e2e"
+
 TEMPL := go run github.com/a-h/templ/cmd/templ@$(shell go list -m -f '{{.Version}}' github.com/a-h/templ)
 TEMPL_SUMS = find . -name '*_templ.go' -not -path './node_modules/*' | sort | xargs shasum
 
@@ -46,13 +61,29 @@ check:
 	@pnpm exec biome check .
 	@echo "\033[0;32m(✓)\033[0;37m Checks passed"
 
-smoke: test e2e
+test-all: test e2e
 
-e2e:
-	@E2E_URL=http://localhost:$(PORT) pnpm exec playwright test
+# Read-only check that production pages render, run after each deploy.
+# Override the site with SMOKE_URL, e.g. make smoke SMOKE_URL=http://localhost:8080.
+# Phony because the spec lives in smoke/.
+.PHONY: smoke
+smoke:
+	@pnpm exec playwright test -c playwright.smoke.config.ts
 
-e2e-ui:
-	@E2E_URL=http://localhost:$(PORT) pnpm exec playwright test --ui
+# Playwright starts its own server on port 8090 against movies_e2e, with a
+# TMDB stub on 8091, and rebuilds the database first, so this runs beside
+# make dev. The server starts before the rebuild, so postgres_test has to be
+# up already. Pass PSQL to use another Postgres, as for e2e-db.
+#
+# Locally Playwright reuses a server already on its port, even one another
+# checkout started. Override the ports to run from a second checkout, e.g.
+# make e2e E2E_PORT=8190 E2E_TMDB_PORT=8191. Every run rebuilds the one
+# movies_e2e, though, so only one run at a time is supported.
+e2e: e2e-postgres
+	@pnpm exec playwright test
+
+e2e-ui: e2e-postgres
+	@pnpm exec playwright test --ui
 
 db-up:
 	@docker-compose up -d

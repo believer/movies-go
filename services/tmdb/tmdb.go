@@ -16,7 +16,17 @@ var httpClient = &http.Client{
 	Timeout: 10 * time.Second,
 }
 
-var baseURL = "https://api.themoviedb.org/3"
+const defaultBaseURL = "https://api.themoviedb.org/3"
+
+// baseURL is the TMDB API, or TMDB_BASE_URL when set, so tests can point the
+// app at a stub. It's read per request, after the env files have loaded.
+func baseURL() string {
+	if u := os.Getenv("TMDB_BASE_URL"); u != "" {
+		return u
+	}
+
+	return defaultBaseURL
+}
 
 // ErrNotFound is returned when TMDB responds with 404.
 var ErrNotFound = errors.New("tmdb: not found")
@@ -93,7 +103,7 @@ func fetchJSON[T any](path []string, additionalParams map[string]string) (result
 	// Construct URL
 	tmdbKey := os.Getenv("TMDB_API_KEY")
 
-	u, err := url.JoinPath(baseURL, path...)
+	u, err := url.JoinPath(baseURL(), path...)
 
 	if err != nil {
 		return result, err

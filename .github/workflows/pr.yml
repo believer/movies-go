@@ -14,7 +14,8 @@ concurrency:
 jobs:
   test:
     name: Test
-    runs-on: ubuntu-latest
+    # Playwright 1.56 can't install Chromium on ubuntu-latest (26.04)
+    runs-on: ubuntu-24.04
     services:
       postgres:
         image: postgres:15
@@ -30,6 +31,11 @@ jobs:
           --health-retries 15
     env:
       TEST_DATABASE_URL: postgres://admin:password@localhost:5432/movies_test?sslmode=disable
+      E2E_DATABASE_URL: postgres://admin:password@localhost:5432/movies_e2e?sslmode=disable
+      # make e2e-db, here and in Playwright's global setup, uses the service
+      # Postgres instead of the postgres_test container
+      PSQL: psql -h localhost -U admin
+      PGPASSWORD: password
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-go@v6
@@ -38,7 +44,8 @@ jobs:
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v6
         with:
-          node-version: lts/*
+          # Playwright 1.56 hangs extracting Chromium on Node 26
+          node-version: 22
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -46,6 +53,21 @@ jobs:
         run: make check
       - name: Load schema
         run: psql "$TEST_DATABASE_URL" -v ON_ERROR_STOP=1 -q -f db/schema.sql
+      - name: Load E2E seed
+        # Builds movies_e2e from the schema and seed, so a schema change that
+        # breaks the seed fails here
+        run: make e2e-db
       - name: Run tests
         # Packages share the test database, so run them one at a time
         run: go test -p 1 ./...
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Run E2E tests
+        # movies_e2e has to exist before Playwright starts the server
+        run: pnpm exec playwright test --project=chromium
+      - uses: actions/upload-artifact@v4
+        if: ${{ failure() }}
+        with:
+          name: e2e-report
+          path: playwright-report/
+          retention-days: 30

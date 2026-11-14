@@ -1,0 +1,35 @@
+{
+	"id": 9000003,
+	"imdb_id": "tt9000003",
+	"title": "The Pending Reel",
+	"release_date": "1963-09-02",
+	"runtime": 88,
+	"tagline": "Halfway there.",
+	"overview": "A projectionist stops every film at the midpoint.",
+	"poster_path": "",
+	"genres": [
+		{
+			"name": "Documentary"
+		}
+	],
+	"spoken_languages": [
+		{
+			"iso_639_1": "sv",
+			"english_name": "Swedish",
+			"name": "Svenska"
+		}
+	],
+	"production_countries": [
+		{
+			"iso_3166_1": "SE",
+			"name": "Sweden"
+		}
+	],
+	"production_companies": [
+		{
+			"id": 9000003,
+			"name": "Pending Productions",
+			"origin_country": "SE"
+		}
+	]
+}

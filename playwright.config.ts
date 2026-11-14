@@ -1,18 +1,19 @@
 import { defineConfig, devices } from "@playwright/test"
-
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
+import {
+	adminSecret,
+	baseURL,
+	databaseURL,
+	port,
+	tmdbBaseURL,
+} from "./tests/env"
 
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
 	testDir: "./tests",
+	/* Rebuild movies_e2e from the schema and seed once per run */
+	globalSetup: "./tests/global-setup.ts",
 	/* Run tests in files in parallel */
 	fullyParallel: true,
 	/* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -28,7 +29,7 @@ export default defineConfig({
 	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
 	use: {
 		/* Base URL to use in actions like `await page.goto('')`. */
-		// baseURL: 'http://localhost:3000',
+		baseURL,
 
 		/* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
 		trace: "on-first-retry",
@@ -72,10 +73,22 @@ export default defineConfig({
 		// },
 	],
 
-	/* Run your local dev server before starting the tests */
-	// webServer: {
-	//   command: 'npm run start',
-	//   url: 'http://localhost:3000',
-	//   reuseExistingServer: !process.env.CI,
-	// },
+	/* Start the app against movies_e2e, rebuilt from the seed by the global
+	 * setup, and the TMDB stub it starts. The process env wins over the
+	 * checkout's env files, so a .env.local can't point it elsewhere. In
+	 * development the login cookie isn't Secure, so it's kept over http. */
+	webServer: {
+		command: "go run .",
+		url: `${baseURL}/health`,
+		env: {
+			PORT: String(port),
+			DATABASE_URL: databaseURL,
+			ADMIN_SECRET: adminSecret,
+			APP_ENV: "development",
+			TMDB_BASE_URL: tmdbBaseURL,
+			TMDB_API_KEY: "e2e",
+		},
+		reuseExistingServer: !process.env.CI,
+		timeout: 120_000,
+	},
 })
