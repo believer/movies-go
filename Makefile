@@ -70,10 +70,15 @@ test-all: test e2e
 smoke:
 	@pnpm exec playwright test -c playwright.smoke.config.ts
 
-# Playwright starts its own server on port 8090 against movies_e2e and
-# rebuilds the database first, so this runs beside make dev. The server starts
-# before the rebuild, so postgres_test has to be up already. Pass PSQL to use
-# another Postgres, as for e2e-db.
+# Playwright starts its own server on port 8090 against movies_e2e, with a
+# TMDB stub on 8091, and rebuilds the database first, so this runs beside
+# make dev. The server starts before the rebuild, so postgres_test has to be
+# up already. Pass PSQL to use another Postgres, as for e2e-db.
+#
+# Locally Playwright reuses a server already on its port, even one another
+# checkout started. Override the ports to run from a second checkout, e.g.
+# make e2e E2E_PORT=8190 E2E_TMDB_PORT=8191. Every run rebuilds the one
+# movies_e2e, though, so only one run at a time is supported.
 e2e: e2e-postgres
 	@pnpm exec playwright test
 
