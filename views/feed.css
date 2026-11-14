@@ -1,0 +1,166 @@
+.feed-search {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--spacing-8);
+  max-width: 36rem;
+  padding-inline: var(--spacing-5);
+  margin-inline: auto;
+}
+
+.feed-list {
+  position: relative;
+  font-size: var(--text-sm);
+
+  :where(& > :not(:last-child)) {
+    margin-block-end: var(--spacing-6);
+  }
+
+  &.feed-list--person {
+    display: flex;
+    flex-direction: column;
+    row-gap: var(--spacing-3);
+
+    :where(& > :not(:last-child)) {
+      margin-block-end: 0;
+    }
+  }
+
+  /**
+   * These handle positioning when the element sticks,
+   * .year and .month are use to align with the list items
+   */
+  .feed-list__year-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    margin-block: 0;
+
+    @media (width >= 1024px) {
+      top: var(--spacing-4);
+    }
+  }
+
+  .feed-list__year {
+    display: block;
+    padding-block: var(--spacing-2);
+    font-family:
+      Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: var(--text-3xl);
+    line-height: 2.25rem;
+    color: transparent;
+    -webkit-text-stroke-width: 2px;
+    -webkit-text-stroke-color: light-dark(
+      rgb(163 163 163 / 100%),
+      rgb(82 82 82 / 100%)
+    );
+    background-color: var(--color-background-primary);
+
+    @media (min-width: 1024px) {
+      position: absolute;
+      top: -1rem;
+      left: -13rem;
+      z-index: 20;
+      padding-block: var(--spacing-4);
+      font-size: 4.5rem;
+      line-height: 1;
+    }
+  }
+
+  .feed-list__month-wrap {
+    position: sticky;
+    top: 48px;
+    z-index: 10;
+    margin-block: 0;
+    margin-block-end: var(--spacing-2);
+
+    @media (width >= 1024px) {
+      top: 96px;
+      margin-block-end: 0;
+    }
+  }
+
+  .feed-list__month {
+    padding-block: var(--spacing-1);
+    font-size: var(--text-lg);
+    color: var(--color-content-tertiary);
+    background-color: var(--color-background-primary);
+
+    @media (width >= 1024px) {
+      position: absolute;
+      top: -4px;
+      left: -196px;
+      z-index: 10;
+      width: 160px;
+      font-size: var(--text-xl);
+      text-align: right;
+    }
+  }
+
+  .feed-list__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    row-gap: var(--spacing-4);
+    border-radius: var(--rounded-sm);
+
+    a::after {
+      position: absolute;
+      inset: 0;
+      content: "";
+    }
+
+    &:has(:focus-visible) {
+      outline: 1px dashed var(--color-content-secondary);
+      outline-offset: var(--spacing-1);
+      border-radius: var(--border-radius, 1px);
+    }
+
+    header {
+      display: flex;
+      flex-direction: column;
+      row-gap: var(--spacing-1);
+
+      h2 {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 1rem;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+
+      .subtitle {
+        font-size: var(--text-xs);
+        color: var(--color-content-secondary);
+      }
+
+      a:focus-visible {
+        outline: 0;
+      }
+    }
+  }
+}
+
+/* Scroll driven animation to fade in date indicators
+* Note that the order of the properties seems to be important here,
+* animation needed to be before animation-timeline.
+* */
+@media (prefers-reduced-motion: no-preference) and (min-width: 1024px) {
+  @supports (animation-range: 0 50vh) {
+    .feed-list__year,
+    .feed-list__month {
+      opacity: 0;
+      transform: translateY(50px);
+      animation: fade-in linear forwards;
+      animation-timeline: view();
+      /* Start at 0px (when it comes into view), end at half the screen height */
+      animation-range: 0 50vh;
+    }
+
+    @keyframes fade-in {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  }
+}

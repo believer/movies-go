@@ -1,0 +1,9 @@
+.watch-providers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--spacing-4);
+
+  @media (width <= 480px) {
+    grid-template-columns: 1fr;
+  }
+}

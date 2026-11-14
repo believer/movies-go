@@ -1,0 +1,100 @@
+@layer base {
+  *,
+  :after,
+  :before,
+  ::backdrop {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    border: 0 solid;
+  }
+
+  ::placeholder {
+    color: color-mix(in oklch, currentColor 50%, transparent);
+  }
+
+  :focus-visible {
+    outline: 1px dashed var(--color-content-secondary);
+    outline-offset: var(--spacing-1);
+    border-radius: var(--border-radius, 1px);
+  }
+
+  :where(html) {
+    scrollbar-gutter: stable;
+    font-family: ui-sans-serif, system-ui;
+    line-height: 1.5;
+    /* Enable light and dark mode colors */
+    color-scheme: light dark;
+
+    @media (prefers-reduced-motion: no-preference) {
+      interpolate-size: allow-keywords;
+    }
+  }
+
+  body {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 20px);
+    margin: 0;
+    color: var(--color-content-primary);
+    background-color: var(--color-background-primary);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+
+  :where(button, input, select, textarea) {
+    font-family: inherit;
+    font-size: inherit;
+    background-color: transparent;
+    border-radius: 0;
+  }
+
+  ol,
+  ul,
+  menu {
+    list-style: none;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: inherit;
+  }
+
+  svg {
+    display: block;
+  }
+
+  hr {
+    height: 0;
+    color: inherit;
+    border-top-width: 1px;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  .layout {
+    display: flex;
+    flex-direction: column;
+    row-gap: var(--spacing-8);
+    max-width: 36rem;
+    padding-inline: var(--spacing-5);
+    padding-bottom: calc(env(safe-area-inset-bottom) + 64px);
+    margin-inline: auto;
+  }
+
+  .contents {
+    display: contents;
+  }
+
+  details summary {
+    cursor: pointer;
+  }
+}

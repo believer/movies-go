@@ -1,0 +1,26 @@
+.now-playing-manage__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.now-playing-dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.now-playing-dialog {
+  width: 32rem;
+  max-width: 90vw;
+  padding: var(--spacing-6);
+  margin: auto;
+  color: var(--color-content-primary);
+  background-color: var(--color-background-primary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: 8px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+.now-playing-dialog:not([open]) {
+  display: none;
+}

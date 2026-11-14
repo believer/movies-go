@@ -1,0 +1,11 @@
+.settings {
+  max-width: 36rem;
+  padding-inline: var(--spacing-5);
+  padding-top: var(--spacing-4);
+  padding-bottom: calc(env(safe-area-inset-bottom) + 64px);
+  margin-inline: auto;
+
+  :where(& > :not(:last-child)) {
+    margin-block-end: var(--spacing-6);
+  }
+}

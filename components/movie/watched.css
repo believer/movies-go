@@ -1,0 +1,13 @@
+.watched__primary {
+  color: var(--color-content-primary);
+}
+
+.watched__secondary {
+  font-size: var(--text-xs);
+}
+
+.watched__in-watchlist {
+  display: flex;
+  column-gap: var(--spacing-2);
+  align-items: center;
+}

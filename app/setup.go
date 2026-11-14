@@ -7,6 +7,7 @@ import (
 	"believer/movies/utils"
 	"believer/movies/views"
 	"fmt"
+	"io/fs"
 	"log"
 	"os"
 	"strings"
@@ -22,12 +23,14 @@ type Headers struct {
 	Authorization string `reqHeader:"Authorization"`
 }
 
-func SetupAndRunApp() error {
+// SetupAndRunApp starts the app. cssSources holds the CSS files the
+// stylesheet is built from.
+func SetupAndRunApp(cssSources fs.FS) error {
 	utils.LoadEnv()
 	appEnv := os.Getenv("APP_ENV")
 
-	// Version the stylesheet URL by its contents to bust caches
-	css, err := os.ReadFile("./public/styles.css")
+	// Build the stylesheet and version its URL by its contents to bust caches
+	css, err := layout.BuildStylesheet(cssSources)
 
 	if err != nil {
 		return err
@@ -105,7 +108,14 @@ func SetupAndRunApp() error {
 		return c.Next()
 	})
 
-	// Serve static files
+	// Serve static files. The stylesheet URL is versioned, so it can be
+	// cached for good
+	app.Get("/styles.css", func(c *fiber.Ctx) error {
+		c.Type("css")
+		c.Set(fiber.HeaderCacheControl, "public, max-age=31536000, immutable")
+
+		return c.Send(css)
+	})
 	app.Static("/robots.txt", "./public/robots.txt")
 	app.Static("/public", "./public", fiber.Static{
 		MaxAge: 31_536_000, // 1 year

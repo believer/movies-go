@@ -1,0 +1,30 @@
+.stats {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--spacing-8);
+  max-width: 36rem;
+  padding-inline: var(--spacing-5);
+  padding-bottom: var(--spacing-8);
+  margin-inline: auto;
+
+  @media (width >= 1024px) {
+    max-width: 64rem;
+    padding-top: var(--spacing-4);
+  }
+
+  .stats__content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+
+    @media (width >= 1024px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .stats__column {
+    display: flex;
+    flex-direction: column;
+    row-gap: var(--spacing-8);
+  }
+}

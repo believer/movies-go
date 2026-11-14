@@ -1,0 +1,5 @@
+.rating {
+  display: flex;
+  flex-direction: row;
+  column-gap: var(--spacing-4);
+}

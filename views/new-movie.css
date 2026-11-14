@@ -1,0 +1,21 @@
+.new-movie__series {
+  display: flex;
+  gap: var(--spacing-4);
+
+  > div {
+    flex-grow: 1;
+  }
+
+  @media (width <= 480px) {
+    flex-direction: column;
+  }
+}
+
+.new-movie__selected-series {
+  font-size: var(--text-xs);
+  color: var(--color-content-secondary);
+
+  &:empty {
+    display: none;
+  }
+}

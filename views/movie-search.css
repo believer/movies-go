@@ -1,0 +1,13 @@
+.new-movie-search__card {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--spacing-2);
+  padding: var(--spacing-2);
+  background-color: var(--color-background-primary);
+  border-radius: var(--rounded-sm);
+  transition: background-color 200ms ease-in-out;
+
+  &:hover {
+    background-color: var(--color-background-secondary);
+  }
+}

@@ -1,0 +1,7 @@
+.overview {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  -webkit-line-clamp: 3;
+  color: var(--color-content-secondary);
+}
