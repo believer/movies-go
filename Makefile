@@ -34,14 +34,16 @@ test:
 # container isn't started.
 PSQL ?= docker exec -i postgres_test psql -U admin
 
-# Drop movies_e2e and rebuild it from db/schema.sql and db/seed.sql
+# Rebuild movies_e2e from db/schema.sql and db/seed.sql. Playwright starts the
+# E2E server before its global setup runs this, so the database is emptied in
+# place rather than dropped: dropping it would cut off the server's
+# connections.
 e2e-db:
 	$(if $(filter default,$(origin PSQL)),@docker-compose up -d --wait postgres_test)
-	@$(PSQL) -v ON_ERROR_STOP=1 -q -d postgres \
-		-c 'SET client_min_messages = warning' \
-		-c 'DROP DATABASE IF EXISTS movies_e2e WITH (FORCE)' \
-		-c 'CREATE DATABASE movies_e2e'
-	@cat db/schema.sql db/seed.sql | $(PSQL) -v ON_ERROR_STOP=1 -q -d movies_e2e > /dev/null
+	@echo "SELECT 'CREATE DATABASE movies_e2e' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'movies_e2e') \gexec" \
+		| $(PSQL) -v ON_ERROR_STOP=1 -q -d postgres
+	@{ echo 'SET client_min_messages = warning; DROP SCHEMA public CASCADE; CREATE SCHEMA public;'; \
+		cat db/schema.sql db/seed.sql; } | $(PSQL) -v ON_ERROR_STOP=1 -q -d movies_e2e > /dev/null
 	@echo "\033[0;32m(✓)\033[0;37m Rebuilt movies_e2e"
 
 TEMPL := go run github.com/a-h/templ/cmd/templ@$(shell go list -m -f '{{.Version}}' github.com/a-h/templ)
@@ -63,11 +65,17 @@ check:
 
 smoke: test e2e
 
+# Playwright starts its own server on port 8090 against movies_e2e and
+# rebuilds the database first, so this runs beside make dev. The server starts
+# before the rebuild, so postgres_test has to be up already. Pass PSQL to use
+# another Postgres, as for e2e-db.
 e2e:
-	@E2E_URL=http://localhost:$(PORT) pnpm exec playwright test
+	$(if $(filter default,$(origin PSQL)),@docker-compose up -d --wait postgres_test)
+	@pnpm exec playwright test
 
 e2e-ui:
-	@E2E_URL=http://localhost:$(PORT) pnpm exec playwright test --ui
+	$(if $(filter default,$(origin PSQL)),@docker-compose up -d --wait postgres_test)
+	@pnpm exec playwright test --ui
 
 db-up:
 	@docker-compose up -d

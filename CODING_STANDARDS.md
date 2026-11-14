@@ -19,4 +19,5 @@ The stylesheet is built from `styles/`, `components/` and `views/`, and a file's
 ## Tests
 
 - **Real database for queries.** Test repository queries against the test database with `db/dbtest`, so the SQL itself runs. Mocks stand in for repositories only in handler tests.
+- **E2E tests assert on the seed.** Every value an E2E test expects comes from `db/seed.sql`, never from whatever data a database happens to hold. A test that needs more data adds rows to the seed. Assert on fixed past years; check views of the current year for structure only.
 - **Rule out the near miss.** A test of a selection or ordering rule includes data where the plausible wrong rule gives a different answer. For "latest rating wins", make the later rating lower than the earlier one, so "highest rating wins" fails.
