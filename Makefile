@@ -61,7 +61,15 @@ check:
 	@pnpm exec biome check .
 	@echo "\033[0;32m(✓)\033[0;37m Checks passed"
 
-smoke: test e2e
+test-all: test e2e
+
+SMOKE_URL ?= https://movies.willcodefor.beer
+
+# Read-only check that production pages render, run after each deploy.
+# Phony because the spec lives in smoke/.
+.PHONY: smoke
+smoke:
+	@SMOKE_URL=$(SMOKE_URL) pnpm exec playwright test -c playwright.smoke.config.ts
 
 e2e:
 	@E2E_URL=http://localhost:$(PORT) pnpm exec playwright test
