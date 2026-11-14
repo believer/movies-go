@@ -1,13 +1,13 @@
 package auth
 
 templ IsAuthenticated() {
-	if ctx.Value("IsAuthenticated").(bool) {
+	if Authenticated(ctx) {
 		{ children... }
 	}
 }
 
 templ IsNotAuthenticated() {
-	if !ctx.Value("IsAuthenticated").(bool) {
+	if !Authenticated(ctx) {
 		{ children... }
 	}
 }
