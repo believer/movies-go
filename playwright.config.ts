@@ -1,12 +1,5 @@
 import { defineConfig, devices } from "@playwright/test"
-
-/* The E2E server gets its own port, so it runs beside make dev (8080 and
- * 7331). It reads movies_e2e, rebuilt from the seed by the global setup. */
-const port = 8090
-const baseURL = `http://localhost:${port}`
-const databaseURL =
-	process.env.E2E_DATABASE_URL ||
-	"postgres://admin:password@localhost:5433/movies_e2e?sslmode=disable"
+import { adminSecret, baseURL, databaseURL, port } from "./tests/env"
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -74,12 +67,19 @@ export default defineConfig({
 		// },
 	],
 
-	/* Start the app against movies_e2e. The process env wins over the
-	 * checkout's env files, so a .env.local can't point it elsewhere. */
+	/* Start the app against movies_e2e, rebuilt from the seed by the global
+	 * setup. The process env wins over the
+	 * checkout's env files, so a .env.local can't point it elsewhere. In
+	 * development the login cookie isn't Secure, so it's kept over http. */
 	webServer: {
 		command: "go run .",
 		url: `${baseURL}/health`,
-		env: { PORT: String(port), DATABASE_URL: databaseURL },
+		env: {
+			PORT: String(port),
+			DATABASE_URL: databaseURL,
+			ADMIN_SECRET: adminSecret,
+			APP_ENV: "development",
+		},
 		reuseExistingServer: !process.env.CI,
 		timeout: 120_000,
 	},
