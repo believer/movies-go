@@ -31,14 +31,15 @@ func renderStylesheetHref(t *testing.T) string {
 }
 
 func TestStylesheet(t *testing.T) {
-	t.Cleanup(func() { stylesheetURL = "/public/styles.css" })
+	prev := stylesheetURL
+	t.Cleanup(func() { stylesheetURL = prev })
 
 	assert.Equal(t, "/public/styles.css", renderStylesheetHref(t))
 
 	// SHA-256 of "body{}" starts with 7c9804, of "body{color:red}" with 15c42a
-	SetStylesheet([]byte("body{}"))
+	VersionStylesheet([]byte("body{}"))
 	assert.Equal(t, "/public/styles.css?v=7c9804", renderStylesheetHref(t))
 
-	SetStylesheet([]byte("body{color:red}"))
+	VersionStylesheet([]byte("body{color:red}"))
 	assert.Equal(t, "/public/styles.css?v=15c42a", renderStylesheetHref(t))
 }

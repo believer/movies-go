@@ -33,7 +33,7 @@ func SetupAndRunApp() error {
 		return err
 	}
 
-	layout.SetStylesheet(css)
+	layout.VersionStylesheet(css)
 
 	// Initialize database connection
 	err = db.InitializeConnection()

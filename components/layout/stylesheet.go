@@ -5,14 +5,16 @@ import (
 	"encoding/hex"
 )
 
-// stylesheetURL is the URL the layout links the stylesheet at. It stays
-// unhashed until SetStylesheet is called at startup, so tests can render the
-// layout without the file on disk.
-var stylesheetURL = "/public/styles.css"
+const stylesheetPath = "/public/styles.css"
 
-// SetStylesheet points the layout at the stylesheet with a cache-busting
-// version: the first 6 hex characters of the SHA-256 of its contents.
-func SetStylesheet(css []byte) {
+// stylesheetURL is the URL the layout links the stylesheet at. It stays
+// unversioned until VersionStylesheet is called at startup, so tests can
+// render the layout without the file on disk.
+var stylesheetURL = stylesheetPath
+
+// VersionStylesheet adds a cache-busting version to the stylesheet URL: the
+// first 6 hex characters of the SHA-256 of its contents.
+func VersionStylesheet(css []byte) {
 	hash := sha256.Sum256(css)
-	stylesheetURL = "/public/styles.css?v=" + hex.EncodeToString(hash[:])[:6]
+	stylesheetURL = stylesheetPath + "?v=" + hex.EncodeToString(hash[:])[:6]
 }
