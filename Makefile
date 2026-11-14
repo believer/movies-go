@@ -29,6 +29,21 @@ test:
 	@docker-compose up -d --wait postgres_test
 	@TEST_DATABASE_URL="$(TEST_DATABASE_URL)" go test -p 1 $(if $(RUN),-run '$(RUN)') $(PKG)
 
+# Runs psql in the postgres_test container. Override it to reach another
+# server, e.g. make e2e-db PSQL="psql -h localhost -U admin", and the
+# container isn't started.
+PSQL ?= docker exec -i postgres_test psql -U admin
+
+# Drop movies_e2e and rebuild it from db/schema.sql and db/seed.sql
+e2e-db:
+	$(if $(filter default,$(origin PSQL)),@docker-compose up -d --wait postgres_test)
+	@$(PSQL) -v ON_ERROR_STOP=1 -q -d postgres \
+		-c 'SET client_min_messages = warning' \
+		-c 'DROP DATABASE IF EXISTS movies_e2e WITH (FORCE)' \
+		-c 'CREATE DATABASE movies_e2e'
+	@cat db/schema.sql db/seed.sql | $(PSQL) -v ON_ERROR_STOP=1 -q -d movies_e2e > /dev/null
+	@echo "\033[0;32m(✓)\033[0;37m Rebuilt movies_e2e"
+
 TEMPL := go run github.com/a-h/templ/cmd/templ@$(shell go list -m -f '{{.Version}}' github.com/a-h/templ)
 TEMPL_SUMS = find . -name '*_templ.go' -not -path './node_modules/*' | sort | xargs shasum
 
