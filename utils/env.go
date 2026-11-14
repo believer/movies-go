@@ -2,23 +2,23 @@ package utils
 
 import (
 	"bufio"
-	"fmt"
 	"log/slog"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 )
 
+// setVariables loads the file from the working directory, so a binary
+// built in one checkout and run from another reads the second one's env
 func setVariables(filename string) (err error) {
-	_, file, _, ok := runtime.Caller(1)
+	path, err := filepath.Abs(filename)
 
-	if !ok {
-		return fmt.Errorf("no calling file")
+	if err != nil {
+		return err
 	}
 
 	var f *os.File
-	f, err = os.Open(filepath.Join(filepath.Dir(file), "..", filename))
+	f, err = os.Open(path)
 
 	if err != nil {
 		return err
@@ -54,7 +54,7 @@ func setVariables(filename string) (err error) {
 		return err
 	}
 
-	slog.Info("ENV loaded from", "File", filename)
+	slog.Info("ENV loaded from", "File", path)
 
 	return nil
 }
