@@ -41,11 +41,13 @@ dev: css
 		--cmd='go run .'
 
 TEST_DATABASE_URL ?= postgres://admin:password@localhost:5433/movies_test?sslmode=disable
+PKG ?= ./...
 
-# Packages share the test database, so run them one at a time
+# Packages share the test database, so run them one at a time. Narrow with
+# PKG and RUN, e.g. make test PKG=./db RUN=TestGetBestOfTheYear
 test:
 	@docker-compose up -d --wait postgres_test
-	@TEST_DATABASE_URL="$(TEST_DATABASE_URL)" go test -p 1 ./...
+	@TEST_DATABASE_URL="$(TEST_DATABASE_URL)" go test -p 1 $(if $(RUN),-run '$(RUN)') $(PKG)
 
 TEMPL := go run github.com/a-h/templ/cmd/templ@$(shell go list -m -f '{{.Version}}' github.com/a-h/templ)
 TEMPL_SUMS = find . -name '*_templ.go' -not -path './node_modules/*' | sort | xargs shasum
