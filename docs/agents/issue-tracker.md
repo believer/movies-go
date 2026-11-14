@@ -1,6 +1,6 @@
 # Issue tracker: GitHub
 
-Issues and specs for this repo live in GitHub Issues on **`believer/movies-go`**. Use the `gh` CLI for all operations. Run it from the repo root and it picks up the repo automatically. Otherwise pass `-R believer/movies-go`.
+Issues and specs for this repo live in GitHub Issues on **`believer/movies-go`**. Use the `gh` CLI for all operations: the GitHub MCP token is read-only, so its writes fail with 403. Run it from the repo root and it picks up the repo automatically. Otherwise pass `-R believer/movies-go`.
 
 ## Conventions
 
