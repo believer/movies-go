@@ -10,7 +10,7 @@ import (
 
 // setVariables loads the file from the working directory, so a binary
 // built in one checkout and run from another reads the second one's env
-func setVariables(filename string, keep map[string]bool) (err error) {
+func setVariables(filename string, fromProcess map[string]bool) (err error) {
 	path, err := filepath.Abs(filename)
 
 	if err != nil {
@@ -41,7 +41,7 @@ func setVariables(filename string, keep map[string]bool) (err error) {
 			continue
 		}
 
-		if k, v, ok := strings.Cut(line, "="); ok && !keep[k] {
+		if k, v, ok := strings.Cut(line, "="); ok && !fromProcess[k] {
 			err := os.Setenv(k, strings.Trim(v, `"`))
 
 			if err != nil {
@@ -63,18 +63,18 @@ func setVariables(filename string, keep map[string]bool) (err error) {
 // non-empty variable from the process wins over both, so a server started
 // with its own DATABASE_URL, like the E2E server, keeps it.
 func LoadEnv() {
-	keep := map[string]bool{}
+	fromProcess := map[string]bool{}
 
 	for _, kv := range os.Environ() {
 		if k, v, ok := strings.Cut(kv, "="); ok && v != "" {
-			keep[k] = true
+			fromProcess[k] = true
 		}
 	}
 
-	if err := setVariables(".env", keep); err != nil {
+	if err := setVariables(".env", fromProcess); err != nil {
 		slog.Warn("Could not load .env file", "error", err)
 	}
-	if err := setVariables(".env.local", keep); err != nil {
+	if err := setVariables(".env.local", fromProcess); err != nil {
 		slog.Warn("Could not load .env.local file", "error", err)
 	}
 }
