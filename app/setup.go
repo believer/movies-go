@@ -1,6 +1,7 @@
 package app
 
 import (
+	"believer/movies/components/layout"
 	"believer/movies/db"
 	"believer/movies/router"
 	"believer/movies/utils"
@@ -25,8 +26,17 @@ func SetupAndRunApp() error {
 	utils.LoadEnv()
 	appEnv := os.Getenv("APP_ENV")
 
+	// Version the stylesheet URL by its contents to bust caches
+	css, err := os.ReadFile("./public/styles.css")
+
+	if err != nil {
+		return err
+	}
+
+	layout.SetStylesheet(css)
+
 	// Initialize database connection
-	err := db.InitializeConnection()
+	err = db.InitializeConnection()
 
 	if err != nil {
 		return err
