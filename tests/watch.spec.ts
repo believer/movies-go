@@ -1,15 +1,16 @@
 import { expect, test } from "./fixtures"
+import { batmanBegins, interstellar } from "./seed"
 
 test("a user logs a Watch of a movie in the diary", async ({
 	page,
 	user: _,
 }) => {
-	await page.goto("/movie/batman-begins-1")
+	await page.goto(batmanBegins.path)
 	await expect(page.getByText("No watches")).toBeVisible()
 	await page.getByRole("link", { name: "Add watch" }).click()
 
 	await expect(page.getByText("Batman Begins", { exact: true })).toBeVisible()
-	await expect(page.getByLabel("IMDb ID")).toHaveValue("tt0372784")
+	await expect(page.getByLabel("IMDb ID")).toHaveValue(batmanBegins.imdbId)
 
 	await page.getByLabel("Rating").fill("7")
 	await page.getByText("Additional fields").click()
@@ -35,7 +36,9 @@ test("a user logs a Watch of a movie in the diary", async ({
 test("a user adds and deletes a rewatch", async ({ page, user: _ }) => {
 	page.on("dialog", (dialog) => dialog.accept())
 
-	await page.goto("/movie/new?imdbId=tt0816692&id=4")
+	await page.goto(
+		`/movie/new?imdbId=${interstellar.imdbId}&id=${interstellar.id}`
+	)
 	await page.getByLabel("Rating").fill("8")
 	await page.getByText("Additional fields").click()
 	await page.getByLabel("Watched at").fill("2017-02-03T19:00")

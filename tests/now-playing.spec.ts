@@ -1,11 +1,12 @@
 import { expect, logWatch, test } from "./fixtures"
+import { batmanBegins } from "./seed"
 
 test("a user starts Now playing for a movie in the diary", async ({
 	page,
 	user,
 }) => {
 	// The feed only shows Now playing to a user with a Watch
-	await logWatch(user, 1, "2018-01-01 20:00")
+	await logWatch(user, batmanBegins, "2018-01-01 20:00")
 
 	await page.goto("/now-playing/manage")
 	await expect(

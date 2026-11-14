@@ -2,6 +2,7 @@ import { createHmac, randomUUID } from "node:crypto"
 import { test as base } from "@playwright/test"
 import pg from "pg"
 import { adminSecret, baseURL, databaseURL } from "./env"
+import type { SeedMovie } from "./seed"
 
 export { expect } from "@playwright/test"
 
@@ -41,10 +42,10 @@ export async function createUser(): Promise<User> {
 
 /* Logs a Watch without going through the app, for tests of what a Watch
  * unlocks, such as Ratings and Reviews */
-export async function logWatch(user: User, movieId: number, date: string) {
+export async function logWatch(user: User, movie: SeedMovie, date: string) {
 	await query(
 		"INSERT INTO seen (movie_id, user_id, date) VALUES ($1, $2, $3)",
-		[movieId, user.id, date]
+		[movie.id, user.id, date]
 	)
 }
 
