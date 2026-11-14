@@ -44,7 +44,11 @@ INSERT INTO production_country (id, name) VALUES
     ('GB', 'United Kingdom'),
     ('FR', 'France'),
     ('JP', 'Japan'),
-    ('KR', 'South Korea');
+    ('KR', 'South Korea'),
+    -- No seeded movie is from Sweden. It's here for the made-up movies in
+    -- the E2E TMDB fixtures: Movie intake links countries but never adds
+    -- them, as production holds every country already.
+    ('SE', 'Sweden');
 
 INSERT INTO production_company (id, tmdb_id, name, country) VALUES
     (1, 174, 'Warner Bros. Pictures', 'US'),

@@ -1,0 +1,35 @@
+{
+	"id": 9000002,
+	"imdb_id": "tt9000002",
+	"title": "The Fixture Garden",
+	"release_date": "1962-05-20",
+	"runtime": 102,
+	"tagline": "It grows the same way every time.",
+	"overview": "A gardener plants the same seeds every spring and gets the same garden.",
+	"poster_path": "",
+	"genres": [
+		{
+			"name": "Documentary"
+		}
+	],
+	"spoken_languages": [
+		{
+			"iso_639_1": "sv",
+			"english_name": "Swedish",
+			"name": "Svenska"
+		}
+	],
+	"production_countries": [
+		{
+			"iso_3166_1": "SE",
+			"name": "Sweden"
+		}
+	],
+	"production_companies": [
+		{
+			"id": 9000002,
+			"name": "Fixture Films",
+			"origin_country": "SE"
+		}
+	]
+}

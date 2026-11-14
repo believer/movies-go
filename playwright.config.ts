@@ -1,5 +1,11 @@
 import { defineConfig, devices } from "@playwright/test"
-import { adminSecret, baseURL, databaseURL, port } from "./tests/env"
+import {
+	adminSecret,
+	baseURL,
+	databaseURL,
+	port,
+	tmdbBaseURL,
+} from "./tests/env"
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -68,7 +74,7 @@ export default defineConfig({
 	],
 
 	/* Start the app against movies_e2e, rebuilt from the seed by the global
-	 * setup. The process env wins over the
+	 * setup, and the TMDB stub it starts. The process env wins over the
 	 * checkout's env files, so a .env.local can't point it elsewhere. In
 	 * development the login cookie isn't Secure, so it's kept over http. */
 	webServer: {
@@ -79,6 +85,8 @@ export default defineConfig({
 			DATABASE_URL: databaseURL,
 			ADMIN_SECRET: adminSecret,
 			APP_ENV: "development",
+			TMDB_BASE_URL: tmdbBaseURL,
+			TMDB_API_KEY: "e2e",
 		},
 		reuseExistingServer: !process.env.CI,
 		timeout: 120_000,
