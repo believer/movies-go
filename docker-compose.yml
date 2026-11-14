@@ -1,3 +1,6 @@
+# Fixed so every worktree shares the same containers
+name: movies
+
 services:
   postgres:
     image: postgres:16
