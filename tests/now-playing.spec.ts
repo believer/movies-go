@@ -1,4 +1,4 @@
-import { expect, logWatch, test } from "./fixtures"
+import { acceptDialogs, expect, logWatch, test } from "./fixtures"
 import { batmanBegins } from "./seed"
 
 test("a user starts Now playing for a movie in the diary", async ({
@@ -39,7 +39,7 @@ test("Now playing brings in a movie that isn't in the diary", async ({
 	page,
 	user: _,
 }) => {
-	page.on("dialog", (dialog) => dialog.accept())
+	acceptDialogs(page)
 
 	await page.goto("/now-playing/manage")
 	await page.getByLabel("IMDb ID or TMDB ID").fill("tt9000003")

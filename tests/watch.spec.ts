@@ -1,4 +1,4 @@
-import { expect, test } from "./fixtures"
+import { acceptDialogs, expect, test } from "./fixtures"
 import { batmanBegins, interstellar } from "./seed"
 
 test("a user logs a Watch of a movie in the diary", async ({
@@ -34,7 +34,7 @@ test("a user logs a Watch of a movie in the diary", async ({
 })
 
 test("a user adds and deletes a rewatch", async ({ page, user: _ }) => {
-	page.on("dialog", (dialog) => dialog.accept())
+	acceptDialogs(page)
 
 	await page.goto(
 		`/movie/new?imdbId=${interstellar.imdbId}&id=${interstellar.id}`

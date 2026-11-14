@@ -1,5 +1,5 @@
 import { createHmac, randomUUID } from "node:crypto"
-import { test as base } from "@playwright/test"
+import { test as base, type Page } from "@playwright/test"
 import pg from "pg"
 import { adminSecret, baseURL, databaseURL } from "./env"
 import type { SeedMovie } from "./seed"
@@ -47,6 +47,11 @@ export async function logWatch(user: User, movie: SeedMovie, date: string) {
 		"INSERT INTO seen (movie_id, user_id, date) VALUES ($1, $2, $3)",
 		[movie.id, user.id, date]
 	)
+}
+
+/* Accepts the confirm the app asks for before a delete */
+export function acceptDialogs(page: Page) {
+	page.on("dialog", (dialog) => dialog.accept())
 }
 
 const base64url = (value: string | Buffer) =>
