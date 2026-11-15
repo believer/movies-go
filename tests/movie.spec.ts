@@ -76,6 +76,21 @@ test("a re-rated movie shows the latest Rating", async ({ page }) => {
 	)
 })
 
+test("a re-rated movie is listed only under its latest Rating", async ({
+	page,
+}) => {
+	await page.goto("/rating/10")
+	await expect(page.getByRole("link", { name: "Spirited Away" })).toBeVisible()
+	await expect(
+		page.getByRole("link", { name: "The Dark Knight", exact: true })
+	).toHaveCount(0)
+
+	await page.goto("/rating/9")
+	await expect(
+		page.getByRole("link", { name: "The Dark Knight", exact: true })
+	).toHaveCount(1)
+})
+
 test("the Rating links to movies with the same Rating", async ({ page }) => {
 	await page.goto("/movie/inception-3")
 

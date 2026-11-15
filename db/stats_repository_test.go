@@ -1,6 +1,7 @@
 package db
 
 import (
+	"believer/movies/components/graph"
 	"believer/movies/db/dbtest"
 	"believer/movies/types"
 	"fmt"
@@ -21,7 +22,7 @@ func setupStats(t *testing.T) testStats {
 	t.Helper()
 
 	db := dbtest.Open(t)
-	dbtest.Truncate(t, db, "movie", "user", "seen", "rating")
+	dbtest.Truncate(t, db, "movie", "user", "seen", "rating", "person")
 
 	ts := testStats{db}
 	ts.seedUser(t, 1)
@@ -63,6 +64,21 @@ func (ts testStats) watch(t *testing.T, userID int, movieID int, date string) {
 func (ts testStats) rate(t *testing.T, userID int, movieID int, rating int, createdAt string) {
 	t.Helper()
 	ts.exec(t, `INSERT INTO rating (user_id, movie_id, rating, created_at) VALUES ($1, $2, $3, $4)`, userID, movieID, rating, createdAt)
+}
+
+// director adds a person who directed the given movies.
+func (ts testStats) director(t *testing.T, name string, movieIDs ...int) {
+	t.Helper()
+
+	var id int
+
+	if err := ts.db.Get(&id, `INSERT INTO person (name, original_id) VALUES ($1, 0) RETURNING id`, name); err != nil {
+		t.Fatal(err)
+	}
+
+	for _, movieID := range movieIDs {
+		ts.exec(t, `INSERT INTO movie_person (movie_id, person_id, job) VALUES ($1, $2, 'director')`, movieID, id)
+	}
 }
 
 // watchedAndRated adds a movie that user 1 watched once on date and rated on
@@ -224,5 +240,98 @@ func TestGetBestOfTheYear(t *testing.T) {
 		assert.Len(t, titles, 10)
 		assert.Equal(t, ratedTitle{"Tied 01", 7}, titles[0])
 		assert.Equal(t, ratedTitle{"Tied 10", 7}, titles[9])
+	})
+}
+
+// ratingCounts maps each Rating with movies to how many it has.
+func ratingCounts(t *testing.T, data []graph.GraphData, err error) map[string]int {
+	t.Helper()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	counts := map[string]int{}
+
+	for _, d := range data {
+		if d.Value > 0 {
+			counts[d.Label] = d.Value
+		}
+	}
+
+	return counts
+}
+
+func TestGetRatings(t *testing.T) {
+	t.Run("counts a movie rated again once, under its latest rating", func(t *testing.T) {
+		ts := setupStats(t)
+
+		id := ts.watchedAndRated(t, "Rated down", 10, "2024-02-01")
+		ts.rate(t, 1, id, 9, "2024-09-01")
+		ts.watchedAndRated(t, "Nine", 9, "2024-03-01")
+		ts.rate(t, 2, id, 3, "2025-01-01")
+
+		data, err := NewStatsRepository(ts.db).GetRatings("1")
+
+		assert.Equal(t, map[string]int{"9": 2}, ratingCounts(t, data, err))
+	})
+}
+
+func TestGetRatingsThisYear(t *testing.T) {
+	t.Run("counts a movie rated again once, under its latest rating", func(t *testing.T) {
+		ts := setupStats(t)
+
+		id := ts.watchedAndRated(t, "Rated down", 10, "2024-02-01")
+		ts.rate(t, 1, id, 9, "2024-09-01")
+		ts.watchedAndRated(t, "Eight", 8, "2024-03-01")
+		ts.rate(t, 2, id, 3, "2025-01-01")
+
+		data, err := NewStatsRepository(ts.db).GetRatingsThisYear("1", "2024-01-01")
+
+		assert.Equal(t, map[string]int{"9": 1, "8": 1}, ratingCounts(t, data, err))
+	})
+
+	t.Run("counts a movie watched twice in the year once", func(t *testing.T) {
+		ts := setupStats(t)
+
+		id := ts.watchedAndRated(t, "Twice", 7, "2024-02-01")
+		ts.watch(t, 1, id, "2024-08-01")
+
+		data, err := NewStatsRepository(ts.db).GetRatingsThisYear("1", "2024-01-01")
+
+		assert.Equal(t, map[string]int{"7": 1}, ratingCounts(t, data, err))
+	})
+
+	t.Run("leaves out movies not watched in the year", func(t *testing.T) {
+		ts := setupStats(t)
+
+		ts.watchedAndRated(t, "Last year", 7, "2023-02-01")
+
+		data, err := NewStatsRepository(ts.db).GetRatingsThisYear("1", "2024-01-01")
+
+		assert.Empty(t, ratingCounts(t, data, err))
+	})
+}
+
+func TestGetHighestRankedPersonByJob(t *testing.T) {
+	t.Run("counts a movie rated again once, with its latest rating", func(t *testing.T) {
+		ts := setupStats(t)
+
+		rated := ts.watchedAndRated(t, "Rated down", 10, "2024-02-01")
+		ts.rate(t, 1, rated, 6, "2024-09-01")
+		eight := ts.watchedAndRated(t, "Eight", 8, "2024-03-01")
+		ts.rate(t, 2, eight, 1, "2025-01-01")
+		ts.director(t, "Director", rated, eight)
+
+		persons, err := NewStatsRepository(ts.db).GetHighestRankedPersonByJob("1", "director")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, persons, 1)
+		assert.Equal(t, "Director", persons[0].Name)
+		assert.Equal(t, 2, persons[0].Appearances)
+		assert.Equal(t, 14, persons[0].TotalRating)
 	})
 }

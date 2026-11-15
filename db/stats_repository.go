@@ -156,9 +156,17 @@ SELECT
     COUNT(*) AS value,
     rating AS label
 FROM
-    rating
-WHERE
-    user_id = $1
+    -- The latest Rating is the one that counts
+    ( SELECT DISTINCT ON (movie_id)
+            rating
+        FROM
+            rating
+        WHERE
+            user_id = $1
+        ORDER BY
+            movie_id,
+            created_at DESC,
+            id DESC) AS latest_rating
 GROUP BY
     rating
 ORDER BY
@@ -318,22 +326,38 @@ func (r *StatsRepository) GetRatingsThisYear(userID string, yearTime string) ([]
 WITH rating_series AS (
     SELECT
         generate_series(1, 10) AS rating_value
+),
+-- The latest Rating is the one that counts
+latest_rating AS (
+    SELECT DISTINCT ON (movie_id)
+        movie_id,
+        rating
+    FROM
+        rating
+    WHERE
+        user_id = $1
+    ORDER BY
+        movie_id,
+        created_at DESC,
+        id DESC
+),
+-- Each movie counts once, however many times it was watched in the year
+watched_this_year AS (
+    SELECT DISTINCT
+        movie_id
+    FROM
+        seen
+    WHERE
+        user_id = $1
+        AND EXTRACT(YEAR FROM date) = EXTRACT(YEAR FROM $2::date)
 )
 SELECT
     rs.rating_value AS label,
-    COUNT(
-        CASE WHEN s.movie_id IS NOT NULL THEN
-            r.movie_id
-        ELSE
-            NULL
-        END) AS value
+    COUNT(w.movie_id) AS value
 FROM
     rating_series rs
-    LEFT JOIN rating r ON r.rating = rs.rating_value
-        AND r.user_id = $1
-    LEFT JOIN seen s ON s.movie_id = r.movie_id
-        AND s.user_id = $1
-        AND EXTRACT(YEAR FROM s.date) = EXTRACT(YEAR FROM $2::date)
+    LEFT JOIN latest_rating lr ON lr.rating = rs.rating_value
+    LEFT JOIN watched_this_year w ON w.movie_id = lr.movie_id
 GROUP BY
     rs.rating_value
 ORDER BY
@@ -608,12 +632,21 @@ WITH person_ratings AS (
         COUNT(*) AS appearances,
         SUM(r.rating) AS total_rating
     FROM
-        rating AS r
+        -- The latest Rating is the one that counts
+        ( SELECT DISTINCT ON (movie_id)
+                movie_id,
+                rating
+            FROM
+                rating
+            WHERE
+                user_id = $1
+            ORDER BY
+                movie_id,
+                created_at DESC,
+                id DESC) AS r
         INNER JOIN movie_person AS mp ON mp.movie_id = r.movie_id
             AND mp.job = $2
         INNER JOIN person AS p ON mp.person_id = p.id
-    WHERE
-        r.user_id = $1
     GROUP BY
         p.id
 )

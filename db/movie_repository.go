@@ -127,7 +127,8 @@ FROM
             movie_id = m.id
             AND user_id = $2
         ORDER BY
-            created_at DESC
+            created_at DESC,
+            id DESC
         LIMIT 1) AS r ON TRUE
     LEFT JOIN movie_series AS ms ON ms.movie_id = m.id
     LEFT JOIN series AS se ON se.id = ms.series_id
