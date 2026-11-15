@@ -191,6 +191,35 @@ ALTER SEQUENCE public.language_id_seq OWNED BY public.language.id;
 
 
 --
+-- Name: rating; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.rating (
+    id integer NOT NULL,
+    movie_id integer NOT NULL,
+    rating smallint NOT NULL,
+    created_at timestamp without time zone DEFAULT now() NOT NULL,
+    updated_at timestamp without time zone DEFAULT now() NOT NULL,
+    user_id integer NOT NULL
+);
+
+
+--
+-- Name: latest_rating; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.latest_rating AS
+ SELECT DISTINCT ON (rating.user_id, rating.movie_id) rating.id,
+    rating.user_id,
+    rating.movie_id,
+    rating.rating,
+    rating.created_at,
+    rating.updated_at
+   FROM public.rating
+  ORDER BY rating.user_id, rating.movie_id, rating.created_at DESC, rating.id DESC;
+
+
+--
 -- Name: movie; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -570,20 +599,6 @@ ALTER SEQUENCE public.production_company_id_seq OWNED BY public.production_compa
 CREATE TABLE public.production_country (
     id text NOT NULL,
     name text NOT NULL
-);
-
-
---
--- Name: rating; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.rating (
-    id integer NOT NULL,
-    movie_id integer NOT NULL,
-    rating smallint NOT NULL,
-    created_at timestamp without time zone DEFAULT now() NOT NULL,
-    updated_at timestamp without time zone DEFAULT now() NOT NULL,
-    user_id integer NOT NULL
 );
 
 
@@ -1657,5 +1672,6 @@ ALTER TABLE ONLY public.series_parents
 
 INSERT INTO public.goose_db_version (version_id, is_applied) VALUES
     (0, true),
-    (1, true);
+    (1, true),
+    (2, true);
 

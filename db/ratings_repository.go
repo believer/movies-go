@@ -38,18 +38,7 @@ SELECT DISTINCT
     m.imdb_id,
     (s.id IS NOT NULL) AS "seen"
 FROM
-    -- The latest Rating is the one that counts
-    ( SELECT DISTINCT ON (movie_id)
-            movie_id,
-            rating
-        FROM
-            rating
-        WHERE
-            user_id = $1
-        ORDER BY
-            movie_id,
-            created_at DESC,
-            id DESC) AS r
+    latest_rating AS r
     INNER JOIN movie m ON m.id = r.movie_id
     LEFT JOIN ( SELECT DISTINCT ON (movie_id)
             movie_id,
@@ -62,7 +51,8 @@ FROM
             movie_id,
             id) AS s ON m.id = s.movie_id
 WHERE
-    r.rating = $2
+    r.user_id = $1
+    AND r.rating = $2
 ORDER BY
     m.release_date DESC,
     m.id OFFSET $3
