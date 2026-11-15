@@ -5,6 +5,7 @@ import (
 	"believer/movies/components/movie"
 	"believer/movies/types"
 	"believer/movies/views"
+	"database/sql"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -22,9 +23,9 @@ type MovieQuerier interface {
 
 	// Seen/Watched Queries
 	GetFriends(userID string) ([]list.DataListItem, error)
-	GetSeenMovie(seenID string) (views.WatchData, error)
-	DeleteSeenMovie(tx *sqlx.Tx, seenID string) error
-	UpdateSeenMovie(seenID string, watchedAt time.Time, friends []string) error
+	GetSeenMovie(seenID string, userID string) (views.WatchData, error)
+	DeleteSeenMovie(tx *sqlx.Tx, seenID string, userID string) error
+	UpdateSeenMovie(seenID string, userID string, watchedAt time.Time, friends []string) error
 
 	// Ratings Queries
 	DeleteRating(tx *sqlx.Tx, movieID int, userID string) error
@@ -362,7 +363,9 @@ func (r *MovieRepository) GetFriends(userID string) ([]list.DataListItem, error)
 	return friends, err
 }
 
-func (r *MovieRepository) GetSeenMovie(seenID string) (views.WatchData, error) {
+// GetSeenMovie returns the user's Watch, or sql.ErrNoRows when the user has
+// no Watch with the ID.
+func (r *MovieRepository) GetSeenMovie(seenID string, userID string) (views.WatchData, error) {
 	var watch views.WatchData
 	err := r.db.Get(&watch, `
 SELECT
@@ -372,39 +375,63 @@ FROM
     seen s
     LEFT JOIN seen_with sw ON sw.seen_id = s.id
 WHERE
-    id = $1
+    s.id = $1
+    AND s.user_id = $2
 GROUP BY
     id
-`, seenID)
+`, seenID, userID)
 	return watch, err
 }
 
-func (r *MovieRepository) DeleteSeenMovie(tx *sqlx.Tx, seenID string) error {
+// DeleteSeenMovie deletes the user's Watch, or returns sql.ErrNoRows when the
+// user has no Watch with the ID.
+func (r *MovieRepository) DeleteSeenMovie(tx *sqlx.Tx, seenID string, userID string) error {
 	_, err := tx.Exec(`DELETE FROM seen_with
-WHERE seen_id = $1`, seenID)
+WHERE seen_id = (
+        SELECT
+            id
+        FROM
+            seen
+        WHERE
+            id = $1
+            AND user_id = $2)`, seenID, userID)
 	if err != nil {
 		return err
 	}
 
-	_, err = tx.Exec(`DELETE FROM seen
-WHERE id = $1`, seenID)
-	return err
+	res, err := tx.Exec(`DELETE FROM seen
+WHERE id = $1
+    AND user_id = $2`, seenID, userID)
+	if err != nil {
+		return err
+	}
+
+	return requireRow(res)
 }
 
-func (r *MovieRepository) UpdateSeenMovie(seenID string, watchedAt time.Time, friends []string) error {
+// UpdateSeenMovie updates the user's Watch, or returns sql.ErrNoRows when the
+// user has no Watch with the ID.
+func (r *MovieRepository) UpdateSeenMovie(seenID string, userID string, watchedAt time.Time, friends []string) error {
 	tx, err := r.db.Beginx()
 	if err != nil {
 		return err
 	}
 	defer tx.Rollback()
 
-	_, err = tx.Exec(`UPDATE
+	res, err := tx.Exec(`UPDATE
     seen
 SET
     date = $1
 WHERE
-    id = $2`, watchedAt, seenID)
+    id = $2
+    AND user_id = $3`, watchedAt, seenID, userID)
 	if err != nil {
+		return err
+	}
+
+	// The seen_with statements below run only once the Watch is known to be
+	// the user's
+	if err := requireRow(res); err != nil {
 		return err
 	}
 
@@ -429,6 +456,20 @@ WHERE seen_id = $1`, seenID)
 	}
 
 	return tx.Commit()
+}
+
+// requireRow returns sql.ErrNoRows when a statement changed no rows.
+func requireRow(res sql.Result) error {
+	n, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if n == 0 {
+		return sql.ErrNoRows
+	}
+
+	return nil
 }
 
 // Ratings Queries

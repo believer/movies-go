@@ -2,15 +2,20 @@ package handlers
 
 import (
 	"believer/movies/components/movie"
+	"believer/movies/db/dbtest"
 	"believer/movies/mocks"
 	"believer/movies/types"
 	"believer/movies/views"
+	"database/sql"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
 func setupMovieApp(h *MovieHandler) *fiber.App {
@@ -28,6 +33,9 @@ func setupMovieApp(h *MovieHandler) *fiber.App {
 	app.Get("/movie/:id/seen/others", h.GetMovieOthersSeenByID)
 	app.Get("/movie/:id/watch-providers", h.WatchProviders)
 	app.Delete("/movie/:id/now-playing", h.DeleteNowPlaying)
+	app.Delete("/movie/:id/seen/:seenId", h.DeleteSeenMovie)
+	app.Get("/movie/:id/seen/:seenId/edit", h.GetSeenMovie)
+	app.Put("/movie/:id/seen/:seenId/edit", h.UpdateSeenMovie)
 
 	return app
 }
@@ -162,5 +170,53 @@ func TestWatchProviders(t *testing.T) {
 
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusUnauthorized, resp.StatusCode)
+	})
+}
+
+// The repository returns sql.ErrNoRows for a Watch that isn't the user's
+func TestSeenMovieNotTheUsers(t *testing.T) {
+	send := func(t *testing.T, app *fiber.App, method string, path string, body string) int {
+		t.Helper()
+
+		req := httptest.NewRequest(method, path, strings.NewReader(body))
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+		req.AddCookie(&http.Cookie{Name: "token", Value: "active"})
+		resp, err := app.Test(req)
+		assert.NoError(t, err)
+
+		return resp.StatusCode
+	}
+
+	t.Run("edit form returns 404", func(t *testing.T) {
+		repo := mocks.NewMockMovieQuerier(t)
+		repo.On("GetSeenMovie", "99", "user-123").Return(views.WatchData{}, sql.ErrNoRows)
+
+		app := setupMovieApp(NewMovieHandler(repo, nil))
+
+		assert.Equal(t, http.StatusNotFound, send(t, app, http.MethodGet, "/movie/456/seen/99/edit", ""))
+	})
+
+	t.Run("update returns 404", func(t *testing.T) {
+		repo := mocks.NewMockMovieQuerier(t)
+		repo.On("UpdateSeenMovie", "99", "user-123", mock.Anything, []string{"2"}).Return(sql.ErrNoRows)
+
+		app := setupMovieApp(NewMovieHandler(repo, nil))
+
+		assert.Equal(t, http.StatusNotFound, send(t, app, http.MethodPut, "/movie/456/seen/99/edit", "watched_at=2026-05-06&friend=2"))
+	})
+
+	t.Run("delete returns 404", func(t *testing.T) {
+		// DeleteSeenMovie runs in a transaction the handler rolls back, so
+		// it needs a real one
+		tx, err := dbtest.Open(t).Beginx()
+		require.NoError(t, err)
+
+		repo := mocks.NewMockMovieQuerier(t)
+		repo.On("Begin").Return(tx, nil)
+		repo.On("DeleteSeenMovie", mock.Anything, "99", "user-123").Return(sql.ErrNoRows)
+
+		app := setupMovieApp(NewMovieHandler(repo, nil))
+
+		assert.Equal(t, http.StatusNotFound, send(t, app, http.MethodDelete, "/movie/456/seen/99", ""))
 	})
 }

@@ -340,7 +340,11 @@ func (h *MovieHandler) DeleteSeenMovie(c *fiber.Ctx) error {
 	}
 	defer tx.Rollback()
 
-	err = h.repo.DeleteSeenMovie(tx, seenId)
+	err = h.repo.DeleteSeenMovie(tx, seenId, userID)
+
+	if errors.Is(err, sql.ErrNoRows) {
+		return c.SendStatus(fiber.StatusNotFound)
+	}
 
 	if err != nil {
 		return err
@@ -425,7 +429,11 @@ func (h *MovieHandler) GetSeenMovie(c *fiber.Ctx) error {
 		return err
 	}
 
-	watch, err := h.repo.GetSeenMovie(seenId)
+	watch, err := h.repo.GetSeenMovie(seenId, userId)
+
+	if errors.Is(err, sql.ErrNoRows) {
+		return c.SendStatus(fiber.StatusNotFound)
+	}
 
 	if err != nil {
 		return err
@@ -450,6 +458,7 @@ func (h *MovieHandler) UpdateSeenMovie(c *fiber.Ctx) error {
 	movieId, err := req.ParamsInt("id")
 	seenID := req.Params("seenId")
 	isAuth := req.IsAuthenticated()
+	userID := req.UserID()
 
 	if err != nil {
 		return err
@@ -471,15 +480,17 @@ func (h *MovieHandler) UpdateSeenMovie(c *fiber.Ctx) error {
 
 	watchedAt := utils.ParseWatchedAt(data.WatchedAt, time.Now())
 
-	err = h.repo.UpdateSeenMovie(seenID, watchedAt, data.Friend)
+	err = h.repo.UpdateSeenMovie(seenID, userID, watchedAt, data.Friend)
+
+	if errors.Is(err, sql.ErrNoRows) {
+		return c.SendStatus(fiber.StatusNotFound)
+	}
 
 	if err != nil {
 		return err
 	}
 
-	if userID := req.UserID(); userID != "" {
-		InvalidateStatsCache(userID)
-	}
+	InvalidateStatsCache(userID)
 
 	c.Set("HX-Redirect", fmt.Sprintf("/movie/%d", movieId))
 
