@@ -6,7 +6,7 @@ Playwright specs live in `tests/`. The comments above `e2e` and `e2e-db` in the 
 
 - Run Chromium only: `pnpm exec playwright test --project=chromium`. Firefox can hang in agent sandboxes, and CI runs all three browsers on every PR.
 - Each server port gets its own database, `movies_e2e_<port>`. `make e2e` builds it before Playwright starts the server. Before running `pnpm exec playwright test` on a new port, run `make e2e-db` with the same `E2E_PORT`.
-- Other checkouts' agents run E2E too. Pick an `E2E_PORT` and `E2E_TMDB_PORT` that no other run is using. `lsof -nP -iTCP -sTCP:LISTEN | grep e2e-serve` lists the ports in use.
+- Other checkouts' agents run E2E too. Pick an `E2E_PORT` that no other run is using; the TMDB stub takes the port after it. `lsof -nP -iTCP -sTCP:LISTEN | grep e2e-serve` lists the ports in use.
 - `http://localhost:<port>/health is already used` means a server is already running on that port. If `lsof -a -p <pid> -d cwd` shows it running from this checkout, it's left over from an earlier run and may run old code: stop it and run again. If it runs from another checkout, it belongs to another agent's run: pick other ports.
 
 ## Writing

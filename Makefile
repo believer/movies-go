@@ -81,8 +81,8 @@ smoke:
 # built here first. Pass PSQL to use another Postgres, as for e2e-db.
 #
 # A server already on the port fails the run; set E2E_REUSE=1 to reuse it.
-# Override the ports to run beside another checkout, e.g.
-# make e2e E2E_PORT=8190 E2E_TMDB_PORT=8191. The run then gets
+# Override the port to run beside another checkout, e.g. make e2e E2E_PORT=8190.
+# The TMDB stub follows on 8191 unless E2E_TMDB_PORT is set, and the run gets
 # movies_e2e_8190, so the two don't share data.
 e2e: e2e-db
 	@pnpm exec playwright test
