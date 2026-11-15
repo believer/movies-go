@@ -12,6 +12,18 @@ test("stats count Watches", async ({ page }) => {
 	await expect(stat("Reviews")).toHaveText("2")
 })
 
+test("stats counts use tabular numbers", async ({ page }) => {
+	await page.goto("/stats")
+
+	await expect(
+		page.getByLabel("Unique movies seen", { exact: true })
+	).toHaveCSS("font-variant-numeric", "tabular-nums")
+	await expect(page.getByLabel("Shortest movie", { exact: true })).toHaveCSS(
+		"font-variant-numeric",
+		"normal"
+	)
+})
+
 test("stats show this year's views", async ({ page }) => {
 	await page.goto("/stats")
 
