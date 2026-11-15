@@ -15,10 +15,10 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  # Postgres for tests: make test loads movies_test and make e2e-db builds
-  # movies_e2e_<port>, each from the calling checkout. It mounts no files,
-  # since a mount resolves to one checkout's path, and starting the container
-  # from another checkout would recreate it and wipe every database.
+  # Postgres for tests: make test builds movies_test_<checkout> and make
+  # e2e-db builds movies_e2e_<port>, each from the calling checkout. It mounts
+  # no files, since a mount resolves to one checkout's path, and starting the
+  # container from another checkout would recreate it and wipe every database.
   postgres_test:
     image: postgres:15
     container_name: postgres_test
