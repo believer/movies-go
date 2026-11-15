@@ -79,7 +79,8 @@ SELECT
     m.id,
     m.title,
     m.overview,
-    m.release_date AS watched_at COALESCE(ARRAY_TO_JSON(ARRAY (
+    m.release_date AS watched_at,
+    COALESCE(ARRAY_TO_JSON(ARRAY (
                 SELECT
                     jsonb_build_object('id', s2.id::text, 'name', s2.name, 'number_in_series', ms2.number_in_series)
                 FROM movie_series ms2
@@ -88,14 +89,23 @@ SELECT
                     ms2.movie_id = m.id ORDER BY s2.name ASC)), '[]') AS all_series
 FROM
     movie AS m
-    LEFT JOIN movie_series AS ms ON ms.movie_id = m.id
-    LEFT JOIN series AS se ON se.id = ms.series_id
-    LEFT JOIN rating AS r ON r.movie_id = m.id
+    -- The latest Rating is the one that counts
+    INNER JOIN ( SELECT DISTINCT ON (movie_id)
+            movie_id,
+            rating
+        FROM
+            rating
+        WHERE
+            user_id = $2
+        ORDER BY
+            movie_id,
+            created_at DESC,
+            id DESC) AS r ON r.movie_id = m.id
 WHERE
     r.rating = $1
-    AND r.user_id = $2
 ORDER BY
-    m.release_date DESC
+    m.release_date DESC,
+    m.id
 	`, rating, userID)
 	return movies, err
 }

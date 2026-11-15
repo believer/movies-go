@@ -14,4 +14,4 @@ Playwright specs live in `tests/`. The comments above `e2e` and `e2e-db` in the 
 - Tests that write log in as a fresh user through the `user` fixture in `tests/fixtures.ts`.
 - TMDB responses come from `tests/tmdb/fixtures/`, keyed by request path. A new Movie intake test needs a movie of its own there.
 - A language page's heading is the native name: the link on a movie page reads "French", the heading "Français".
-- Leave out the cases these open bugs break, until they close: #73 (a re-rated movie's page shows the older Rating) and #74 (a NULL tagline returns a 500).
+- Leave out the cases this open bug breaks, until it closes: #74 (a NULL tagline returns a 500).

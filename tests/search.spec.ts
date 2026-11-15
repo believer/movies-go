@@ -16,6 +16,22 @@ test("search finds movies by title", async ({ page }) => {
 	).toBeVisible()
 })
 
+test("search finds movies by their latest Rating", async ({ page }) => {
+	await page.goto("/")
+
+	// The Dark Knight was rated 10, then 9
+	await search(page, "rating:10")
+	await expect(page.getByRole("link", { name: "Spirited Away" })).toBeVisible()
+	await expect(
+		page.getByRole("link", { name: "The Dark Knight", exact: true })
+	).toHaveCount(0)
+
+	await search(page, "rating:9")
+	await expect(
+		page.getByRole("link", { name: "The Dark Knight", exact: true })
+	).toHaveCount(1)
+})
+
 const people = [
 	{ query: "cast:paul", name: "Paul Rudd" },
 	{ query: "director:steven", name: "Steven Spielberg" },
