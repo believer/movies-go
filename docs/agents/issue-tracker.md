@@ -5,7 +5,7 @@ Issues and specs for this repo live in GitHub Issues on **`believer/movies-go`**
 ## Conventions
 
 - **Create an issue**: `gh issue create --title "..." --body-file <file> [--label ...]`. Add `bug`, `enhancement` (feature) or `Improvement` when the type is clear.
-- **Read an issue**: `gh issue view 123 --comments` for the body plus the discussion.
+- **Read an issue**: `gh issue view 123 --json title,body,labels,comments` for the body plus the discussion. `--comments` prints nothing when an issue has no comments yet.
 - **List issues**: `gh issue list --state open [--label ...] [--assignee ...] --json number,title,labels,assignees`. Raise `--limit` (default 30) when you need everything.
 - **Issue ids vs numbers**: the sub-issue and dependency endpoints take the issue's database **id**, not its number. Get it with `gh api repos/{owner}/{repo}/issues/<n> --jq .id`.
 - **Make an issue a sub-issue of a parent**: `gh api repos/{owner}/{repo}/issues/<parent>/sub_issues -F sub_issue_id=<child id>`. List children in order with `gh api repos/{owner}/{repo}/issues/<parent>/sub_issues`.
@@ -21,7 +21,7 @@ File issues only in `believer/movies-go`. Never file in `mattpocock/skills` (the
 
 ## Pull requests as a triage surface
 
-**PRs as a request surface: yes.** Treat open PRs on `believer/movies-go` like issues when triaging: read with `gh pr view <n> --comments`, list with `gh pr list`. Triage labels apply to PRs too. Link a PR to its issue with `Fixes #123` in the PR body so the issue closes on merge.
+**PRs as a request surface: yes.** Treat open PRs on `believer/movies-go` like issues when triaging: read with `gh pr view <n> --json title,body,labels,comments`, list with `gh pr list`. Triage labels apply to PRs too. Link a PR to its issue with `Fixes #123` in the PR body so the issue closes on merge.
 
 ## When a skill says "publish to the issue tracker"
 
