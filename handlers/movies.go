@@ -196,6 +196,12 @@ func (h *MovieHandler) GetMovieNew(c *fiber.Ctx) error {
 }
 
 func (h *MovieHandler) GetMovieNewSeries(c *fiber.Ctx) error {
+	req := utils.NewRequest(c)
+
+	if !req.IsAuthenticated() {
+		return c.SendStatus(fiber.StatusUnauthorized)
+	}
+
 	options, err := h.repo.GetAllSeries()
 
 	if err != nil {
@@ -410,6 +416,10 @@ func (h *MovieHandler) GetSeenMovie(c *fiber.Ctx) error {
 	movieId, err := req.ParamsInt("id")
 	seenId := req.Params("seenId")
 	userId := req.UserID()
+
+	if !req.IsAuthenticated() {
+		return c.SendStatus(fiber.StatusUnauthorized)
+	}
 
 	if err != nil {
 		return err
