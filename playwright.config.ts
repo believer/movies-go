@@ -76,9 +76,14 @@ export default defineConfig({
 	/* Start the app against movies_e2e, rebuilt from the seed by the global
 	 * setup, and the TMDB stub it starts. The process env wins over the
 	 * checkout's env files, so a .env.local can't point it elsewhere. In
-	 * development the login cookie isn't Secure, so it's kept over http. */
+	 * development the login cookie isn't Secure, so it's kept over http.
+	 *
+	 * The server is built and exec'd, so Playwright stops the server itself
+	 * rather than a go run parent that can leave it behind. A server already
+	 * on the port fails the run instead of being reused, since it may run old
+	 * code or env. Set E2E_REUSE=1 to reuse one on purpose. */
 	webServer: {
-		command: "go run .",
+		command: "go build -o tmp/e2e-server . && exec ./tmp/e2e-server",
 		url: `${baseURL}/health`,
 		env: {
 			PORT: String(port),
@@ -88,7 +93,7 @@ export default defineConfig({
 			TMDB_BASE_URL: tmdbBaseURL,
 			TMDB_API_KEY: "e2e",
 		},
-		reuseExistingServer: !process.env.CI,
+		reuseExistingServer: process.env.E2E_REUSE === "1",
 		timeout: 120_000,
 	},
 })
