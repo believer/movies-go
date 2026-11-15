@@ -29,7 +29,7 @@
     /* TODO: Use if() */
     align-items: var(--align, flex-start);
 
-    .dd--tabular {
+    &.dd--tabular {
       overflow: hidden;
       font-variant-numeric: tabular-nums;
     }
