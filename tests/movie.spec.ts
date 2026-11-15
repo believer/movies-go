@@ -70,6 +70,7 @@ test("a re-rated movie shows the latest Rating", async ({ page }) => {
 	const rating = page.getByLabel("My rating")
 
 	await expect(rating).toHaveText("9")
+	// biome-ignore lint/plugin/no-markup-locator: the <time> title attribute is what the test checks
 	await expect(rating.locator("time")).toHaveAttribute(
 		"title",
 		"2021-12-30 23:40"
@@ -127,12 +128,14 @@ test("a movie with no overview shows none", async ({ page }) => {
 	await expect(
 		page.getByText("An adventure 65 million years in the making.")
 	).toBeVisible()
+	// biome-ignore lint/plugin/no-markup-locator: the overview is an unlabelled <p>
 	await expect(page.locator(".movie__overview")).toHaveCount(0)
 })
 
 test("a movie with a tagline and an overview shows both", async ({ page }) => {
 	await page.goto("/movie/parasite-11")
 
+	// biome-ignore lint/plugin/no-markup-locator: the overview is an unlabelled <p>
 	await expect(page.locator(".movie__overview")).toContainText(
 		"Ki-taek's family"
 	)

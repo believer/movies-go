@@ -29,6 +29,7 @@ const test = base.extend<{ noErrors: void }>({
 test("feed and a movie from it", async ({ page }) => {
 	await page.goto("/")
 
+	// biome-ignore lint/plugin/no-markup-locator: a feed card is an unlabelled <li>
 	const firstMovie = page.locator(".feed-list__card").first()
 	const title = await firstMovie.getByRole("heading").textContent()
 
