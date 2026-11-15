@@ -307,6 +307,8 @@ func writeMetadata(tx *sqlx.Tx, id int, details types.MovieDetailsResponse, cred
 		return err
 	}
 
+	// Countries go before companies so a company from one of the movie's
+	// countries gets its country on the first intake
 	if err := addCountries(tx, id, details); err != nil {
 		return err
 	}

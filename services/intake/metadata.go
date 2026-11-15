@@ -335,16 +335,26 @@ func addCountries(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse) error {
 	return nil
 }
 
+// addProductionCompanies stores a company's country only when it is already in
+// production_country, since TMDB gives companies a country code but no name. A
+// company without a country gets it filled in by a later intake.
 func addProductionCompanies(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse) error {
 	for _, c := range movie.ProductionCompanies {
 		var pcID int
 
 		err := tx.Get(&pcID, `
 			INSERT INTO production_company (tmdb_id, name, country)
-			    VALUES ($1, $2, NULLIF ($3, ''))
+			    VALUES ($1, $2, (
+			            SELECT
+			                id
+			            FROM
+			                production_country
+			            WHERE
+			                id = $3))
 			ON CONFLICT (tmdb_id, name)
 			    DO UPDATE SET
-			        name = EXCLUDED.name
+			        name = EXCLUDED.name,
+			        country = COALESCE(production_company.country, EXCLUDED.country)
 			    RETURNING
 			        id
 		`, c.ID, c.Name, c.OriginCountry)
