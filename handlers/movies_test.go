@@ -139,6 +139,19 @@ func TestHandleSearch(t *testing.T) {
 	})
 }
 
+func TestPlaybackProgressUnauthorized(t *testing.T) {
+	t.Run("without a login state", func(t *testing.T) {
+		app := fiber.New()
+		app.Post("/hooks/playback", NewMovieHandler(mocks.NewMockMovieQuerier(t), nil).PlaybackProgress)
+
+		req := httptest.NewRequest(http.MethodPost, "/hooks/playback", nil)
+		resp, err := app.Test(req)
+
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusUnauthorized, resp.StatusCode)
+	})
+}
+
 func TestWatchProviders(t *testing.T) {
 	t.Run("unauthorized", func(t *testing.T) {
 		repo := mocks.NewMockMovieQuerier(t)
