@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"fmt"
+	"log/slog"
 	"sync"
 
 	"golang.org/x/text/feature/plural"
@@ -9,9 +9,7 @@ import (
 	"golang.org/x/text/message"
 )
 
-var (
-	once sync.Once
-)
+var registerMessagesOnce sync.Once
 
 const (
 	NominationKey = "%d nomination"
@@ -34,14 +32,14 @@ func register(key, one, other string) {
 	err := message.Set(language.English, key, msg)
 
 	if err != nil {
-		fmt.Println("Register language", err)
+		slog.Error("Could not register plural message", "key", key, "error", err)
 	}
 }
 
 // PluralMessage formats a plural message with the given count and key.
 // It ensures messages are registered only once.
 func PluralMessage(key string, count int) string {
-	once.Do(initMessages)
+	registerMessagesOnce.Do(initMessages)
 
 	p := message.NewPrinter(language.English)
 	return p.Sprintf(key, count)
