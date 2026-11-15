@@ -26,7 +26,7 @@ func (g Genre) Trailing() string {
 }
 
 func (g Genre) Href() string {
-	return utils.CreateSelfHealingUrl("genre", g.Name, strconv.Itoa(g.ID))
+	return utils.CreateSelfHealingURL("genre", g.Name, strconv.Itoa(g.ID))
 }
 
 // Repo

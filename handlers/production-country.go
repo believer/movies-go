@@ -27,7 +27,7 @@ func (p ProductionItem) Trailing() string {
 }
 
 func (p ProductionItem) Href() string {
-	return utils.CreateSelfHealingUrl("production-country", p.Name, p.ID)
+	return utils.CreateSelfHealingURL("production-country", p.Name, p.ID)
 }
 
 type ProductionCountryHandler struct {

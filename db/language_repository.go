@@ -27,7 +27,7 @@ func (l Language) Trailing() string {
 }
 
 func (l Language) Href() string {
-	return utils.CreateSelfHealingUrl("language", l.EnglishName, strconv.Itoa(l.ID))
+	return utils.CreateSelfHealingURL("language", l.EnglishName, strconv.Itoa(l.ID))
 }
 
 // Repo

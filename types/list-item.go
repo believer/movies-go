@@ -30,7 +30,7 @@ func (l List) Trailing() string {
 }
 
 func (l List) Href() string {
-	return utils.CreateSelfHealingUrl("list", l.Slug, l.ID)
+	return utils.CreateSelfHealingURL("list", l.Slug, l.ID)
 }
 
 type ListItem struct {
