@@ -3,6 +3,7 @@ package tmdb
 import (
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -89,6 +90,22 @@ func TestFetch(t *testing.T) {
 
 		assert.Error(t, err)
 		assert.NotErrorIs(t, err, ErrNotFound)
+	})
+
+	t.Run("keeps the API key out of request errors", func(t *testing.T) {
+		server := httptest.NewServer(http.NotFoundHandler())
+		server.Close()
+
+		t.Setenv("TMDB_BASE_URL", server.URL)
+		t.Setenv("TMDB_API_KEY", "secret-key")
+
+		_, err := New("").Search("inception")
+
+		var urlErr *url.Error
+
+		assert.ErrorAs(t, err, &urlErr)
+		assert.NotContains(t, err.Error(), "secret-key")
+		assert.Contains(t, err.Error(), "query=inception")
 	})
 }
 
