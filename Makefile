@@ -73,7 +73,7 @@ bench-db:
 BENCH ?= .
 BENCH_COUNT ?= 10
 # The slowest queries take under 100ms, so a quarter second still times a
-# few calls, and all benchmarks run ten times in about three minutes
+# few calls, and all benchmarks run ten times in three to four minutes
 BENCH_TIME ?= 0.25s
 
 # Run the benchmarks in db/ against BENCH_DB, built by make bench-db. Narrow

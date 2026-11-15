@@ -328,7 +328,7 @@ GROUP BY
 
 	var rating int
 
-	if err := db.Get(&rating, `SELECT rating FROM rating WHERE movie_id = $1 AND user_id = $2`, a.RatedMovieID, a.UserID); err != nil {
+	if err := db.Get(&rating, `SELECT rating FROM latest_rating WHERE movie_id = $1 AND user_id = $2`, a.RatedMovieID, a.UserID); err != nil {
 		b.Fatal(err)
 	}
 
