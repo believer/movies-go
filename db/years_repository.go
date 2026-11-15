@@ -36,19 +36,11 @@ SELECT
     m.title,
     m.release_date,
     m.imdb_id,
-    (s.id IS NOT NULL) AS "seen"
+    (w.movie_id IS NOT NULL) AS "seen"
 FROM
     movie AS m
-    LEFT JOIN ( SELECT DISTINCT ON (movie_id)
-            movie_id,
-            id
-        FROM
-            public.seen
-        WHERE
-            user_id = $1
-        ORDER BY
-            movie_id,
-            id) AS s ON m.id = s.movie_id
+    LEFT JOIN watched_movie AS w ON w.movie_id = m.id
+        AND w.user_id = $1
 WHERE
     date_part('year', release_date) = $2
 ORDER BY

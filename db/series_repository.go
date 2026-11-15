@@ -75,7 +75,7 @@ WITH RECURSIVE series_hierarchy AS (
 SELECT
     sh.series_id AS "id",
     sh.series_name AS "name",
-    ARRAY_TO_JSON(COALESCE(array_agg(json_build_object('id', m.id, 'title', m.title, 'releaseDate', to_char(m.release_date, 'YYYY-MM-DD"T"HH24:MI:SS"Z"'), 'numberInSeries', ms.number_in_series, 'seen', (s.id IS NOT NULL), 'runtime', m.runtime, 'rating', r.rating)
+    ARRAY_TO_JSON(COALESCE(array_agg(json_build_object('id', m.id, 'title', m.title, 'releaseDate', to_char(m.release_date, 'YYYY-MM-DD"T"HH24:MI:SS"Z"'), 'numberInSeries', ms.number_in_series, 'seen', (w.movie_id IS NOT NULL), 'runtime', m.runtime, 'rating', r.rating)
             ORDER BY ms.number_in_series ASC) FILTER (WHERE m.id IS NOT NULL), '{}'::json[])) AS movies
 FROM
     series_hierarchy sh
@@ -83,16 +83,8 @@ FROM
     LEFT JOIN movie m ON m.id = ms.movie_id
     LEFT JOIN latest_rating AS r ON r.movie_id = m.id
         AND r.user_id = $2
-    LEFT JOIN ( SELECT DISTINCT ON (movie_id)
-            movie_id,
-            id
-        FROM
-            seen
-        WHERE
-            user_id = $2
-        ORDER BY
-            movie_id,
-            id) AS s ON m.id = s.movie_id
+    LEFT JOIN watched_movie AS w ON w.movie_id = m.id
+        AND w.user_id = $2
 GROUP BY
     sh.series_id,
     sh.series_name

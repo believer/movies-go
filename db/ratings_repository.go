@@ -36,20 +36,12 @@ SELECT DISTINCT
     m.title,
     m.release_date,
     m.imdb_id,
-    (s.id IS NOT NULL) AS "seen"
+    (w.movie_id IS NOT NULL) AS "seen"
 FROM
     latest_rating AS r
     INNER JOIN movie m ON m.id = r.movie_id
-    LEFT JOIN ( SELECT DISTINCT ON (movie_id)
-            movie_id,
-            id
-        FROM
-            public.seen
-        WHERE
-            user_id = $1
-        ORDER BY
-            movie_id,
-            id) AS s ON m.id = s.movie_id
+    LEFT JOIN watched_movie AS w ON w.movie_id = m.id
+        AND w.user_id = $1
 WHERE
     r.user_id = $1
     AND r.rating = $2
