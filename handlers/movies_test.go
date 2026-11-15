@@ -35,7 +35,7 @@ func setupMovieApp(h *MovieHandler) *fiber.App {
 func TestGetMovieByID(t *testing.T) {
 	t.Run("returns 200 with movie details", func(t *testing.T) {
 		repo := mocks.NewMockMovieQuerier(t)
-		
+
 		mockMovie := types.Movie{
 			ID:    456,
 			Title: "Inception",

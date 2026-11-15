@@ -98,7 +98,7 @@ func TestNowPlayingHandlerPostManage(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPost, "/now-playing/manage", strings.NewReader(form.Encode()))
 		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 		req.AddCookie(&http.Cookie{Name: "token", Value: "active"})
-		
+
 		resp, err := app.Test(req)
 
 		assert.NoError(t, err)

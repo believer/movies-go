@@ -52,13 +52,19 @@ e2e-db: e2e-postgres
 TEMPL := go run github.com/a-h/templ/cmd/templ@$(shell go list -m -f '{{.Version}}' github.com/a-h/templ)
 TEMPL_SUMS = find . -name '*_templ.go' -not -path './node_modules/*' | sort | xargs shasum
 
-# Fast checks that need no database: generated templ files are fresh, go vet
-# and biome pass, and tests pass with database tests skipped
+# Fast checks that need no database: generated templ files are fresh, Go files
+# are gofmt'd, go vet and biome pass, and tests pass with database tests skipped
 check:
 	@before=$$($(TEMPL_SUMS)); \
 		$(TEMPL) generate > /dev/null 2>&1; \
 		if [ "$$before" != "$$($(TEMPL_SUMS))" ]; then \
 			echo "❌ *_templ.go files were stale and have been regenerated, commit them"; \
+			exit 1; \
+		fi
+	@unformatted=$$(gofmt -l $$(git ls-files '*.go')); \
+		if [ -n "$$unformatted" ]; then \
+			echo "❌ Not gofmt'd, run gofmt -w on:"; \
+			echo "$$unformatted"; \
 			exit 1; \
 		fi
 	@go vet ./...
