@@ -72,9 +72,7 @@ func (h *AwardsHandler) GetAwardsByYear(c *fiber.Ctx) error {
 	// Only valid types
 	validSorts := map[string]bool{"Movie": true, "Category": true}
 	if !validSorts[sort] {
-		err := fiber.ErrBadRequest
-		err.Message = "Invalid sort value"
-		return err
+		return fiber.NewError(fiber.StatusBadRequest, "Invalid sort value")
 	}
 
 	switch sort {
@@ -114,16 +112,12 @@ func awardConfigFromQuery(c *fiber.Ctx) (types.AwardConfig, error) {
 	awardType := req.Query("type")
 
 	if awardType == "" {
-		err := fiber.ErrBadRequest
-		err.Message = "Missing awardType"
-		return types.AwardConfig{}, err
+		return types.AwardConfig{}, fiber.NewError(fiber.StatusBadRequest, "Missing awardType")
 	}
 
 	cfg, ok := types.GetAwardConfig(awardType)
 	if !ok {
-		err := fiber.ErrBadRequest
-		err.Message = "Incompatible awardType"
-		return types.AwardConfig{}, err
+		return types.AwardConfig{}, fiber.NewError(fiber.StatusBadRequest, "Incompatible awardType")
 	}
 
 	return cfg, nil

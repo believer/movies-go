@@ -3,6 +3,7 @@ package handlers
 import (
 	"believer/movies/mocks"
 	"believer/movies/types"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -135,4 +136,30 @@ func TestGetAwardsByYear(t *testing.T) {
 			expectedCode: http.StatusBadRequest,
 		},
 	})
+}
+
+func TestAwardsBadRequestKeepsSharedError(t *testing.T) {
+	tests := []struct {
+		name    string
+		url     string
+		message string
+	}{
+		{"missing award type", "/awards/year/2026", "Missing awardType"},
+		{"unknown award type", "/awards/2?type=grammy", "Incompatible awardType"},
+		{"unknown sort", "/awards/year/2026?type=academy-award&sort=INVALID", "Invalid sort value"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			app := setupAwardsApp(NewAwardsHandler(mocks.NewMockAwardsQuerier(t)))
+			resp, err := app.Test(httptest.NewRequest(http.MethodGet, tt.url, nil))
+			assert.NoError(t, err)
+
+			body, err := io.ReadAll(resp.Body)
+			assert.NoError(t, err)
+			assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+			assert.Equal(t, tt.message, string(body))
+			assert.Equal(t, "Bad Request", fiber.ErrBadRequest.Message)
+		})
+	}
 }
