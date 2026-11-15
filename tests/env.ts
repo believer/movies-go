@@ -8,9 +8,13 @@ export const baseURL = `http://localhost:${port}`
 export const tmdbPort = Number(process.env.E2E_TMDB_PORT || 8091)
 export const tmdbBaseURL = `http://localhost:${tmdbPort}/3`
 
-export const databaseURL =
-	process.env.E2E_DATABASE_URL ||
-	"postgres://admin:password@localhost:5433/movies_e2e?sslmode=disable"
+/* Each port gets a database of its own, named as in the Makefile, so runs on
+ * different ports don't share data. E2E_POSTGRES_URL points at another
+ * server. */
+export const databaseName = `movies_e2e_${port}`
+const postgresURL =
+	process.env.E2E_POSTGRES_URL || "postgres://admin:password@localhost:5433"
+export const databaseURL = `${postgresURL}/${databaseName}?sslmode=disable`
 
 /* The server signs and checks tokens with this, so tests can mint their own */
 export const adminSecret = "e2e-secret"

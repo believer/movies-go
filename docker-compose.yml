@@ -16,7 +16,8 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   # Empty database with the current schema, used by tests that need Postgres,
-  # and movies_e2e with the schema and seed, used by the E2E tests
+  # and movies_e2e_8090 with the schema and seed, used by E2E runs on the default
+  # port
   postgres_test:
     image: postgres:15
     container_name: postgres_test
