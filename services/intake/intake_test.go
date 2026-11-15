@@ -113,6 +113,37 @@ WHERE mc.movie_id = $1 ORDER BY pc.id`, id))
 		assert.Equal(t, []string{"Sweden", "United States of America"}, countries)
 	})
 
+	t.Run("adds a company whose country isn't known without its country", func(t *testing.T) {
+		in, fake, db := setup(t)
+
+		movie := inception
+		movie.ProductionCompanies = []types.TmdbCompany{{ID: 7505, Name: "Marvel Entertainment", OriginCountry: "GB"}}
+		fake.Add(movie, inceptionCredits, "tt1375666")
+
+		id, err := in.EnsureMovie(ByExternalID("tt1375666"), MovieOptions{})
+		require.NoError(t, err)
+
+		assert.Equal(t, 1, count(t, db, `
+SELECT count(*) FROM movie_company mc
+    INNER JOIN production_company pc ON pc.id = mc.company_id
+WHERE mc.movie_id = $1 AND pc.country IS NULL`, id))
+	})
+
+	t.Run("fills in a company's missing country once it is known", func(t *testing.T) {
+		in, fake, db := setup(t)
+
+		_, err := db.Exec(`INSERT INTO production_company (tmdb_id, name) VALUES (923, 'Legendary Pictures')`)
+		require.NoError(t, err)
+
+		_, err = in.EnsureMovie(ByExternalID("tt1375666"), MovieOptions{})
+		require.NoError(t, err)
+
+		var country string
+		require.NoError(t, db.Get(&country, `SELECT country FROM production_company WHERE tmdb_id = 923`))
+		assert.Equal(t, "US", country)
+		assert.Equal(t, []string{"tt1375666"}, fake.Calls())
+	})
+
 	t.Run("finds an existing movie by IMDb or TMDB ID without fetching", func(t *testing.T) {
 		in, fake, _ := setup(t)
 
