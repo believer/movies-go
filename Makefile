@@ -130,6 +130,16 @@ e2e: e2e-db
 e2e-ui: e2e-db
 	@pnpm exec playwright test --ui
 
+# What a change needs before review: make check, make test and the Chromium
+# E2E suite. Stops at the first failure and prints only its output. Pass
+# E2E_PORT as for make e2e to run beside another checkout.
+verify: check
+	@out=$$($(MAKE) -s test 2>&1) || { echo "$$out"; exit 1; }
+	@echo "\033[0;32m(✓)\033[0;37m Tests passed"
+	@out=$$($(MAKE) -s e2e-db 2>&1) || { echo "$$out"; exit 1; }
+	@out=$$(pnpm exec playwright test --project=chromium 2>&1) || { echo "$$out"; exit 1; }; \
+		echo "\033[0;32m(✓)\033[0;37m E2E passed (Chromium):$$(echo "$$out" | grep -E '^ +[0-9]+ (passed|skipped|flaky)' | tr -s ' \n' ' ')"
+
 db-up:
 	@docker-compose up -d
 	@docker exec \
