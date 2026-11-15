@@ -1,6 +1,6 @@
-Run `make check` before finishing a change: it regenerates stale `*_templ.go` files and runs `go vet` and `biome check`.
+Run `make check` before finishing a change.
 
-Implement in a worktree: the main checkout is shared with a human. Run `pnpm install` there before `make check`.
+Implement in a worktree branched from a fresh `origin/main` (`git fetch` first). The main checkout is shared with a human, so leave it on whatever they have checked out. Run `pnpm install` in the worktree before `make check`.
 
 ## Agent skills
 
