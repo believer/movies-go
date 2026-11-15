@@ -56,26 +56,18 @@ SELECT
     m.id,
     m.title,
     m.release_date,
-    (s.id IS NOT NULL) AS "seen"
+    (w.movie_id IS NOT NULL) AS "seen"
 FROM
     award a
     INNER JOIN movie m ON m.imdb_id = a.imdb_id
-    LEFT JOIN ( SELECT DISTINCT ON (movie_id)
-            movie_id,
-            id
-        FROM
-            public.seen
-        WHERE
-            user_id = $1
-        ORDER BY
-            movie_id,
-            id) AS s ON m.id = s.movie_id
+    LEFT JOIN watched_movie AS w ON w.movie_id = m.id
+        AND w.user_id = $1
 WHERE
     a.type = $3
 GROUP BY
     a.imdb_id,
     m.id,
-    s.id
+    w.movie_id
 HAVING
     count(DISTINCT CASE WHEN a.name IN ('Best Film', 'Best Screenplay', 'Editing', 'Adapted Screenplay') THEN
             a.name
@@ -83,38 +75,32 @@ HAVING
             a.id::text
         END) = $2
 ORDER BY
-    m.release_date DESC`
+    m.release_date DESC,
+    m.id`
 
 const awardsByWinsQuery = `
 SELECT
     m.id,
     m.title,
     m.release_date,
-    (s.id IS NOT NULL) AS "seen"
+    (w.movie_id IS NOT NULL) AS "seen"
 FROM
     award a
     INNER JOIN movie m ON m.imdb_id = a.imdb_id
-    LEFT JOIN ( SELECT DISTINCT ON (movie_id)
-            movie_id,
-            id
-        FROM
-            public.seen
-        WHERE
-            user_id = $1
-        ORDER BY
-            movie_id,
-            id) AS s ON m.id = s.movie_id
+    LEFT JOIN watched_movie AS w ON w.movie_id = m.id
+        AND w.user_id = $1
 WHERE
     winner = TRUE
     AND type = $3
 GROUP BY
     a.imdb_id,
     m.id,
-    s.id
+    w.movie_id
 HAVING
     count(DISTINCT a.name) = $2
 ORDER BY
-    m.release_date DESC
+    m.release_date DESC,
+    m.id
 `
 
 const awardsGroupedByMovieQuery = `

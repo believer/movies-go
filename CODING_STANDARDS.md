@@ -6,6 +6,7 @@ Judgement calls for review. Anything a tool can check belongs in `make check` in
 
 - **Deterministic order.** A query that feeds a user-visible list ends its `ORDER BY` with a unique key, usually the row id. Ties then resolve the same way on every load and at any `LIMIT` cutoff.
 - **Latest rating.** A user can rate a movie again, and the latest rating counts (`GLOSSARY.md`). Read ratings from `latest_rating`, a view with one row per user and movie, and filter it on `user_id`. A plain join on `rating` returns one row per rating, so only writes use the table.
+- **Watched movies.** A user can watch a movie many times, and it counts once. Read whether a user watched a movie from `watched_movie`, a view with one row per user and movie, and filter it on `user_id`. A plain join on `seen` returns one row per Watch, so use the table when the Watches themselves matter (their dates, their count).
 - **Scoped to the user.** A query that reads, updates or deletes a user's row by its id (a Watch, Rating, Review, Watchlist entry) also filters on `user_id`, or joins through a row that does. No matching row is a not-found.
 
 ## CSS

@@ -57,27 +57,20 @@ SELECT
     ol.source,
     ol.slug,
     COUNT(*) AS total_movies,
-    COUNT(s.id) AS seen_movies,
-    ROUND(100.0 * COUNT(s.id) / COUNT(*), 2) AS percent_seen
+    COUNT(w.movie_id) AS seen_movies,
+    ROUND(100.0 * COUNT(w.movie_id) / COUNT(*), 2) AS percent_seen
 FROM
     official_list ol
     INNER JOIN official_list_movie l ON l.list_id = ol.id
     INNER JOIN movie m ON m.id = l.movie_id
-    LEFT JOIN ( SELECT DISTINCT ON (movie_id)
-            movie_id,
-            id
-        FROM
-            public.seen
-        WHERE
-            user_id = $1
-        ORDER BY
-            movie_id,
-            id) AS s ON m.id = s.movie_id
+    LEFT JOIN watched_movie AS w ON w.movie_id = m.id
+        AND w.user_id = $1
 GROUP BY
     ol.id,
     ol.name
 ORDER BY
-    percent_seen DESC`
+    percent_seen DESC,
+    ol.id`
 
 const listQuery = `SELECT
     id,
@@ -95,24 +88,17 @@ SELECT
     l.rank,
     m.id,
     m.title,
-    (s.id IS NOT NULL) AS "seen"
+    (w.movie_id IS NOT NULL) AS "seen"
 FROM
     official_list_movie l
     INNER JOIN movie m ON m.id = l.movie_id
-    LEFT JOIN ( SELECT DISTINCT ON (movie_id)
-            movie_id,
-            id
-        FROM
-            public.seen
-        WHERE
-            user_id = $2
-        ORDER BY
-            movie_id,
-            id) AS s ON m.id = s.movie_id
+    LEFT JOIN watched_movie AS w ON w.movie_id = m.id
+        AND w.user_id = $2
 WHERE
     list_id = $1
 ORDER BY
-    RANK ASC
+    RANK ASC,
+    m.id
 `
 
 const listsByMovieQuery = `

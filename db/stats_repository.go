@@ -294,20 +294,14 @@ ORDER BY
 func (r *StatsRepository) GetWilhelmScreamCount(userID string) ([]int, error) {
 	var wilhelms []int
 	err := r.db.Select(&wilhelms, `
-WITH seen_once AS (
-    SELECT DISTINCT
-        movie_id
-    FROM
-        seen s
-    WHERE
-        user_id = $1
-)
 SELECT
     COUNT(*)
 FROM
-    seen_once s
-    INNER JOIN movie m ON m.id = s.movie_id
+    watched_movie w
+    INNER JOIN movie m ON m.id = w.movie_id
         AND m.wilhelm = TRUE
+WHERE
+    w.user_id = $1
 	`, userID)
 	return wilhelms, err
 }
@@ -522,36 +516,20 @@ LIMIT 10
 func (r *StatsRepository) GetWilhelmMovies(userID string, offset int) (types.Movies, error) {
 	var movies types.Movies
 	err := r.db.Select(&movies, `
-WITH seen_once AS (
-    SELECT DISTINCT
-        movie_id
-    FROM
-        seen s
-    WHERE
-        user_id = $1
-)
-SELECT DISTINCT
-    (m.id),
+SELECT
+    m.id,
     m.title,
     m.release_date,
-    (s.id IS NOT NULL) AS "seen"
+    TRUE AS "seen"
 FROM
-    seen_once so
-    INNER JOIN movie m ON m.id = so.movie_id
-    LEFT JOIN ( SELECT DISTINCT ON (movie_id)
-            movie_id,
-            id
-        FROM
-            public.seen
-        WHERE
-            user_id = $1
-        ORDER BY
-            movie_id,
-            id) AS s ON m.id = s.movie_id
+    watched_movie w
+    INNER JOIN movie m ON m.id = w.movie_id
 WHERE
-    m.wilhelm = TRUE
+    w.user_id = $1
+    AND m.wilhelm = TRUE
 ORDER BY
-    m.release_date DESC OFFSET $2
+    m.release_date DESC,
+    m.id OFFSET $2
 LIMIT 50
 	`, userID, offset)
 	return movies, err
