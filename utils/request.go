@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"mime"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -80,7 +82,17 @@ func (r Request) QueryDefault(key, defaultValue string) string {
 	return defaultValue
 }
 
-// Is the request for JSON?
-func (r Request) IsJson() bool {
-	return r.Get("Accept") == "application/json"
+// IsJSON reports whether application/json is one of the media types in
+// Accept, with or without parameters. A wildcard like */* doesn't count, so
+// a browser still gets HTML.
+func (r Request) IsJSON() bool {
+	for _, accepted := range strings.Split(r.Get("Accept"), ",") {
+		mediaType, _, err := mime.ParseMediaType(accepted)
+
+		if err == nil && mediaType == "application/json" {
+			return true
+		}
+	}
+
+	return false
 }

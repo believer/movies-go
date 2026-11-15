@@ -36,7 +36,7 @@ func (h *WatchlistHandler) GetWatchlist(c *fiber.Ctx) error {
 		return err
 	}
 
-	if c.Get("Accept") == "application/json" {
+	if req.IsJSON() {
 		return c.JSON(map[string]any{
 			"movies":        movies,
 			"unreleased":    unreleasedMovies,

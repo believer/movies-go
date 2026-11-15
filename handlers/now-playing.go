@@ -28,7 +28,7 @@ func (h *NowPlayingHandler) GetNowPlaying(c *fiber.Ctx) error {
 		return err
 	}
 
-	if req.IsJson() {
+	if req.IsJSON() {
 		return c.JSON(nowPlaying)
 	}
 
