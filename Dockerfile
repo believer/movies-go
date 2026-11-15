@@ -1,4 +1,6 @@
-ARG GO_VERSION=1
+# The go directive in go.mod, passed by the release workflow, so production
+# builds with the Go that CI tests with
+ARG GO_VERSION
 
 # Install
 FROM golang:${GO_VERSION}-alpine AS install
