@@ -3,7 +3,6 @@ package awards
 import (
 	"believer/movies/types"
 	"encoding/csv"
-	"fmt"
 	"io"
 	"log/slog"
 	"os"
@@ -63,7 +62,7 @@ func AddOscars(tx *sqlx.Tx, id string) {
 		// 	continue
 		// }
 
-		slog.Info("Found Academy Award", "movie", r[fields["Film"]])
+		slog.Debug("Found Academy Award", "movie", r[fields["Film"]])
 
 		// We can only add where movie exists in database, otherwise
 		// we get a violation on the foreign key to the movie table
@@ -127,11 +126,11 @@ WHERE
 				`, category, imdbId, winner, year, n, person.ID)
 
 				if err != nil {
-					fmt.Printf("Person Err %s %s %t %s %s %d\n", category, imdbId, winner, year, n, person.ID)
+					slog.Error("Could not add Academy Award", "category", category, "imdb_id", imdbId, "winner", winner, "year", year, "person", n, "person_id", person.ID)
 					panic(err)
 				}
 
-				fmt.Printf("Person %s\n", n)
+				slog.Debug("Added Academy Award", "category", category, "person", n)
 			}
 		case "Music (Original Song)":
 			_, err = tx.Exec(`
@@ -143,11 +142,11 @@ WHERE
 			`, category, imdbId, winner, year, detail)
 
 			if err != nil {
-				fmt.Printf("Music Err %s %s %t %s %s\n", category, imdbId, winner, year, detail)
+				slog.Error("Could not add Academy Award", "category", category, "imdb_id", imdbId, "winner", winner, "year", year, "detail", detail)
 				panic(err)
 			}
 
-			fmt.Printf("Music %s\n", detail)
+			slog.Debug("Added Academy Award", "category", category, "detail", detail)
 		default:
 			_, err = tx.Exec(`
 				INSERT INTO award (name, imdb_id, winner, YEAR, type)
@@ -158,11 +157,11 @@ WHERE
 			`, category, imdbId, winner, year)
 
 			if err != nil {
-				fmt.Printf("Other Err %s %s %t %s\n", category, imdbId, winner, year)
+				slog.Error("Could not add Academy Award", "category", category, "imdb_id", imdbId, "winner", winner, "year", year)
 				panic(err)
 			}
 
-			fmt.Printf("Other %s %s\n", category, imdbId)
+			slog.Debug("Added Academy Award", "category", category, "imdb_id", imdbId)
 		}
 	}
 }
