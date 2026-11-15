@@ -28,8 +28,10 @@ test("a user logs a Watch of a movie in the diary", async ({
 
 	// The Watch leads the user's own feed
 	await page.goto("/")
+	// biome-ignore lint/plugin/no-markup-locator: a feed card is an unlabelled <li>
 	const firstCard = page.locator(".feed-list__card").first()
 	await expect(firstCard.getByRole("heading")).toHaveText("Batman Begins")
+	// biome-ignore lint/plugin/no-markup-locator: a feed card is an unlabelled <li>
 	await expect(page.locator(".feed-list__card")).toHaveCount(1)
 })
 

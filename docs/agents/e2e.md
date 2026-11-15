@@ -12,9 +12,11 @@ Playwright specs live in `tests/`. The comments above `e2e` and `e2e-db` in the 
 ## Writing
 
 - Expected values come from `db/seed.sql`. Add rows there when a test needs data the seed lacks. `tests/seed.ts` names the seed movies that write tests set up data for.
+- Specs on a port share one database, so a spec shows what a page displays, not that a row was created. Prove inserts in a Go test.
 - Tests that write log in as a fresh user through the `user` fixture in `tests/fixtures.ts`.
 - TMDB responses come from `tests/tmdb/fixtures/`, keyed by request path. A new Movie intake test needs a movie of its own there.
 - A language page's heading is the native name: the link on a movie page reads "French", the heading "Français".
+- `getByLabel("<Detail>")` returns a metadata row's whole value. Narrow it with `.getByRole("link")` when the row also holds buttons, like My rating for a logged-in user.
 - A case an open bug breaks is a `test.fixme` whose title names the issue, e.g. `"a re-rated movie shows the latest Rating (#73)"`. The PR that fixes the bug turns it into a `test`.
 
 ## Visual baselines

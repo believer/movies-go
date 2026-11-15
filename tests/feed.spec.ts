@@ -3,11 +3,13 @@ import { expect, test } from "@playwright/test"
 test("the feed lists the latest Watch first", async ({ page }) => {
 	await page.goto("/")
 
+	// biome-ignore lint/plugin/no-markup-locator: a feed card is an unlabelled <li>
 	const firstCard = page.locator(".feed-list__card").first()
 
 	await expect(firstCard.getByRole("heading")).toHaveText(
 		"Kingsman: The Secret Service"
 	)
+	// biome-ignore lint/plugin/no-markup-locator: the <time> title attribute is what the test checks
 	await expect(firstCard.locator("time")).toHaveText("April 9 2022")
 })
 

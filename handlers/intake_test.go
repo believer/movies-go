@@ -17,7 +17,7 @@ type testIntake struct {
 }
 
 // setupIntake returns a Movie intake backed by an empty test database and a
-// fake TMDB. Tests using it skip when TEST_DATABASE_URL is unset.
+// fake TMDB. Tests using it skip with -short.
 func setupIntake(t *testing.T) testIntake {
 	t.Helper()
 
