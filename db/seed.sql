@@ -61,6 +61,8 @@ INSERT INTO production_company (id, tmdb_id, name, country) VALUES
 
 -- Movies
 -- =====================================================
+-- Spirited Away has a NULL tagline and Jurassic Park a NULL overview, as
+-- older production rows do.
 
 INSERT INTO movie (id, title, original_title, release_date, runtime, imdb_id, tmdb_id, imdb_rating, tagline, overview, created_at, updated_at) VALUES
     (1, 'Batman Begins', 'Batman Begins', '2005-06-10', 140, 'tt0372784', 272, '8.2', 'Evil fears the knight.', 'Driven by tragedy, billionaire Bruce Wayne dedicates his life to uncovering and defeating the corruption that plagues his home, Gotham City.', '2019-01-01 12:00', '2019-01-01 12:00'),
@@ -68,7 +70,7 @@ INSERT INTO movie (id, title, original_title, release_date, runtime, imdb_id, tm
     (3, 'Inception', 'Inception', '2010-07-15', 148, 'tt1375666', 27205, '8.8', 'Your mind is the scene of the crime.', 'Cobb, a skilled thief who steals secrets from deep within the subconscious, is offered a chance to have his past crimes forgiven.', '2019-01-01 12:00', '2019-01-01 12:00'),
     (4, 'Interstellar', 'Interstellar', '2014-11-05', 169, 'tt0816692', 157336, '8.7', 'Mankind was born on Earth. It was never meant to die here.', 'A team of explorers travel through a wormhole in space in an attempt to ensure humanity''s survival.', '2019-01-01 12:00', '2019-01-01 12:00'),
     (5, 'Dune', 'Dune', '2021-09-15', 155, 'tt1160419', 438631, '8.0', 'It begins.', 'Paul Atreides, a brilliant and gifted young man born into a great destiny beyond his understanding, must travel to the most dangerous planet in the universe.', '2021-10-01 12:00', '2021-10-01 12:00'),
-    (6, 'Jurassic Park', 'Jurassic Park', '1993-06-11', 127, 'tt0107290', 329, '8.2', 'An adventure 65 million years in the making.', 'A wealthy entrepreneur secretly creates a theme park featuring living dinosaurs drawn from prehistoric DNA.', '2019-01-01 12:00', '2019-01-01 12:00'),
+    (6, 'Jurassic Park', 'Jurassic Park', '1993-06-11', 127, 'tt0107290', 329, '8.2', 'An adventure 65 million years in the making.', NULL, '2019-01-01 12:00', '2019-01-01 12:00'),
     (7, 'Ant-Man', 'Ant-Man', '2015-07-14', 117, 'tt0478970', 102899, '7.3', 'Heroes don''t get any bigger.', 'Armed with the astonishing ability to shrink in scale but increase in strength, master thief Scott Lang must embrace his inner-hero.', '2020-01-01 12:00', '2020-01-01 12:00'),
     (8, 'Kingsman: The Secret Service', 'Kingsman: The Secret Service', '2015-01-24', 129, 'tt2802144', 207703, '7.7', 'Manners maketh man.', 'The story of a super-secret spy organization that recruits an unrefined but promising street kid into the agency''s ultra-competitive training program.', '2020-01-01 12:00', '2020-01-01 12:00'),
     (9, 'Amélie', 'Le Fabuleux Destin d''Amélie Poulain', '2001-04-25', 122, 'tt0211915', 194, '8.3', 'One person can change your life forever.', 'At a tiny Parisian café, the adorable yet painfully shy Amélie accidentally discovers a gift for helping others.', '2020-01-01 12:00', '2020-01-01 12:00'),

@@ -109,3 +109,34 @@ test("the Rating links to movies with the same Rating", async ({ page }) => {
 
 	await expect(page.getByRole("link", { name: "Amélie" })).toHaveCount(0)
 })
+
+test("a movie with no tagline shows none", async ({ page }) => {
+	const response = await page.goto("/movie/spirited-away-10")
+
+	expect(response?.status()).toBe(200)
+	await expect(
+		page.getByRole("heading", { name: "Spirited Away", level: 1 })
+	).toBeVisible()
+	await expect(
+		page.getByRole("definition").filter({ hasText: "Tagline" })
+	).toHaveCount(0)
+})
+
+test("a movie with no overview shows none", async ({ page }) => {
+	const response = await page.goto("/movie/jurassic-park-6")
+
+	expect(response?.status()).toBe(200)
+	await expect(
+		page.getByText("An adventure 65 million years in the making.")
+	).toBeVisible()
+	await expect(page.locator(".movie__overview")).toHaveCount(0)
+})
+
+test("a movie with a tagline shows it", async ({ page }) => {
+	await page.goto("/movie/parasite-11")
+
+	await expect(
+		page.getByRole("definition").filter({ hasText: "Tagline" })
+	).toBeVisible()
+	await expect(page.getByText("Act like you own the place.")).toBeVisible()
+})

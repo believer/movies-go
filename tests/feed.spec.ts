@@ -30,3 +30,9 @@ test("a feed card opens its movie", async ({ page }) => {
 	).toBeVisible()
 	await expect(page.getByText("Ki-taek's family")).toBeVisible()
 })
+
+test("the feed lists a movie with no overview", async ({ page }) => {
+	await page.goto("/")
+
+	await expect(page.getByRole("link", { name: "Jurassic Park" })).toBeVisible()
+})
