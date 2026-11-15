@@ -75,8 +75,8 @@ smoke:
 # make dev. The server starts before the rebuild, so postgres_test has to be
 # up already. Pass PSQL to use another Postgres, as for e2e-db.
 #
-# Locally Playwright reuses a server already on its port, even one another
-# checkout started. Override the ports to run from a second checkout, e.g.
+# A server already on the port fails the run; set E2E_REUSE=1 to reuse it.
+# Override the ports to run from a second checkout, e.g.
 # make e2e E2E_PORT=8190 E2E_TMDB_PORT=8191. Every run rebuilds the one
 # movies_e2e, though, so only one run at a time is supported.
 e2e: e2e-postgres
