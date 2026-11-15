@@ -375,8 +375,8 @@ FROM
     seen s
     LEFT JOIN seen_with sw ON sw.seen_id = s.id
 WHERE
-    id = $1
-    AND user_id = $2
+    s.id = $1
+    AND s.user_id = $2
 GROUP BY
     id
 `, seenID, userID)

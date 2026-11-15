@@ -13,12 +13,13 @@ import (
 type testWatch struct {
 	testStats
 	repo *MovieRepository
-	// otherWatch is user 2's Watch, seen with user 3
-	otherWatch string
+	// user2Watch is user 2's Watch, seen with user 3
+	user2Watch string
 }
 
 // setupWatch gives user 2 a Watch of a movie, seen with user 3, for tests
-// that act on it as user 1.
+// that act on it as user 1. User 1 has a Watch of the movie too, so a rule
+// like "any Watch the user has" doesn't pass.
 func setupWatch(t *testing.T) testWatch {
 	t.Helper()
 
@@ -33,6 +34,7 @@ func setupWatch(t *testing.T) testWatch {
 	}
 
 	ts.exec(t, `INSERT INTO seen_with (seen_id, other_user_id) VALUES ($1, 3)`, seenID)
+	ts.watch(t, 1, movieID, "2026-01-03 20:00")
 
 	return testWatch{ts, NewMovieRepository(ts.db), strconv.Itoa(seenID)}
 }
@@ -41,7 +43,7 @@ func setupWatch(t *testing.T) testWatch {
 func (tw testWatch) assertUntouched(t *testing.T) {
 	t.Helper()
 
-	watch, err := tw.repo.GetSeenMovie(tw.otherWatch, "2")
+	watch, err := tw.repo.GetSeenMovie(tw.user2Watch, "2")
 	require.NoError(t, err)
 	assert.Equal(t, "2026-01-02T21:00", watch.Date)
 	assert.Equal(t, []string{"3"}, []string(watch.SeenWith))
@@ -51,14 +53,14 @@ func TestGetSeenMovie(t *testing.T) {
 	tw := setupWatch(t)
 
 	t.Run("returns the user's Watch", func(t *testing.T) {
-		watch, err := tw.repo.GetSeenMovie(tw.otherWatch, "2")
+		watch, err := tw.repo.GetSeenMovie(tw.user2Watch, "2")
 
 		require.NoError(t, err)
 		assert.Equal(t, "2026-01-02T21:00", watch.Date)
 	})
 
 	t.Run("doesn't return another user's Watch", func(t *testing.T) {
-		_, err := tw.repo.GetSeenMovie(tw.otherWatch, "1")
+		_, err := tw.repo.GetSeenMovie(tw.user2Watch, "1")
 
 		assert.ErrorIs(t, err, sql.ErrNoRows)
 	})
@@ -68,7 +70,7 @@ func TestUpdateSeenMovie(t *testing.T) {
 	t.Run("doesn't update another user's Watch", func(t *testing.T) {
 		tw := setupWatch(t)
 
-		err := tw.repo.UpdateSeenMovie(tw.otherWatch, "1", time.Date(2026, 5, 6, 0, 0, 0, 0, time.UTC), []string{"1"})
+		err := tw.repo.UpdateSeenMovie(tw.user2Watch, "1", time.Date(2026, 5, 6, 0, 0, 0, 0, time.UTC), []string{"1"})
 
 		assert.ErrorIs(t, err, sql.ErrNoRows)
 		tw.assertUntouched(t)
@@ -77,10 +79,10 @@ func TestUpdateSeenMovie(t *testing.T) {
 	t.Run("updates the user's Watch", func(t *testing.T) {
 		tw := setupWatch(t)
 
-		err := tw.repo.UpdateSeenMovie(tw.otherWatch, "2", time.Date(2026, 5, 6, 18, 0, 0, 0, time.UTC), []string{"1"})
+		err := tw.repo.UpdateSeenMovie(tw.user2Watch, "2", time.Date(2026, 5, 6, 18, 0, 0, 0, time.UTC), []string{"1"})
 		require.NoError(t, err)
 
-		watch, err := tw.repo.GetSeenMovie(tw.otherWatch, "2")
+		watch, err := tw.repo.GetSeenMovie(tw.user2Watch, "2")
 		require.NoError(t, err)
 		assert.Equal(t, "2026-05-06T20:00", watch.Date)
 		assert.Equal(t, []string{"1"}, []string(watch.SeenWith))
@@ -95,7 +97,7 @@ func TestDeleteSeenMovie(t *testing.T) {
 		require.NoError(t, err)
 		defer tx.Rollback()
 
-		if err := tw.repo.DeleteSeenMovie(tx, tw.otherWatch, userID); err != nil {
+		if err := tw.repo.DeleteSeenMovie(tx, tw.user2Watch, userID); err != nil {
 			return err
 		}
 
@@ -114,11 +116,11 @@ func TestDeleteSeenMovie(t *testing.T) {
 
 		require.NoError(t, deleteAs(t, tw, "2"))
 
-		_, err := tw.repo.GetSeenMovie(tw.otherWatch, "2")
+		_, err := tw.repo.GetSeenMovie(tw.user2Watch, "2")
 		assert.ErrorIs(t, err, sql.ErrNoRows)
 
 		var seenWith int
-		require.NoError(t, tw.db.Get(&seenWith, `SELECT COUNT(*) FROM seen_with WHERE seen_id = $1`, tw.otherWatch))
+		require.NoError(t, tw.db.Get(&seenWith, `SELECT COUNT(*) FROM seen_with WHERE seen_id = $1`, tw.user2Watch))
 		assert.Zero(t, seenWith)
 	})
 }
