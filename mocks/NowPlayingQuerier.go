@@ -16,10 +16,19 @@ func NewMockNowPlayingQuerier(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockNowPlayingQuerier {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &MockNowPlayingQuerier{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -72,7 +81,7 @@ type MockNowPlayingQuerier_GetNowPlaying_Call struct {
 
 // GetNowPlaying is a helper method to define mock.On call
 //   - userID string
-func (_e *MockNowPlayingQuerier_Expecter) GetNowPlaying(userID interface{}) *MockNowPlayingQuerier_GetNowPlaying_Call {
+func (_e *MockNowPlayingQuerier_Expecter) GetNowPlaying(userID any) *MockNowPlayingQuerier_GetNowPlaying_Call {
 	return &MockNowPlayingQuerier_GetNowPlaying_Call{Call: _e.mock.On("GetNowPlaying", userID)}
 }
 

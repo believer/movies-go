@@ -14,10 +14,19 @@ func NewMockSettingsQuerier(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockSettingsQuerier {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &MockSettingsQuerier{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -68,7 +77,7 @@ type MockSettingsQuerier_GetWatchProviders_Call struct {
 
 // GetWatchProviders is a helper method to define mock.On call
 //   - userID string
-func (_e *MockSettingsQuerier_Expecter) GetWatchProviders(userID interface{}) *MockSettingsQuerier_GetWatchProviders_Call {
+func (_e *MockSettingsQuerier_Expecter) GetWatchProviders(userID any) *MockSettingsQuerier_GetWatchProviders_Call {
 	return &MockSettingsQuerier_GetWatchProviders_Call{Call: _e.mock.On("GetWatchProviders", userID)}
 }
 
@@ -120,7 +129,7 @@ type MockSettingsQuerier_UpdateWatchProviders_Call struct {
 // UpdateWatchProviders is a helper method to define mock.On call
 //   - userID string
 //   - providers string
-func (_e *MockSettingsQuerier_Expecter) UpdateWatchProviders(userID interface{}, providers interface{}) *MockSettingsQuerier_UpdateWatchProviders_Call {
+func (_e *MockSettingsQuerier_Expecter) UpdateWatchProviders(userID any, providers any) *MockSettingsQuerier_UpdateWatchProviders_Call {
 	return &MockSettingsQuerier_UpdateWatchProviders_Call{Call: _e.mock.On("UpdateWatchProviders", userID, providers)}
 }
 

@@ -16,10 +16,19 @@ func NewMockYearsQuerier(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockYearsQuerier {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &MockYearsQuerier{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -74,7 +83,7 @@ type MockYearsQuerier_GetMoviesByYear_Call struct {
 //   - userID string
 //   - year string
 //   - page int
-func (_e *MockYearsQuerier_Expecter) GetMoviesByYear(userID interface{}, year interface{}, page interface{}) *MockYearsQuerier_GetMoviesByYear_Call {
+func (_e *MockYearsQuerier_Expecter) GetMoviesByYear(userID any, year any, page any) *MockYearsQuerier_GetMoviesByYear_Call {
 	return &MockYearsQuerier_GetMoviesByYear_Call{Call: _e.mock.On("GetMoviesByYear", userID, year, page)}
 }
 

@@ -17,10 +17,19 @@ func NewMockProductionCountryQuerier(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockProductionCountryQuerier {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &MockProductionCountryQuerier{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -75,7 +84,7 @@ type MockProductionCountryQuerier_GetProductionCountryMovies_Call struct {
 //   - id string
 //   - userID string
 //   - offset int
-func (_e *MockProductionCountryQuerier_Expecter) GetProductionCountryMovies(id interface{}, userID interface{}, offset interface{}) *MockProductionCountryQuerier_GetProductionCountryMovies_Call {
+func (_e *MockProductionCountryQuerier_Expecter) GetProductionCountryMovies(id any, userID any, offset any) *MockProductionCountryQuerier_GetProductionCountryMovies_Call {
 	return &MockProductionCountryQuerier_GetProductionCountryMovies_Call{Call: _e.mock.On("GetProductionCountryMovies", id, userID, offset)}
 }
 
@@ -145,7 +154,7 @@ type MockProductionCountryQuerier_GetProductionCountryName_Call struct {
 
 // GetProductionCountryName is a helper method to define mock.On call
 //   - id string
-func (_e *MockProductionCountryQuerier_Expecter) GetProductionCountryName(id interface{}) *MockProductionCountryQuerier_GetProductionCountryName_Call {
+func (_e *MockProductionCountryQuerier_Expecter) GetProductionCountryName(id any) *MockProductionCountryQuerier_GetProductionCountryName_Call {
 	return &MockProductionCountryQuerier_GetProductionCountryName_Call{Call: _e.mock.On("GetProductionCountryName", id)}
 }
 
@@ -208,7 +217,7 @@ type MockProductionCountryQuerier_GetProductionCountryStats_Call struct {
 // GetProductionCountryStats is a helper method to define mock.On call
 //   - userID string
 //   - year string
-func (_e *MockProductionCountryQuerier_Expecter) GetProductionCountryStats(userID interface{}, year interface{}) *MockProductionCountryQuerier_GetProductionCountryStats_Call {
+func (_e *MockProductionCountryQuerier_Expecter) GetProductionCountryStats(userID any, year any) *MockProductionCountryQuerier_GetProductionCountryStats_Call {
 	return &MockProductionCountryQuerier_GetProductionCountryStats_Call{Call: _e.mock.On("GetProductionCountryStats", userID, year)}
 }
 

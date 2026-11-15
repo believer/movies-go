@@ -52,13 +52,30 @@ e2e-db: e2e-postgres
 TEMPL := go run github.com/a-h/templ/cmd/templ@$(shell go list -m -f '{{.Version}}' github.com/a-h/templ)
 TEMPL_SUMS = find . -name '*_templ.go' -not -path './node_modules/*' | sort | xargs shasum
 
-# Fast checks that need no database: generated templ files are fresh, Go files
-# are gofmt'd, go vet and biome pass, and tests pass with database tests skipped
+# Pinned, and built with the local Go toolchain: an installed mockery built
+# with an older Go can't load this module's packages
+MOCKERY := go run github.com/vektra/mockery/v3@v3.9.1
+MOCK_SUMS = find mocks -name '*.go' | sort | xargs shasum
+
+# Regenerate mocks/ from the interfaces in db/. Phony, since mocks/ exists.
+.PHONY: mocks
+mocks:
+	@out=$$($(MOCKERY) 2>&1) || { echo "$$out"; exit 1; }
+
+# Fast checks that need no database: generated templ files and mocks are fresh,
+# Go files are gofmt'd, go vet and biome pass, and tests pass with database
+# tests skipped
 check:
 	@before=$$($(TEMPL_SUMS)); \
 		$(TEMPL) generate > /dev/null 2>&1; \
 		if [ "$$before" != "$$($(TEMPL_SUMS))" ]; then \
 			echo "❌ *_templ.go files were stale and have been regenerated, commit them"; \
+			exit 1; \
+		fi
+	@before=$$($(MOCK_SUMS)); \
+		$(MAKE) -s mocks || exit 1; \
+		if [ "$$before" != "$$($(MOCK_SUMS))" ]; then \
+			echo "❌ mocks/ was stale and has been regenerated with make mocks, commit it"; \
 			exit 1; \
 		fi
 	@unformatted=$$(gofmt -l $$(git ls-files '*.go')); \

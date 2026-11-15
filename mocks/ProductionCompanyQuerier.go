@@ -17,10 +17,19 @@ func NewMockProductionCompanyQuerier(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockProductionCompanyQuerier {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &MockProductionCompanyQuerier{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -75,7 +84,7 @@ type MockProductionCompanyQuerier_GetProductionCompanyMovies_Call struct {
 //   - id string
 //   - userID string
 //   - offset int
-func (_e *MockProductionCompanyQuerier_Expecter) GetProductionCompanyMovies(id interface{}, userID interface{}, offset interface{}) *MockProductionCompanyQuerier_GetProductionCompanyMovies_Call {
+func (_e *MockProductionCompanyQuerier_Expecter) GetProductionCompanyMovies(id any, userID any, offset any) *MockProductionCompanyQuerier_GetProductionCompanyMovies_Call {
 	return &MockProductionCompanyQuerier_GetProductionCompanyMovies_Call{Call: _e.mock.On("GetProductionCompanyMovies", id, userID, offset)}
 }
 
@@ -145,7 +154,7 @@ type MockProductionCompanyQuerier_GetProductionCompanyName_Call struct {
 
 // GetProductionCompanyName is a helper method to define mock.On call
 //   - id string
-func (_e *MockProductionCompanyQuerier_Expecter) GetProductionCompanyName(id interface{}) *MockProductionCompanyQuerier_GetProductionCompanyName_Call {
+func (_e *MockProductionCompanyQuerier_Expecter) GetProductionCompanyName(id any) *MockProductionCompanyQuerier_GetProductionCompanyName_Call {
 	return &MockProductionCompanyQuerier_GetProductionCompanyName_Call{Call: _e.mock.On("GetProductionCompanyName", id)}
 }
 
@@ -208,7 +217,7 @@ type MockProductionCompanyQuerier_GetProductionCompanyStats_Call struct {
 // GetProductionCompanyStats is a helper method to define mock.On call
 //   - userID string
 //   - year string
-func (_e *MockProductionCompanyQuerier_Expecter) GetProductionCompanyStats(userID interface{}, year interface{}) *MockProductionCompanyQuerier_GetProductionCompanyStats_Call {
+func (_e *MockProductionCompanyQuerier_Expecter) GetProductionCompanyStats(userID any, year any) *MockProductionCompanyQuerier_GetProductionCompanyStats_Call {
 	return &MockProductionCompanyQuerier_GetProductionCompanyStats_Call{Call: _e.mock.On("GetProductionCompanyStats", userID, year)}
 }
 
@@ -275,7 +284,7 @@ type MockProductionCompanyQuerier_ListProductionCompanies_Call struct {
 
 // ListProductionCompanies is a helper method to define mock.On call
 //   - page int
-func (_e *MockProductionCompanyQuerier_Expecter) ListProductionCompanies(page interface{}) *MockProductionCompanyQuerier_ListProductionCompanies_Call {
+func (_e *MockProductionCompanyQuerier_Expecter) ListProductionCompanies(page any) *MockProductionCompanyQuerier_ListProductionCompanies_Call {
 	return &MockProductionCompanyQuerier_ListProductionCompanies_Call{Call: _e.mock.On("ListProductionCompanies", page)}
 }
 

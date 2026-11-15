@@ -16,10 +16,19 @@ func NewMockSeriesQuerier(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockSeriesQuerier {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &MockSeriesQuerier{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -70,7 +79,7 @@ type MockSeriesQuerier_GetSeriesByID_Call struct {
 
 // GetSeriesByID is a helper method to define mock.On call
 //   - id string
-func (_e *MockSeriesQuerier_Expecter) GetSeriesByID(id interface{}) *MockSeriesQuerier_GetSeriesByID_Call {
+func (_e *MockSeriesQuerier_Expecter) GetSeriesByID(id any) *MockSeriesQuerier_GetSeriesByID_Call {
 	return &MockSeriesQuerier_GetSeriesByID_Call{Call: _e.mock.On("GetSeriesByID", id)}
 }
 
@@ -133,7 +142,7 @@ type MockSeriesQuerier_GetSeriesMovies_Call struct {
 // GetSeriesMovies is a helper method to define mock.On call
 //   - id string
 //   - userID string
-func (_e *MockSeriesQuerier_Expecter) GetSeriesMovies(id interface{}, userID interface{}) *MockSeriesQuerier_GetSeriesMovies_Call {
+func (_e *MockSeriesQuerier_Expecter) GetSeriesMovies(id any, userID any) *MockSeriesQuerier_GetSeriesMovies_Call {
 	return &MockSeriesQuerier_GetSeriesMovies_Call{Call: _e.mock.On("GetSeriesMovies", id, userID)}
 }
 

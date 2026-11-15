@@ -16,10 +16,19 @@ func NewMockAwardsQuerier(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockAwardsQuerier {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &MockAwardsQuerier{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -74,7 +83,7 @@ type MockAwardsQuerier_GetByNominations_Call struct {
 //   - userID string
 //   - count int
 //   - awardType string
-func (_e *MockAwardsQuerier_Expecter) GetByNominations(userID interface{}, count interface{}, awardType interface{}) *MockAwardsQuerier_GetByNominations_Call {
+func (_e *MockAwardsQuerier_Expecter) GetByNominations(userID any, count any, awardType any) *MockAwardsQuerier_GetByNominations_Call {
 	return &MockAwardsQuerier_GetByNominations_Call{Call: _e.mock.On("GetByNominations", userID, count, awardType)}
 }
 
@@ -148,7 +157,7 @@ type MockAwardsQuerier_GetByWins_Call struct {
 //   - userID string
 //   - count int
 //   - awardType string
-func (_e *MockAwardsQuerier_Expecter) GetByWins(userID interface{}, count interface{}, awardType interface{}) *MockAwardsQuerier_GetByWins_Call {
+func (_e *MockAwardsQuerier_Expecter) GetByWins(userID any, count any, awardType any) *MockAwardsQuerier_GetByWins_Call {
 	return &MockAwardsQuerier_GetByWins_Call{Call: _e.mock.On("GetByWins", userID, count, awardType)}
 }
 
@@ -221,7 +230,7 @@ type MockAwardsQuerier_GetGroupedByCategory_Call struct {
 // GetGroupedByCategory is a helper method to define mock.On call
 //   - year string
 //   - awardType string
-func (_e *MockAwardsQuerier_Expecter) GetGroupedByCategory(year interface{}, awardType interface{}) *MockAwardsQuerier_GetGroupedByCategory_Call {
+func (_e *MockAwardsQuerier_Expecter) GetGroupedByCategory(year any, awardType any) *MockAwardsQuerier_GetGroupedByCategory_Call {
 	return &MockAwardsQuerier_GetGroupedByCategory_Call{Call: _e.mock.On("GetGroupedByCategory", year, awardType)}
 }
 
@@ -289,7 +298,7 @@ type MockAwardsQuerier_GetGroupedByMovie_Call struct {
 // GetGroupedByMovie is a helper method to define mock.On call
 //   - year string
 //   - awardType string
-func (_e *MockAwardsQuerier_Expecter) GetGroupedByMovie(year interface{}, awardType interface{}) *MockAwardsQuerier_GetGroupedByMovie_Call {
+func (_e *MockAwardsQuerier_Expecter) GetGroupedByMovie(year any, awardType any) *MockAwardsQuerier_GetGroupedByMovie_Call {
 	return &MockAwardsQuerier_GetGroupedByMovie_Call{Call: _e.mock.On("GetGroupedByMovie", year, awardType)}
 }
 

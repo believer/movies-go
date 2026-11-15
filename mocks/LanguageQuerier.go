@@ -17,10 +17,19 @@ func NewMockLanguageQuerier(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockLanguageQuerier {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &MockLanguageQuerier{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -75,7 +84,7 @@ type MockLanguageQuerier_GetLanguageMovies_Call struct {
 //   - id string
 //   - userID string
 //   - offset int
-func (_e *MockLanguageQuerier_Expecter) GetLanguageMovies(id interface{}, userID interface{}, offset interface{}) *MockLanguageQuerier_GetLanguageMovies_Call {
+func (_e *MockLanguageQuerier_Expecter) GetLanguageMovies(id any, userID any, offset any) *MockLanguageQuerier_GetLanguageMovies_Call {
 	return &MockLanguageQuerier_GetLanguageMovies_Call{Call: _e.mock.On("GetLanguageMovies", id, userID, offset)}
 }
 
@@ -145,7 +154,7 @@ type MockLanguageQuerier_GetLanguageName_Call struct {
 
 // GetLanguageName is a helper method to define mock.On call
 //   - id string
-func (_e *MockLanguageQuerier_Expecter) GetLanguageName(id interface{}) *MockLanguageQuerier_GetLanguageName_Call {
+func (_e *MockLanguageQuerier_Expecter) GetLanguageName(id any) *MockLanguageQuerier_GetLanguageName_Call {
 	return &MockLanguageQuerier_GetLanguageName_Call{Call: _e.mock.On("GetLanguageName", id)}
 }
 
@@ -208,7 +217,7 @@ type MockLanguageQuerier_GetLanguageStats_Call struct {
 // GetLanguageStats is a helper method to define mock.On call
 //   - userID string
 //   - year string
-func (_e *MockLanguageQuerier_Expecter) GetLanguageStats(userID interface{}, year interface{}) *MockLanguageQuerier_GetLanguageStats_Call {
+func (_e *MockLanguageQuerier_Expecter) GetLanguageStats(userID any, year any) *MockLanguageQuerier_GetLanguageStats_Call {
 	return &MockLanguageQuerier_GetLanguageStats_Call{Call: _e.mock.On("GetLanguageStats", userID, year)}
 }
 

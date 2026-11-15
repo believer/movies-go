@@ -16,10 +16,19 @@ func NewMockRatingsQuerier(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockRatingsQuerier {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &MockRatingsQuerier{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -74,7 +83,7 @@ type MockRatingsQuerier_GetMoviesByRating_Call struct {
 //   - userID string
 //   - rating int
 //   - page int
-func (_e *MockRatingsQuerier_Expecter) GetMoviesByRating(userID interface{}, rating interface{}, page interface{}) *MockRatingsQuerier_GetMoviesByRating_Call {
+func (_e *MockRatingsQuerier_Expecter) GetMoviesByRating(userID any, rating any, page any) *MockRatingsQuerier_GetMoviesByRating_Call {
 	return &MockRatingsQuerier_GetMoviesByRating_Call{Call: _e.mock.On("GetMoviesByRating", userID, rating, page)}
 }
 
