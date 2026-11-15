@@ -44,6 +44,9 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Check
         run: make check
+      - name: Check schema.sql matches the migrations
+        # Migrates an empty database and dumps it, as make schema does
+        run: make schema && git diff --exit-code db/schema.sql
       - name: Load schema
         run: psql "$TEST_DATABASE_URL" -v ON_ERROR_STOP=1 -q -f db/schema.sql
       - name: Run tests

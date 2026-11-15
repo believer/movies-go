@@ -2,6 +2,8 @@ Run `make check` before finishing a change. A change to handlers, views, templat
 
 **E2E**: running or writing Playwright tests → `docs/agents/e2e.md`.
 
+**Schema changes**: adding a table, column, index or view → `docs/agents/migrations.md`.
+
 Implement in a worktree branched from a fresh `origin/main` (`git fetch` first). The main checkout is shared with a human, so leave it on whatever they have checked out. Run `pnpm install` in the worktree before `make check`.
 
 ## Agent skills

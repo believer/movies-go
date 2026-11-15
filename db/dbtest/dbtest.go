@@ -4,9 +4,12 @@
 package dbtest
 
 import (
+	"fmt"
+	"net/url"
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
@@ -31,6 +34,43 @@ func Open(t *testing.T) *sqlx.DB {
 
 	if err != nil {
 		t.Fatalf("connect to test database: %v", err)
+	}
+
+	t.Cleanup(func() { db.Close() })
+
+	return db
+}
+
+// Scratch creates an empty database on the TEST_DATABASE_URL server, for a
+// test that needs a database without the schema, and drops it when the test
+// ends.
+func Scratch(t *testing.T) *sqlx.DB {
+	t.Helper()
+
+	server := Open(t)
+	name := fmt.Sprintf("scratch_%d", time.Now().UnixNano())
+
+	if _, err := server.Exec("CREATE DATABASE " + name); err != nil {
+		t.Fatalf("create scratch database: %v", err)
+	}
+
+	t.Cleanup(func() {
+		if _, err := server.Exec("DROP DATABASE " + name + " WITH (FORCE)"); err != nil {
+			t.Errorf("drop scratch database: %v", err)
+		}
+	})
+
+	u, err := url.Parse(os.Getenv("TEST_DATABASE_URL"))
+
+	if err != nil {
+		t.Fatalf("parse TEST_DATABASE_URL: %v", err)
+	}
+
+	u.Path = "/" + name
+	db, err := sqlx.Connect("postgres", u.String())
+
+	if err != nil {
+		t.Fatalf("connect to scratch database: %v", err)
 	}
 
 	t.Cleanup(func() { db.Close() })

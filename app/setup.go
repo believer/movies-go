@@ -6,6 +6,7 @@ import (
 	"believer/movies/router"
 	"believer/movies/utils"
 	"believer/movies/views"
+	"context"
 	"errors"
 	"fmt"
 	"io/fs"
@@ -83,6 +84,14 @@ func SetupAndRunApp(cssSources fs.FS) error {
 
 	// Close database connection when the app exits
 	defer db.CloseConnection()
+
+	// Apply pending migrations before serving, so new code never meets an
+	// old schema. A failure stops the app, which fails the deploy.
+	err = db.Migrate(context.Background(), db.Client.DB)
+
+	if err != nil {
+		return err
+	}
 
 	// Setup the app
 	app := newApp()
