@@ -3,8 +3,8 @@ package awards
 import (
 	"believer/movies/types"
 	"encoding/csv"
-	"fmt"
 	"io"
+	"log/slog"
 	"os"
 	"strconv"
 	"strings"
@@ -105,7 +105,7 @@ func AddBaftas(tx *sqlx.Tx, id string) {
 		yearAsInt, err := strconv.Atoi(year)
 
 		if err != nil {
-			fmt.Printf("[BAFTA] Year error: %s", year)
+			slog.Error("Could not parse BAFTA year", "year", year)
 			continue
 		}
 
@@ -165,11 +165,11 @@ WHERE
 			`, category, movie.ImdbId, winner, year, n, person.ID)
 
 			if err != nil {
-				fmt.Printf("Person Err %s %s %t %s %s %d\n", category, imdbId, winner, year, n, person.ID)
+				slog.Error("Could not add BAFTA", "category", category, "imdb_id", imdbId, "winner", winner, "year", year, "person", n, "person_id", person.ID)
 				continue
 			}
 
-			fmt.Printf("Person %s\n", n)
+			slog.Debug("Added BAFTA", "category", category, "person", n)
 		}
 	}
 }

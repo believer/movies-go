@@ -1,4 +1,4 @@
-Run `make check` before finishing a change. A change to handlers, views, templates or `db/` also needs `make test` and the E2E suite.
+Run `make check` before finishing a change. A change to handlers, views, templates, `services/` or `db/` also needs `make test` and the E2E suite.
 
 **E2E**: running or writing Playwright tests → `docs/agents/e2e.md`.
 
