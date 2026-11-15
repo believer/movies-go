@@ -23,8 +23,10 @@ func setupMovieApp(h *MovieHandler) *fiber.App {
 	})
 
 	app.Get("/movie/imdb", h.GetByImdbId)
+	app.Get("/movie/search", h.HandleSearch)
 	app.Get("/movie/:id", h.GetMovieByID)
 	app.Get("/movie/:id/seen/others", h.GetMovieOthersSeenByID)
+	app.Get("/movie/:id/watch-providers", h.WatchProviders)
 	app.Delete("/movie/:id/now-playing", h.DeleteNowPlaying)
 
 	return app
@@ -121,5 +123,31 @@ func TestDeleteNowPlaying(t *testing.T) {
 
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusOK, resp.StatusCode)
+	})
+}
+
+func TestHandleSearch(t *testing.T) {
+	t.Run("unauthorized", func(t *testing.T) {
+		repo := mocks.NewMockMovieQuerier(t)
+		app := setupMovieApp(NewMovieHandler(repo, nil))
+
+		req := httptest.NewRequest(http.MethodGet, "/movie/search?search=inception", nil)
+		resp, err := app.Test(req)
+
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusUnauthorized, resp.StatusCode)
+	})
+}
+
+func TestWatchProviders(t *testing.T) {
+	t.Run("unauthorized", func(t *testing.T) {
+		repo := mocks.NewMockMovieQuerier(t)
+		app := setupMovieApp(NewMovieHandler(repo, nil))
+
+		req := httptest.NewRequest(http.MethodGet, "/movie/456/watch-providers", nil)
+		resp, err := app.Test(req)
+
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusUnauthorized, resp.StatusCode)
 	})
 }
