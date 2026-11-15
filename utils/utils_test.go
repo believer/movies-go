@@ -140,3 +140,10 @@ func TestParseWatchedAt(t *testing.T) {
 		})
 	}
 }
+
+func TestFormatNumber(t *testing.T) {
+	assert.Equal(t, "0", FormatNumber(0))
+	assert.Equal(t, "999", FormatNumber(999))
+	assert.Equal(t, "12,345", FormatNumber(12345))
+	assert.Equal(t, "1,234,567", FormatNumber(1234567))
+}

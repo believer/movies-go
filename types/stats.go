@@ -13,11 +13,11 @@ type Stats struct {
 }
 
 func (s *Stats) FormattedNumberOfMoviesSeen() string {
-	return utils.Formatter().Sprintf("%d", s.UniqueMovies)
+	return utils.FormatNumber(s.UniqueMovies)
 }
 
 func (s *Stats) FormattedNumberOfMoviesSeenWithRewatches() string {
-	return utils.Formatter().Sprintf("%d", s.SeenWithRewatches)
+	return utils.FormatNumber(s.SeenWithRewatches)
 }
 
 type MovieStats struct {

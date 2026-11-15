@@ -48,5 +48,5 @@ func (l ListItem) LinkTo(root string) string {
 }
 
 func (l ListItem) FormattedCount() string {
-	return utils.Formatter().Sprintf("%d", l.Count)
+	return utils.FormatNumber(l.Count)
 }

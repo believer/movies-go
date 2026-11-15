@@ -251,7 +251,7 @@ func (h *StatsHandler) GetStats(c *fiber.Ctx) error {
 		Reviews:                 reviews,
 		SeenThisYear:            seenThisYearByMonthBars,
 		Stats:                   stats,
-		TotalCast:               utils.Formatter().Sprintf("%d", totalCast),
+		TotalCast:               utils.FormatNumber(totalCast),
 		WatchedByYear:           watchedByYearBar,
 		WatchedByWeekday:        watchedByWeekdayBar,
 		Year:                    year,
@@ -307,7 +307,7 @@ func (h *StatsHandler) GetMostWatchedByJob(c *fiber.Ctx) error {
 			Data:  persons,
 			Job:   job,
 			Title: cases.Title(language.English).String(job),
-			Total: utils.Formatter().Sprintf("%d", totalJob),
+			Total: utils.FormatNumber(totalJob),
 			Year:  year,
 			Years: years,
 		}))
