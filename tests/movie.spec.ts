@@ -117,6 +117,7 @@ test("a movie with no tagline shows none", async ({ page }) => {
 	await expect(
 		page.getByRole("heading", { name: "Spirited Away", level: 1 })
 	).toBeVisible()
+	// DlItem renders the label in a <dd>, so the row's label is a definition
 	await expect(
 		page.getByRole("definition").filter({ hasText: "Tagline" })
 	).toHaveCount(0)
@@ -132,9 +133,12 @@ test("a movie with no overview shows none", async ({ page }) => {
 	await expect(page.locator(".movie__overview")).toHaveCount(0)
 })
 
-test("a movie with a tagline shows it", async ({ page }) => {
+test("a movie with a tagline and an overview shows both", async ({ page }) => {
 	await page.goto("/movie/parasite-11")
 
+	await expect(page.locator(".movie__overview")).toContainText(
+		"Ki-taek's family"
+	)
 	await expect(
 		page.getByRole("definition").filter({ hasText: "Tagline" })
 	).toBeVisible()
