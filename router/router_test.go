@@ -123,10 +123,12 @@ func TestNonPublicRoutesRequireLogin(t *testing.T) {
 
 			assert.NoError(t, err)
 
+			hint := "%s doesn't reject anonymous requests; if it's meant to be public, add it to publicRoutes"
+
 			if resp.StatusCode == fiber.StatusFound {
-				assert.Contains(t, []string{"/", "/login"}, resp.Header.Get("Location"))
+				assert.Contains(t, []string{"/", "/login"}, resp.Header.Get("Location"), hint, key)
 			} else {
-				assert.Equal(t, fiber.StatusUnauthorized, resp.StatusCode)
+				assert.Equal(t, fiber.StatusUnauthorized, resp.StatusCode, hint, key)
 			}
 		})
 	}
