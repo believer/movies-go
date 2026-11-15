@@ -14,7 +14,7 @@ Time queries on a copy of the production backup with the benchmarks in `db/bench
 Each checkout benchmarks its own copy, migrated by its own migrations. So a branch whose migration changes a function or view, like `get_person_role_with_seen_json`, is timed against the old function in the base checkout and the new one in the branch. A branch without migrations gets two identical copies.
 
 1. Add a base worktree beside the branch's: `git worktree add --detach ../movies-<slug>-base origin/main`, then `make bench-db` in both.
-2. If the branch adds or changes benchmarks, copy them into the base: `git -C ../movies-<slug>-base checkout <branch> -- db/bench_test.go`. If the branch changed a method's signature, the copy won't compile, so time only the benchmarks the two share.
+2. If the branch adds or changes benchmarks, copy them into the base: `git -C ../movies-<slug>-base restore --source=<branch> -- db/bench_test.go`. If the branch changed a method's signature, the copy won't compile, so time only the benchmarks the two share.
 3. Alternate the runs, so drift on the machine (another agent's E2E run, a build) hits both sides. Narrow `BENCH` to the queries the branch changes:
 
    ```sh
@@ -25,7 +25,7 @@ Each checkout benchmarks its own copy, migrated by its own migrations. So a bran
    ```
 
 4. Compare: `go run golang.org/x/perf/cmd/benchstat@v0.0.0-20261009192801-be2c69fb417e /tmp/<slug>-old.txt /tmp/<slug>-new.txt`. benchstat merges the rounds in each file and prints the median, its spread, and `~` when the difference isn't significant. Paste its table into the PR's evidence.
-5. Clean up: `git worktree remove ../movies-<slug>-base`, then drop both copies, e.g. `docker exec postgres_local dropdb -U admin --force movies_bench_<checkout>`.
+5. Clean up: `git worktree remove ../movies-<slug>-base` (add `--force` when step 2 copied the benchmarks), then drop both copies, e.g. `docker exec postgres_local dropdb -U admin --force movies_bench_<checkout>`.
 
 ## Benchmarks
 
