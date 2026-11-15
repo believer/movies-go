@@ -99,6 +99,25 @@ func TestRequestPageBelowOne(t *testing.T) {
 	}
 }
 
+func TestRequestAccepts(t *testing.T) {
+	app := fiber.New()
+
+	app.Get("/test-accepts", func(c *fiber.Ctx) error {
+		req := NewRequest(c)
+
+		assert.True(t, req.Accepts("text/plain"))
+		assert.False(t, req.Accepts("application/json"))
+
+		return c.SendStatus(http.StatusOK)
+	})
+
+	req := httptest.NewRequest(http.MethodGet, "/test-accepts", nil)
+	req.Header.Set("Accept", "text/plain; charset=utf-8")
+	resp, err := app.Test(req)
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+}
+
 func TestRequestIsJSON(t *testing.T) {
 	tests := []struct {
 		accept string

@@ -1,0 +1,30 @@
+version: "2"
+
+linters:
+  # errcheck, govet, ineffassign, staticcheck and unused
+  default: standard
+  enable:
+    - forbidigo
+  settings:
+    errcheck:
+      # Errors with nowhere to go: a deferred Rollback after a Commit returns
+      # ErrTxDone, the closes are on reads, and a failed response write
+      # shows up at the client
+      exclude-functions:
+        - (*database/sql.Tx).Rollback
+        - (*database/sql.DB).Close
+        - (*database/sql.Stmt).Close
+        - (*os.File).Close
+        - (net/http.ResponseWriter).Write
+    forbidigo:
+      analyze-types: true
+      forbid:
+        - pattern: ^panic$
+          msg: return an error instead; only main panics
+        - pattern: ^fiber\.Ctx\.Get$
+          msg: read request headers through utils.Request, e.g. req.Accepts or req.IsJSON
+  exclusions:
+    rules:
+      - path: (_test\.go|^main\.go|^mocks/)
+        linters:
+          - forbidigo

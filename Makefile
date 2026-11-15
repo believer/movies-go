@@ -70,14 +70,18 @@ TEMPL_SUMS = find . -name '*_templ.go' -not -path './node_modules/*' | sort | xa
 MOCKERY := go run github.com/vektra/mockery/v3@v3.9.1
 MOCK_SUMS = find mocks -name '*.go' | sort | xargs shasum
 
+# Pinned like mockery. Runs go vet with staticcheck, errcheck and the
+# forbidigo rules in .golangci.yml.
+GOLANGCI_LINT := go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.15.0
+
 # Regenerate mocks/ from the interfaces in db/. Phony, since mocks/ exists.
 .PHONY: mocks
 mocks:
 	@out=$$($(MOCKERY) 2>&1) || { echo "$$out"; exit 1; }
 
 # Fast checks that need no database: generated templ files and mocks are fresh,
-# Go files are gofmt'd, go vet and biome pass, and tests pass with database
-# tests skipped
+# Go files are gofmt'd, golangci-lint and biome pass, and tests pass with
+# database tests skipped
 check:
 	@before=$$($(TEMPL_SUMS)); \
 		$(TEMPL) generate > /dev/null 2>&1; \
@@ -97,7 +101,7 @@ check:
 			echo "$$unformatted"; \
 			exit 1; \
 		fi
-	@go vet ./...
+	@out=$$($(GOLANGCI_LINT) run ./... 2>&1) || { echo "$$out"; exit 1; }
 	@out=$$(go test -short ./... 2>&1) || { echo "$$out"; exit 1; }
 	@pnpm exec biome check .
 	@echo "\033[0;32m(✓)\033[0;37m Checks passed"

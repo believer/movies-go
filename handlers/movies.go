@@ -297,7 +297,7 @@ func (h *MovieHandler) PostMovieNew(c *fiber.Ctx) error {
 
 	InvalidateStatsCache(userId)
 
-	if c.Get("Accept") == "text/plain" {
+	if utils.NewRequest(c).Accepts("text/plain") {
 		return c.SendString(strconv.Itoa(movieId))
 	}
 
