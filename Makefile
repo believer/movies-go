@@ -29,19 +29,28 @@ PSQL ?= docker exec -i postgres_test psql -U admin
 test-postgres:
 	$(if $(filter file,$(origin PSQL)),@docker-compose up -d --wait postgres_test)
 
-# Rebuild movies_test from this checkout's db/schema.sql, so a branch that
+# Each checkout gets a test database of its own, named after its directory
+# plus a hash of its path, e.g. movies_test_movies_api_3f9a1c, so checkouts
+# run make test side by side. Databases of removed checkouts stay until
+# dropped by hand.
+CHECKOUT_TEST_DB := movies_test_$(shell printf '%s' '$(notdir $(CURDIR))' | tr 'A-Z' 'a-z' | tr -c 'a-z0-9' '_' | cut -c1-30)_$(shell printf '%s' '$(CURDIR)' | shasum | cut -c1-6)
+TEST_DB ?= $(CHECKOUT_TEST_DB)
+
+# Rebuild TEST_DB from this checkout's db/schema.sql, so a branch that
 # changes the schema tests against it
 test-db: test-postgres
-	@PSQL="$(PSQL)" SCHEMA=db/schema.sql DB=movies_test ./db/rebuild.sh
+	@PSQL="$(PSQL)" SCHEMA=db/schema.sql DB=$(TEST_DB) ./db/rebuild.sh
 
-TEST_DATABASE_URL ?= postgres://admin:password@localhost:5433/movies_test?sslmode=disable
+TEST_DATABASE_URL ?= postgres://admin:password@localhost:5433/$(TEST_DB)?sslmode=disable
 PKG ?= ./...
 
-# Packages share the test database, so run them one at a time. Narrow with
-# PKG and RUN, e.g. make test PKG=./db RUN=TestGetBestOfTheYear. Pointing
-# TEST_DATABASE_URL at another server needs PSQL pointed there too.
+# Packages share the checkout's test database, so run them one at a time.
+# Narrow with PKG and RUN, e.g. make test PKG=./db RUN=TestGetBestOfTheYear.
+# Pointing TEST_DATABASE_URL at another server needs PSQL pointed there too,
+# and TEST_DB set to the database in the URL. -count=1 skips go test's cache,
+# which can't tell that test-db rebuilt the database.
 test: test-db
-	@TEST_DATABASE_URL="$(TEST_DATABASE_URL)" go test -p 1 $(if $(RUN),-run '$(RUN)') $(PKG)
+	@TEST_DATABASE_URL="$(TEST_DATABASE_URL)" go test -count=1 -p 1 $(if $(RUN),-run '$(RUN)') $(PKG)
 
 # Each E2E server port gets a database of its own, so checkouts on different
 # ports run E2E side by side. tests/env.ts names it the same way.
