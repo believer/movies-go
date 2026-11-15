@@ -11,7 +11,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "2.6.7",
 		"@playwright/test": "1.65.1",
-		"@types/node": "24.10.1",
+		"@types/node": "26.6.6",
 		"@types/pg": "8.23.1",
 		"pg": "8.23.1"
 	}
