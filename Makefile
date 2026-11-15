@@ -20,33 +20,37 @@ dev:
 		--ignore-pattern='playwright-report' \
 		--cmd='go run .'
 
-TEST_DATABASE_URL ?= postgres://admin:password@localhost:5433/movies_test?sslmode=disable
-PKG ?= ./...
-
-# Packages share the test database, so run them one at a time. Narrow with
-# PKG and RUN, e.g. make test PKG=./db RUN=TestGetBestOfTheYear
-test:
-	@docker-compose up -d --wait postgres_test
-	@TEST_DATABASE_URL="$(TEST_DATABASE_URL)" go test -p 1 $(if $(RUN),-run '$(RUN)') $(PKG)
-
 # Runs psql in the postgres_test container. Override it to reach another
 # server, e.g. make e2e-db PSQL="psql -h localhost -U admin", and the
 # container isn't started.
 PSQL ?= docker exec -i postgres_test psql -U admin
 
 # Start postgres_test, unless PSQL points elsewhere
-e2e-postgres:
-	$(if $(filter default,$(origin PSQL)),@docker-compose up -d --wait postgres_test)
+test-postgres:
+	$(if $(filter file,$(origin PSQL)),@docker-compose up -d --wait postgres_test)
+
+# Rebuild movies_test from this checkout's db/schema.sql, so a branch that
+# changes the schema tests against it
+test-db: test-postgres
+	@PSQL="$(PSQL)" SCHEMA=db/schema.sql DB=movies_test ./db/rebuild.sh
+
+TEST_DATABASE_URL ?= postgres://admin:password@localhost:5433/movies_test?sslmode=disable
+PKG ?= ./...
+
+# Packages share the test database, so run them one at a time. Narrow with
+# PKG and RUN, e.g. make test PKG=./db RUN=TestGetBestOfTheYear. Pointing
+# TEST_DATABASE_URL at another server needs PSQL pointed there too.
+test: test-db
+	@TEST_DATABASE_URL="$(TEST_DATABASE_URL)" go test -p 1 $(if $(RUN),-run '$(RUN)') $(PKG)
 
 # Each E2E server port gets a database of its own, so checkouts on different
 # ports run E2E side by side. tests/env.ts names it the same way.
 E2E_PORT ?= 8090
 E2E_DB = movies_e2e_$(E2E_PORT)
 
-# Rebuild the E2E database from db/schema.sql and db/seed.sql, as postgres_test
-# does for the default port when it starts
-e2e-db: e2e-postgres
-	@PSQL="$(PSQL)" SCHEMA=db/schema.sql SEED=db/seed.sql DB=$(E2E_DB) ./db/e2e.sh
+# Rebuild the E2E database from db/schema.sql and db/seed.sql
+e2e-db: test-postgres
+	@PSQL="$(PSQL)" SCHEMA=db/schema.sql SEED=db/seed.sql DB=$(E2E_DB) ./db/rebuild.sh
 	@echo "\033[0;32m(✓)\033[0;37m Rebuilt $(E2E_DB)"
 
 TEMPL := go run github.com/a-h/templ/cmd/templ@$(shell go list -m -f '{{.Version}}' github.com/a-h/templ)
