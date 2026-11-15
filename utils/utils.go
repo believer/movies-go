@@ -131,8 +131,11 @@ func SelfHealingNumericID(text string) (string, error) {
 	return id, nil
 }
 
-func Formatter() *message.Printer {
-	return message.NewPrinter(language.English)
+var englishPrinter = message.NewPrinter(language.English)
+
+// FormatNumber formats n with thousands separators, e.g. 12,345
+func FormatNumber(n int) string {
+	return englishPrinter.Sprintf("%d", n)
 }
 
 func ScanJSON[T any](v any, target *T) error {
