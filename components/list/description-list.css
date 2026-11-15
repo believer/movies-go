@@ -7,21 +7,21 @@
   @container (width <= 400px) {
     display: block;
 
-    dt:nth-child(even) {
+    dd:nth-child(even) {
       margin-top: calc(var(--spacing-1) / 2);
       margin-bottom: var(--spacing-2);
     }
 
-    :last-child > dt {
+    :last-child > dd {
       margin-bottom: 0;
     }
   }
 
-  .dd {
+  .dt {
     font-weight: 600;
   }
 
-  .dt {
+  .dd {
     display: flex;
     flex-direction: var(--style, row);
     flex-wrap: wrap;
@@ -29,7 +29,7 @@
     /* TODO: Use if() */
     align-items: var(--align, flex-start);
 
-    .dt--tabular {
+    .dd--tabular {
       overflow: hidden;
       font-variant-numeric: tabular-nums;
     }

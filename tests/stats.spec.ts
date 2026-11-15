@@ -5,8 +5,7 @@ test("stats count Watches", async ({ page }) => {
 	await page.goto("/")
 	await page.getByRole("link", { name: "Stats" }).click()
 
-	const stat = (name: string) =>
-		page.locator(".contents").filter({ hasText: name }).locator("dt")
+	const stat = (name: string) => page.getByLabel(name, { exact: true })
 
 	await expect(stat("Unique movies seen")).toHaveText("11")
 	await expect(stat("Movies seen with rewatches")).toHaveText("12")
