@@ -16,4 +16,5 @@ Playwright specs live in `tests/`. The comments above `e2e` and `e2e-db` in the 
 - Tests that write log in as a fresh user through the `user` fixture in `tests/fixtures.ts`.
 - TMDB responses come from `tests/tmdb/fixtures/`, keyed by request path. A new Movie intake test needs a movie of its own there.
 - A language page's heading is the native name: the link on a movie page reads "French", the heading "Français".
+- `getByLabel("<Detail>")` returns a metadata row's whole value. Narrow it with `.getByRole("link")` when the row also holds buttons, like My rating for a logged-in user.
 - A case an open bug breaks is a `test.fixme` whose title names the issue, e.g. `"a re-rated movie shows the latest Rating (#73)"`. The PR that fixes the bug turns it into a `test`.
