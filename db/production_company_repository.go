@@ -25,7 +25,7 @@ func (p ProductionCompany) Trailing() string {
 }
 
 func (p ProductionCompany) Href() string {
-	return utils.CreateSelfHealingUrl("production-company", p.Name, p.ID)
+	return utils.CreateSelfHealingURL("production-company", p.Name, p.ID)
 }
 
 // Repo

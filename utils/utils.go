@@ -102,25 +102,32 @@ func Slugify(text string) string {
 	return text
 }
 
-func SelfHealingUrl(text string) (string, error) {
-	parts := strings.Split(path.Base(text), "-")
-	id := parts[len(parts)-1]
-	_, err := strconv.Atoi(parts[len(parts)-1])
+// CreateSelfHealingURL builds /root/<slug of name>-id. Only the ID after
+// the last hyphen identifies the page, so a renamed item's old links still
+// work.
+func CreateSelfHealingURL(root, name, id string) string {
+	return fmt.Sprintf("/%s/%s-%s", root, Slugify(name), id)
+}
 
-	if err != nil {
+// SelfHealingID returns the ID after the last hyphen of a self-healing URL.
+// IDs that aren't numbers, like a production country's "US", are returned
+// as they are.
+func SelfHealingID(text string) string {
+	base := path.Base(text)
+
+	return base[strings.LastIndex(base, "-")+1:]
+}
+
+// SelfHealingNumericID returns the ID of a self-healing URL, or an error when
+// the ID isn't a number.
+func SelfHealingNumericID(text string) (string, error) {
+	id := SelfHealingID(text)
+
+	if _, err := strconv.Atoi(id); err != nil {
 		return "", errors.New("not a valid ID")
 	}
 
 	return id, nil
-}
-
-func CreateSelfHealingUrl(root, name, id string) string {
-	return fmt.Sprintf("/%s/%s-%s", root, Slugify(name), id)
-}
-
-func SelfHealingUrlString(text string) string {
-	parts := strings.Split(path.Base(text), "-")
-	return parts[len(parts)-1]
 }
 
 func Formatter() *message.Printer {

@@ -59,7 +59,7 @@ func (h *ListHandler) GetListById(c *fiber.Ctx) error {
 		Title:       l.Name,
 		Subtitle:    l.Source,
 		Movies:      movies,
-		Slug:        utils.CreateSelfHealingUrl("list", l.Slug, l.ID),
+		Slug:        utils.CreateSelfHealingURL("list", l.Slug, l.ID),
 		Sort:        views.ToListSort(sort),
 		Seen:        seen,
 		Unseen:      len(movies) - seen,

@@ -75,42 +75,41 @@ func TestSlugify(t *testing.T) {
 	}
 }
 
-func TestSelfHealingUrlSuccess(t *testing.T) {
-	got, err := SelfHealingUrl("/root/sub/test-1234")
-
-	assert.NoError(t, err)
-	assert.Equal(t, "1234", got)
-}
-
-func TestSelfHealingUrlError(t *testing.T) {
-	_, err := SelfHealingUrl("/root/sub/test-test")
-
-	assert.Errorf(t, err, "not a valid ID")
-}
-
-func TestCreateSelfHealingUrl(t *testing.T) {
-	got := CreateSelfHealingUrl("root", "name", "1234")
+func TestCreateSelfHealingURL(t *testing.T) {
+	got := CreateSelfHealingURL("root", "name", "1234")
 	want := "/root/name-1234"
 
 	assert.Equal(t, want, got)
 }
 
-func TestSelfHealingUrlStringWithNumber(t *testing.T) {
-	got := SelfHealingUrlString("/root/sub/test-test-250-test-1234")
+func TestSelfHealingID(t *testing.T) {
+	tests := []struct {
+		path string
+		want string
+	}{
+		{"/root/sub/test-1234", "1234"},
+		{"/root/sub/test-test-250-test-1234", "1234"},
+		{"/root/sub/test-test", "test"},
+		{"/root/sub/united-states-of-america-US", "US"},
+		{"/root/sub/1234", "1234"},
+	}
 
-	assert.Equal(t, "1234", got)
+	for _, tc := range tests {
+		t.Run(tc.path, func(t *testing.T) {
+			assert.Equal(t, tc.want, SelfHealingID(tc.path))
+		})
+	}
 }
 
-func TestSelfHealingUrlString(t *testing.T) {
-	got := SelfHealingUrlString("/root/sub/test-test")
+func TestSelfHealingNumericID(t *testing.T) {
+	got, err := SelfHealingNumericID("/root/sub/test-1234")
 
-	assert.Equal(t, "test", got)
-}
-
-func TestSelfHealingStringOnlyID(t *testing.T) {
-	got := SelfHealingUrlString("/root/sub/1234")
-
+	assert.NoError(t, err)
 	assert.Equal(t, "1234", got)
+
+	_, err = SelfHealingNumericID("/root/sub/test-test")
+
+	assert.EqualError(t, err, "not a valid ID")
 }
 
 func TestAvailableYears(t *testing.T) {
