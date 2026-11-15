@@ -1,5 +1,6 @@
 // Package dbtest connects tests to a real Postgres database loaded with
-// db/schema.sql. Tests using it are skipped when TEST_DATABASE_URL is unset.
+// db/schema.sql. Tests using it are skipped with -short and fail when
+// TEST_DATABASE_URL is unset.
 package dbtest
 
 import (
@@ -16,10 +17,14 @@ import (
 func Open(t *testing.T) *sqlx.DB {
 	t.Helper()
 
+	if testing.Short() {
+		t.Skip("database test skipped with -short")
+	}
+
 	url := os.Getenv("TEST_DATABASE_URL")
 
 	if url == "" {
-		t.Skip("TEST_DATABASE_URL not set")
+		t.Fatal("TEST_DATABASE_URL not set: run make test PKG=./<pkg> RUN=<Test>, or pass -short to skip database tests")
 	}
 
 	db, err := sqlx.Connect("postgres", url)

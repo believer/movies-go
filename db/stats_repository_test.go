@@ -16,8 +16,7 @@ type testStats struct {
 }
 
 // setupStats returns a stats repository fixture backed by an empty test
-// database with users 1 and 2. Tests using it skip when TEST_DATABASE_URL is
-// unset.
+// database with users 1 and 2. Tests using it skip with -short.
 func setupStats(t *testing.T) testStats {
 	t.Helper()
 
