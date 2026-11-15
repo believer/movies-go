@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
-	"os"
 	"testing"
 
 	"github.com/gofiber/fiber/v2"
@@ -58,8 +57,7 @@ func TestLogin(t *testing.T) {
 	})
 
 	t.Run("valid credentials", func(t *testing.T) {
-		os.Setenv("ADMIN_SECRET", "super-secret-key")
-		defer os.Unsetenv("ADMIN_SECRET")
+		t.Setenv("ADMIN_SECRET", "super-secret-key")
 
 		hashed, _ := bcrypt.GenerateFromPassword([]byte("secretpassword"), bcrypt.DefaultCost)
 

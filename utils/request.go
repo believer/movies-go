@@ -82,17 +82,22 @@ func (r Request) QueryDefault(key, defaultValue string) string {
 	return defaultValue
 }
 
-// IsJSON reports whether application/json is one of the media types in
-// Accept, with or without parameters. A wildcard like */* doesn't count, so
-// a browser still gets HTML.
-func (r Request) IsJSON() bool {
+// Accepts reports whether mediaType is one of the media types in Accept,
+// with or without parameters. A wildcard like */* doesn't count, so a
+// browser still gets HTML.
+func (r Request) Accepts(mediaType string) bool {
 	for _, accepted := range strings.Split(r.Get("Accept"), ",") {
-		mediaType, _, err := mime.ParseMediaType(accepted)
+		parsed, _, err := mime.ParseMediaType(accepted)
 
-		if err == nil && mediaType == "application/json" {
+		if err == nil && parsed == mediaType {
 			return true
 		}
 	}
 
 	return false
+}
+
+// IsJSON reports whether the request accepts application/json
+func (r Request) IsJSON() bool {
+	return r.Accepts("application/json")
 }
