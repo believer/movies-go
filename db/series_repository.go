@@ -90,7 +90,8 @@ FROM
             user_id = $2
         ORDER BY
             movie_id,
-            created_at DESC) AS r ON r.movie_id = m.id
+            created_at DESC,
+            id DESC) AS r ON r.movie_id = m.id
     LEFT JOIN ( SELECT DISTINCT ON (movie_id)
             movie_id,
             id

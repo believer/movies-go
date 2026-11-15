@@ -64,6 +64,7 @@ FROM
 WHERE
     r.rating = $2
 ORDER BY
-    m.release_date DESC OFFSET $3
+    m.release_date DESC,
+    m.id OFFSET $3
 LIMIT 50
 `

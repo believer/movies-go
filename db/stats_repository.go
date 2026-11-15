@@ -490,7 +490,7 @@ WITH RankedRatings AS (
         r.rating,
         r.created_at,
         ROW_NUMBER() OVER (PARTITION BY r.movie_id,
-            r.user_id ORDER BY r.created_at DESC) AS rn
+            r.user_id ORDER BY r.created_at DESC, r.id DESC) AS rn
     FROM
         rating r
 )

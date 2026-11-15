@@ -104,7 +104,8 @@ FROM
 WHERE
     r.rating = $1
 ORDER BY
-    m.release_date DESC
+    m.release_date DESC,
+    m.id
 	`, rating, userID)
 	return movies, err
 }
