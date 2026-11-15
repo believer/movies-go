@@ -14,8 +14,7 @@ concurrency:
 jobs:
   test:
     name: Test
-    # Playwright 1.56 can't install Chromium on ubuntu-latest (26.04), see #77
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     services:
       postgres:
         image: postgres:15
@@ -39,8 +38,7 @@ jobs:
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v6
         with:
-          # Playwright 1.56 hangs extracting Chromium on Node 26, see #77
-          node-version: 22
+          node-version: lts/*
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -54,8 +52,7 @@ jobs:
 
   e2e:
     name: E2E (${{ matrix.browser }})
-    # Playwright 1.56 can't install Chromium on ubuntu-latest (26.04), see #77
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     strategy:
       # Finish every browser, so one failure doesn't hide another
       fail-fast: false
@@ -88,8 +85,7 @@ jobs:
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v6
         with:
-          # Playwright 1.56 hangs extracting Chromium on Node 26, see #77
-          node-version: 22
+          node-version: lts/*
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
