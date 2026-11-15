@@ -6,9 +6,11 @@ import (
 	"believer/movies/router"
 	"believer/movies/utils"
 	"believer/movies/views"
+	"errors"
 	"fmt"
 	"io/fs"
 	"log"
+	"log/slog"
 	"os"
 	"strings"
 
@@ -21,6 +23,39 @@ import (
 
 type Headers struct {
 	Authorization string `reqHeader:"Authorization"`
+}
+
+// newApp builds the Fiber app. It is separate from SetupAndRunApp so the error
+// handler can be tested without a database or a listener.
+func newApp() *fiber.App {
+	return fiber.New(fiber.Config{
+		DisableStartupMessage: true,
+		ErrorHandler:          handleError,
+	})
+}
+
+// handleError logs unexpected errors and sends a generic body. Fiber's default
+// handler sends err.Error() to the client, which can leak SQL, internal paths
+// or secrets carried in the error. Fiber errors are deliberate responses, so
+// they keep their status and message.
+func handleError(c *fiber.Ctx, err error) error {
+	code := fiber.StatusInternalServerError
+	message := "Internal Server Error"
+
+	var fiberErr *fiber.Error
+	if errors.As(err, &fiberErr) {
+		code = fiberErr.Code
+		message = fiberErr.Message
+	}
+
+	if code >= fiber.StatusInternalServerError {
+		slog.Error("request failed", "method", c.Method(), "path", c.OriginalURL(), "error", err)
+		message = "Internal Server Error"
+	}
+
+	c.Set(fiber.HeaderContentType, fiber.MIMETextPlainCharsetUTF8)
+
+	return c.Status(code).SendString(message)
 }
 
 // SetupAndRunApp starts the app. cssSources holds the CSS files the
@@ -49,9 +84,7 @@ func SetupAndRunApp(cssSources fs.FS) error {
 	defer db.CloseConnection()
 
 	// Setup the app
-	app := fiber.New(fiber.Config{
-		DisableStartupMessage: true,
-	})
+	app := newApp()
 
 	// Recover middleware recovers from panics anywhere in
 	// the chain and handles the control to the centralized ErrorHandler.
