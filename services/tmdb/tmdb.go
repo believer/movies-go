@@ -99,6 +99,33 @@ func (t *Tmdb) WatchProviders() (types.MovieWatchProvidersResponse, error) {
 	return providers, err
 }
 
+// redactKey hides the api_key in the request URL that transport errors
+// include, so the key doesn't reach logs or response bodies.
+func redactKey(err error) error {
+	var urlErr *url.Error
+
+	if !errors.As(err, &urlErr) {
+		return err
+	}
+
+	u, parseErr := url.Parse(urlErr.URL)
+
+	if parseErr != nil {
+		urlErr.URL = "<unparseable URL>"
+		return err
+	}
+
+	q := u.Query()
+
+	if q.Get("api_key") != "" {
+		q.Set("api_key", "REDACTED")
+		u.RawQuery = q.Encode()
+		urlErr.URL = u.String()
+	}
+
+	return err
+}
+
 func fetchJSON[T any](path []string, additionalParams map[string]string) (result T, err error) {
 	// Construct URL
 	tmdbKey := os.Getenv("TMDB_API_KEY")
@@ -123,7 +150,7 @@ func fetchJSON[T any](path []string, additionalParams map[string]string) (result
 	resp, err := httpClient.Get(u)
 
 	if err != nil {
-		return result, err
+		return result, redactKey(err)
 	}
 
 	defer func() {
