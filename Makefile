@@ -52,9 +52,11 @@ e2e-db: e2e-postgres
 TEMPL := go run github.com/a-h/templ/cmd/templ@$(shell go list -m -f '{{.Version}}' github.com/a-h/templ)
 TEMPL_SUMS = find . -name '*_templ.go' -not -path './node_modules/*' | sort | xargs shasum
 
-# Pinned, and built with the local Go toolchain: an installed mockery built
-# with an older Go can't load this module's packages
-MOCKERY := go run github.com/vektra/mockery/v3@v3.9.1
+# Pinned, with the toolchain pinned too: mockery needs Go 1.26 or later, and an
+# x/tools that reads the export data of the Go loading the packages. go.mod and
+# production stay on 1.25, so only this command runs on 1.26, which Go
+# downloads on first use.
+MOCKERY := GOTOOLCHAIN=go1.26.11 go run github.com/vektra/mockery/v3@v3.9.1
 MOCK_SUMS = find mocks -name '*.go' | sort | xargs shasum
 
 # Regenerate mocks/ from the interfaces in db/. Phony, since mocks/ exists.
