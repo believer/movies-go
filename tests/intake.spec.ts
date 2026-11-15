@@ -16,7 +16,7 @@ test("logging a Watch of a new movie brings it in from TMDB", async ({
 		page.getByRole("heading", { name: "The Stub Lighthouse", level: 1 })
 	).toBeVisible()
 	await expect(page.getByLabel("Release date")).toHaveText("1961-03-14")
-	await expect(page.getByLabel("My rating")).toHaveText("8")
+	await expect(page.getByLabel("My rating").getByRole("link")).toHaveText("8")
 	await expect(page.getByRole("heading", { name: /^Watched/ })).toHaveText(
 		"Watched (1)"
 	)
@@ -53,7 +53,7 @@ test("a movie found with TMDB search is brought in by its TMDB ID", async ({
 	await expect(
 		page.getByRole("heading", { name: "The Fixture Garden", level: 1 })
 	).toBeVisible()
-	await expect(page.getByLabel("My rating")).toHaveText("6")
+	await expect(page.getByLabel("My rating").getByRole("link")).toHaveText("6")
 	await expect(page.getByRole("link", { name: "Sigrid Holm" })).toBeVisible()
 })
 

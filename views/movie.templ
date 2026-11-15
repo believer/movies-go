@@ -53,12 +53,7 @@ templ Movie(props MovieProps) {
 				}
 				if props.Movie.ReleaseDate.Valid {
 					@list.DlItem(list.DlProps{Detail: "Release date", ID: "release-date"}) {
-						@link.Link(link.Props{
-							Href: props.Movie.LinkToYear(),
-							Attrs: templ.Attributes{
-								"aria-labelledby": "release-date",
-							},
-						}) {
+						@link.Link(link.Props{Href: props.Movie.LinkToYear()}) {
 							{ props.Movie.ISOReleaseDate() }
 						}
 					}
@@ -76,12 +71,7 @@ templ Movie(props MovieProps) {
 						IsTabular: false,
 					}) {
 						for _, s := range props.Movie.AllSeries {
-							@link.Link(link.Props{
-								Href: s.LinkTo(),
-								Attrs: templ.Attributes{
-									"aria-labelledby": "series",
-								},
-							}) {
+							@link.Link(link.Props{Href: s.LinkTo()}) {
 								{ s.Name } #{ strconv.FormatFloat(s.NumberInSeries, 'f', -1, 64) }
 							}
 						}

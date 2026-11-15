@@ -24,7 +24,7 @@ test("a user logs a Watch of a movie in the diary", async ({
 		"Watched (1)"
 	)
 	await expect(page.getByText("June 01, 2018")).toBeVisible()
-	await expect(page.getByLabel("My rating")).toHaveText("7")
+	await expect(page.getByLabel("My rating").getByRole("link")).toHaveText("7")
 
 	// The Watch leads the user's own feed
 	await page.goto("/")

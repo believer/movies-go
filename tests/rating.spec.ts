@@ -12,7 +12,7 @@ test("a user rates a watched movie and changes the Rating", async ({
 	await page.getByRole("spinbutton").fill("4")
 	await page.getByRole("button", { name: "Save rating" }).click()
 
-	const rating = page.getByLabel("My rating")
+	const rating = page.getByLabel("My rating").getByRole("link")
 
 	await expect(rating).toHaveText("4")
 

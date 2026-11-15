@@ -6,7 +6,7 @@ test("the release date links to the year page", async ({ page }) => {
 	const releaseDate = page.getByLabel("Release date")
 
 	await expect(releaseDate).toHaveText("2008-07-16")
-	await releaseDate.click()
+	await releaseDate.getByRole("link").click()
 
 	await expect(page).toHaveURL(/\/year\/2008$/)
 	await expect(page.getByRole("heading", { name: "2008" })).toBeVisible()
@@ -21,7 +21,7 @@ test("the Series links to the Series page", async ({ page }) => {
 	const series = page.getByLabel("Series")
 
 	await expect(series).toHaveText("The Dark Knight Trilogy #2")
-	await series.click()
+	await series.getByRole("link").click()
 
 	await expect(
 		page.getByRole("heading", { name: "The Dark Knight Trilogy" })
@@ -97,7 +97,7 @@ test("the Rating links to movies with the same Rating", async ({ page }) => {
 	const rating = page.getByLabel("My rating")
 
 	await expect(rating).toHaveText("9")
-	await rating.click()
+	await rating.getByRole("link").click()
 
 	await expect(
 		page.getByRole("heading", { name: "Movies rated 9" })
@@ -117,10 +117,7 @@ test("a movie with no tagline shows none", async ({ page }) => {
 	await expect(
 		page.getByRole("heading", { name: "Spirited Away", level: 1 })
 	).toBeVisible()
-	// DlItem renders the label in a <dd>, so the row's label is a definition
-	await expect(
-		page.getByRole("definition").filter({ hasText: "Tagline" })
-	).toHaveCount(0)
+	await expect(page.getByLabel("Tagline")).toHaveCount(0)
 })
 
 test("a movie with no overview shows none", async ({ page }) => {
@@ -139,8 +136,16 @@ test("a movie with a tagline and an overview shows both", async ({ page }) => {
 	await expect(page.locator(".movie__overview")).toContainText(
 		"Ki-taek's family"
 	)
-	await expect(
-		page.getByRole("definition").filter({ hasText: "Tagline" })
-	).toBeVisible()
-	await expect(page.getByText("Act like you own the place.")).toBeVisible()
+	await expect(page.getByLabel("Tagline")).toHaveText(
+		"Act like you own the place."
+	)
+})
+
+test("each metadata row is labelled by its detail", async ({ page }) => {
+	await page.goto("/movie/parasite-11")
+
+	await expect(page.getByLabel("Original title")).toHaveText("기생충")
+	await expect(page.getByLabel("Release date")).toHaveText("2019-05-30")
+	await expect(page.getByLabel("Runtime")).toHaveText("2h 13m")
+	await expect(page.getByLabel("IMDb")).toHaveText("tt6751668")
 })

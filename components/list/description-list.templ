@@ -1,15 +1,17 @@
 package list
 
-templ dd(text, id string) {
-	<dd class="dd" id={ id }>
+import "believer/movies/utils"
+
+templ dt(text, id string) {
+	<dt class="dt" id={ id }>
 		{ text }
-	</dd>
+	</dt>
 }
 
-templ dt(isTabular bool) {
-	<dt class={ "dt", templ.KV("dt--tabular", isTabular) }>
+templ dd(labelID string, isTabular bool) {
+	<dd class={ "dd", templ.KV("dd--tabular", isTabular) } aria-labelledby={ labelID }>
 		{ children... }
-	</dt>
+	</dd>
 }
 
 templ Dl() {
@@ -25,6 +27,16 @@ type DlProps struct {
 	IsColumn  bool
 }
 
+// labelID is the id of the item's <dt>, which labels its <dd>. It differs
+// from ID, which htmx targets on the wrapper.
+func (p DlProps) labelID() string {
+	if p.ID != "" {
+		return p.ID + "-label"
+	}
+
+	return "dl-" + utils.Slugify(p.Detail)
+}
+
 templ DlItem(props DlProps) {
 	<div
 		class="contents"
@@ -35,8 +47,8 @@ templ DlItem(props DlProps) {
 			style="--style:column;--align:flex-start;--spacing:var(--spacing-1);"
 		}
 	>
-		@dd(props.Detail, props.ID)
-		@dt(props.IsTabular) {
+		@dt(props.Detail, props.labelID())
+		@dd(props.labelID(), props.IsTabular) {
 			{ children... }
 		}
 	</div>
