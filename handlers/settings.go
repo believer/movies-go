@@ -19,13 +19,13 @@ func NewSettingsHandler(repo db.SettingsQuerier) *SettingsHandler {
 }
 
 func (h *SettingsHandler) Settings(c *fiber.Ctx) error {
-	isAuthenticated := utils.IsAuthenticated(c)
+	req := utils.NewRequest(c)
 
-	if !isAuthenticated {
+	if !req.IsAuthenticated() {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	userId := c.Locals("UserId").(string)
+	userId := req.UserID()
 	storedProviders, err := h.repo.GetWatchProviders(userId)
 
 	if err != nil {
@@ -38,13 +38,13 @@ func (h *SettingsHandler) Settings(c *fiber.Ctx) error {
 }
 
 func (h *SettingsHandler) SettingsWatchProviders(c *fiber.Ctx) error {
-	isAuthenticated := utils.IsAuthenticated(c)
+	req := utils.NewRequest(c)
 
-	if !isAuthenticated {
+	if !req.IsAuthenticated() {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	userId := c.Locals("UserId").(string)
+	userId := req.UserID()
 	formData := new(struct {
 		Providers []string `form:"providers"`
 	})

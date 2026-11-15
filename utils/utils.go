@@ -23,15 +23,6 @@ var (
 	tmdbPattern = regexp.MustCompile(`^\d+$`)
 )
 
-func IsAuthenticated(c *fiber.Ctx) bool {
-	if val := c.Locals("IsAuthenticated"); val != nil {
-		if b, ok := val.(bool); ok {
-			return b
-		}
-	}
-	return false
-}
-
 func ParseId(s string) (string, error) {
 	if s == "" {
 		return "", fmt.Errorf("empty ID")

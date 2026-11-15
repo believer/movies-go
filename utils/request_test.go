@@ -23,7 +23,6 @@ func TestRequestHelpersAuthenticated(t *testing.T) {
 
 		assert.Equal(t, "user-123", req.UserID())
 		assert.True(t, req.IsAuthenticated())
-		assert.True(t, IsAuthenticated(c))
 		assert.Equal(t, "2024", req.Year())
 		assert.Equal(t, 2, req.Page())
 		assert.Equal(t, 50, req.Offset())
@@ -47,7 +46,6 @@ func TestRequestHelpersUnauthenticated(t *testing.T) {
 
 		assert.Equal(t, "", req.UserID())
 		assert.False(t, req.IsAuthenticated())
-		assert.False(t, IsAuthenticated(c))
 		assert.Equal(t, "All", req.Year())
 		assert.Equal(t, 1, req.Page())
 		assert.Equal(t, 0, req.Offset())

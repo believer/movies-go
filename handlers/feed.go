@@ -26,11 +26,12 @@ func (h *FeedHandler) GetFeed(c *fiber.Ctx) error {
 	var movies types.Movies
 	var persons types.Persons
 	var nowPlaying types.Movies
+	req := utils.NewRequest(c)
 
 	page := c.QueryInt("page", 1)
 	lastHeader := c.Query("last-header", "0000-00-January")
 	searchQuery := c.Query("search")
-	userID := c.Locals("UserId").(string)
+	userID := req.UserID()
 	searchQueryType := "movie"
 
 	if searchQuery != "" {
@@ -145,7 +146,7 @@ func (h *FeedHandler) GetFeed(c *fiber.Ctx) error {
 	sort.Sort(sort.Reverse(sort.StringSlice(keys)))
 
 	feed := views.Feed(views.FeedProps{
-		IsAdmin:       utils.IsAuthenticated(c),
+		IsAdmin:       req.IsAuthenticated(),
 		LastHeader:    lastHeader,
 		GroupedMovies: groupedMovies,
 		SortedKeys:    keys,

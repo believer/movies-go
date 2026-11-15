@@ -893,8 +893,9 @@ type Progress struct {
 
 func (h *MovieHandler) PlaybackProgress(c *fiber.Ctx) error {
 	var data Progress
+	req := utils.NewRequest(c)
 
-	if c.Locals("IsAuthenticated") == false {
+	if !req.IsAuthenticated() {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
@@ -908,7 +909,7 @@ func (h *MovieHandler) PlaybackProgress(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusUnprocessableEntity)
 	}
 
-	userID := c.Locals("UserId").(string)
+	userID := req.UserID()
 	ref := intake.ByExternalID(imdbID)
 
 	if data.Completed {
