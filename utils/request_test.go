@@ -76,3 +76,25 @@ func TestRequestAvailableYears(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 }
+
+func TestRequestPageBelowOne(t *testing.T) {
+	app := fiber.New()
+
+	app.Get("/test-page", func(c *fiber.Ctx) error {
+		req := NewRequest(c)
+
+		assert.Equal(t, 1, req.Page())
+		assert.Equal(t, 0, req.Offset())
+
+		return c.SendStatus(http.StatusOK)
+	})
+
+	for _, page := range []string{"0", "-3"} {
+		t.Run(page, func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodGet, "/test-page?page="+page, nil)
+			resp, err := app.Test(req)
+			assert.NoError(t, err)
+			assert.Equal(t, http.StatusOK, resp.StatusCode)
+		})
+	}
+}
