@@ -17,10 +17,19 @@ func NewMockGenreQuerier(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockGenreQuerier {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &MockGenreQuerier{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -75,7 +84,7 @@ type MockGenreQuerier_GetGenreMovies_Call struct {
 //   - id string
 //   - userID string
 //   - offset int
-func (_e *MockGenreQuerier_Expecter) GetGenreMovies(id interface{}, userID interface{}, offset interface{}) *MockGenreQuerier_GetGenreMovies_Call {
+func (_e *MockGenreQuerier_Expecter) GetGenreMovies(id any, userID any, offset any) *MockGenreQuerier_GetGenreMovies_Call {
 	return &MockGenreQuerier_GetGenreMovies_Call{Call: _e.mock.On("GetGenreMovies", id, userID, offset)}
 }
 
@@ -145,7 +154,7 @@ type MockGenreQuerier_GetGenreName_Call struct {
 
 // GetGenreName is a helper method to define mock.On call
 //   - id string
-func (_e *MockGenreQuerier_Expecter) GetGenreName(id interface{}) *MockGenreQuerier_GetGenreName_Call {
+func (_e *MockGenreQuerier_Expecter) GetGenreName(id any) *MockGenreQuerier_GetGenreName_Call {
 	return &MockGenreQuerier_GetGenreName_Call{Call: _e.mock.On("GetGenreName", id)}
 }
 
@@ -208,7 +217,7 @@ type MockGenreQuerier_GetGenreStats_Call struct {
 // GetGenreStats is a helper method to define mock.On call
 //   - userID string
 //   - year string
-func (_e *MockGenreQuerier_Expecter) GetGenreStats(userID interface{}, year interface{}) *MockGenreQuerier_GetGenreStats_Call {
+func (_e *MockGenreQuerier_Expecter) GetGenreStats(userID any, year any) *MockGenreQuerier_GetGenreStats_Call {
 	return &MockGenreQuerier_GetGenreStats_Call{Call: _e.mock.On("GetGenreStats", userID, year)}
 }
 

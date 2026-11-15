@@ -17,10 +17,19 @@ func NewMockPersonQuerier(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockPersonQuerier {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &MockPersonQuerier{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -88,7 +97,7 @@ type MockPersonQuerier_GetGroupedAwards_Call struct {
 // GetGroupedAwards is a helper method to define mock.On call
 //   - id string
 //   - award db.Award
-func (_e *MockPersonQuerier_Expecter) GetGroupedAwards(id interface{}, award interface{}) *MockPersonQuerier_GetGroupedAwards_Call {
+func (_e *MockPersonQuerier_Expecter) GetGroupedAwards(id any, award any) *MockPersonQuerier_GetGroupedAwards_Call {
 	return &MockPersonQuerier_GetGroupedAwards_Call{Call: _e.mock.On("GetGroupedAwards", id, award)}
 }
 
@@ -154,7 +163,7 @@ type MockPersonQuerier_GetPersonByID_Call struct {
 // GetPersonByID is a helper method to define mock.On call
 //   - id string
 //   - userID string
-func (_e *MockPersonQuerier_Expecter) GetPersonByID(id interface{}, userID interface{}) *MockPersonQuerier_GetPersonByID_Call {
+func (_e *MockPersonQuerier_Expecter) GetPersonByID(id any, userID any) *MockPersonQuerier_GetPersonByID_Call {
 	return &MockPersonQuerier_GetPersonByID_Call{Call: _e.mock.On("GetPersonByID", id, userID)}
 }
 

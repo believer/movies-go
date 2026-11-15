@@ -16,10 +16,19 @@ func NewMockReviewQuerier(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockReviewQuerier {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &MockReviewQuerier{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -61,7 +70,7 @@ type MockReviewQuerier_DeleteReview_Call struct {
 
 // DeleteReview is a helper method to define mock.On call
 //   - id string
-func (_e *MockReviewQuerier_Expecter) DeleteReview(id interface{}) *MockReviewQuerier_DeleteReview_Call {
+func (_e *MockReviewQuerier_Expecter) DeleteReview(id any) *MockReviewQuerier_DeleteReview_Call {
 	return &MockReviewQuerier_DeleteReview_Call{Call: _e.mock.On("DeleteReview", id)}
 }
 
@@ -121,7 +130,7 @@ type MockReviewQuerier_GetReviewByID_Call struct {
 
 // GetReviewByID is a helper method to define mock.On call
 //   - id string
-func (_e *MockReviewQuerier_Expecter) GetReviewByID(id interface{}) *MockReviewQuerier_GetReviewByID_Call {
+func (_e *MockReviewQuerier_Expecter) GetReviewByID(id any) *MockReviewQuerier_GetReviewByID_Call {
 	return &MockReviewQuerier_GetReviewByID_Call{Call: _e.mock.On("GetReviewByID", id)}
 }
 
@@ -184,7 +193,7 @@ type MockReviewQuerier_InsertReview_Call struct {
 //   - private bool
 //   - userID string
 //   - movieID int
-func (_e *MockReviewQuerier_Expecter) InsertReview(content interface{}, private interface{}, userID interface{}, movieID interface{}) *MockReviewQuerier_InsertReview_Call {
+func (_e *MockReviewQuerier_Expecter) InsertReview(content any, private any, userID any, movieID any) *MockReviewQuerier_InsertReview_Call {
 	return &MockReviewQuerier_InsertReview_Call{Call: _e.mock.On("InsertReview", content, private, userID, movieID)}
 }
 
@@ -261,7 +270,7 @@ type MockReviewQuerier_UpdateReview_Call struct {
 //   - id string
 //   - content string
 //   - private bool
-func (_e *MockReviewQuerier_Expecter) UpdateReview(id interface{}, content interface{}, private interface{}) *MockReviewQuerier_UpdateReview_Call {
+func (_e *MockReviewQuerier_Expecter) UpdateReview(id any, content any, private any) *MockReviewQuerier_UpdateReview_Call {
 	return &MockReviewQuerier_UpdateReview_Call{Call: _e.mock.On("UpdateReview", id, content, private)}
 }
 

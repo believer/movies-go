@@ -21,10 +21,19 @@ func NewMockMovieQuerier(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockMovieQuerier {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &MockMovieQuerier{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -69,7 +78,7 @@ type MockMovieQuerier_AddRating_Call struct {
 //   - userID string
 //   - movieID int
 //   - rating int
-func (_e *MockMovieQuerier_Expecter) AddRating(tx interface{}, userID interface{}, movieID interface{}, rating interface{}) *MockMovieQuerier_AddRating_Call {
+func (_e *MockMovieQuerier_Expecter) AddRating(tx any, userID any, movieID any, rating any) *MockMovieQuerier_AddRating_Call {
 	return &MockMovieQuerier_AddRating_Call{Call: _e.mock.On("AddRating", tx, userID, movieID, rating)}
 }
 
@@ -207,7 +216,7 @@ type MockMovieQuerier_Cast_Call struct {
 
 // Cast is a helper method to define mock.On call
 //   - id string
-func (_e *MockMovieQuerier_Expecter) Cast(id interface{}) *MockMovieQuerier_Cast_Call {
+func (_e *MockMovieQuerier_Expecter) Cast(id any) *MockMovieQuerier_Cast_Call {
 	return &MockMovieQuerier_Cast_Call{Call: _e.mock.On("Cast", id)}
 }
 
@@ -259,7 +268,7 @@ type MockMovieQuerier_DeleteNowPlayingDirect_Call struct {
 // DeleteNowPlayingDirect is a helper method to define mock.On call
 //   - userID string
 //   - movieID int
-func (_e *MockMovieQuerier_Expecter) DeleteNowPlayingDirect(userID interface{}, movieID interface{}) *MockMovieQuerier_DeleteNowPlayingDirect_Call {
+func (_e *MockMovieQuerier_Expecter) DeleteNowPlayingDirect(userID any, movieID any) *MockMovieQuerier_DeleteNowPlayingDirect_Call {
 	return &MockMovieQuerier_DeleteNowPlayingDirect_Call{Call: _e.mock.On("DeleteNowPlayingDirect", userID, movieID)}
 }
 
@@ -317,7 +326,7 @@ type MockMovieQuerier_DeleteRating_Call struct {
 //   - tx *sqlx.Tx
 //   - movieID int
 //   - userID string
-func (_e *MockMovieQuerier_Expecter) DeleteRating(tx interface{}, movieID interface{}, userID interface{}) *MockMovieQuerier_DeleteRating_Call {
+func (_e *MockMovieQuerier_Expecter) DeleteRating(tx any, movieID any, userID any) *MockMovieQuerier_DeleteRating_Call {
 	return &MockMovieQuerier_DeleteRating_Call{Call: _e.mock.On("DeleteRating", tx, movieID, userID)}
 }
 
@@ -380,7 +389,7 @@ type MockMovieQuerier_DeleteSeenMovie_Call struct {
 //   - tx *sqlx.Tx
 //   - seenID string
 //   - userID string
-func (_e *MockMovieQuerier_Expecter) DeleteSeenMovie(tx interface{}, seenID interface{}, userID interface{}) *MockMovieQuerier_DeleteSeenMovie_Call {
+func (_e *MockMovieQuerier_Expecter) DeleteSeenMovie(tx any, seenID any, userID any) *MockMovieQuerier_DeleteSeenMovie_Call {
 	return &MockMovieQuerier_DeleteSeenMovie_Call{Call: _e.mock.On("DeleteSeenMovie", tx, seenID, userID)}
 }
 
@@ -506,7 +515,7 @@ type MockMovieQuerier_GetByID_Call struct {
 // GetByID is a helper method to define mock.On call
 //   - id string
 //   - userID string
-func (_e *MockMovieQuerier_Expecter) GetByID(id interface{}, userID interface{}) *MockMovieQuerier_GetByID_Call {
+func (_e *MockMovieQuerier_Expecter) GetByID(id any, userID any) *MockMovieQuerier_GetByID_Call {
 	return &MockMovieQuerier_GetByID_Call{Call: _e.mock.On("GetByID", id, userID)}
 }
 
@@ -573,7 +582,7 @@ type MockMovieQuerier_GetFriends_Call struct {
 
 // GetFriends is a helper method to define mock.On call
 //   - userID string
-func (_e *MockMovieQuerier_Expecter) GetFriends(userID interface{}) *MockMovieQuerier_GetFriends_Call {
+func (_e *MockMovieQuerier_Expecter) GetFriends(userID any) *MockMovieQuerier_GetFriends_Call {
 	return &MockMovieQuerier_GetFriends_Call{Call: _e.mock.On("GetFriends", userID)}
 }
 
@@ -636,7 +645,7 @@ type MockMovieQuerier_GetMovieAwards_Call struct {
 // GetMovieAwards is a helper method to define mock.On call
 //   - imdbID string
 //   - awardType string
-func (_e *MockMovieQuerier_Expecter) GetMovieAwards(imdbID interface{}, awardType interface{}) *MockMovieQuerier_GetMovieAwards_Call {
+func (_e *MockMovieQuerier_Expecter) GetMovieAwards(imdbID any, awardType any) *MockMovieQuerier_GetMovieAwards_Call {
 	return &MockMovieQuerier_GetMovieAwards_Call{Call: _e.mock.On("GetMovieAwards", imdbID, awardType)}
 }
 
@@ -701,7 +710,7 @@ type MockMovieQuerier_GetMovieByIDSimple_Call struct {
 
 // GetMovieByIDSimple is a helper method to define mock.On call
 //   - movieID int
-func (_e *MockMovieQuerier_Expecter) GetMovieByIDSimple(movieID interface{}) *MockMovieQuerier_GetMovieByIDSimple_Call {
+func (_e *MockMovieQuerier_Expecter) GetMovieByIDSimple(movieID any) *MockMovieQuerier_GetMovieByIDSimple_Call {
 	return &MockMovieQuerier_GetMovieByIDSimple_Call{Call: _e.mock.On("GetMovieByIDSimple", movieID)}
 }
 
@@ -761,7 +770,7 @@ type MockMovieQuerier_GetMovieByImdbID_Call struct {
 
 // GetMovieByImdbID is a helper method to define mock.On call
 //   - imdbID string
-func (_e *MockMovieQuerier_Expecter) GetMovieByImdbID(imdbID interface{}) *MockMovieQuerier_GetMovieByImdbID_Call {
+func (_e *MockMovieQuerier_Expecter) GetMovieByImdbID(imdbID any) *MockMovieQuerier_GetMovieByImdbID_Call {
 	return &MockMovieQuerier_GetMovieByImdbID_Call{Call: _e.mock.On("GetMovieByImdbID", imdbID)}
 }
 
@@ -821,7 +830,7 @@ type MockMovieQuerier_GetMovieTitleAndImdbID_Call struct {
 
 // GetMovieTitleAndImdbID is a helper method to define mock.On call
 //   - movieID string
-func (_e *MockMovieQuerier_Expecter) GetMovieTitleAndImdbID(movieID interface{}) *MockMovieQuerier_GetMovieTitleAndImdbID_Call {
+func (_e *MockMovieQuerier_Expecter) GetMovieTitleAndImdbID(movieID any) *MockMovieQuerier_GetMovieTitleAndImdbID_Call {
 	return &MockMovieQuerier_GetMovieTitleAndImdbID_Call{Call: _e.mock.On("GetMovieTitleAndImdbID", movieID)}
 }
 
@@ -882,7 +891,7 @@ type MockMovieQuerier_GetReviewByMovieID_Call struct {
 // GetReviewByMovieID is a helper method to define mock.On call
 //   - movieID string
 //   - userID string
-func (_e *MockMovieQuerier_Expecter) GetReviewByMovieID(movieID interface{}, userID interface{}) *MockMovieQuerier_GetReviewByMovieID_Call {
+func (_e *MockMovieQuerier_Expecter) GetReviewByMovieID(movieID any, userID any) *MockMovieQuerier_GetReviewByMovieID_Call {
 	return &MockMovieQuerier_GetReviewByMovieID_Call{Call: _e.mock.On("GetReviewByMovieID", movieID, userID)}
 }
 
@@ -948,7 +957,7 @@ type MockMovieQuerier_GetSeenMovie_Call struct {
 // GetSeenMovie is a helper method to define mock.On call
 //   - seenID string
 //   - userID string
-func (_e *MockMovieQuerier_Expecter) GetSeenMovie(seenID interface{}, userID interface{}) *MockMovieQuerier_GetSeenMovie_Call {
+func (_e *MockMovieQuerier_Expecter) GetSeenMovie(seenID any, userID any) *MockMovieQuerier_GetSeenMovie_Call {
 	return &MockMovieQuerier_GetSeenMovie_Call{Call: _e.mock.On("GetSeenMovie", seenID, userID)}
 }
 
@@ -1013,7 +1022,7 @@ type MockMovieQuerier_GetUserWatchProviders_Call struct {
 
 // GetUserWatchProviders is a helper method to define mock.On call
 //   - userID string
-func (_e *MockMovieQuerier_Expecter) GetUserWatchProviders(userID interface{}) *MockMovieQuerier_GetUserWatchProviders_Call {
+func (_e *MockMovieQuerier_Expecter) GetUserWatchProviders(userID any) *MockMovieQuerier_GetUserWatchProviders_Call {
 	return &MockMovieQuerier_GetUserWatchProviders_Call{Call: _e.mock.On("GetUserWatchProviders", userID)}
 }
 
@@ -1074,7 +1083,7 @@ type MockMovieQuerier_IsWatchlisted_Call struct {
 // IsWatchlisted is a helper method to define mock.On call
 //   - id string
 //   - userID string
-func (_e *MockMovieQuerier_Expecter) IsWatchlisted(id interface{}, userID interface{}) *MockMovieQuerier_IsWatchlisted_Call {
+func (_e *MockMovieQuerier_Expecter) IsWatchlisted(id any, userID any) *MockMovieQuerier_IsWatchlisted_Call {
 	return &MockMovieQuerier_IsWatchlisted_Call{Call: _e.mock.On("IsWatchlisted", id, userID)}
 }
 
@@ -1139,7 +1148,7 @@ type MockMovieQuerier_RatingsByOthers_Call struct {
 
 // RatingsByOthers is a helper method to define mock.On call
 //   - id string
-func (_e *MockMovieQuerier_Expecter) RatingsByOthers(id interface{}) *MockMovieQuerier_RatingsByOthers_Call {
+func (_e *MockMovieQuerier_Expecter) RatingsByOthers(id any) *MockMovieQuerier_RatingsByOthers_Call {
 	return &MockMovieQuerier_RatingsByOthers_Call{Call: _e.mock.On("RatingsByOthers", id)}
 }
 
@@ -1202,7 +1211,7 @@ type MockMovieQuerier_SeenByUser_Call struct {
 // SeenByUser is a helper method to define mock.On call
 //   - id string
 //   - userID string
-func (_e *MockMovieQuerier_Expecter) SeenByUser(id interface{}, userID interface{}) *MockMovieQuerier_SeenByUser_Call {
+func (_e *MockMovieQuerier_Expecter) SeenByUser(id any, userID any) *MockMovieQuerier_SeenByUser_Call {
 	return &MockMovieQuerier_SeenByUser_Call{Call: _e.mock.On("SeenByUser", id, userID)}
 }
 
@@ -1260,7 +1269,7 @@ type MockMovieQuerier_UpdateNowPlaying_Call struct {
 //   - movieID int
 //   - position float64
 //   - userID string
-func (_e *MockMovieQuerier_Expecter) UpdateNowPlaying(movieID interface{}, position interface{}, userID interface{}) *MockMovieQuerier_UpdateNowPlaying_Call {
+func (_e *MockMovieQuerier_Expecter) UpdateNowPlaying(movieID any, position any, userID any) *MockMovieQuerier_UpdateNowPlaying_Call {
 	return &MockMovieQuerier_UpdateNowPlaying_Call{Call: _e.mock.On("UpdateNowPlaying", movieID, position, userID)}
 }
 
@@ -1323,7 +1332,7 @@ type MockMovieQuerier_UpdateRating_Call struct {
 //   - userID string
 //   - movieID int
 //   - rating string
-func (_e *MockMovieQuerier_Expecter) UpdateRating(userID interface{}, movieID interface{}, rating interface{}) *MockMovieQuerier_UpdateRating_Call {
+func (_e *MockMovieQuerier_Expecter) UpdateRating(userID any, movieID any, rating any) *MockMovieQuerier_UpdateRating_Call {
 	return &MockMovieQuerier_UpdateRating_Call{Call: _e.mock.On("UpdateRating", userID, movieID, rating)}
 }
 
@@ -1387,7 +1396,7 @@ type MockMovieQuerier_UpdateSeenMovie_Call struct {
 //   - userID string
 //   - watchedAt time.Time
 //   - friends []string
-func (_e *MockMovieQuerier_Expecter) UpdateSeenMovie(seenID interface{}, userID interface{}, watchedAt interface{}, friends interface{}) *MockMovieQuerier_UpdateSeenMovie_Call {
+func (_e *MockMovieQuerier_Expecter) UpdateSeenMovie(seenID any, userID any, watchedAt any, friends any) *MockMovieQuerier_UpdateSeenMovie_Call {
 	return &MockMovieQuerier_UpdateSeenMovie_Call{Call: _e.mock.On("UpdateSeenMovie", seenID, userID, watchedAt, friends)}
 }
 

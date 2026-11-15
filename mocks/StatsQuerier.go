@@ -17,10 +17,19 @@ func NewMockStatsQuerier(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockStatsQuerier {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &MockStatsQuerier{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -74,7 +83,7 @@ type MockStatsQuerier_GetBestOfTheYear_Call struct {
 // GetBestOfTheYear is a helper method to define mock.On call
 //   - userID string
 //   - year string
-func (_e *MockStatsQuerier_Expecter) GetBestOfTheYear(userID interface{}, year interface{}) *MockStatsQuerier_GetBestOfTheYear_Call {
+func (_e *MockStatsQuerier_Expecter) GetBestOfTheYear(userID any, year any) *MockStatsQuerier_GetBestOfTheYear_Call {
 	return &MockStatsQuerier_GetBestOfTheYear_Call{Call: _e.mock.On("GetBestOfTheYear", userID, year)}
 }
 
@@ -142,7 +151,7 @@ type MockStatsQuerier_GetHighestRankedPersonByJob_Call struct {
 // GetHighestRankedPersonByJob is a helper method to define mock.On call
 //   - userID string
 //   - job string
-func (_e *MockStatsQuerier_Expecter) GetHighestRankedPersonByJob(userID interface{}, job interface{}) *MockStatsQuerier_GetHighestRankedPersonByJob_Call {
+func (_e *MockStatsQuerier_Expecter) GetHighestRankedPersonByJob(userID any, job any) *MockStatsQuerier_GetHighestRankedPersonByJob_Call {
 	return &MockStatsQuerier_GetHighestRankedPersonByJob_Call{Call: _e.mock.On("GetHighestRankedPersonByJob", userID, job)}
 }
 
@@ -207,7 +216,7 @@ type MockStatsQuerier_GetMostAwardNominations_Call struct {
 
 // GetMostAwardNominations is a helper method to define mock.On call
 //   - userID string
-func (_e *MockStatsQuerier_Expecter) GetMostAwardNominations(userID interface{}) *MockStatsQuerier_GetMostAwardNominations_Call {
+func (_e *MockStatsQuerier_Expecter) GetMostAwardNominations(userID any) *MockStatsQuerier_GetMostAwardNominations_Call {
 	return &MockStatsQuerier_GetMostAwardNominations_Call{Call: _e.mock.On("GetMostAwardNominations", userID)}
 }
 
@@ -267,7 +276,7 @@ type MockStatsQuerier_GetMostAwardWins_Call struct {
 
 // GetMostAwardWins is a helper method to define mock.On call
 //   - userID string
-func (_e *MockStatsQuerier_Expecter) GetMostAwardWins(userID interface{}) *MockStatsQuerier_GetMostAwardWins_Call {
+func (_e *MockStatsQuerier_Expecter) GetMostAwardWins(userID any) *MockStatsQuerier_GetMostAwardWins_Call {
 	return &MockStatsQuerier_GetMostAwardWins_Call{Call: _e.mock.On("GetMostAwardWins", userID)}
 }
 
@@ -331,7 +340,7 @@ type MockStatsQuerier_GetMostWatchedByJob_Call struct {
 //   - job string
 //   - userID string
 //   - year string
-func (_e *MockStatsQuerier_Expecter) GetMostWatchedByJob(job interface{}, userID interface{}, year interface{}) *MockStatsQuerier_GetMostWatchedByJob_Call {
+func (_e *MockStatsQuerier_Expecter) GetMostWatchedByJob(job any, userID any, year any) *MockStatsQuerier_GetMostWatchedByJob_Call {
 	return &MockStatsQuerier_GetMostWatchedByJob_Call{Call: _e.mock.On("GetMostWatchedByJob", job, userID, year)}
 }
 
@@ -403,7 +412,7 @@ type MockStatsQuerier_GetMostWatchedMovies_Call struct {
 
 // GetMostWatchedMovies is a helper method to define mock.On call
 //   - userID string
-func (_e *MockStatsQuerier_Expecter) GetMostWatchedMovies(userID interface{}) *MockStatsQuerier_GetMostWatchedMovies_Call {
+func (_e *MockStatsQuerier_Expecter) GetMostWatchedMovies(userID any) *MockStatsQuerier_GetMostWatchedMovies_Call {
 	return &MockStatsQuerier_GetMostWatchedMovies_Call{Call: _e.mock.On("GetMostWatchedMovies", userID)}
 }
 
@@ -466,7 +475,7 @@ type MockStatsQuerier_GetMoviesByYear_Call struct {
 // GetMoviesByYear is a helper method to define mock.On call
 //   - userID string
 //   - year string
-func (_e *MockStatsQuerier_Expecter) GetMoviesByYear(userID interface{}, year interface{}) *MockStatsQuerier_GetMoviesByYear_Call {
+func (_e *MockStatsQuerier_Expecter) GetMoviesByYear(userID any, year any) *MockStatsQuerier_GetMoviesByYear_Call {
 	return &MockStatsQuerier_GetMoviesByYear_Call{Call: _e.mock.On("GetMoviesByYear", userID, year)}
 }
 
@@ -533,7 +542,7 @@ type MockStatsQuerier_GetRatings_Call struct {
 
 // GetRatings is a helper method to define mock.On call
 //   - userID string
-func (_e *MockStatsQuerier_Expecter) GetRatings(userID interface{}) *MockStatsQuerier_GetRatings_Call {
+func (_e *MockStatsQuerier_Expecter) GetRatings(userID any) *MockStatsQuerier_GetRatings_Call {
 	return &MockStatsQuerier_GetRatings_Call{Call: _e.mock.On("GetRatings", userID)}
 }
 
@@ -596,7 +605,7 @@ type MockStatsQuerier_GetRatingsForYear_Call struct {
 // GetRatingsForYear is a helper method to define mock.On call
 //   - year string
 //   - userID string
-func (_e *MockStatsQuerier_Expecter) GetRatingsForYear(year interface{}, userID interface{}) *MockStatsQuerier_GetRatingsForYear_Call {
+func (_e *MockStatsQuerier_Expecter) GetRatingsForYear(year any, userID any) *MockStatsQuerier_GetRatingsForYear_Call {
 	return &MockStatsQuerier_GetRatingsForYear_Call{Call: _e.mock.On("GetRatingsForYear", year, userID)}
 }
 
@@ -664,7 +673,7 @@ type MockStatsQuerier_GetRatingsThisYear_Call struct {
 // GetRatingsThisYear is a helper method to define mock.On call
 //   - userID string
 //   - yearTime string
-func (_e *MockStatsQuerier_Expecter) GetRatingsThisYear(userID interface{}, yearTime interface{}) *MockStatsQuerier_GetRatingsThisYear_Call {
+func (_e *MockStatsQuerier_Expecter) GetRatingsThisYear(userID any, yearTime any) *MockStatsQuerier_GetRatingsThisYear_Call {
 	return &MockStatsQuerier_GetRatingsThisYear_Call{Call: _e.mock.On("GetRatingsThisYear", userID, yearTime)}
 }
 
@@ -729,7 +738,7 @@ type MockStatsQuerier_GetReviewsCount_Call struct {
 
 // GetReviewsCount is a helper method to define mock.On call
 //   - userID string
-func (_e *MockStatsQuerier_Expecter) GetReviewsCount(userID interface{}) *MockStatsQuerier_GetReviewsCount_Call {
+func (_e *MockStatsQuerier_Expecter) GetReviewsCount(userID any) *MockStatsQuerier_GetReviewsCount_Call {
 	return &MockStatsQuerier_GetReviewsCount_Call{Call: _e.mock.On("GetReviewsCount", userID)}
 }
 
@@ -846,7 +855,7 @@ type MockStatsQuerier_GetShortestAndLongestMovie_Call struct {
 
 // GetShortestAndLongestMovie is a helper method to define mock.On call
 //   - userID string
-func (_e *MockStatsQuerier_Expecter) GetShortestAndLongestMovie(userID interface{}) *MockStatsQuerier_GetShortestAndLongestMovie_Call {
+func (_e *MockStatsQuerier_Expecter) GetShortestAndLongestMovie(userID any) *MockStatsQuerier_GetShortestAndLongestMovie_Call {
 	return &MockStatsQuerier_GetShortestAndLongestMovie_Call{Call: _e.mock.On("GetShortestAndLongestMovie", userID)}
 }
 
@@ -906,7 +915,7 @@ type MockStatsQuerier_GetStatsData_Call struct {
 
 // GetStatsData is a helper method to define mock.On call
 //   - userID string
-func (_e *MockStatsQuerier_Expecter) GetStatsData(userID interface{}) *MockStatsQuerier_GetStatsData_Call {
+func (_e *MockStatsQuerier_Expecter) GetStatsData(userID any) *MockStatsQuerier_GetStatsData_Call {
 	return &MockStatsQuerier_GetStatsData_Call{Call: _e.mock.On("GetStatsData", userID)}
 }
 
@@ -968,7 +977,7 @@ type MockStatsQuerier_GetTopAwardedMovies_Call struct {
 
 // GetTopAwardedMovies is a helper method to define mock.On call
 //   - userID string
-func (_e *MockStatsQuerier_Expecter) GetTopAwardedMovies(userID interface{}) *MockStatsQuerier_GetTopAwardedMovies_Call {
+func (_e *MockStatsQuerier_Expecter) GetTopAwardedMovies(userID any) *MockStatsQuerier_GetTopAwardedMovies_Call {
 	return &MockStatsQuerier_GetTopAwardedMovies_Call{Call: _e.mock.On("GetTopAwardedMovies", userID)}
 }
 
@@ -1032,7 +1041,7 @@ type MockStatsQuerier_GetTotalWatchedByJobAndYear_Call struct {
 //   - userID string
 //   - job string
 //   - year string
-func (_e *MockStatsQuerier_Expecter) GetTotalWatchedByJobAndYear(userID interface{}, job interface{}, year interface{}) *MockStatsQuerier_GetTotalWatchedByJobAndYear_Call {
+func (_e *MockStatsQuerier_Expecter) GetTotalWatchedByJobAndYear(userID any, job any, year any) *MockStatsQuerier_GetTotalWatchedByJobAndYear_Call {
 	return &MockStatsQuerier_GetTotalWatchedByJobAndYear_Call{Call: _e.mock.On("GetTotalWatchedByJobAndYear", userID, job, year)}
 }
 
@@ -1105,7 +1114,7 @@ type MockStatsQuerier_GetWatchedByWeekday_Call struct {
 // GetWatchedByWeekday is a helper method to define mock.On call
 //   - userID string
 //   - yearTime string
-func (_e *MockStatsQuerier_Expecter) GetWatchedByWeekday(userID interface{}, yearTime interface{}) *MockStatsQuerier_GetWatchedByWeekday_Call {
+func (_e *MockStatsQuerier_Expecter) GetWatchedByWeekday(userID any, yearTime any) *MockStatsQuerier_GetWatchedByWeekday_Call {
 	return &MockStatsQuerier_GetWatchedByWeekday_Call{Call: _e.mock.On("GetWatchedByWeekday", userID, yearTime)}
 }
 
@@ -1172,7 +1181,7 @@ type MockStatsQuerier_GetWatchedByYear_Call struct {
 
 // GetWatchedByYear is a helper method to define mock.On call
 //   - userID string
-func (_e *MockStatsQuerier_Expecter) GetWatchedByYear(userID interface{}) *MockStatsQuerier_GetWatchedByYear_Call {
+func (_e *MockStatsQuerier_Expecter) GetWatchedByYear(userID any) *MockStatsQuerier_GetWatchedByYear_Call {
 	return &MockStatsQuerier_GetWatchedByYear_Call{Call: _e.mock.On("GetWatchedByYear", userID)}
 }
 
@@ -1235,7 +1244,7 @@ type MockStatsQuerier_GetWatchedThisYearByMonth_Call struct {
 // GetWatchedThisYearByMonth is a helper method to define mock.On call
 //   - userID string
 //   - yearTime string
-func (_e *MockStatsQuerier_Expecter) GetWatchedThisYearByMonth(userID interface{}, yearTime interface{}) *MockStatsQuerier_GetWatchedThisYearByMonth_Call {
+func (_e *MockStatsQuerier_Expecter) GetWatchedThisYearByMonth(userID any, yearTime any) *MockStatsQuerier_GetWatchedThisYearByMonth_Call {
 	return &MockStatsQuerier_GetWatchedThisYearByMonth_Call{Call: _e.mock.On("GetWatchedThisYearByMonth", userID, yearTime)}
 }
 
@@ -1303,7 +1312,7 @@ type MockStatsQuerier_GetWilhelmMovies_Call struct {
 // GetWilhelmMovies is a helper method to define mock.On call
 //   - userID string
 //   - offset int
-func (_e *MockStatsQuerier_Expecter) GetWilhelmMovies(userID interface{}, offset interface{}) *MockStatsQuerier_GetWilhelmMovies_Call {
+func (_e *MockStatsQuerier_Expecter) GetWilhelmMovies(userID any, offset any) *MockStatsQuerier_GetWilhelmMovies_Call {
 	return &MockStatsQuerier_GetWilhelmMovies_Call{Call: _e.mock.On("GetWilhelmMovies", userID, offset)}
 }
 
@@ -1370,7 +1379,7 @@ type MockStatsQuerier_GetWilhelmScreamCount_Call struct {
 
 // GetWilhelmScreamCount is a helper method to define mock.On call
 //   - userID string
-func (_e *MockStatsQuerier_Expecter) GetWilhelmScreamCount(userID interface{}) *MockStatsQuerier_GetWilhelmScreamCount_Call {
+func (_e *MockStatsQuerier_Expecter) GetWilhelmScreamCount(userID any) *MockStatsQuerier_GetWilhelmScreamCount_Call {
 	return &MockStatsQuerier_GetWilhelmScreamCount_Call{Call: _e.mock.On("GetWilhelmScreamCount", userID)}
 }
 

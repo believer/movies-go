@@ -16,10 +16,19 @@ func NewMockFeedQuerier(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockFeedQuerier {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &MockFeedQuerier{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -73,7 +82,7 @@ type MockFeedQuerier_GetFeedMovies_Call struct {
 // GetFeedMovies is a helper method to define mock.On call
 //   - userID string
 //   - offset int
-func (_e *MockFeedQuerier_Expecter) GetFeedMovies(userID interface{}, offset interface{}) *MockFeedQuerier_GetFeedMovies_Call {
+func (_e *MockFeedQuerier_Expecter) GetFeedMovies(userID any, offset any) *MockFeedQuerier_GetFeedMovies_Call {
 	return &MockFeedQuerier_GetFeedMovies_Call{Call: _e.mock.On("GetFeedMovies", userID, offset)}
 }
 
@@ -140,7 +149,7 @@ type MockFeedQuerier_SearchMovies_Call struct {
 
 // SearchMovies is a helper method to define mock.On call
 //   - query string
-func (_e *MockFeedQuerier_Expecter) SearchMovies(query interface{}) *MockFeedQuerier_SearchMovies_Call {
+func (_e *MockFeedQuerier_Expecter) SearchMovies(query any) *MockFeedQuerier_SearchMovies_Call {
 	return &MockFeedQuerier_SearchMovies_Call{Call: _e.mock.On("SearchMovies", query)}
 }
 
@@ -203,7 +212,7 @@ type MockFeedQuerier_SearchMoviesByRating_Call struct {
 // SearchMoviesByRating is a helper method to define mock.On call
 //   - rating string
 //   - userID string
-func (_e *MockFeedQuerier_Expecter) SearchMoviesByRating(rating interface{}, userID interface{}) *MockFeedQuerier_SearchMoviesByRating_Call {
+func (_e *MockFeedQuerier_Expecter) SearchMoviesByRating(rating any, userID any) *MockFeedQuerier_SearchMoviesByRating_Call {
 	return &MockFeedQuerier_SearchMoviesByRating_Call{Call: _e.mock.On("SearchMoviesByRating", rating, userID)}
 }
 
@@ -271,7 +280,7 @@ type MockFeedQuerier_SearchPersons_Call struct {
 // SearchPersons is a helper method to define mock.On call
 //   - query string
 //   - job string
-func (_e *MockFeedQuerier_Expecter) SearchPersons(query interface{}, job interface{}) *MockFeedQuerier_SearchPersons_Call {
+func (_e *MockFeedQuerier_Expecter) SearchPersons(query any, job any) *MockFeedQuerier_SearchPersons_Call {
 	return &MockFeedQuerier_SearchPersons_Call{Call: _e.mock.On("SearchPersons", query, job)}
 }
 

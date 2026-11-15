@@ -16,10 +16,19 @@ func NewMockWatchlistQuerier(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockWatchlistQuerier {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &MockWatchlistQuerier{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -62,7 +71,7 @@ type MockWatchlistQuerier_DeleteFromWatchlist_Call struct {
 // DeleteFromWatchlist is a helper method to define mock.On call
 //   - id string
 //   - userID string
-func (_e *MockWatchlistQuerier_Expecter) DeleteFromWatchlist(id interface{}, userID interface{}) *MockWatchlistQuerier_DeleteFromWatchlist_Call {
+func (_e *MockWatchlistQuerier_Expecter) DeleteFromWatchlist(id any, userID any) *MockWatchlistQuerier_DeleteFromWatchlist_Call {
 	return &MockWatchlistQuerier_DeleteFromWatchlist_Call{Call: _e.mock.On("DeleteFromWatchlist", id, userID)}
 }
 
@@ -130,7 +139,7 @@ type MockWatchlistQuerier_GetReleasedMovies_Call struct {
 // GetReleasedMovies is a helper method to define mock.On call
 //   - userID string
 //   - sortOrder string
-func (_e *MockWatchlistQuerier_Expecter) GetReleasedMovies(userID interface{}, sortOrder interface{}) *MockWatchlistQuerier_GetReleasedMovies_Call {
+func (_e *MockWatchlistQuerier_Expecter) GetReleasedMovies(userID any, sortOrder any) *MockWatchlistQuerier_GetReleasedMovies_Call {
 	return &MockWatchlistQuerier_GetReleasedMovies_Call{Call: _e.mock.On("GetReleasedMovies", userID, sortOrder)}
 }
 
@@ -197,7 +206,7 @@ type MockWatchlistQuerier_GetTBDMovies_Call struct {
 
 // GetTBDMovies is a helper method to define mock.On call
 //   - userID string
-func (_e *MockWatchlistQuerier_Expecter) GetTBDMovies(userID interface{}) *MockWatchlistQuerier_GetTBDMovies_Call {
+func (_e *MockWatchlistQuerier_Expecter) GetTBDMovies(userID any) *MockWatchlistQuerier_GetTBDMovies_Call {
 	return &MockWatchlistQuerier_GetTBDMovies_Call{Call: _e.mock.On("GetTBDMovies", userID)}
 }
 
@@ -260,7 +269,7 @@ type MockWatchlistQuerier_GetUnreleasedMovies_Call struct {
 // GetUnreleasedMovies is a helper method to define mock.On call
 //   - userID string
 //   - sortOrder string
-func (_e *MockWatchlistQuerier_Expecter) GetUnreleasedMovies(userID interface{}, sortOrder interface{}) *MockWatchlistQuerier_GetUnreleasedMovies_Call {
+func (_e *MockWatchlistQuerier_Expecter) GetUnreleasedMovies(userID any, sortOrder any) *MockWatchlistQuerier_GetUnreleasedMovies_Call {
 	return &MockWatchlistQuerier_GetUnreleasedMovies_Call{Call: _e.mock.On("GetUnreleasedMovies", userID, sortOrder)}
 }
 

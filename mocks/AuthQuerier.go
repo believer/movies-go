@@ -16,10 +16,19 @@ func NewMockAuthQuerier(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockAuthQuerier {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &MockAuthQuerier{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -62,7 +71,7 @@ type MockAuthQuerier_CreateUser_Call struct {
 // CreateUser is a helper method to define mock.On call
 //   - username string
 //   - passwordHash string
-func (_e *MockAuthQuerier_Expecter) CreateUser(username interface{}, passwordHash interface{}) *MockAuthQuerier_CreateUser_Call {
+func (_e *MockAuthQuerier_Expecter) CreateUser(username any, passwordHash any) *MockAuthQuerier_CreateUser_Call {
 	return &MockAuthQuerier_CreateUser_Call{Call: _e.mock.On("CreateUser", username, passwordHash)}
 }
 
@@ -127,7 +136,7 @@ type MockAuthQuerier_GetUserForLogin_Call struct {
 
 // GetUserForLogin is a helper method to define mock.On call
 //   - username string
-func (_e *MockAuthQuerier_Expecter) GetUserForLogin(username interface{}) *MockAuthQuerier_GetUserForLogin_Call {
+func (_e *MockAuthQuerier_Expecter) GetUserForLogin(username any) *MockAuthQuerier_GetUserForLogin_Call {
 	return &MockAuthQuerier_GetUserForLogin_Call{Call: _e.mock.On("GetUserForLogin", username)}
 }
 
