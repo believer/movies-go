@@ -102,5 +102,9 @@ jobs:
         if: ${{ failure() }}
         with:
           name: e2e-report-${{ matrix.browser }}
-          path: playwright-report/
+          # The snapshots folder holds any visual baseline the run wrote, to
+          # commit when a baseline is new or deleted on purpose
+          path: |
+            playwright-report/
+            tests/visual.spec.ts-snapshots/
           retention-days: 30
