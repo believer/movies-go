@@ -8,17 +8,26 @@ import (
 	"path/filepath"
 	"regexp"
 	"strconv"
+	"strings"
 	"testing"
 )
 
-var sqlStart = regexp.MustCompile(`(?i)^\s*(SELECT|INSERT|UPDATE|DELETE|WITH)\b`)
+var sqlStart = regexp.MustCompile(`(?i)^[\s(]*(SELECT|INSERT|UPDATE|DELETE|WITH)\b`)
 
-// TestQueriesPrepare has Postgres prepare every SQL literal in this package's
-// source, so a syntax error or an unknown table or column fails here even when
-// no other test runs the query. It needs no data: preparing checks the SQL
-// against the schema without running it.
-func TestQueriesPrepare(t *testing.T) {
-	db := dbtest.Open(t)
+// sqlLiteral is a SQL string in this package's source.
+type sqlLiteral struct {
+	// Pos is the literal's file:line:column
+	Pos string
+	// Owner is the declaration holding the literal: a query constant's name
+	// (genreMoviesQuery) or a function's (StatsRepository.GetRatings)
+	Owner string
+	Query string
+}
+
+// sqlLiterals returns every SQL string literal in this package's non-test
+// source.
+func sqlLiterals(t *testing.T) []sqlLiteral {
+	t.Helper()
 
 	files, err := filepath.Glob("*.go")
 
@@ -27,48 +36,117 @@ func TestQueriesPrepare(t *testing.T) {
 	}
 
 	fset := token.NewFileSet()
-	count := 0
+	literals := []sqlLiteral{}
 
 	for _, file := range files {
+		if strings.HasSuffix(file, "_test.go") {
+			continue
+		}
+
 		f, err := parser.ParseFile(fset, file, nil, 0)
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		ast.Inspect(f, func(n ast.Node) bool {
-			lit, ok := n.(*ast.BasicLit)
+		for _, decl := range f.Decls {
+			for _, owned := range ownedNodes(decl) {
+				ast.Inspect(owned.node, func(n ast.Node) bool {
+					lit, ok := n.(*ast.BasicLit)
 
-			if !ok || lit.Kind != token.STRING {
-				return true
+					if !ok || lit.Kind != token.STRING {
+						return true
+					}
+
+					query, err := strconv.Unquote(lit.Value)
+
+					if err != nil || !sqlStart.MatchString(query) {
+						return true
+					}
+
+					literals = append(literals, sqlLiteral{fset.Position(lit.Pos()).String(), owned.name, query})
+
+					return true
+				})
 			}
-
-			query, err := strconv.Unquote(lit.Value)
-
-			if err != nil || !sqlStart.MatchString(query) {
-				return true
-			}
-
-			count++
-
-			stmt, err := db.Preparex(query)
-
-			if err != nil {
-				t.Errorf("%s: %v", fset.Position(lit.Pos()), err)
-				return true
-			}
-
-			stmt.Close()
-
-			return true
-		})
+		}
 	}
 
-	t.Logf("prepared %d queries", count)
-
-	// Guards the finder itself: if it stopped matching, the test would pass
-	// without preparing anything
-	if count < 50 {
-		t.Fatalf("found only %d queries, expected the repositories' queries", count)
+	// Guards the finder itself: if it stopped matching, the tests using it
+	// would pass without checking anything
+	if len(literals) < 50 {
+		t.Fatalf("found only %d queries, expected the repositories' queries", len(literals))
 	}
+
+	return literals
+}
+
+type ownedNode struct {
+	name string
+	node ast.Node
+}
+
+// ownedNodes splits a top-level declaration into the parts that own a query:
+// a function, or each name in a const or var declaration.
+func ownedNodes(decl ast.Decl) []ownedNode {
+	switch d := decl.(type) {
+	case *ast.FuncDecl:
+		name := d.Name.Name
+
+		if d.Recv != nil && len(d.Recv.List) == 1 {
+			recv := d.Recv.List[0].Type
+
+			if star, ok := recv.(*ast.StarExpr); ok {
+				recv = star.X
+			}
+
+			if ident, ok := recv.(*ast.Ident); ok {
+				name = ident.Name + "." + name
+			}
+		}
+
+		return []ownedNode{{name, d}}
+	case *ast.GenDecl:
+		nodes := []ownedNode{}
+
+		for _, spec := range d.Specs {
+			v, ok := spec.(*ast.ValueSpec)
+
+			if !ok {
+				continue
+			}
+
+			for i, name := range v.Names {
+				if i < len(v.Values) {
+					nodes = append(nodes, ownedNode{name.Name, v.Values[i]})
+				}
+			}
+		}
+
+		return nodes
+	}
+
+	return nil
+}
+
+// TestQueriesPrepare has Postgres prepare every SQL literal in this package's
+// source, so a syntax error or an unknown table or column fails here even when
+// no other test runs the query. It needs no data: preparing checks the SQL
+// against the schema without running it.
+func TestQueriesPrepare(t *testing.T) {
+	db := dbtest.Open(t)
+	literals := sqlLiterals(t)
+
+	for _, lit := range literals {
+		stmt, err := db.Preparex(lit.Query)
+
+		if err != nil {
+			t.Errorf("%s: %v", lit.Pos, err)
+			continue
+		}
+
+		stmt.Close()
+	}
+
+	t.Logf("prepared %d queries", len(literals))
 }
