@@ -23,3 +23,10 @@ func (ni *NullInt64) UnmarshalJSON(b []byte) error {
 	}
 	return nil
 }
+
+func (ni NullInt64) MarshalJSON() ([]byte, error) {
+	if !ni.Valid {
+		return []byte("null"), nil
+	}
+	return json.Marshal(ni.Int64)
+}
