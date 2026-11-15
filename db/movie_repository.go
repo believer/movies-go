@@ -116,8 +116,19 @@ FROM
     movie AS m
     LEFT JOIN movie_genre AS mg ON mg.movie_id = m.id
     LEFT JOIN genre AS g ON g.id = mg.genre_id
-    LEFT JOIN rating AS r ON r.movie_id = m.id
-        AND r.user_id = $2
+    -- The latest Rating is the one that counts
+    LEFT JOIN LATERAL (
+        SELECT
+            rating,
+            created_at
+        FROM
+            rating
+        WHERE
+            movie_id = m.id
+            AND user_id = $2
+        ORDER BY
+            created_at DESC
+        LIMIT 1) AS r ON TRUE
     LEFT JOIN movie_series AS ms ON ms.movie_id = m.id
     LEFT JOIN series AS se ON se.id = ms.series_id
     LEFT JOIN movie_language AS ml ON ml.movie_id = m.id
@@ -128,7 +139,8 @@ WHERE
     m.id = $1
 GROUP BY
     1,
-    r.id
+    r.rating,
+    r.created_at
 		`, id, userID)
 
 	return movie, err

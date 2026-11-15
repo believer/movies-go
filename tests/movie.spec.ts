@@ -63,6 +63,19 @@ test("a language links to the language page", async ({ page }) => {
 	await expect(page.getByRole("link", { name: "Parasite" })).toHaveCount(0)
 })
 
+test("a re-rated movie shows the latest Rating", async ({ page }) => {
+	// Rated 10, then 9. User 2's Rating of 6 is someone else's.
+	await page.goto("/movie/the-dark-knight-2")
+
+	const rating = page.getByLabel("My rating")
+
+	await expect(rating).toHaveText("9")
+	await expect(rating.locator("time")).toHaveAttribute(
+		"title",
+		"2021-12-30 23:40"
+	)
+})
+
 test("the Rating links to movies with the same Rating", async ({ page }) => {
 	await page.goto("/movie/inception-3")
 
