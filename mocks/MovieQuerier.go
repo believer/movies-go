@@ -355,16 +355,16 @@ func (_c *MockMovieQuerier_DeleteRating_Call) RunAndReturn(run func(tx *sqlx.Tx,
 }
 
 // DeleteSeenMovie provides a mock function for the type MockMovieQuerier
-func (_mock *MockMovieQuerier) DeleteSeenMovie(tx *sqlx.Tx, seenID string) error {
-	ret := _mock.Called(tx, seenID)
+func (_mock *MockMovieQuerier) DeleteSeenMovie(tx *sqlx.Tx, seenID string, userID string) error {
+	ret := _mock.Called(tx, seenID, userID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for DeleteSeenMovie")
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(*sqlx.Tx, string) error); ok {
-		r0 = returnFunc(tx, seenID)
+	if returnFunc, ok := ret.Get(0).(func(*sqlx.Tx, string, string) error); ok {
+		r0 = returnFunc(tx, seenID, userID)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -379,11 +379,12 @@ type MockMovieQuerier_DeleteSeenMovie_Call struct {
 // DeleteSeenMovie is a helper method to define mock.On call
 //   - tx *sqlx.Tx
 //   - seenID string
-func (_e *MockMovieQuerier_Expecter) DeleteSeenMovie(tx interface{}, seenID interface{}) *MockMovieQuerier_DeleteSeenMovie_Call {
-	return &MockMovieQuerier_DeleteSeenMovie_Call{Call: _e.mock.On("DeleteSeenMovie", tx, seenID)}
+//   - userID string
+func (_e *MockMovieQuerier_Expecter) DeleteSeenMovie(tx interface{}, seenID interface{}, userID interface{}) *MockMovieQuerier_DeleteSeenMovie_Call {
+	return &MockMovieQuerier_DeleteSeenMovie_Call{Call: _e.mock.On("DeleteSeenMovie", tx, seenID, userID)}
 }
 
-func (_c *MockMovieQuerier_DeleteSeenMovie_Call) Run(run func(tx *sqlx.Tx, seenID string)) *MockMovieQuerier_DeleteSeenMovie_Call {
+func (_c *MockMovieQuerier_DeleteSeenMovie_Call) Run(run func(tx *sqlx.Tx, seenID string, userID string)) *MockMovieQuerier_DeleteSeenMovie_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 *sqlx.Tx
 		if args[0] != nil {
@@ -393,9 +394,14 @@ func (_c *MockMovieQuerier_DeleteSeenMovie_Call) Run(run func(tx *sqlx.Tx, seenI
 		if args[1] != nil {
 			arg1 = args[1].(string)
 		}
+		var arg2 string
+		if args[2] != nil {
+			arg2 = args[2].(string)
+		}
 		run(
 			arg0,
 			arg1,
+			arg2,
 		)
 	})
 	return _c
@@ -406,7 +412,7 @@ func (_c *MockMovieQuerier_DeleteSeenMovie_Call) Return(err error) *MockMovieQue
 	return _c
 }
 
-func (_c *MockMovieQuerier_DeleteSeenMovie_Call) RunAndReturn(run func(tx *sqlx.Tx, seenID string) error) *MockMovieQuerier_DeleteSeenMovie_Call {
+func (_c *MockMovieQuerier_DeleteSeenMovie_Call) RunAndReturn(run func(tx *sqlx.Tx, seenID string, userID string) error) *MockMovieQuerier_DeleteSeenMovie_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -909,8 +915,8 @@ func (_c *MockMovieQuerier_GetReviewByMovieID_Call) RunAndReturn(run func(movieI
 }
 
 // GetSeenMovie provides a mock function for the type MockMovieQuerier
-func (_mock *MockMovieQuerier) GetSeenMovie(seenID string) (views.WatchData, error) {
-	ret := _mock.Called(seenID)
+func (_mock *MockMovieQuerier) GetSeenMovie(seenID string, userID string) (views.WatchData, error) {
+	ret := _mock.Called(seenID, userID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetSeenMovie")
@@ -918,16 +924,16 @@ func (_mock *MockMovieQuerier) GetSeenMovie(seenID string) (views.WatchData, err
 
 	var r0 views.WatchData
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(string) (views.WatchData, error)); ok {
-		return returnFunc(seenID)
+	if returnFunc, ok := ret.Get(0).(func(string, string) (views.WatchData, error)); ok {
+		return returnFunc(seenID, userID)
 	}
-	if returnFunc, ok := ret.Get(0).(func(string) views.WatchData); ok {
-		r0 = returnFunc(seenID)
+	if returnFunc, ok := ret.Get(0).(func(string, string) views.WatchData); ok {
+		r0 = returnFunc(seenID, userID)
 	} else {
 		r0 = ret.Get(0).(views.WatchData)
 	}
-	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
-		r1 = returnFunc(seenID)
+	if returnFunc, ok := ret.Get(1).(func(string, string) error); ok {
+		r1 = returnFunc(seenID, userID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -941,18 +947,24 @@ type MockMovieQuerier_GetSeenMovie_Call struct {
 
 // GetSeenMovie is a helper method to define mock.On call
 //   - seenID string
-func (_e *MockMovieQuerier_Expecter) GetSeenMovie(seenID interface{}) *MockMovieQuerier_GetSeenMovie_Call {
-	return &MockMovieQuerier_GetSeenMovie_Call{Call: _e.mock.On("GetSeenMovie", seenID)}
+//   - userID string
+func (_e *MockMovieQuerier_Expecter) GetSeenMovie(seenID interface{}, userID interface{}) *MockMovieQuerier_GetSeenMovie_Call {
+	return &MockMovieQuerier_GetSeenMovie_Call{Call: _e.mock.On("GetSeenMovie", seenID, userID)}
 }
 
-func (_c *MockMovieQuerier_GetSeenMovie_Call) Run(run func(seenID string)) *MockMovieQuerier_GetSeenMovie_Call {
+func (_c *MockMovieQuerier_GetSeenMovie_Call) Run(run func(seenID string, userID string)) *MockMovieQuerier_GetSeenMovie_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 string
 		if args[0] != nil {
 			arg0 = args[0].(string)
 		}
+		var arg1 string
+		if args[1] != nil {
+			arg1 = args[1].(string)
+		}
 		run(
 			arg0,
+			arg1,
 		)
 	})
 	return _c
@@ -963,7 +975,7 @@ func (_c *MockMovieQuerier_GetSeenMovie_Call) Return(watchData views.WatchData, 
 	return _c
 }
 
-func (_c *MockMovieQuerier_GetSeenMovie_Call) RunAndReturn(run func(seenID string) (views.WatchData, error)) *MockMovieQuerier_GetSeenMovie_Call {
+func (_c *MockMovieQuerier_GetSeenMovie_Call) RunAndReturn(run func(seenID string, userID string) (views.WatchData, error)) *MockMovieQuerier_GetSeenMovie_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -1349,16 +1361,16 @@ func (_c *MockMovieQuerier_UpdateRating_Call) RunAndReturn(run func(userID strin
 }
 
 // UpdateSeenMovie provides a mock function for the type MockMovieQuerier
-func (_mock *MockMovieQuerier) UpdateSeenMovie(seenID string, watchedAt time.Time, friends []string) error {
-	ret := _mock.Called(seenID, watchedAt, friends)
+func (_mock *MockMovieQuerier) UpdateSeenMovie(seenID string, userID string, watchedAt time.Time, friends []string) error {
+	ret := _mock.Called(seenID, userID, watchedAt, friends)
 
 	if len(ret) == 0 {
 		panic("no return value specified for UpdateSeenMovie")
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(string, time.Time, []string) error); ok {
-		r0 = returnFunc(seenID, watchedAt, friends)
+	if returnFunc, ok := ret.Get(0).(func(string, string, time.Time, []string) error); ok {
+		r0 = returnFunc(seenID, userID, watchedAt, friends)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -1372,30 +1384,36 @@ type MockMovieQuerier_UpdateSeenMovie_Call struct {
 
 // UpdateSeenMovie is a helper method to define mock.On call
 //   - seenID string
+//   - userID string
 //   - watchedAt time.Time
 //   - friends []string
-func (_e *MockMovieQuerier_Expecter) UpdateSeenMovie(seenID interface{}, watchedAt interface{}, friends interface{}) *MockMovieQuerier_UpdateSeenMovie_Call {
-	return &MockMovieQuerier_UpdateSeenMovie_Call{Call: _e.mock.On("UpdateSeenMovie", seenID, watchedAt, friends)}
+func (_e *MockMovieQuerier_Expecter) UpdateSeenMovie(seenID interface{}, userID interface{}, watchedAt interface{}, friends interface{}) *MockMovieQuerier_UpdateSeenMovie_Call {
+	return &MockMovieQuerier_UpdateSeenMovie_Call{Call: _e.mock.On("UpdateSeenMovie", seenID, userID, watchedAt, friends)}
 }
 
-func (_c *MockMovieQuerier_UpdateSeenMovie_Call) Run(run func(seenID string, watchedAt time.Time, friends []string)) *MockMovieQuerier_UpdateSeenMovie_Call {
+func (_c *MockMovieQuerier_UpdateSeenMovie_Call) Run(run func(seenID string, userID string, watchedAt time.Time, friends []string)) *MockMovieQuerier_UpdateSeenMovie_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 string
 		if args[0] != nil {
 			arg0 = args[0].(string)
 		}
-		var arg1 time.Time
+		var arg1 string
 		if args[1] != nil {
-			arg1 = args[1].(time.Time)
+			arg1 = args[1].(string)
 		}
-		var arg2 []string
+		var arg2 time.Time
 		if args[2] != nil {
-			arg2 = args[2].([]string)
+			arg2 = args[2].(time.Time)
+		}
+		var arg3 []string
+		if args[3] != nil {
+			arg3 = args[3].([]string)
 		}
 		run(
 			arg0,
 			arg1,
 			arg2,
+			arg3,
 		)
 	})
 	return _c
@@ -1406,7 +1424,7 @@ func (_c *MockMovieQuerier_UpdateSeenMovie_Call) Return(err error) *MockMovieQue
 	return _c
 }
 
-func (_c *MockMovieQuerier_UpdateSeenMovie_Call) RunAndReturn(run func(seenID string, watchedAt time.Time, friends []string) error) *MockMovieQuerier_UpdateSeenMovie_Call {
+func (_c *MockMovieQuerier_UpdateSeenMovie_Call) RunAndReturn(run func(seenID string, userID string, watchedAt time.Time, friends []string) error) *MockMovieQuerier_UpdateSeenMovie_Call {
 	_c.Call.Return(run)
 	return _c
 }
