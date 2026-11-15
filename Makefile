@@ -29,11 +29,12 @@ PSQL ?= docker exec -i postgres_test psql -U admin
 test-postgres:
 	$(if $(filter file,$(origin PSQL)),@docker-compose up -d --wait postgres_test)
 
-# Each checkout gets a test database of its own, named after its directory
-# plus a hash of its path, e.g. movies_test_movies_api_3f9a1c, so checkouts
-# run make test side by side. Databases of removed checkouts stay until
-# dropped by hand.
-CHECKOUT_TEST_DB := movies_test_$(shell printf '%s' '$(notdir $(CURDIR))' | tr 'A-Z' 'a-z' | tr -c 'a-z0-9' '_' | cut -c1-30)_$(shell printf '%s' '$(CURDIR)' | shasum | cut -c1-6)
+# Each checkout gets test and bench databases of its own, named after its
+# directory plus a hash of its path, e.g. movies_test_movies_api_3f9a1c, so
+# checkouts run make test and make bench side by side. Databases of removed
+# checkouts stay until dropped by hand.
+CHECKOUT := $(shell printf '%s' '$(notdir $(CURDIR))' | tr 'A-Z' 'a-z' | tr -c 'a-z0-9' '_' | cut -c1-30)_$(shell printf '%s' '$(CURDIR)' | shasum | cut -c1-6)
+CHECKOUT_TEST_DB := movies_test_$(CHECKOUT)
 TEST_DB ?= $(CHECKOUT_TEST_DB)
 
 # Rebuild TEST_DB from this checkout's db/schema.sql, so a branch that
@@ -51,6 +52,35 @@ PKG ?= ./...
 # which can't tell that test-db rebuilt the database.
 test: test-db
 	@TEST_DATABASE_URL="$(TEST_DATABASE_URL)" go test -count=1 -p 1 $(if $(RUN),-run '$(RUN)') $(PKG)
+
+# Benchmarks run on a copy of the production backup in postgres_local, so
+# they need make db-up once. See docs/agents/performance.md.
+BENCH_DB ?= movies_bench_$(CHECKOUT)
+BENCH_DATABASE_URL ?= postgres://admin:password@localhost:5432/$(BENCH_DB)?sslmode=disable
+LOCAL_PSQL := docker exec -i postgres_local psql -U admin -v ON_ERROR_STOP=1 -q
+
+# Copy movies into BENCH_DB, migrate it with this checkout's migrations and
+# VACUUM ANALYZE it, so the planner has statistics. pg_dump reads a snapshot
+# while make dev or other clients have movies open, which CREATE DATABASE
+# ... TEMPLATE movies can't.
+bench-db:
+	@$(LOCAL_PSQL) -d postgres -c 'SET client_min_messages = warning' -c 'DROP DATABASE IF EXISTS $(BENCH_DB) WITH (FORCE)' -c 'CREATE DATABASE $(BENCH_DB)'
+	@docker exec postgres_local pg_dump -U admin movies | $(LOCAL_PSQL) -d $(BENCH_DB) > /dev/null
+	@DATABASE_URL="$(BENCH_DATABASE_URL)" go run ./cmd/migrate
+	@$(LOCAL_PSQL) -d $(BENCH_DB) -c 'VACUUM ANALYZE'
+	@echo "\033[0;32m(✓)\033[0;37m Built $(BENCH_DB)"
+
+BENCH ?= .
+BENCH_COUNT ?= 10
+# The slowest queries take under 100ms, so a quarter second still times a
+# few calls, and all benchmarks run ten times in about three minutes
+BENCH_TIME ?= 0.25s
+
+# Run the benchmarks in db/ against BENCH_DB, built by make bench-db. Narrow
+# with BENCH, e.g. make bench BENCH=Stats/GetRatings, and compare two runs
+# with benchstat: make bench > new.txt.
+bench:
+	@BENCH_DATABASE_URL="$(BENCH_DATABASE_URL)" go test ./db -run '^$$' -bench '$(BENCH)' -benchmem -benchtime=$(BENCH_TIME) -count=$(BENCH_COUNT)
 
 # Each E2E server port gets a database of its own, so checkouts on different
 # ports run E2E side by side. tests/env.ts names it the same way.
