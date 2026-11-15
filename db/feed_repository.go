@@ -27,7 +27,7 @@ func (r *FeedRepository) SearchMovies(query string) (types.Movies, error) {
 SELECT
     m.id,
     m.title,
-    m.overview,
+    COALESCE(m.overview, '') AS overview,
     m.release_date AS watched_at,
     COALESCE(ARRAY_TO_JSON(ARRAY (
                 SELECT
@@ -78,7 +78,7 @@ func (r *FeedRepository) SearchMoviesByRating(rating string, userID string) (typ
 SELECT
     m.id,
     m.title,
-    m.overview,
+    COALESCE(m.overview, '') AS overview,
     m.release_date AS watched_at,
     COALESCE(ARRAY_TO_JSON(ARRAY (
                 SELECT
@@ -116,7 +116,7 @@ func (r *FeedRepository) GetFeedMovies(userID string, offset int) (types.Movies,
 SELECT
     m.id,
     m.title,
-    m.overview,
+    COALESCE(m.overview, '') AS overview,
     m.release_date,
     s.date at time zone 'UTC' at time zone 'Europe/Stockholm' AS watched_at,
     COALESCE(ARRAY_TO_JSON(ARRAY (

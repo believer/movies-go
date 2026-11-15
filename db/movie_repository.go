@@ -78,9 +78,9 @@ SELECT
     m.release_date,
     m.runtime,
     m.imdb_id,
-    m.overview,
+    COALESCE(m.overview, '') AS overview,
     m.original_title,
-    m.tagline,
+    COALESCE(m.tagline, '') AS tagline,
     COALESCE(MAX(np.position), 0) AS position,
     (MAX(np.movie_id) IS NOT NULL) AS now_playing,
     COALESCE(ARRAY_TO_JSON(ARRAY (

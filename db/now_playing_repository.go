@@ -36,7 +36,7 @@ SELECT
     m.id,
     m.title,
     m.runtime,
-    m.overview,
+    COALESCE(m.overview, '') AS overview,
     (
         CASE WHEN m.runtime != 0 THEN
             np."position" / m.runtime
