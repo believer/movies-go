@@ -31,12 +31,12 @@ jobs:
     env:
       TEST_DATABASE_URL: postgres://admin:password@localhost:5432/movies_test?sslmode=disable
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-go@v6
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
         with:
           go-version-file: "go.mod"
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v6
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: lts/*
           cache: pnpm
@@ -78,12 +78,12 @@ jobs:
       PSQL: psql -h localhost -U admin
       PGPASSWORD: password
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-go@v6
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
         with:
           go-version-file: "go.mod"
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v6
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: lts/*
           cache: pnpm
@@ -98,7 +98,7 @@ jobs:
         run: pnpm exec playwright install --with-deps ${{ matrix.browser }}
       - name: Run E2E tests
         run: pnpm exec playwright test --project=${{ matrix.browser }}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: ${{ failure() }}
         with:
           name: e2e-report-${{ matrix.browser }}
