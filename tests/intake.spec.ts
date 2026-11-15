@@ -30,6 +30,8 @@ test("logging a Watch of a new movie brings it in from TMDB", async ({
 	await expect(
 		page.getByRole("link", { name: "Stub Pictures", exact: true })
 	).toBeVisible()
+	// Sweden isn't in the seed, so intake adds it
+	await expect(page.getByRole("link", { name: "Sweden" })).toBeVisible()
 
 	// Watch providers come from TMDB too, and this user has picked none
 	await expect(page.getByText("Select your providers in")).toBeVisible()

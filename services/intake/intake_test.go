@@ -90,6 +90,29 @@ SELECT count(*) FROM award a
 WHERE a.imdb_id = 'tt1375666' AND a.name = 'Cinematography' AND p.name = 'Wally Pfister' AND a.winner`))
 	})
 
+	t.Run("adds production countries it hasn't seen before", func(t *testing.T) {
+		in, fake, db := setup(t)
+
+		movie := inception
+		movie.ProductionCountries = []types.TmdbCountry{
+			{ID: "US", Name: "United States"},
+			{ID: "SE", Name: "Sweden"},
+		}
+		fake.Add(movie, inceptionCredits, "tt1375666")
+
+		id, err := in.EnsureMovie(ByExternalID("tt1375666"), MovieOptions{})
+		require.NoError(t, err)
+
+		var countries []string
+		require.NoError(t, db.Select(&countries, `
+SELECT pc.name FROM movie_country mc
+    INNER JOIN production_country pc ON pc.id = mc.country_id
+WHERE mc.movie_id = $1 ORDER BY pc.id`, id))
+
+		// Existing countries keep their name
+		assert.Equal(t, []string{"Sweden", "United States of America"}, countries)
+	})
+
 	t.Run("finds an existing movie by IMDb or TMDB ID without fetching", func(t *testing.T) {
 		in, fake, _ := setup(t)
 

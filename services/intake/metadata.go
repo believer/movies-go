@@ -311,6 +311,17 @@ ON CONFLICT
 func addCountries(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse) error {
 	for _, c := range movie.ProductionCountries {
 		_, err := tx.Exec(`
+			INSERT INTO production_country (id, name)
+			    VALUES ($1, $2)
+			ON CONFLICT
+			    DO NOTHING
+    `, c.ID, c.Name)
+		if err != nil {
+			slog.Error("Could not insert country", "err", err)
+			return err
+		}
+
+		_, err = tx.Exec(`
 			INSERT INTO movie_country (movie_id, country_id)
 			    VALUES ($1, $2)
 			ON CONFLICT
