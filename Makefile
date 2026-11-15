@@ -62,7 +62,7 @@ check:
 			exit 1; \
 		fi
 	@go vet ./...
-	@out=$$(TEST_DATABASE_URL= go test ./... 2>&1) || { echo "$$out"; exit 1; }
+	@out=$$(go test -short ./... 2>&1) || { echo "$$out"; exit 1; }
 	@pnpm exec biome check .
 	@echo "\033[0;32m(✓)\033[0;37m Checks passed"
 
