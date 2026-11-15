@@ -2,7 +2,10 @@ package awards
 
 import (
 	"believer/movies/types"
+	"database/sql"
 	"encoding/csv"
+	"errors"
+	"fmt"
 	"io"
 	"log/slog"
 	"os"
@@ -12,15 +15,17 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func AddBaftas(tx *sqlx.Tx, id string) {
+// AddBaftas adds the BAFTAs in baftas.csv for the movie with the IMDb ID id.
+// The file is read from the working directory.
+func AddBaftas(tx *sqlx.Tx, id string) error {
 	if id == "" {
-		return
+		return nil
 	}
 
 	f, err := os.Open("baftas.csv")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	defer f.Close()
@@ -29,7 +34,7 @@ func AddBaftas(tx *sqlx.Tx, id string) {
 	headers, err := csvReader.Read()
 
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("read baftas.csv: %w", err)
 	}
 
 	// Gather indexes to headers for easier mapping
@@ -44,7 +49,7 @@ func AddBaftas(tx *sqlx.Tx, id string) {
 			break
 		}
 		if err != nil {
-			panic(err)
+			return fmt.Errorf("read baftas.csv: %w", err)
 		}
 
 		imdbId := r[fields["FilmId"]]
@@ -58,49 +63,6 @@ func AddBaftas(tx *sqlx.Tx, id string) {
 		category := r[fields["Category"]]
 		title := r[fields["Film"]]
 		winner := r[fields["Winner"]] == "TRUE"
-
-		// if category == "EE Rising Star" {
-		// 	var person types.Person
-		// 	nominees := strings.Split(r[fields["Nominees"]], ", ")
-		//
-		// 	if len(nominees) == 0 {
-		// 		continue
-		// 	}
-		//
-		// 	n := nominees[0]
-		//
-		// 	err = tx.Get(&person, `
-		// 		SELECT
-		// 		    p."name",
-		// 		    p.id
-		// 		FROM
-		// 		    person p
-		// 		WHERE
-		// 		    p."name" ILIKE '%' || $1 || '%'
-		// 		`, n)
-		//
-		// 	if err != nil {
-		// 		continue
-		// 	}
-		//
-		// 	_, err = tx.Exec(`
-		// 		INSERT INTO award (name, winner, YEAR, person, person_id, type)
-		// 		    VALUES ($1, $2, $3, $4, $5, 'bafta')
-		// 		ON CONFLICT (imdb_id, name, YEAR, person, detail)
-		// 		    DO UPDATE SET
-		// 		        winner = excluded.winner,
-		// 		        name = excluded.name,
-		// 		        person_id = excluded.person_id
-		// 	`, category, winner, year, n, person.ID)
-		//
-		// 	if err != nil {
-		// 		continue
-		// 	}
-		//
-		// 	fmt.Printf("Rising Star %s\n", n)
-		//
-		// 	continue
-		// }
 
 		yearAsInt, err := strconv.Atoi(year)
 
@@ -124,7 +86,15 @@ WHERE
         AND EXTRACT(year FROM release_date) = $3)
 		`, imdbId, title, yearAsInt-1)
 
-		if err != nil || movie.ImdbId == "" {
+		if errors.Is(err, sql.ErrNoRows) {
+			continue
+		}
+
+		if err != nil {
+			return err
+		}
+
+		if movie.ImdbId == "" {
 			continue
 		}
 
@@ -150,7 +120,15 @@ WHERE
 				    AND p."name" ILIKE '%' || $2 || '%'
 				`, movie.ImdbId, n)
 
-			if err != nil || person.Name == "" {
+			if errors.Is(err, sql.ErrNoRows) {
+				continue
+			}
+
+			if err != nil {
+				return err
+			}
+
+			if person.Name == "" {
 				continue
 			}
 
@@ -165,11 +143,12 @@ WHERE
 			`, category, movie.ImdbId, winner, year, n, person.ID)
 
 			if err != nil {
-				slog.Error("Could not add BAFTA", "category", category, "imdb_id", imdbId, "winner", winner, "year", year, "person", n, "person_id", person.ID)
-				continue
+				return fmt.Errorf("add BAFTA %s %s to %s: %w", year, category, n, err)
 			}
 
 			slog.Debug("Added BAFTA", "category", category, "person", n)
 		}
 	}
+
+	return nil
 }

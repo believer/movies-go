@@ -2,7 +2,10 @@ package awards
 
 import (
 	"believer/movies/types"
+	"database/sql"
 	"encoding/csv"
+	"errors"
+	"fmt"
 	"io"
 	"log/slog"
 	"os"
@@ -11,15 +14,17 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func AddOscars(tx *sqlx.Tx, id string) {
+// AddOscars adds the Academy Awards in oscars.csv for the movie with the
+// IMDb ID id. The file is read from the working directory.
+func AddOscars(tx *sqlx.Tx, id string) error {
 	if id == "" {
-		return
+		return nil
 	}
 
 	f, err := os.Open("oscars.csv")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	defer f.Close()
@@ -28,7 +33,7 @@ func AddOscars(tx *sqlx.Tx, id string) {
 	headers, err := csvReader.Read()
 
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("read oscars.csv: %w", err)
 	}
 
 	// Gather indexes to headers for easier mapping
@@ -43,7 +48,7 @@ func AddOscars(tx *sqlx.Tx, id string) {
 			break
 		}
 		if err != nil {
-			panic(err)
+			return fmt.Errorf("read oscars.csv: %w", err)
 		}
 
 		year := r[fields["Year"]]
@@ -74,8 +79,12 @@ FROM
 WHERE
     imdb_id = $1`, imdbId)
 
-		if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
 			continue
+		}
+
+		if err != nil {
+			return err
 		}
 
 		switch category {
@@ -111,8 +120,12 @@ WHERE
 					    AND p."name" ILIKE '%' || $2 || '%'
 					`, imdbId, n)
 
-				if err != nil {
+				if errors.Is(err, sql.ErrNoRows) {
 					continue
+				}
+
+				if err != nil {
+					return err
 				}
 
 				_, err = tx.Exec(`
@@ -126,8 +139,7 @@ WHERE
 				`, category, imdbId, winner, year, n, person.ID)
 
 				if err != nil {
-					slog.Error("Could not add Academy Award", "category", category, "imdb_id", imdbId, "winner", winner, "year", year, "person", n, "person_id", person.ID)
-					panic(err)
+					return fmt.Errorf("add Academy Award %s %s to %s: %w", year, category, n, err)
 				}
 
 				slog.Debug("Added Academy Award", "category", category, "person", n)
@@ -142,8 +154,7 @@ WHERE
 			`, category, imdbId, winner, year, detail)
 
 			if err != nil {
-				slog.Error("Could not add Academy Award", "category", category, "imdb_id", imdbId, "winner", winner, "year", year, "detail", detail)
-				panic(err)
+				return fmt.Errorf("add Academy Award %s %s for %s: %w", year, category, detail, err)
 			}
 
 			slog.Debug("Added Academy Award", "category", category, "detail", detail)
@@ -157,11 +168,12 @@ WHERE
 			`, category, imdbId, winner, year)
 
 			if err != nil {
-				slog.Error("Could not add Academy Award", "category", category, "imdb_id", imdbId, "winner", winner, "year", year)
-				panic(err)
+				return fmt.Errorf("add Academy Award %s %s: %w", year, category, err)
 			}
 
 			slog.Debug("Added Academy Award", "category", category, "imdb_id", imdbId)
 		}
 	}
+
+	return nil
 }
