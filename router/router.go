@@ -169,7 +169,10 @@ func SetupRoutes(app *fiber.App) {
 	// awardsGroup.Get("/baftas", func(c *fiber.Ctx) error {
 	// 	tx := db.Client.MustBegin()
 	//
-	// 	awards.AddBaftas(tx, "")
+	// 	if err := awards.AddBaftas(tx, ""); err != nil {
+	// 		tx.Rollback()
+	// 		return err
+	// 	}
 	//
 	// 	err := tx.Commit()
 	//
@@ -184,7 +187,10 @@ func SetupRoutes(app *fiber.App) {
 	// awardsGroup.Get("/oscars", func(c *fiber.Ctx) error {
 	// 	tx := db.Client.MustBegin()
 	//
-	// 	awards.AddOscars(tx, "")
+	// 	if err := awards.AddOscars(tx, ""); err != nil {
+	// 		tx.Rollback()
+	// 		return err
+	// 	}
 	//
 	// 	err := tx.Commit()
 	//

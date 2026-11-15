@@ -321,8 +321,13 @@ func writeMetadata(tx *sqlx.Tx, id int, details types.MovieDetailsResponse, cred
 		return err
 	}
 
-	awards.AddOscars(tx, details.ImdbId)
-	awards.AddBaftas(tx, details.ImdbId)
+	if err := awards.AddOscars(tx, details.ImdbId); err != nil {
+		return fmt.Errorf("add Academy Awards: %w", err)
+	}
+
+	if err := awards.AddBaftas(tx, details.ImdbId); err != nil {
+		return fmt.Errorf("add BAFTAs: %w", err)
+	}
 
 	return nil
 }
