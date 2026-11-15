@@ -1,0 +1,4 @@
+`$target.locator($selector)` where {
+	$selector <: r"[\"'`](?:[a-z]|\.|:).*",
+	register_diagnostic(span=$selector, message="Find elements by role, label or text, or by #id. A tag or class selector breaks when the markup changes.")
+}

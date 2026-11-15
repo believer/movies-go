@@ -14,9 +14,9 @@
 		"indentStyle": "tab"
 	},
 	"linter": {
-		"enabled": false,
+		"enabled": true,
 		"rules": {
-			"preset": "recommended"
+			"preset": "none"
 		}
 	},
 	"javascript": {
@@ -40,5 +40,11 @@
 				"useSortedProperties": "on"
 			}
 		}
-	}
+	},
+	"plugins": [
+		{
+			"path": "./biome/no-markup-locator.grit",
+			"includes": ["tests/**/*.ts", "smoke/**/*.ts"]
+		}
+	]
 }

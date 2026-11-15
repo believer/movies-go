@@ -4,6 +4,7 @@ import { expect, test } from "@playwright/test"
 // falls back to user 1 without a token.
 test("another user's Watches don't show", async ({ page }) => {
 	await page.goto("/")
+	// biome-ignore lint/plugin/no-markup-locator: a feed card is an unlabelled <li>
 	await expect(page.locator(".feed-list__card").first()).toBeVisible()
 	await expect(page.getByRole("link", { name: "The Lion King" })).toHaveCount(0)
 
