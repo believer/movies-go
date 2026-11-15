@@ -1,0 +1,19 @@
+# Upgrades arrive as PRs that PR checks test, so drift in Playwright or the
+# actions shows up before it breaks main
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      npm:
+        patterns: ["*"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
