@@ -14,9 +14,38 @@ func setupServer(t *testing.T, handler http.HandlerFunc) {
 	server := httptest.NewServer(handler)
 	t.Cleanup(server.Close)
 
-	original := baseURL
-	baseURL = server.URL
-	t.Cleanup(func() { baseURL = original })
+	t.Setenv("TMDB_BASE_URL", server.URL)
+}
+
+type roundTripFunc func(*http.Request) (*http.Response, error)
+
+func (f roundTripFunc) RoundTrip(r *http.Request) (*http.Response, error) {
+	return f(r)
+}
+
+func TestBaseURL(t *testing.T) {
+	t.Run("defaults to the TMDB API", func(t *testing.T) {
+		t.Setenv("TMDB_BASE_URL", "")
+
+		var requested string
+
+		original := httpClient.Transport
+		httpClient.Transport = roundTripFunc(func(r *http.Request) (*http.Response, error) {
+			requested = r.URL.Scheme + "://" + r.URL.Host + r.URL.Path
+
+			return &http.Response{
+				StatusCode: http.StatusNotFound,
+				Body:       http.NoBody,
+				Request:    r,
+			}, nil
+		})
+		t.Cleanup(func() { httpClient.Transport = original })
+
+		_, _, err := Client{}.Fetch("tt1375666")
+
+		assert.ErrorIs(t, err, ErrNotFound)
+		assert.Equal(t, "https://api.themoviedb.org/3/movie/tt1375666", requested)
+	})
 }
 
 func TestFetch(t *testing.T) {

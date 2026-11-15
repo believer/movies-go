@@ -1,0 +1,35 @@
+{
+	"id": 9000001,
+	"imdb_id": "tt9000001",
+	"title": "The Stub Lighthouse",
+	"release_date": "1961-03-14",
+	"runtime": 95,
+	"tagline": "Every request gets an answer.",
+	"overview": "A keeper answers every ship that calls, from a list kept in a drawer.",
+	"poster_path": "",
+	"genres": [
+		{
+			"name": "Documentary"
+		}
+	],
+	"spoken_languages": [
+		{
+			"iso_639_1": "sv",
+			"english_name": "Swedish",
+			"name": "Svenska"
+		}
+	],
+	"production_countries": [
+		{
+			"iso_3166_1": "SE",
+			"name": "Sweden"
+		}
+	],
+	"production_companies": [
+		{
+			"id": 9000001,
+			"name": "Stub Pictures",
+			"origin_country": "SE"
+		}
+	]
+}
