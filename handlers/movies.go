@@ -513,6 +513,10 @@ func (h *MovieHandler) HandleSearch(c *fiber.Ctx) error {
 	req := utils.NewRequest(c)
 	query := req.Query("search")
 
+	if !req.IsAuthenticated() {
+		return c.SendStatus(fiber.StatusUnauthorized)
+	}
+
 	if query == "" {
 		return utils.Render(c, views.MovieSearch([]types.SearchResult{}))
 	}
@@ -520,8 +524,10 @@ func (h *MovieHandler) HandleSearch(c *fiber.Ctx) error {
 	tmdbApi := tmdb.New("")
 	movies, err := tmdbApi.Search(query)
 
+	// Treat a failed search like one with no results
 	if err != nil {
-		return err
+		slog.Error("failed to search TMDB", "query", query, "error", err)
+		movies = types.SearchMovieResponse{}
 	}
 
 	if req.IsJson() {
@@ -778,6 +784,10 @@ func (h *MovieHandler) WatchProviders(c *fiber.Ctx) error {
 	id := req.MovieID()
 	userID := req.UserID()
 
+	if !req.IsAuthenticated() {
+		return c.SendStatus(fiber.StatusUnauthorized)
+	}
+
 	storedProviders, err := h.repo.GetUserWatchProviders(userID)
 
 	if err != nil {
@@ -793,8 +803,10 @@ func (h *MovieHandler) WatchProviders(c *fiber.Ctx) error {
 	t := tmdb.New(movieObj.ImdbId)
 	watchProviders, err := t.WatchProviders()
 
+	// Treat a failed lookup like a movie with no providers
 	if err != nil {
-		return err
+		slog.Error("failed to get TMDB watch providers", "imdbId", movieObj.ImdbId, "error", err)
+		watchProviders = types.MovieWatchProvidersResponse{}
 	}
 
 	hasProviders := len(watchProviders.Results.SE.Buy) > 0 || len(watchProviders.Results.SE.Rent) > 0 || len(watchProviders.Results.SE.Subscription) > 0
