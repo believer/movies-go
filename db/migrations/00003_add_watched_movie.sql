@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION public.get_person_role_with_seen_json(pid integer, ro
 						mp.person_id = pid
 						AND mp.job = ROLE
 					ORDER BY
-						m.release_date DESC))
+						m.release_date DESC,
+						m.id))
 $$;
 -- +goose StatementEnd

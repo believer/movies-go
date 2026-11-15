@@ -44,6 +44,7 @@ FROM
 WHERE
     date_part('year', release_date) = $2
 ORDER BY
-    release_date ASC OFFSET $3
+    release_date ASC,
+    m.id OFFSET $3
 LIMIT 50
 `

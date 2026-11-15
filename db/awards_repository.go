@@ -75,7 +75,8 @@ HAVING
             a.id::text
         END) = $2
 ORDER BY
-    m.release_date DESC`
+    m.release_date DESC,
+    m.id`
 
 const awardsByWinsQuery = `
 SELECT
@@ -98,7 +99,8 @@ GROUP BY
 HAVING
     count(DISTINCT a.name) = $2
 ORDER BY
-    m.release_date DESC
+    m.release_date DESC,
+    m.id
 `
 
 const awardsGroupedByMovieQuery = `

@@ -69,7 +69,8 @@ GROUP BY
     ol.id,
     ol.name
 ORDER BY
-    percent_seen DESC`
+    percent_seen DESC,
+    ol.id`
 
 const listQuery = `SELECT
     id,
@@ -96,7 +97,8 @@ FROM
 WHERE
     list_id = $1
 ORDER BY
-    RANK ASC
+    RANK ASC,
+    m.id
 `
 
 const listsByMovieQuery = `

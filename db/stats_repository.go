@@ -529,7 +529,7 @@ WHERE
     AND m.wilhelm = TRUE
 ORDER BY
     m.release_date DESC,
-    m.id DESC OFFSET $2
+    m.id OFFSET $2
 LIMIT 50
 	`, userID, offset)
 	return movies, err

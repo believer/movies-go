@@ -13,6 +13,16 @@ import (
 // only user 2 watched "Others only". Both movies share a genre, language,
 // company, country, list, series, director, award nomination and win, and a
 // rating of 8 by user 1, so every query that reads watched_movie sees both.
+//
+// The movies tie on every sort key but id: same release date, series number
+// and list rank. "Others only" (id 2) is inserted before "Rewatched" (id 1),
+// so a query without the id tiebreak tends to return them in insertion order,
+// not id order. Likewise for the two lists, which tie on % seen.
+const (
+	rewatched  = 1
+	othersOnly = 2
+)
+
 func setupWatched(t *testing.T) testStats {
 	t.Helper()
 
@@ -24,24 +34,24 @@ func setupWatched(t *testing.T) testStats {
 	ts.exec(t, `INSERT INTO production_company (id, tmdb_id, name) VALUES (1, 1, 'Company')`)
 	ts.exec(t, `INSERT INTO production_country (id, name) VALUES ('SE', 'Sweden')`)
 	ts.exec(t, `INSERT INTO series (id, name) VALUES (1, 'Series')`)
-	ts.exec(t, `INSERT INTO official_list (id, slug, name, source) VALUES (1, 'list', 'List', 'test')`)
+	ts.exec(t, `INSERT INTO official_list (id, slug, name, source) VALUES (2, 'second', 'Second', 'test'), (1, 'first', 'First', 'test')`)
 
-	rewatched := ts.movie(t, "Rewatched")
-	othersOnly := ts.movie(t, "Others only")
-
-	for i, id := range []int{rewatched, othersOnly} {
-		ts.exec(t, `UPDATE movie SET release_date = '2001-01-01', wilhelm = TRUE WHERE id = $1`, id)
-		ts.exec(t, `INSERT INTO movie_genre (movie_id, genre_id) VALUES ($1, 1)`, id)
-		ts.exec(t, `INSERT INTO movie_language (movie_id, language_id) VALUES ($1, 1)`, id)
-		ts.exec(t, `INSERT INTO movie_company (movie_id, company_id) VALUES ($1, 1)`, id)
-		ts.exec(t, `INSERT INTO movie_country (movie_id, country_id) VALUES ($1, 'SE')`, id)
-		ts.exec(t, `INSERT INTO movie_series (movie_id, series_id, number_in_series) VALUES ($1, 1, $2)`, id, i+1)
-		ts.exec(t, `INSERT INTO official_list_movie (list_id, movie_id, rank) VALUES (1, $1, $2)`, id, i+1)
-		ts.exec(t, `INSERT INTO award (id, imdb_id, name, year, winner) SELECT $1, imdb_id, 'Best Picture', '2001', TRUE FROM movie WHERE id = $2`, i+1, id)
-		ts.rate(t, 1, id, 8, "2024-01-01")
+	for _, m := range []struct {
+		id    int
+		title string
+	}{{othersOnly, "Others only"}, {rewatched, "Rewatched"}} {
+		ts.exec(t, `INSERT INTO movie (id, title, imdb_id, release_date, wilhelm) VALUES ($1, $2, $2, '2001-01-01', TRUE)`, m.id, m.title)
+		ts.exec(t, `INSERT INTO movie_genre (movie_id, genre_id) VALUES ($1, 1)`, m.id)
+		ts.exec(t, `INSERT INTO movie_language (movie_id, language_id) VALUES ($1, 1)`, m.id)
+		ts.exec(t, `INSERT INTO movie_company (movie_id, company_id) VALUES ($1, 1)`, m.id)
+		ts.exec(t, `INSERT INTO movie_country (movie_id, country_id) VALUES ($1, 'SE')`, m.id)
+		ts.exec(t, `INSERT INTO movie_series (movie_id, series_id, number_in_series) VALUES ($1, 1, 1)`, m.id)
+		ts.exec(t, `INSERT INTO official_list_movie (list_id, movie_id, rank) VALUES (2, $1, 1), (1, $1, 1)`, m.id)
+		ts.exec(t, `INSERT INTO award (id, imdb_id, name, year, winner) VALUES ($1, $2, 'Best Picture', '2001', TRUE)`, m.id, m.title)
+		ts.rate(t, 1, m.id, 8, "2024-01-01")
 	}
 
-	ts.director(t, "Director", rewatched, othersOnly)
+	ts.director(t, "Director", othersOnly, rewatched)
 
 	ts.watch(t, 1, rewatched, "2024-01-01")
 	ts.watch(t, 1, rewatched, "2024-06-01")
@@ -66,7 +76,8 @@ func seenTitles(movies types.Movies) []seenTitle {
 }
 
 func TestWatchedMovie(t *testing.T) {
-	// Each movie appears once, and only user 1's Watches mark it seen
+	// Each movie appears once, only user 1's Watches mark it seen, and ties
+	// resolve by id
 	both := []seenTitle{{"Rewatched", true}, {"Others only", false}}
 
 	movieLists := []struct {
@@ -103,7 +114,7 @@ func TestWatchedMovie(t *testing.T) {
 	}
 
 	for _, tt := range movieLists {
-		t.Run(tt.name+" marks the user's watched movies seen, once each", func(t *testing.T) {
+		t.Run(tt.name+" marks the user's watched movies seen, once each, in id order", func(t *testing.T) {
 			ts := setupWatched(t)
 
 			movies, err := tt.query(ts)
@@ -112,11 +123,11 @@ func TestWatchedMovie(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			assert.ElementsMatch(t, both, seenTitles(movies))
+			assert.Equal(t, both, seenTitles(movies))
 		})
 	}
 
-	t.Run("GetSeriesMovies marks the user's watched movies seen, once each", func(t *testing.T) {
+	t.Run("GetSeriesMovies marks the user's watched movies seen, once each, in id order", func(t *testing.T) {
 		ts := setupWatched(t)
 
 		series, err := NewSeriesRepository(ts.db).GetSeriesMovies("1", "1")
@@ -129,7 +140,7 @@ func TestWatchedMovie(t *testing.T) {
 		assert.Equal(t, both, seenTitles(types.Movies(series[0].Movies)))
 	})
 
-	t.Run("GetPersonByID marks the user's watched movies seen, once each", func(t *testing.T) {
+	t.Run("GetPersonByID marks the user's watched movies seen, once each, in id order", func(t *testing.T) {
 		ts := setupWatched(t)
 
 		var personID int
@@ -150,10 +161,10 @@ func TestWatchedMovie(t *testing.T) {
 			titles = append(titles, seenTitle{m.Title, m.Seen})
 		}
 
-		assert.ElementsMatch(t, both, titles)
+		assert.Equal(t, both, titles)
 	})
 
-	t.Run("GetLists counts a rewatched movie once and ignores other users' Watches", func(t *testing.T) {
+	t.Run("GetLists counts a rewatched movie once and ignores other users' Watches, in id order", func(t *testing.T) {
 		ts := setupWatched(t)
 
 		lists, err := NewListRepository(ts.db).GetLists("1")
@@ -162,14 +173,25 @@ func TestWatchedMovie(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Len(t, lists, 1)
-		assert.Equal(t, 2, lists[0].TotalMovies)
-		assert.Equal(t, 1, lists[0].SeenMovies)
-		assert.Equal(t, 50.0, lists[0].PercentSeen)
+		type listSeen struct {
+			ID          string
+			SeenMovies  int
+			TotalMovies int
+			PercentSeen float64
+		}
+
+		got := []listSeen{}
+
+		for _, l := range lists {
+			got = append(got, listSeen{l.ID, l.SeenMovies, l.TotalMovies, l.PercentSeen})
+		}
+
+		assert.Equal(t, []listSeen{{"1", 1, 2, 50.0}, {"2", 1, 2, 50.0}}, got)
 	})
 
-	t.Run("GetWilhelmMovies lists the user's watched movies once each", func(t *testing.T) {
+	t.Run("GetWilhelmMovies lists the user's watched movies once each, in id order", func(t *testing.T) {
 		ts := setupWatched(t)
+		ts.watch(t, 1, othersOnly, "2024-01-01")
 
 		movies, err := NewStatsRepository(ts.db).GetWilhelmMovies("1", 0)
 
@@ -177,7 +199,7 @@ func TestWatchedMovie(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, []seenTitle{{"Rewatched", true}}, seenTitles(movies))
+		assert.Equal(t, []seenTitle{{"Rewatched", true}, {"Others only", true}}, seenTitles(movies))
 	})
 
 	t.Run("GetWilhelmScreamCount counts a rewatched movie once and ignores other users' Watches", func(t *testing.T) {
