@@ -46,7 +46,7 @@ func (h *ProductionCountryHandler) ListProductionCountries(c *fiber.Ctx) error {
 		return err
 	}
 
-	if req.IsJson() {
+	if req.IsJSON() {
 		return c.JSON(countries)
 	}
 
@@ -72,7 +72,7 @@ func (h *ProductionCountryHandler) GetProductionCountry(c *fiber.Ctx) error {
 		return err
 	}
 
-	if req.IsJson() {
+	if req.IsJSON() {
 		return c.JSON(map[string]any{
 			"country": country,
 			"movies":  movies,

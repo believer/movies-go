@@ -58,7 +58,7 @@ func (h *PersonHandler) GetPersonByID(c *fiber.Ctx) error {
 		totalCredits += field
 	}
 
-	if c.Get("Accept") == "application/json" {
+	if req.IsJSON() {
 		return c.JSON(map[string]any{
 			"awards": map[string]any{
 				"academyAwards": academyAwards,

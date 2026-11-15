@@ -84,7 +84,7 @@ func (h *MovieHandler) GetMovieByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	if c.Get("Accept") == "application/json" {
+	if req.IsJSON() {
 		return c.JSON(map[string]any{
 			"movie":         movieData,
 			"cast":          cast,
@@ -151,7 +151,7 @@ func (h *MovieHandler) GetMovieNew(c *fiber.Ctx) error {
 	}
 
 	if id == 0 {
-		if req.IsJson() {
+		if req.IsJSON() {
 			return c.JSON(map[string]any{
 				"friends":       friends,
 				"isWatchlisted": false,
@@ -179,7 +179,7 @@ func (h *MovieHandler) GetMovieNew(c *fiber.Ctx) error {
 		return err
 	}
 
-	if req.IsJson() {
+	if req.IsJSON() {
 		return c.JSON(map[string]any{
 			"friends":       friends,
 			"isWatchlisted": isInWatchlist,
@@ -551,7 +551,7 @@ func (h *MovieHandler) HandleSearch(c *fiber.Ctx) error {
 		movies = types.SearchMovieResponse{}
 	}
 
-	if req.IsJson() {
+	if req.IsJSON() {
 		return c.JSON(movies)
 	}
 

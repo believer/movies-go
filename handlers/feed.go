@@ -115,7 +115,7 @@ func (h *FeedHandler) GetFeed(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusOK)
 	}
 
-	if c.Get("Accept") == "application/json" {
+	if req.IsJSON() {
 		return c.JSON(movies)
 	}
 

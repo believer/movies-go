@@ -38,7 +38,7 @@ func (h *StatsHandler) GetStats(c *fiber.Ctx) error {
 	statsCacheMutex.RUnlock()
 
 	if found && time.Since(cached.createdAt) < cacheTTL {
-		if req.IsJson() {
+		if req.IsJSON() {
 			return c.JSON(cached.props)
 		}
 
@@ -261,7 +261,7 @@ func (h *StatsHandler) GetStats(c *fiber.Ctx) error {
 		WilhelmScreams:          wilhelms[0],
 	}
 
-	if req.IsJson() {
+	if req.IsJSON() {
 		return c.JSON(props)
 	}
 

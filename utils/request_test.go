@@ -98,3 +98,35 @@ func TestRequestPageBelowOne(t *testing.T) {
 		})
 	}
 }
+
+func TestRequestIsJSON(t *testing.T) {
+	tests := []struct {
+		accept string
+		want   bool
+	}{
+		{"application/json", true},
+		{"application/json; charset=utf-8", true},
+		{"text/html, application/json;q=0.9", true},
+		{"Application/JSON", true},
+		{"", false},
+		{"*/*", false},
+		{"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", false},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.accept, func(t *testing.T) {
+			app := fiber.New()
+
+			app.Get("/test-json", func(c *fiber.Ctx) error {
+				assert.Equal(t, tc.want, NewRequest(c).IsJSON())
+				return c.SendStatus(http.StatusOK)
+			})
+
+			req := httptest.NewRequest(http.MethodGet, "/test-json", nil)
+			req.Header.Set("Accept", tc.accept)
+			resp, err := app.Test(req)
+			assert.NoError(t, err)
+			assert.Equal(t, http.StatusOK, resp.StatusCode)
+		})
+	}
+}

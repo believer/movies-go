@@ -26,7 +26,7 @@ func (h *ProductionCompanyHandler) ListProductionCompanies(c *fiber.Ctx) error {
 		return err
 	}
 
-	if req.IsJson() {
+	if req.IsJSON() {
 		return c.JSON(companies)
 	}
 
@@ -53,7 +53,7 @@ func (h *ProductionCompanyHandler) GetProductionCompany(c *fiber.Ctx) error {
 		return err
 	}
 
-	if req.IsJson() {
+	if req.IsJSON() {
 		return c.JSON(map[string]any{
 			"company": company,
 			"movies":  movies,
