@@ -22,7 +22,8 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only
+      # Build with the Go version in go.mod, as the PR checks do
+      - run: flyctl deploy --remote-only --build-arg GO_VERSION="$(sed -n 's/^go //p' go.mod)"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
