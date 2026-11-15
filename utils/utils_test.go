@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestParseImdbId(t *testing.T) {
+func TestParseID(t *testing.T) {
 	tests := []struct {
 		url  string
 		want string
@@ -25,7 +25,7 @@ func TestParseImdbId(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.url, func(t *testing.T) {
-			got, err := ParseId(tc.url)
+			got, err := ParseID(tc.url)
 			assert.Equal(t, tc.want, got)
 			if tc.err != nil {
 				assert.EqualError(t, err, tc.err.Error())

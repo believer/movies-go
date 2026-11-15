@@ -236,7 +236,7 @@ func (h *MovieHandler) PostMovieNew(c *fiber.Ctx) error {
 		return err
 	}
 
-	imdbId, err := utils.ParseId(data.ImdbID)
+	imdbId, err := utils.ParseID(data.ImdbID)
 	userId := req.UserID()
 
 	if err != nil {
@@ -924,7 +924,7 @@ func (h *MovieHandler) PlaybackProgress(c *fiber.Ctx) error {
 		return err
 	}
 
-	imdbID, err := utils.ParseId(data.ImdbID)
+	imdbID, err := utils.ParseID(data.ImdbID)
 
 	if err != nil {
 		return c.SendStatus(fiber.StatusUnprocessableEntity)
