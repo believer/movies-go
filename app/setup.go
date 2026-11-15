@@ -13,6 +13,7 @@ import (
 	"log/slog"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -95,51 +96,12 @@ func SetupAndRunApp(cssSources fs.FS) error {
 
 	// Pass app environment to all views
 	app.Use(func(c *fiber.Ctx) error {
-		secret := os.Getenv("ADMIN_SECRET")
-		tokenString := c.Cookies("token")
-		c.Locals("IsAuthenticated", false)
-
-		h := new(Headers)
-
-		if err := c.ReqHeaderParser(h); err != nil {
-			return err
-		}
-
-		if tokenString == "" && h.Authorization != "" {
-			_, token, _ := strings.Cut(h.Authorization, " ")
-			tokenString = token
-		}
-
-		// Set me as default user
-		userId := "1"
-
-		// Parse the JWT token if it exists
-		// and set the user ID in the locals
-		if tokenString != "" {
-			token, err := jwt.Parse(tokenString, func(token *jwt.Token) (any, error) {
-				// Validate the signing method
-				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-					return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-				}
-
-				return []byte(secret), nil
-			})
-
-			if err != nil {
-				return err
-			}
-
-			if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-				userId = claims["id"].(string)
-				c.Locals("IsAuthenticated", true)
-			}
-		}
-
 		c.Locals("AppEnv", appEnv)
-		c.Locals("UserId", userId)
 
 		return c.Next()
 	})
+
+	app.Use(authenticate)
 
 	// Serve static files. The stylesheet URL is versioned, so it can be
 	// cached for good
@@ -169,6 +131,84 @@ func SetupAndRunApp(cssSources fs.FS) error {
 	log.Fatal(app.Listen(":" + port))
 
 	return nil
+}
+
+// authenticate sets IsAuthenticated and UserId from the token cookie or the
+// Authorization header. A token that doesn't validate counts as logged out,
+// and an invalid cookie is cleared so the browser stops sending it.
+func authenticate(c *fiber.Ctx) error {
+	tokenString := c.Cookies("token")
+	c.Locals("IsAuthenticated", false)
+
+	h := new(Headers)
+
+	if err := c.ReqHeaderParser(h); err != nil {
+		return err
+	}
+
+	if tokenString == "" && h.Authorization != "" {
+		_, token, _ := strings.Cut(h.Authorization, " ")
+		tokenString = token
+	}
+
+	// Set me as default user
+	userId := "1"
+
+	if tokenString != "" {
+		id, err := userIdFromToken(tokenString, os.Getenv("ADMIN_SECRET"))
+
+		if err != nil {
+			slog.Warn("invalid auth token", "path", c.OriginalURL(), "error", err)
+
+			if c.Cookies("token") != "" {
+				c.Cookie(&fiber.Cookie{
+					Name:     "token",
+					Value:    "",
+					Expires:  time.Now().AddDate(0, 0, -1),
+					HTTPOnly: true,
+				})
+			}
+		} else {
+			userId = id
+			c.Locals("IsAuthenticated", true)
+		}
+	}
+
+	c.Locals("UserId", userId)
+
+	return c.Next()
+}
+
+// userIdFromToken returns the id claim of a token signed with secret. It
+// fails for a token that is malformed, expired, signed with another secret or
+// without a string id.
+func userIdFromToken(tokenString string, secret string) (string, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (any, error) {
+		// Validate the signing method
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+
+		return []byte(secret), nil
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+
+	if !ok {
+		return "", errors.New("unexpected claims type")
+	}
+
+	id, ok := claims["id"].(string)
+
+	if !ok || id == "" {
+		return "", errors.New("token has no id claim")
+	}
+
+	return id, nil
 }
 
 func notFoundMiddleware(c *fiber.Ctx) error {
