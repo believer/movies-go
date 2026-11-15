@@ -15,9 +15,10 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  # Empty database with the current schema, used by tests that need Postgres,
-  # and movies_e2e_8090 with the schema and seed, used by E2E runs on the default
-  # port
+  # Postgres for tests: make test loads movies_test and make e2e-db builds
+  # movies_e2e_<port>, each from the calling checkout. It mounts no files,
+  # since a mount resolves to one checkout's path, and starting the container
+  # from another checkout would recreate it and wipe every database.
   postgres_test:
     image: postgres:15
     container_name: postgres_test
@@ -45,10 +46,6 @@ services:
       retries: 30
     tmpfs:
       - /var/lib/postgresql/data
-    volumes:
-      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
-      - ./db/e2e.sh:/docker-entrypoint-initdb.d/e2e.sh:ro
-      - ./db/seed.sql:/db/seed.sql:ro
 
 volumes:
   postgres_data:
