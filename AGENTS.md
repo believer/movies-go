@@ -4,7 +4,7 @@ Run `make verify E2E_PORT=<free port>` before finishing a change: `make check`, 
 
 **Schema changes**: adding a table, column, index or view → `docs/agents/migrations.md`.
 
-Implement in a worktree branched from a fresh `origin/main` (`git fetch` first). The main checkout is shared with a human, so leave it on whatever they have checked out. Run `pnpm install` in the worktree before `make check`.
+Implement in a worktree off a fresh `origin/main`: `git fetch`, then `git worktree add ../movies-<slug> -b <type>/<slug> origin/main`, with `<type>` the commit type and a `<slug>` missing from `git worktree list`, then `pnpm install` in it. Once its PR merges, `git worktree remove` it. The main checkout is shared with a human, so leave it on whatever they have checked out.
 
 ## Agent skills
 
