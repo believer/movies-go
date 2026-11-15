@@ -89,18 +89,8 @@ SELECT
                     ms2.movie_id = m.id ORDER BY s2.name ASC)), '[]') AS all_series
 FROM
     movie AS m
-    -- The latest Rating is the one that counts
-    INNER JOIN ( SELECT DISTINCT ON (movie_id)
-            movie_id,
-            rating
-        FROM
-            rating
-        WHERE
-            user_id = $2
-        ORDER BY
-            movie_id,
-            created_at DESC,
-            id DESC) AS r ON r.movie_id = m.id
+    INNER JOIN latest_rating AS r ON r.movie_id = m.id
+        AND r.user_id = $2
 WHERE
     r.rating = $1
 ORDER BY

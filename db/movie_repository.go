@@ -117,19 +117,8 @@ FROM
     movie AS m
     LEFT JOIN movie_genre AS mg ON mg.movie_id = m.id
     LEFT JOIN genre AS g ON g.id = mg.genre_id
-    -- The latest Rating is the one that counts
-    LEFT JOIN ( SELECT DISTINCT ON (movie_id)
-            movie_id,
-            rating,
-            created_at
-        FROM
-            rating
-        WHERE
-            user_id = $2
-        ORDER BY
-            movie_id,
-            created_at DESC,
-            id DESC) AS r ON r.movie_id = m.id
+    LEFT JOIN latest_rating AS r ON r.movie_id = m.id
+        AND r.user_id = $2
     LEFT JOIN movie_series AS ms ON ms.movie_id = m.id
     LEFT JOIN series AS se ON se.id = ms.series_id
     LEFT JOIN movie_language AS ml ON ml.movie_id = m.id
@@ -179,18 +168,11 @@ SELECT
             movie_id = $1) AS seen_count,
     (
         SELECT
-            COALESCE(AVG(r.latest_rating), 0)
-        FROM ( SELECT DISTINCT ON (user_id)
-                user_id,
-                rating AS latest_rating
-            FROM
-                rating
-            WHERE
-                movie_id = $1
-            ORDER BY
-                user_id,
-                created_at DESC,
-                id DESC) r) AS avg_rating
+            COALESCE(AVG(rating), 0)
+        FROM
+            latest_rating
+        WHERE
+            movie_id = $1) AS avg_rating
 `, id)
 
 	return others, err

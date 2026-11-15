@@ -156,17 +156,9 @@ SELECT
     COUNT(*) AS value,
     rating AS label
 FROM
-    -- The latest Rating is the one that counts
-    ( SELECT DISTINCT ON (movie_id)
-            rating
-        FROM
-            rating
-        WHERE
-            user_id = $1
-        ORDER BY
-            movie_id,
-            created_at DESC,
-            id DESC) AS latest_rating
+    latest_rating
+WHERE
+    user_id = $1
 GROUP BY
     rating
 ORDER BY
@@ -327,20 +319,6 @@ WITH rating_series AS (
     SELECT
         generate_series(1, 10) AS rating_value
 ),
--- The latest Rating is the one that counts
-latest_rating AS (
-    SELECT DISTINCT ON (movie_id)
-        movie_id,
-        rating
-    FROM
-        rating
-    WHERE
-        user_id = $1
-    ORDER BY
-        movie_id,
-        created_at DESC,
-        id DESC
-),
 -- Each movie counts once, however many times it was watched in the year
 watched_this_year AS (
     SELECT DISTINCT
@@ -357,6 +335,7 @@ SELECT
 FROM
     rating_series rs
     LEFT JOIN latest_rating lr ON lr.rating = rs.rating_value
+        AND lr.user_id = $1
     LEFT JOIN watched_this_year w ON w.movie_id = lr.movie_id
 GROUP BY
     rs.rating_value
@@ -483,17 +462,6 @@ WHERE
 func (r *StatsRepository) GetRatingsForYear(year string, userID string) (types.Movies, error) {
 	var movies types.Movies
 	err := r.db.Select(&movies, `
-WITH RankedRatings AS (
-    SELECT
-        r.movie_id,
-        r.user_id,
-        r.rating,
-        r.created_at,
-        ROW_NUMBER() OVER (PARTITION BY r.movie_id,
-            r.user_id ORDER BY r.created_at DESC, r.id DESC) AS rn
-    FROM
-        rating r
-)
 SELECT DISTINCT
     m.id,
     m.title,
@@ -502,12 +470,11 @@ SELECT DISTINCT
 FROM
     seen s
     INNER JOIN movie m ON m.id = s.movie_id
-    INNER JOIN RankedRatings rr ON rr.movie_id = s.movie_id
+    INNER JOIN latest_rating rr ON rr.movie_id = s.movie_id
         AND rr.user_id = s.user_id
 WHERE
     EXTRACT('YEAR' FROM s.date) = $1
     AND s.user_id = $2
-    AND rr.rn = 1
 ORDER BY
     rr.rating DESC,
     s.date ASC
@@ -533,19 +500,6 @@ WITH watched_once AS (
         COUNT(*) = 1
         AND MIN(date) >= make_date($2, 1, 1)
         AND MIN(date) < make_date($2 + 1, 1, 1)
-),
-latest_rating AS (
-    SELECT DISTINCT ON (movie_id)
-        movie_id,
-        rating
-    FROM
-        rating
-    WHERE
-        user_id = $1
-    ORDER BY
-        movie_id,
-        created_at DESC,
-        id DESC
 )
 SELECT
     m.title AS "name",
@@ -554,6 +508,7 @@ SELECT
 FROM
     watched_once wo
     INNER JOIN latest_rating lr ON lr.movie_id = wo.movie_id
+        AND lr.user_id = $1
     INNER JOIN movie m ON m.id = wo.movie_id
 ORDER BY
     lr.rating DESC,
@@ -632,21 +587,12 @@ WITH person_ratings AS (
         COUNT(*) AS appearances,
         SUM(r.rating) AS total_rating
     FROM
-        -- The latest Rating is the one that counts
-        ( SELECT DISTINCT ON (movie_id)
-                movie_id,
-                rating
-            FROM
-                rating
-            WHERE
-                user_id = $1
-            ORDER BY
-                movie_id,
-                created_at DESC,
-                id DESC) AS r
+        latest_rating AS r
         INNER JOIN movie_person AS mp ON mp.movie_id = r.movie_id
             AND mp.job = $2
         INNER JOIN person AS p ON mp.person_id = p.id
+    WHERE
+        r.user_id = $1
     GROUP BY
         p.id
 )
