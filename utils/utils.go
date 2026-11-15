@@ -21,6 +21,9 @@ import (
 var (
 	imdbPattern = regexp.MustCompile(`^tt\d{7,}$`)
 	tmdbPattern = regexp.MustCompile(`^\d+$`)
+
+	slugInvalid = regexp.MustCompile(`[^a-z0-9\-]`)
+	slugHyphens = regexp.MustCompile(`-+`)
 )
 
 func ParseId(s string) (string, error) {
@@ -89,12 +92,10 @@ func Slugify(text string) string {
 	text = strings.ReplaceAll(text, " ", "-")
 
 	// Remove special characters
-	re := regexp.MustCompile(`[^a-z0-9\-]`)
-	text = re.ReplaceAllString(text, "")
+	text = slugInvalid.ReplaceAllString(text, "")
 
 	// Replace multiple hyphens with a single one
-	re = regexp.MustCompile(`-+`)
-	text = re.ReplaceAllString(text, "-")
+	text = slugHyphens.ReplaceAllString(text, "-")
 
 	// Trim hyphens from the start and end
 	text = strings.Trim(text, "-")
