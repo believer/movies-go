@@ -5,8 +5,9 @@ Playwright specs live in `tests/`. The comments above `e2e` and `e2e-db` in the 
 ## Running
 
 - Run Chromium only: `pnpm exec playwright test --project=chromium`. Firefox can hang in agent sandboxes, and CI runs all three browsers on every PR.
-- In a checkout where `movies_e2e` has never been built, run `make e2e-db` first. Playwright starts the server before its global setup rebuilds the database, so the first run can't connect without it.
-- `http://localhost:8090/health is already used` means a server from an earlier run is still up and may run old code. Stop it with `lsof -ti tcp:8090,8091 | xargs kill`, then run again.
+- Each server port gets its own database, `movies_e2e_<port>`. `make e2e` builds it before Playwright starts the server. Before running `pnpm exec playwright test` on a new port, run `make e2e-db` with the same `E2E_PORT`.
+- Other checkouts' agents run E2E too. Pick an `E2E_PORT` and `E2E_TMDB_PORT` that no other run is using. `lsof -nP -iTCP -sTCP:LISTEN | grep e2e-serve` lists the ports in use.
+- `http://localhost:<port>/health is already used` means a server is already running on that port. If `lsof -a -p <pid> -d cwd` shows it running from this checkout, it's left over from an earlier run and may run old code: stop it and run again. If it runs from another checkout, it belongs to another agent's run: pick other ports.
 
 ## Writing
 
@@ -14,3 +15,5 @@ Playwright specs live in `tests/`. The comments above `e2e` and `e2e-db` in the 
 - Tests that write log in as a fresh user through the `user` fixture in `tests/fixtures.ts`.
 - TMDB responses come from `tests/tmdb/fixtures/`, keyed by request path. A new Movie intake test needs a movie of its own there.
 - A language page's heading is the native name: the link on a movie page reads "French", the heading "Français".
+- A metadata row (`DlItem`) has its label in a `<dd>`, so find the row with `getByRole("definition").filter({ hasText: "Tagline" })`. `getByLabel` finds only rows whose link has an `aria-label`, like Release date. An `ID` on the item doesn't label it.
+- A case an open bug breaks is a `test.fixme` whose title names the issue, e.g. `"a re-rated movie shows the latest Rating (#73)"`. The PR that fixes the bug turns it into a `test`.

@@ -12,7 +12,7 @@ import {
  */
 export default defineConfig({
 	testDir: "./tests",
-	/* Rebuild movies_e2e from the schema and seed once per run */
+	/* Rebuild the E2E database from the schema and seed once per run */
 	globalSetup: "./tests/global-setup.ts",
 	/* Run tests in files in parallel */
 	fullyParallel: true,
@@ -73,7 +73,7 @@ export default defineConfig({
 		// },
 	],
 
-	/* Start the app against movies_e2e, rebuilt from the seed by the global
+	/* Start the app against the E2E database, rebuilt from the seed by the global
 	 * setup, and the TMDB stub it starts. The process env wins over the
 	 * checkout's env files, so a .env.local can't point it elsewhere. In
 	 * development the login cookie isn't Secure, so it's kept over http.

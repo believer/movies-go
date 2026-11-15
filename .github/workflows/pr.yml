@@ -72,7 +72,7 @@ jobs:
           --health-interval 2s
           --health-retries 15
     env:
-      E2E_DATABASE_URL: postgres://admin:password@localhost:5432/movies_e2e?sslmode=disable
+      E2E_POSTGRES_URL: postgres://admin:password@localhost:5432
       # make e2e-db, here and in Playwright's global setup, uses the service
       # Postgres instead of the postgres_test container
       PSQL: psql -h localhost -U admin
@@ -91,7 +91,7 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Build E2E database
         # From the schema and seed, so a schema change that breaks the seed
-        # fails here. movies_e2e has to exist before Playwright starts the
+        # fails here. The database has to exist before Playwright starts the
         # server.
         run: make e2e-db
       - name: Install Playwright browser
