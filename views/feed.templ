@@ -147,6 +147,13 @@ templ Feed(props FeedProps) {
 								></li>
 							}
 						</ol>
+					} else if props.Query == "" && len(props.NowPlaying) > 0 {
+						<ol class="feed-list" id="feed">
+							@NowPlaying(NowPlayingProps{
+								Movies: props.NowPlaying,
+							})
+							<li class="empty-state">No movies seen</li>
+						</ol>
 					} else {
 						@emptystate.EmptyState(emptystate.Props{ID: "feed"}) {
 							No movies seen

@@ -1,13 +1,9 @@
-import { acceptDialogs, expect, logWatch, test } from "./fixtures"
-import { batmanBegins } from "./seed"
+import { acceptDialogs, expect, test } from "./fixtures"
 
 test("a user starts Now playing for a movie in the diary", async ({
 	page,
-	user,
+	user: _,
 }) => {
-	// The feed only shows Now playing to a user with a Watch
-	await logWatch(user, batmanBegins, "2018-01-01 20:00")
-
 	await page.goto("/now-playing/manage")
 	await expect(
 		page.getByText("No movies currently being watched.")
@@ -24,9 +20,10 @@ test("a user starts Now playing for a movie in the diary", async ({
 	).toBeVisible()
 	await expect(item).toContainText("Progress:")
 
-	// The feed and the movie page show it
+	// The feed and the movie page show it, even without a Watch
 	await page.goto("/")
 	await expect(page.getByRole("link", { name: "Now watching" })).toBeVisible()
+	await expect(page.getByText("No movies seen")).toBeVisible()
 	await page.getByRole("link", { name: "Jurassic Park" }).click()
 
 	await expect(page.getByText("Currently watching")).toBeVisible()

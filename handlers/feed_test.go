@@ -3,6 +3,7 @@ package handlers
 import (
 	"believer/movies/mocks"
 	"believer/movies/types"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -47,6 +48,51 @@ func TestGetFeed(t *testing.T) {
 		resp, err := app.Test(req)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusOK, resp.StatusCode)
+	})
+
+	t.Run("empty home feed shows now playing", func(t *testing.T) {
+		feedRepo := mocks.NewMockFeedQuerier(t)
+		nowPlayingRepo := mocks.NewMockNowPlayingQuerier(t)
+
+		mockNowPlaying := types.Movies{
+			{ID: 2, Title: "Avatar 3"},
+		}
+
+		feedRepo.On("GetFeedMovies", "user-123", 0).Return(types.Movies{}, nil)
+		nowPlayingRepo.On("GetNowPlaying", "user-123").Return(mockNowPlaying, nil)
+
+		app := setupFeedApp(feedRepo, nowPlayingRepo)
+
+		req := httptest.NewRequest(http.MethodGet, "/", nil)
+		resp, err := app.Test(req)
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusOK, resp.StatusCode)
+
+		body, err := io.ReadAll(resp.Body)
+		assert.NoError(t, err)
+		assert.Contains(t, string(body), `class="now-playing"`)
+		assert.Contains(t, string(body), "Avatar 3")
+		assert.Contains(t, string(body), "No movies seen")
+	})
+
+	t.Run("empty home feed without now playing", func(t *testing.T) {
+		feedRepo := mocks.NewMockFeedQuerier(t)
+		nowPlayingRepo := mocks.NewMockNowPlayingQuerier(t)
+
+		feedRepo.On("GetFeedMovies", "user-123", 0).Return(types.Movies{}, nil)
+		nowPlayingRepo.On("GetNowPlaying", "user-123").Return(types.Movies{}, nil)
+
+		app := setupFeedApp(feedRepo, nowPlayingRepo)
+
+		req := httptest.NewRequest(http.MethodGet, "/", nil)
+		resp, err := app.Test(req)
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusOK, resp.StatusCode)
+
+		body, err := io.ReadAll(resp.Body)
+		assert.NoError(t, err)
+		assert.NotContains(t, string(body), `class="now-playing"`)
+		assert.Contains(t, string(body), "No movies seen")
 	})
 
 	t.Run("search movies", func(t *testing.T) {
