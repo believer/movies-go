@@ -53,14 +53,18 @@ func (r Request) Year() string {
 	return r.QueryDefault("year", "All")
 }
 
-// Page returns the "page" query parameter, defaulting to 1.
+// pageSize matches the LIMIT 50 in the paged queries in db/
+const pageSize = 50
+
+// Page returns the "page" query parameter, defaulting to 1. A page below 1
+// is page 1, so Offset never goes negative.
 func (r Request) Page() int {
-	return r.QueryInt("page", 1)
+	return max(r.QueryInt("page", 1), 1)
 }
 
 // Offset returns the SQL query offset based on the current page.
 func (r Request) Offset() int {
-	return (r.Page() - 1) * 50
+	return (r.Page() - 1) * pageSize
 }
 
 // AvailableYears returns the list of years for stats and filters.

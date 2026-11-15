@@ -15,6 +15,17 @@ test("the release date links to the year page", async ({ page }) => {
 	).toBeVisible()
 })
 
+test("a page below 1 on the year page shows the first page", async ({
+	page,
+}) => {
+	await page.goto("/year/2008?page=0")
+
+	await expect(page.getByRole("heading", { name: "2008" })).toBeVisible()
+	await expect(
+		page.getByRole("link", { name: "The Dark Knight", exact: true })
+	).toBeVisible()
+})
+
 test("the Series links to the Series page", async ({ page }) => {
 	await page.goto("/movie/the-dark-knight-2")
 
