@@ -23,7 +23,9 @@ var (
 	tmdbPattern = regexp.MustCompile(`^\d+$`)
 )
 
-func ParseId(s string) (string, error) {
+// ParseID returns the IMDb ID (tt0111161) or TMDB ID (27205) in s, which can
+// be the ID itself or a URL ending in it.
+func ParseID(s string) (string, error) {
 	if s == "" {
 		return "", fmt.Errorf("empty ID")
 	}

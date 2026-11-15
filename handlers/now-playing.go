@@ -71,7 +71,7 @@ func (h *NowPlayingHandler) PostManage(c *fiber.Ctx) error {
 		position = 0
 	}
 
-	imdbIDClean, err := utils.ParseId(imdbID)
+	imdbIDClean, err := utils.ParseID(imdbID)
 	if err != nil {
 		c.Set("HX-Retarget", "#error")
 		return c.SendString(err.Error())
