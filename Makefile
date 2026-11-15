@@ -128,12 +128,17 @@ db-up:
 db-down:
 	@docker-compose down -v
 
-# Refresh db/schema.sql from the database in .env (production). pg_dump runs
-# in a Postgres 15 container to match production, so the dump loads on 15.
-# The restrict lines carry a random token per dump, so they are dropped to
-# keep diffs clean.
+# Rebuild db/schema.sql from the migrations, in a scratch Postgres 15
+# container (db/schema.sh). Run it after adding a migration.
 schema:
-	@set -a && . ./.env && set +a && \
-		docker run --rm postgres:15 pg_dump "$${DATABASE_URL%\?*}" --schema-only --no-owner --no-privileges \
-		| sed -e '/^\\restrict /d' -e '/^\\unrestrict /d' > db/schema.sql
+	@./db/schema.sh > db/schema.sql.tmp && mv db/schema.sql.tmp db/schema.sql
 	@echo "\033[0;32m(✓)\033[0;37m Dumped db/schema.sql"
+
+# Add the next migration, e.g. make migration NAME=add_latest_rating.
+# Version 1 is the baseline in db/migrate.go, so files start at 2.
+migration:
+	@test -n "$(NAME)" || { echo "❌ Pass NAME, e.g. make migration NAME=add_latest_rating"; exit 1; }
+	@last=$$(ls db/migrations | sed -n 's/^0*\([0-9]*\)_.*\.sql$$/\1/p' | sort -n | tail -n 1); \
+		file=db/migrations/$$(printf '%05d' $$(( $${last:-1} + 1 )))_$(NAME).sql; \
+		printf -- '-- +goose Up\n' > $$file; \
+		echo "\033[0;32m(✓)\033[0;37m Created $$file"

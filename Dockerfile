@@ -14,7 +14,7 @@ FROM golang:${GO_VERSION} AS build
 
 COPY --from=install /app /app
 WORKDIR /app
-RUN GOEXPERIMENT=greenteagc CGO_ENABLED=0 GOOS=linux go build -buildvcs=false -o movies
+RUN CGO_ENABLED=0 GOOS=linux go build -buildvcs=false -o movies
 
 # App
 FROM alpine:latest AS deploy
