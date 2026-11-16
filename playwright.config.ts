@@ -1,19 +1,15 @@
 import { defineConfig, devices } from "@playwright/test"
-import {
-	adminSecret,
-	baseURL,
-	databaseURL,
-	port,
-	tmdbBaseURL,
-} from "./tests/env"
+import { adminSecret, baseURL, databaseURL, port, tmdbBaseURL } from "./e2e/env"
 
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-	testDir: "./tests",
+	testDir: "./e2e",
+	/* The production smoke check has its own config, playwright.smoke.config.ts */
+	testIgnore: "smoke/**",
 	/* Rebuild the E2E database from the schema and seed once per run */
-	globalSetup: "./tests/global-setup.ts",
+	globalSetup: "./e2e/global-setup.ts",
 	/* Run tests in files in parallel */
 	fullyParallel: true,
 	/* Fail the build on CI if you accidentally left test.only in the source code. */

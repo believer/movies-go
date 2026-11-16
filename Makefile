@@ -83,7 +83,7 @@ bench:
 	@BENCH_DATABASE_URL="$(BENCH_DATABASE_URL)" go test ./db -run '^$$' -bench '$(BENCH)' -benchmem -benchtime=$(BENCH_TIME) -count=$(BENCH_COUNT)
 
 # Each E2E server port gets a database of its own, so checkouts on different
-# ports run E2E side by side. tests/env.ts names it the same way.
+# ports run E2E side by side. e2e/env.ts names it the same way.
 E2E_PORT ?= 8090
 E2E_DB = movies_e2e_$(E2E_PORT)
 
@@ -140,7 +140,7 @@ test-all: test e2e
 
 # Read-only check that production pages render, run after each deploy.
 # Override the site with SMOKE_URL, e.g. make smoke SMOKE_URL=http://localhost:8080.
-# Phony because the spec lives in smoke/.
+# Phony because the spec lives in e2e/smoke/.
 .PHONY: smoke
 smoke:
 	@pnpm exec playwright test -c playwright.smoke.config.ts
