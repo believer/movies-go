@@ -319,8 +319,9 @@ FROM
     LEFT JOIN seen_with sw ON sw.seen_id = s.id
 WHERE
     s.id = $1
+    AND s.user_id = $2
 GROUP BY
-    s.id`, a.SeenID)
+    s.id`, a.SeenID, a.UserID)
 
 	if err != nil {
 		b.Fatal(err)
@@ -559,7 +560,7 @@ func TestBenchmarksCoverUserMethods(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// Benchmark name to the string literals in its body
+	// Benchmark name to the names of the benchCases in its body
 	cases := map[string]map[string]bool{}
 	// Benchmark name to the methods it needs
 	methods := map[string][]string{}
@@ -575,8 +576,19 @@ func TestBenchmarksCoverUserMethods(t *testing.T) {
 			if fn, ok := decl.(*ast.FuncDecl); ok && strings.HasPrefix(fn.Name.Name, "Benchmark") && fn.Body != nil {
 				names := map[string]bool{}
 
+				// Only a name: field counts, so a string argument like "cast"
+				// can't pass for a case
 				ast.Inspect(fn.Body, func(n ast.Node) bool {
-					if lit, ok := n.(*ast.BasicLit); ok && lit.Kind == token.STRING {
+					kv, ok := n.(*ast.KeyValueExpr)
+
+					if !ok {
+						return true
+					}
+
+					key, ok := kv.Key.(*ast.Ident)
+					lit, isLit := kv.Value.(*ast.BasicLit)
+
+					if ok && isLit && key.Name == "name" && lit.Kind == token.STRING {
 						if s, err := strconv.Unquote(lit.Value); err == nil {
 							names[s] = true
 						}

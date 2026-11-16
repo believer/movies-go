@@ -78,7 +78,7 @@ BENCH_TIME ?= 0.25s
 
 # Run the benchmarks in db/ against BENCH_DB, built by make bench-db. Narrow
 # with BENCH, e.g. make bench BENCH=Stats/GetRatings, and compare two runs
-# with benchstat: make bench > new.txt.
+# with benchstat: make bench > /tmp/new.txt.
 bench:
 	@BENCH_DATABASE_URL="$(BENCH_DATABASE_URL)" go test ./db -run '^$$' -bench '$(BENCH)' -benchmem -benchtime=$(BENCH_TIME) -count=$(BENCH_COUNT)
 
