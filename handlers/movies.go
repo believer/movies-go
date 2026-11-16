@@ -559,7 +559,7 @@ func (h *MovieHandler) HandleSearch(c *fiber.Ctx) error {
 		return utils.Render(c, views.MovieSearchEmpty())
 	}
 
-	maxResults := clamp(len(movies.Results), 1, 5)
+	maxResults := min(max(len(movies.Results), 1), 5)
 
 	return utils.Render(c, views.MovieSearch(movies.Results[:maxResults]))
 }

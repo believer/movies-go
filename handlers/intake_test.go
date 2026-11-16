@@ -24,9 +24,6 @@ func setupIntake(t *testing.T) testIntake {
 	db := dbtest.Open(t)
 	dbtest.Truncate(t, db, "movie", "person", "genre", "language", "production_company", "series", "user", "watchlist", "now_playing")
 
-	// Awards are read from the CSV files at the repository root
-	t.Chdir("..")
-
 	fake := &tmdbtest.Fake{}
 
 	return testIntake{intake.New(db, fake), fake, db}

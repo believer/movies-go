@@ -2,34 +2,32 @@ package awards
 
 import (
 	"believer/movies/types"
+	"bytes"
 	"database/sql"
 	"encoding/csv"
 	"errors"
 	"fmt"
 	"io"
 	"log/slog"
-	"os"
 	"strings"
 
 	"github.com/jmoiron/sqlx"
 )
 
 // AddOscars adds the Academy Awards in oscars.csv for the movie with the
-// IMDb ID id. The file is read from the working directory.
+// IMDb ID id.
 func AddOscars(tx *sqlx.Tx, id string) error {
 	if id == "" {
 		return nil
 	}
 
-	f, err := os.Open("oscars.csv")
+	data, err := files.ReadFile("oscars.csv")
 
 	if err != nil {
 		return err
 	}
 
-	defer f.Close()
-
-	csvReader := csv.NewReader(f)
+	csvReader := csv.NewReader(bytes.NewReader(data))
 	headers, err := csvReader.Read()
 
 	if err != nil {

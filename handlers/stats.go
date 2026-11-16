@@ -367,8 +367,8 @@ func constructGraphFromData(data []graph.GraphData) ([]graph.Bar, error) {
 			elementsInGraph = graphWidth / len(data)
 			// Calcualte the bar Height
 			// Subtract 46 from the graph height to make room for the labels
-			barHeight = clamp(int(float64(row.Value)/float64(maxCount)*float64(graphHeight-46)), 2, graphHeight-46)
-			barWidth  = clamp(int(float64(graphWidth)/float64(len(data)))-5, 2, 100)
+			barHeight = min(max(int(float64(row.Value)/float64(maxCount)*float64(graphHeight-46)), 2), graphHeight-46)
+			barWidth  = min(max(int(float64(graphWidth)/float64(len(data)))-5, 2), 100)
 
 			// Space the bars evenly across the graph
 			barX = elementsInGraph*i + 1
