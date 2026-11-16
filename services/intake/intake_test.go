@@ -42,9 +42,6 @@ func setup(t *testing.T) (*Intake, *tmdbtest.Fake, *sqlx.DB) {
 	_, err := db.Exec(`INSERT INTO production_country (id, name) VALUES ('US', 'United States of America')`)
 	require.NoError(t, err)
 
-	// Awards are read from the CSV files at the repository root
-	t.Chdir("../..")
-
 	fake := &tmdbtest.Fake{}
 	fake.Add(inception, inceptionCredits, "tt1375666", "27205")
 
@@ -88,18 +85,6 @@ func TestEnsureMovie(t *testing.T) {
 SELECT count(*) FROM award a
     INNER JOIN person p ON p.id = a.person_id
 WHERE a.imdb_id = 'tt1375666' AND a.name = 'Cinematography' AND p.name = 'Wally Pfister' AND a.winner`))
-	})
-
-	t.Run("fails without adding the movie when the awards can't be read", func(t *testing.T) {
-		in, _, db := setup(t)
-
-		// No CSV files here
-		t.Chdir(t.TempDir())
-
-		_, err := in.EnsureMovie(ByExternalID("tt1375666"), MovieOptions{})
-		assert.ErrorContains(t, err, "oscars.csv")
-
-		assert.Equal(t, 0, count(t, db, `SELECT count(*) FROM movie`))
 	})
 
 	t.Run("adds production countries it hasn't seen before", func(t *testing.T) {

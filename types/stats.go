@@ -53,3 +53,8 @@ func (h HighestRated) LinkTo() string {
 func (h HighestRated) Rank() string {
 	return strconv.FormatFloat(h.WeightedAverageRating, 'f', 2, 64)
 }
+
+type OthersStats struct {
+	Seen          int     `db:"seen_count" json:"seenByUsers"`
+	AverageRating float64 `db:"avg_rating" json:"averageRating"`
+}

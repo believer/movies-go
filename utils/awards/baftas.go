@@ -2,13 +2,13 @@ package awards
 
 import (
 	"believer/movies/types"
+	"bytes"
 	"database/sql"
 	"encoding/csv"
 	"errors"
 	"fmt"
 	"io"
 	"log/slog"
-	"os"
 	"strconv"
 	"strings"
 
@@ -16,21 +16,18 @@ import (
 )
 
 // AddBaftas adds the BAFTAs in baftas.csv for the movie with the IMDb ID id.
-// The file is read from the working directory.
 func AddBaftas(tx *sqlx.Tx, id string) error {
 	if id == "" {
 		return nil
 	}
 
-	f, err := os.Open("baftas.csv")
+	data, err := files.ReadFile("baftas.csv")
 
 	if err != nil {
 		return err
 	}
 
-	defer f.Close()
-
-	csvReader := csv.NewReader(f)
+	csvReader := csv.NewReader(bytes.NewReader(data))
 	headers, err := csvReader.Read()
 
 	if err != nil {
