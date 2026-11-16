@@ -560,31 +560,45 @@ func (r *StatsRepository) GetHighestRankedPersonByJob(userID string, job string)
 	err := r.db.Select(&persons, `
 WITH person_ratings AS (
     SELECT
-        p.name,
-        p.id,
+        mp.person_id,
         COUNT(*) AS appearances,
         SUM(r.rating) AS total_rating
     FROM
         latest_rating AS r
         INNER JOIN movie_person AS mp ON mp.movie_id = r.movie_id
             AND mp.job = $2
-        INNER JOIN person AS p ON mp.person_id = p.id
     WHERE
         r.user_id = $1
     GROUP BY
-        p.id
+        mp.person_id
+),
+-- Ranks before joining person, so only the top 10 people get their names
+-- looked up rather than every person the user rated a movie of
+top_rated AS (
+    SELECT
+        person_id,
+        total_rating,
+        (total_rating::float / appearances) * LOG(appearances) AS weighted_average_rating,
+        appearances
+    FROM
+        person_ratings
+    ORDER BY
+        weighted_average_rating DESC,
+        person_id
+    LIMIT 10
 )
 SELECT
-    id,
-    name,
-    total_rating,
-    (total_rating::float / appearances) * LOG(appearances) AS weighted_average_rating,
-    appearances
+    p.id,
+    p.name,
+    t.total_rating,
+    t.weighted_average_rating,
+    t.appearances
 FROM
-    person_ratings
+    top_rated AS t
+    INNER JOIN person AS p ON p.id = t.person_id
 ORDER BY
-    weighted_average_rating DESC
-LIMIT 10
+    t.weighted_average_rating DESC,
+    p.id
 	`, userID, job)
 	return persons, err
 }

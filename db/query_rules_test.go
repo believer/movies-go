@@ -38,7 +38,6 @@ var queryRules = []queryRule{
 			"StatsRepository.GetMostWatchedByJob",
 			"StatsRepository.GetMostWatchedMovies",
 			"StatsRepository.GetShortestAndLongestMovie",
-			"StatsRepository.GetHighestRankedPersonByJob",
 			"StatsRepository.GetMostAwardNominations",
 			"StatsRepository.GetMostAwardWins",
 			"genreStatsQuery",
