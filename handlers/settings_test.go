@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"believer/movies/mocks"
+	"believer/movies/db/mocks"
 	"bytes"
 	"net/http"
 	"net/http/httptest"

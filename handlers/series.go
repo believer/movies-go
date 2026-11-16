@@ -3,7 +3,6 @@ package handlers
 import (
 	"believer/movies/db"
 	"believer/movies/types"
-	"believer/movies/utils"
 	"believer/movies/views"
 	"database/sql"
 	"log/slog"
@@ -21,7 +20,7 @@ func NewSeriesHandler(repo db.SeriesQuerier) *SeriesHandler {
 }
 
 func (h *SeriesHandler) GetSeries(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	id := req.IDString()
 
 	// Get series information
@@ -62,7 +61,7 @@ func (h *SeriesHandler) GetSeries(c *fiber.Ctx) error {
 		}
 	}
 
-	return utils.Render(c, views.Series(views.SeriesProps{
+	return Render(c, views.Series(views.SeriesProps{
 		LongestNumber: int(longestNumber),
 		TotalMovies:   totalMovies,
 		Movies:        movies,

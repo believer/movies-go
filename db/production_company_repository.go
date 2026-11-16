@@ -1,8 +1,8 @@
 package db
 
 import (
+	"believer/movies/slug"
 	"believer/movies/types"
-	"believer/movies/utils"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -25,7 +25,7 @@ func (p ProductionCompany) Trailing() string {
 }
 
 func (p ProductionCompany) Href() string {
-	return utils.CreateSelfHealingURL("production-company", p.Name, p.ID)
+	return slug.URL("production-company", p.Name, p.ID)
 }
 
 // Repo

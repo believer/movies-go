@@ -1,7 +1,8 @@
 package types
 
 import (
-	"believer/movies/utils"
+	"believer/movies/format"
+	"believer/movies/slug"
 	"fmt"
 	"strconv"
 )
@@ -13,11 +14,11 @@ type Stats struct {
 }
 
 func (s *Stats) FormattedNumberOfMoviesSeen() string {
-	return utils.FormatNumber(s.UniqueMovies)
+	return format.Number(s.UniqueMovies)
 }
 
 func (s *Stats) FormattedNumberOfMoviesSeenWithRewatches() string {
-	return utils.FormatNumber(s.SeenWithRewatches)
+	return format.Number(s.SeenWithRewatches)
 }
 
 type MovieStats struct {
@@ -47,7 +48,7 @@ type HighestRated struct {
 }
 
 func (h HighestRated) LinkTo() string {
-	return fmt.Sprintf("/person/%s-%d", utils.Slugify(h.Name), h.ID)
+	return fmt.Sprintf("/person/%s-%d", slug.Make(h.Name), h.ID)
 }
 
 func (h HighestRated) Rank() string {

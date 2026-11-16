@@ -22,9 +22,9 @@ linters:
         - pattern: ^panic$
           msg: return an error instead; only main panics
         - pattern: ^fiber\.Ctx\.Get$
-          msg: read request headers through utils.Request, e.g. req.Accepts or req.IsJSON
+          msg: read request headers through handlers.Request, e.g. req.Accepts or req.IsJSON
   exclusions:
     rules:
-      - path: (_test\.go|^main\.go|^mocks/)
+      - path: (_test\.go|^main\.go|^db/mocks/)
         linters:
           - forbidigo

@@ -1,6 +1,6 @@
 # E2E tests
 
-Playwright specs live in `tests/`. The comments above `e2e` and `e2e-db` in the `Makefile` cover ports, `PSQL` and running beside another checkout. This file holds what the config doesn't tell you.
+Playwright specs live in `e2e/`. The comments above `e2e` and `e2e-db` in the `Makefile` cover ports, `PSQL` and running beside another checkout. This file holds what the config doesn't tell you.
 
 ## Running
 
@@ -11,17 +11,17 @@ Playwright specs live in `tests/`. The comments above `e2e` and `e2e-db` in the 
 
 ## Writing
 
-- Expected values come from `db/seed.sql`. Add rows there when a test needs data the seed lacks. `tests/seed.ts` names the seed movies that write tests set up data for.
+- Expected values come from `db/seed.sql`. Add rows there when a test needs data the seed lacks. `e2e/seed.ts` names the seed movies that write tests set up data for.
 - Specs on a port share one database, so a spec shows what a page displays, not that a row was created. Prove inserts in a Go test.
-- Tests that write log in as a fresh user through the `user` fixture in `tests/fixtures.ts`.
-- TMDB responses come from `tests/tmdb/fixtures/`, keyed by request path. A new Movie intake test needs a movie of its own there.
+- Tests that write log in as a fresh user through the `user` fixture in `e2e/fixtures.ts`.
+- TMDB responses come from `e2e/tmdb/fixtures/`, keyed by request path. A new Movie intake test needs a movie of its own there.
 - A language page's heading is the native name: the link on a movie page reads "French", the heading "Français".
 - `getByLabel("<Detail>")` returns a metadata row's whole value. Narrow it with `.getByRole("link")` when the row also holds buttons, like My rating for a logged-in user.
 - A case an open bug breaks is a `test.fixme` whose title names the issue, e.g. `"a re-rated movie shows the latest Rating (#73)"`. The PR that fixes the bug turns it into a `test`.
 
 ## Visual baselines
 
-`tests/visual.spec.ts` screenshots the movie metadata and stats sections. The committed baselines are Linux Chromium from CI, so the spec skips locally unless `VISUAL=1`.
+`e2e/visual.spec.ts` screenshots the movie metadata and stats sections. The committed baselines are Linux Chromium from CI, so the spec skips locally unless `VISUAL=1`.
 
 - **Check a markup or CSS change for visual change:** run the spec with `VISUAL=1` and `--update-snapshots` on `origin/main`'s code (`git checkout origin/main -- components views styles`, then restore) to write local baselines that git ignores, then with `VISUAL=1` alone on your change. A diff fails the test.
-- **Change a baseline on purpose:** delete its PNG in `tests/visual.spec.ts-snapshots/` and push. The Chromium E2E job fails and writes a new one. Commit it from the job's `e2e-report-chromium` artifact.
+- **Change a baseline on purpose:** delete its PNG in `e2e/visual.spec.ts-snapshots/` and push. The Chromium E2E job fails and writes a new one. Commit it from the job's `e2e-report-chromium` artifact.

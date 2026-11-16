@@ -44,7 +44,7 @@
 	"plugins": [
 		{
 			"path": "./biome/no-markup-locator.grit",
-			"includes": ["tests/**/*.ts", "smoke/**/*.ts"]
+			"includes": ["e2e/**/*.ts"]
 		}
 	]
 }

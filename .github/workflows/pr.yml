@@ -109,5 +109,5 @@ jobs:
           # commit when a baseline is new or deleted on purpose
           path: |
             playwright-report/
-            tests/visual.spec.ts-snapshots/
+            e2e/visual.spec.ts-snapshots/
           retention-days: 30

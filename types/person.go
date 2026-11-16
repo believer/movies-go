@@ -1,21 +1,22 @@
 package types
 
 import (
-	"believer/movies/utils"
+	"believer/movies/null"
+	"believer/movies/slug"
 	"fmt"
 )
 
 type PersonMovie struct {
-	ID          int            `json:"id" db:"id"`
-	Title       string         `json:"title" db:"title"`
-	ReleaseDate utils.NullTime `json:"releaseDate" db:"release_date"`
-	Seen        bool           `json:"seen" db:"seen"`
-	Character   string         `json:"character" db:"character"`
+	ID          int       `json:"id" db:"id"`
+	Title       string    `json:"title" db:"title"`
+	ReleaseDate null.Time `json:"releaseDate" db:"release_date"`
+	Seen        bool      `json:"seen" db:"seen"`
+	Character   string    `json:"character" db:"character"`
 }
 
 // Link to the movie
 func (m PersonMovie) LinkTo() string {
-	return fmt.Sprintf("/movie/%s-%d", utils.Slugify(m.Title), m.ID)
+	return fmt.Sprintf("/movie/%s-%d", slug.Make(m.Title), m.ID)
 }
 
 // Release year
@@ -48,7 +49,7 @@ func (m PersonMovie) LinkToYear() string {
 type PersonMovies []PersonMovie
 
 func (u *PersonMovies) Scan(v any) error {
-	return utils.ScanJSON(v, u)
+	return scanJSON(v, u)
 }
 
 type Person struct {
@@ -66,13 +67,13 @@ type Person struct {
 
 // Link to the person
 func (p Person) LinkTo() string {
-	return fmt.Sprintf("/person/%s-%d", utils.Slugify(p.Name), p.ID)
+	return fmt.Sprintf("/person/%s-%d", slug.Make(p.Name), p.ID)
 }
 
 type Persons []Person
 
 func (u *Persons) Scan(v any) error {
-	return utils.ScanJSON(v, u)
+	return scanJSON(v, u)
 }
 
 type Cast struct {

@@ -3,7 +3,7 @@ package handlers
 import (
 	"believer/movies/components/movie"
 	"believer/movies/db/dbtest"
-	"believer/movies/mocks"
+	"believer/movies/db/mocks"
 	"believer/movies/types"
 	"believer/movies/views"
 	"database/sql"

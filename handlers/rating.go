@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"believer/movies/db"
-	"believer/movies/utils"
 	"believer/movies/views"
 	"fmt"
 
@@ -18,7 +17,7 @@ func NewRatingsHandler(repo db.RatingsQuerier) *RatingsHandler {
 }
 
 func (h *RatingsHandler) GetMoviesByRating(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	rating, err := req.ParamsInt("rating")
 
 	if err != nil {
@@ -38,7 +37,7 @@ func (h *RatingsHandler) GetMoviesByRating(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusOK)
 	}
 
-	return utils.Render(c, views.ListView(views.ListViewProps{
+	return Render(c, views.ListView(views.ListViewProps{
 		EmptyState: "No movies for this rating",
 		Name:       fmt.Sprintf("Movies rated %d", rating),
 		NextPage:   fmt.Sprintf("/rating/%d?page=%d", rating, req.Page()+1),

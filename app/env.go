@@ -1,4 +1,4 @@
-package utils
+package app
 
 import (
 	"bufio"
@@ -59,10 +59,10 @@ func setVariables(filename string, fromProcess map[string]bool) (err error) {
 	return nil
 }
 
-// LoadEnv loads .env and then .env.local from the working directory. A
+// loadEnv loads .env and then .env.local from the working directory. A
 // non-empty variable from the process wins over both, so a server started
 // with its own DATABASE_URL, like the E2E server, keeps it.
-func LoadEnv() {
+func loadEnv() {
 	fromProcess := map[string]bool{}
 
 	for _, kv := range os.Environ() {

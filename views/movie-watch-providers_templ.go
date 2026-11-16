@@ -8,7 +8,7 @@ package views
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "believer/movies/types"
+import "believer/movies/services/tmdb"
 import "believer/movies/components/section"
 import "believer/movies/components/link"
 import "believer/movies/components/list"
@@ -16,11 +16,11 @@ import "believer/movies/components/empty-state"
 import "believer/movies/components/details"
 
 type WatchProviderCategories struct {
-	Ads          []types.Provider
-	Buy          []types.Provider
-	Free         []types.Provider
-	Rent         []types.Provider
-	Subscription []types.Provider
+	Ads          []tmdb.Provider
+	Buy          []tmdb.Provider
+	Free         []tmdb.Provider
+	Rent         []tmdb.Provider
+	Subscription []tmdb.Provider
 }
 
 type WatchProvidersProps struct {
@@ -279,7 +279,7 @@ func WatchProviders(props WatchProvidersProps) templ.Component {
 	})
 }
 
-func providers(p []types.Provider, title string) templ.Component {
+func providers(p []tmdb.Provider, title string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {

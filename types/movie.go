@@ -1,7 +1,9 @@
 package types
 
 import (
-	"believer/movies/utils"
+	"believer/movies/format"
+	"believer/movies/null"
+	"believer/movies/slug"
 	"database/sql"
 	"fmt"
 	"math"
@@ -14,7 +16,7 @@ type Entity struct {
 }
 
 func (e Entity) LinkTo(prefix string) string {
-	return fmt.Sprintf("/%s/%s-%s", prefix, utils.Slugify(e.Name), e.ID)
+	return fmt.Sprintf("/%s/%s-%s", prefix, slug.Make(e.Name), e.ID)
 }
 
 // Movie sub structs
@@ -30,7 +32,7 @@ type MovieGenre struct{ Entity }
 type MovieGenres []MovieGenre
 
 func (u *MovieGenres) Scan(v any) error {
-	return utils.ScanJSON(v, u)
+	return scanJSON(v, u)
 }
 
 // Language
@@ -38,7 +40,7 @@ type MovieLanguage struct{ Entity }
 type MovieLanguages []MovieLanguage
 
 func (u *MovieLanguages) Scan(v any) error {
-	return utils.ScanJSON(v, u)
+	return scanJSON(v, u)
 }
 
 // Production Companies
@@ -51,7 +53,7 @@ func (mpc *MovieProductionCompany) LinkTo() string {
 type MovieProductionCompanies []MovieProductionCompany
 
 func (u *MovieProductionCompanies) Scan(v any) error {
-	return utils.ScanJSON(v, u)
+	return scanJSON(v, u)
 }
 
 // Production Countries
@@ -64,7 +66,7 @@ func (mpc *MovieProductionCountry) LinkTo() string {
 type MovieProductionCountries []MovieProductionCountry
 
 func (u *MovieProductionCountries) Scan(v any) error {
-	return utils.ScanJSON(v, u)
+	return scanJSON(v, u)
 }
 
 type MovieSeries struct {
@@ -74,13 +76,13 @@ type MovieSeries struct {
 }
 
 func (s MovieSeries) LinkTo() string {
-	return fmt.Sprintf("/series/%s-%s", utils.Slugify(s.Name), s.ID)
+	return fmt.Sprintf("/series/%s-%s", slug.Make(s.Name), s.ID)
 }
 
 type MovieSeriesList []MovieSeries
 
 func (s *MovieSeriesList) Scan(v any) error {
-	return utils.ScanJSON(v, s)
+	return scanJSON(v, s)
 }
 
 // Movie
@@ -104,14 +106,14 @@ type Movie struct {
 	ProductionCountries MovieProductionCountries `db:"production_countries" json:"productionCountries"`
 	Rank                int                      `db:"rank" json:"rank"`
 	RatedAt             sql.NullTime             `db:"rated_at" json:"ratedAt"`
-	Rating              utils.NullInt64          `db:"rating" json:"rating"`
-	ReleaseDate         utils.NullTime           `db:"release_date" json:"releaseDate"`
+	Rating              null.Int64               `db:"rating" json:"rating"`
+	ReleaseDate         null.Time                `db:"release_date" json:"releaseDate"`
 	Runtime             int                      `db:"runtime" json:"runtime"`
 	Seen                bool                     `db:"seen" json:"seen"`
 	Tagline             string                   `db:"tagline" json:"tagline"`
 	Title               string                   `db:"title" json:"title"`
 	UpdatedAt           time.Time                `db:"updated_at" json:"updatedAt"`
-	WatchedAt           utils.NullTime           `db:"watched_at" json:"watchedAt"`
+	WatchedAt           null.Time                `db:"watched_at" json:"watchedAt"`
 	WilhelmScream       sql.NullBool             `db:"wilhelm" json:"wilhelm"`
 	NowPlaying          bool                     `db:"now_playing" json:"nowPlaying"`
 
@@ -121,23 +123,23 @@ type Movie struct {
 
 // Format runtime in hours and minutes from minutes
 func (m Movie) RuntimeFormatted() string {
-	return utils.FormatRuntime(m.Runtime)
+	return format.Runtime(m.Runtime)
 }
 
 func (m Movie) RemainingRuntimeFormatted() string {
 	minutes := m.Runtime - int(m.Position)
 
-	return fmt.Sprintf("-%s %ds", utils.FormatRuntime(minutes), seconds(m.Position))
+	return fmt.Sprintf("-%s %ds", format.Runtime(minutes), seconds(m.Position))
 }
 
 func (m Movie) PositionFormatted() string {
 	minutes := int(m.Position)
 
 	if minutes >= m.Runtime {
-		return utils.FormatRuntime(m.Runtime)
+		return format.Runtime(m.Runtime)
 	}
 
-	return fmt.Sprintf("%s %ds", utils.FormatRuntime(minutes), seconds(m.Position))
+	return fmt.Sprintf("%s %ds", format.Runtime(minutes), seconds(m.Position))
 }
 
 func (m Movie) PositionPercent() string {
@@ -185,7 +187,7 @@ func (m Movie) ReleaseYear() string {
 
 // Link to the movie
 func (m Movie) LinkTo() string {
-	return fmt.Sprintf("/movie/%s-%d", utils.Slugify(m.Title), m.ID)
+	return fmt.Sprintf("/movie/%s-%d", slug.Make(m.Title), m.ID)
 }
 
 func (m Movie) LinkToReleaseYear() string {
@@ -232,7 +234,7 @@ func (m Movie) LinkToWatchlistAdd() string {
 type Movies []Movie
 
 func (u *Movies) Scan(v any) error {
-	return utils.ScanJSON(v, u)
+	return scanJSON(v, u)
 }
 
 func (m Movies) NumberOfMovies() string {

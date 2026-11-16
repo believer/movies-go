@@ -3,8 +3,8 @@ package app
 import (
 	"believer/movies/components/layout"
 	"believer/movies/db"
+	"believer/movies/handlers"
 	"believer/movies/router"
-	"believer/movies/utils"
 	"believer/movies/views"
 	"context"
 	"errors"
@@ -63,7 +63,7 @@ func handleError(c *fiber.Ctx, err error) error {
 // SetupAndRunApp starts the app. cssSources holds the CSS files the
 // stylesheet is built from.
 func SetupAndRunApp(cssSources fs.FS) error {
-	utils.LoadEnv()
+	loadEnv()
 	appEnv := os.Getenv("APP_ENV")
 
 	// Build the stylesheet and version its URL by its contents to bust caches
@@ -222,5 +222,5 @@ func userIdFromToken(tokenString string, secret string) (string, error) {
 
 func notFoundMiddleware(c *fiber.Ctx) error {
 	c.Status(fiber.StatusNotFound)
-	return utils.Render(c, views.NotFound())
+	return handlers.Render(c, views.NotFound())
 }

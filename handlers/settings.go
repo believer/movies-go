@@ -3,7 +3,7 @@ package handlers
 import (
 	"believer/movies/components/checkbox"
 	"believer/movies/db"
-	"believer/movies/utils"
+	"believer/movies/slug"
 	"believer/movies/views"
 	"strings"
 
@@ -19,7 +19,7 @@ func NewSettingsHandler(repo db.SettingsQuerier) *SettingsHandler {
 }
 
 func (h *SettingsHandler) Settings(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 
 	if !req.IsAuthenticated() {
 		return c.SendStatus(fiber.StatusUnauthorized)
@@ -32,13 +32,13 @@ func (h *SettingsHandler) Settings(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.Render(c, views.Settings(views.SettingsProps{
+	return Render(c, views.Settings(views.SettingsProps{
 		Providers: watchProviders(storedProviders),
 	}))
 }
 
 func (h *SettingsHandler) SettingsWatchProviders(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 
 	if !req.IsAuthenticated() {
 		return c.SendStatus(fiber.StatusUnauthorized)
@@ -61,7 +61,7 @@ func (h *SettingsHandler) SettingsWatchProviders(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.Render(c, views.Settings(views.SettingsProps{
+	return Render(c, views.Settings(views.SettingsProps{
 		Providers: watchProviders(selectedProviders),
 	}))
 }
@@ -84,7 +84,7 @@ func watchProviders(selectedProviders string) []checkbox.Props {
 	for _, c := range companies {
 		providers = append(providers, checkbox.Props{
 			Checked: strings.Contains(selectedProviders, c),
-			ID:      strings.ToLower(utils.Slugify(c)),
+			ID:      strings.ToLower(slug.Make(c)),
 			Label:   c,
 			Name:    "providers",
 			Value:   c,

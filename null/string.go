@@ -1,15 +1,15 @@
-package utils
+package null
 
 import (
 	"database/sql"
 	"encoding/json"
 )
 
-type NullString struct {
+type String struct {
 	sql.NullString
 }
 
-func (ns *NullString) UnmarshalJSON(b []byte) error {
+func (ns *String) UnmarshalJSON(b []byte) error {
 	var s *string
 	if err := json.Unmarshal(b, &s); err != nil {
 		return err
@@ -24,7 +24,7 @@ func (ns *NullString) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-func (ns NullString) MarshalJSON() ([]byte, error) {
+func (ns String) MarshalJSON() ([]byte, error) {
 	if !ns.Valid {
 		return []byte("null"), nil
 	}

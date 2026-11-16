@@ -2,8 +2,8 @@ package intake
 
 import (
 	"believer/movies/db/dbtest"
+	"believer/movies/services/tmdb"
 	"believer/movies/services/tmdb/tmdbtest"
-	"believer/movies/types"
 	"testing"
 
 	"github.com/jmoiron/sqlx"
@@ -13,21 +13,21 @@ import (
 
 func ptr(s string) *string { return &s }
 
-var inception = types.MovieDetailsResponse{
+var inception = tmdb.MovieDetailsResponse{
 	TmdbId:              27205,
 	ImdbId:              "tt1375666",
 	Title:               "Inception",
 	Runtime:             148,
 	ReleaseDate:         "2010-07-15",
-	Genres:              []types.TmdbGenre{{Name: "Science Fiction"}, {Name: "Action"}},
-	SpokenLanguages:     []types.TmdbLanguage{{ISO639: "en", EnglishName: "English", Name: "English"}},
-	ProductionCountries: []types.TmdbCountry{{ID: "US", Name: "United States of America"}},
-	ProductionCompanies: []types.TmdbCompany{{ID: 923, Name: "Legendary Pictures", OriginCountry: "US"}},
+	Genres:              []tmdb.Genre{{Name: "Science Fiction"}, {Name: "Action"}},
+	SpokenLanguages:     []tmdb.Language{{ISO639: "en", EnglishName: "English", Name: "English"}},
+	ProductionCountries: []tmdb.Country{{ID: "US", Name: "United States of America"}},
+	ProductionCompanies: []tmdb.Company{{ID: 923, Name: "Legendary Pictures", OriginCountry: "US"}},
 }
 
-var inceptionCredits = types.MovieCreditsResponse{
-	Cast: []types.CastResult{{ID: 6193, Name: "Leonardo DiCaprio", Character: ptr("Cobb")}},
-	Crew: []types.CrewResult{
+var inceptionCredits = tmdb.MovieCreditsResponse{
+	Cast: []tmdb.CastResult{{ID: 6193, Name: "Leonardo DiCaprio", Character: ptr("Cobb")}},
+	Crew: []tmdb.CrewResult{
 		{Id: 525, Name: "Christopher Nolan", Department: "Directing", Job: ptr("Director")},
 		{Id: 559, Name: "Wally Pfister", Department: "Camera", Job: ptr("Director of Photography")},
 	},
@@ -91,7 +91,7 @@ WHERE a.imdb_id = 'tt1375666' AND a.name = 'Cinematography' AND p.name = 'Wally 
 		in, fake, db := setup(t)
 
 		movie := inception
-		movie.ProductionCountries = []types.TmdbCountry{
+		movie.ProductionCountries = []tmdb.Country{
 			{ID: "US", Name: "United States"},
 			{ID: "SE", Name: "Sweden"},
 		}
@@ -115,7 +115,7 @@ WHERE mc.movie_id = $1 ORDER BY pc.id`, id))
 
 		// GB is neither one of the movie's countries nor in production_country
 		movie := inception
-		movie.ProductionCompanies = []types.TmdbCompany{{ID: 1, Name: "Working Title Films", OriginCountry: "GB"}}
+		movie.ProductionCompanies = []tmdb.Company{{ID: 1, Name: "Working Title Films", OriginCountry: "GB"}}
 		fake.Add(movie, inceptionCredits, "tt1375666")
 
 		id, err := in.EnsureMovie(ByExternalID("tt1375666"), MovieOptions{})
@@ -234,7 +234,7 @@ func TestRefreshMovie(t *testing.T) {
 
 		updated := inception
 		updated.Title = "Inception (2010)"
-		updated.Genres = append(updated.Genres, types.TmdbGenre{Name: "Thriller"})
+		updated.Genres = append(updated.Genres, tmdb.Genre{Name: "Thriller"})
 		fake.Add(updated, inceptionCredits, "tt1375666")
 
 		require.NoError(t, in.RefreshMovie(id))

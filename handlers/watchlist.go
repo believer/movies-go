@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"believer/movies/db"
-	"believer/movies/utils"
 	"believer/movies/views"
 
 	"github.com/gofiber/fiber/v2"
@@ -17,7 +16,7 @@ func NewWatchlistHandler(repo db.WatchlistQuerier) *WatchlistHandler {
 }
 
 func (h *WatchlistHandler) GetWatchlist(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	movies, err := h.repo.GetReleasedMovies(req.UserID(), "Date added")
 
 	if err != nil {
@@ -44,7 +43,7 @@ func (h *WatchlistHandler) GetWatchlist(c *fiber.Ctx) error {
 		})
 	}
 
-	return utils.Render(c, views.Watchlist(views.WatchlistProps{
+	return Render(c, views.Watchlist(views.WatchlistProps{
 		Movies:                   movies,
 		UnreleasedMovies:         unreleasedMovies,
 		MoviesWithoutReleaseDate: moviesWithoutReleaseDate,
@@ -52,7 +51,7 @@ func (h *WatchlistHandler) GetWatchlist(c *fiber.Ctx) error {
 }
 
 func (h *WatchlistHandler) GetWatchlistMovies(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	sortOrder := req.QueryDefault("sortOrder", "Date added")
 
 	movies, err := h.repo.GetReleasedMovies(req.UserID(), sortOrder)
@@ -61,7 +60,7 @@ func (h *WatchlistHandler) GetWatchlistMovies(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.Render(c, views.WatchlistList(
+	return Render(c, views.WatchlistList(
 		views.WatchlistListProps{
 			Movies:      movies,
 			Title:       "Movies",
@@ -72,7 +71,7 @@ func (h *WatchlistHandler) GetWatchlistMovies(c *fiber.Ctx) error {
 }
 
 func (h *WatchlistHandler) GetWatchlistUnreleasedMovies(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	sortOrder := req.QueryDefault("sortOrder", "Release date")
 
 	movies, err := h.repo.GetUnreleasedMovies(req.UserID(), sortOrder)
@@ -81,7 +80,7 @@ func (h *WatchlistHandler) GetWatchlistUnreleasedMovies(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.Render(c, views.WatchlistList(
+	return Render(c, views.WatchlistList(
 		views.WatchlistListProps{
 			Movies:      movies,
 			Title:       "Unreleased movies",
@@ -92,7 +91,7 @@ func (h *WatchlistHandler) GetWatchlistUnreleasedMovies(c *fiber.Ctx) error {
 }
 
 func (h *WatchlistHandler) DeleteFromWatchlist(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 
 	if !req.IsAuthenticated() {
 		return c.SendStatus(fiber.StatusUnauthorized)

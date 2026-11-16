@@ -3,13 +3,12 @@ package tmdbtest
 
 import (
 	"believer/movies/services/tmdb"
-	"believer/movies/types"
 	"sync"
 )
 
 type movie struct {
-	details types.MovieDetailsResponse
-	credits types.MovieCreditsResponse
+	details tmdb.MovieDetailsResponse
+	credits tmdb.MovieCreditsResponse
 }
 
 // Fake serves movies added with Add and returns tmdb.ErrNotFound for
@@ -22,7 +21,7 @@ type Fake struct {
 
 // Add makes a movie available under each of the given IDs, typically its
 // IMDb ID and its TMDB ID.
-func (f *Fake) Add(details types.MovieDetailsResponse, credits types.MovieCreditsResponse, ids ...string) {
+func (f *Fake) Add(details tmdb.MovieDetailsResponse, credits tmdb.MovieCreditsResponse, ids ...string) {
 	f.mu.Lock()
 	defer f.mu.Unlock()
 
@@ -35,7 +34,7 @@ func (f *Fake) Add(details types.MovieDetailsResponse, credits types.MovieCredit
 	}
 }
 
-func (f *Fake) Fetch(id string) (types.MovieDetailsResponse, types.MovieCreditsResponse, error) {
+func (f *Fake) Fetch(id string) (tmdb.MovieDetailsResponse, tmdb.MovieCreditsResponse, error) {
 	f.mu.Lock()
 	defer f.mu.Unlock()
 
@@ -44,7 +43,7 @@ func (f *Fake) Fetch(id string) (types.MovieDetailsResponse, types.MovieCreditsR
 	m, ok := f.movies[id]
 
 	if !ok {
-		return types.MovieDetailsResponse{}, types.MovieCreditsResponse{}, tmdb.ErrNotFound
+		return tmdb.MovieDetailsResponse{}, tmdb.MovieCreditsResponse{}, tmdb.ErrNotFound
 	}
 
 	return m.details, m.credits, nil

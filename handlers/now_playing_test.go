@@ -1,7 +1,8 @@
 package handlers
 
 import (
-	"believer/movies/mocks"
+	"believer/movies/db/mocks"
+	"believer/movies/services/tmdb"
 	"believer/movies/types"
 	"net/http"
 	"net/http/httptest"
@@ -85,7 +86,7 @@ func TestNowPlayingHandlerPostManage(t *testing.T) {
 		movieRepo := mocks.NewMockMovieQuerier(t)
 
 		movies := setupIntake(t)
-		movies.tmdb.Add(types.MovieDetailsResponse{ImdbId: "tt0111161", TmdbId: 278, Title: "The Shawshank Redemption"}, types.MovieCreditsResponse{}, "tt0111161")
+		movies.tmdb.Add(tmdb.MovieDetailsResponse{ImdbId: "tt0111161", TmdbId: 278, Title: "The Shawshank Redemption"}, tmdb.MovieCreditsResponse{}, "tt0111161")
 
 		movieRepo.On("UpdateNowPlaying", 1, 10.0, "user-123").Return(nil)
 

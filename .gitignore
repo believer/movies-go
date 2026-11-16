@@ -14,6 +14,6 @@ main
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
-# Visual baselines are committed for Linux only, see tests/visual.spec.ts
-/tests/*-snapshots/*-darwin.png
-/tests/*-snapshots/*-win32.png
+# Visual baselines are committed for Linux only, see e2e/visual.spec.ts
+/e2e/*-snapshots/*-darwin.png
+/e2e/*-snapshots/*-win32.png

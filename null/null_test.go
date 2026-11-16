@@ -1,4 +1,4 @@
-package utils
+package null
 
 import (
 	"database/sql"
@@ -9,18 +9,18 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestNullStringJSON(t *testing.T) {
+func TestStringJSON(t *testing.T) {
 	tests := []struct {
 		json string
-		want NullString
+		want String
 	}{
-		{`"Nolan"`, NullString{sql.NullString{String: "Nolan", Valid: true}}},
-		{`null`, NullString{}},
+		{`"Nolan"`, String{sql.NullString{String: "Nolan", Valid: true}}},
+		{`null`, String{}},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.json, func(t *testing.T) {
-			var got NullString
+			var got String
 			require.NoError(t, json.Unmarshal([]byte(tc.json), &got))
 			assert.Equal(t, tc.want, got)
 
@@ -31,18 +31,18 @@ func TestNullStringJSON(t *testing.T) {
 	}
 }
 
-func TestNullInt64JSON(t *testing.T) {
+func TestInt64JSON(t *testing.T) {
 	tests := []struct {
 		json string
-		want NullInt64
+		want Int64
 	}{
-		{`4`, NullInt64{sql.NullInt64{Int64: 4, Valid: true}}},
-		{`null`, NullInt64{}},
+		{`4`, Int64{sql.NullInt64{Int64: 4, Valid: true}}},
+		{`null`, Int64{}},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.json, func(t *testing.T) {
-			var got NullInt64
+			var got Int64
 			require.NoError(t, json.Unmarshal([]byte(tc.json), &got))
 			assert.Equal(t, tc.want, got)
 

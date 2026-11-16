@@ -1,8 +1,8 @@
 package db
 
 import (
+	"believer/movies/slug"
 	"believer/movies/types"
-	"believer/movies/utils"
 	"strconv"
 
 	"github.com/jmoiron/sqlx"
@@ -27,7 +27,7 @@ func (l Language) Trailing() string {
 }
 
 func (l Language) Href() string {
-	return utils.CreateSelfHealingURL("language", l.EnglishName, strconv.Itoa(l.ID))
+	return slug.URL("language", l.EnglishName, strconv.Itoa(l.ID))
 }
 
 // Repo

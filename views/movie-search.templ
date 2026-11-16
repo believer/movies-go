@@ -1,8 +1,8 @@
 package views
 
-import "believer/movies/types"
+import "believer/movies/services/tmdb"
 
-templ MovieSearch(movies []types.SearchResult) {
+templ MovieSearch(movies []tmdb.SearchResult) {
 	if len(movies) > 0 {
 		<ul>
 			for _, movie := range movies {

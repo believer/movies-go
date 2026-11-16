@@ -3,7 +3,6 @@ package handlers
 import (
 	"believer/movies/db"
 	"believer/movies/services/intake"
-	"believer/movies/utils"
 	"believer/movies/views"
 	"strconv"
 
@@ -21,7 +20,7 @@ func NewNowPlayingHandler(repo db.NowPlayingQuerier, movieRepo db.MovieQuerier, 
 }
 
 func (h *NowPlayingHandler) GetNowPlaying(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	nowPlaying, err := h.repo.GetNowPlaying(req.UserID())
 
 	if err != nil {
@@ -32,13 +31,13 @@ func (h *NowPlayingHandler) GetNowPlaying(c *fiber.Ctx) error {
 		return c.JSON(nowPlaying)
 	}
 
-	return utils.Render(c, views.NowPlaying(views.NowPlayingProps{
+	return Render(c, views.NowPlaying(views.NowPlayingProps{
 		Movies: nowPlaying,
 	}))
 }
 
 func (h *NowPlayingHandler) GetManage(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	isAuth := req.IsAuthenticated()
 
 	if !isAuth {
@@ -50,13 +49,13 @@ func (h *NowPlayingHandler) GetManage(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.Render(c, views.NowPlayingManage(views.NowPlayingManageProps{
+	return Render(c, views.NowPlayingManage(views.NowPlayingManageProps{
 		Movies: nowPlaying,
 	}))
 }
 
 func (h *NowPlayingHandler) PostManage(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	isAuth := req.IsAuthenticated()
 	userID := req.UserID()
 
@@ -71,7 +70,7 @@ func (h *NowPlayingHandler) PostManage(c *fiber.Ctx) error {
 		position = 0
 	}
 
-	imdbIDClean, err := utils.ParseID(imdbID)
+	imdbIDClean, err := ParseID(imdbID)
 	if err != nil {
 		c.Set("HX-Retarget", "#error")
 		return c.SendString(err.Error())
@@ -97,7 +96,7 @@ func (h *NowPlayingHandler) PostManage(c *fiber.Ctx) error {
 }
 
 func (h *NowPlayingHandler) PutNowPlaying(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	isAuth := req.IsAuthenticated()
 	userID := req.UserID()
 
@@ -130,11 +129,11 @@ func (h *NowPlayingHandler) PutNowPlaying(c *fiber.Ctx) error {
 	}
 	movieObj.Position = position
 
-	return utils.Render(c, views.NowPlayingManageItem(movieObj))
+	return Render(c, views.NowPlayingManageItem(movieObj))
 }
 
 func (h *NowPlayingHandler) DeleteNowPlaying(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	isAuth := req.IsAuthenticated()
 	userID := req.UserID()
 

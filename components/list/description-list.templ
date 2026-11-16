@@ -1,6 +1,6 @@
 package list
 
-import "believer/movies/utils"
+import "believer/movies/slug"
 
 templ dt(text, id string) {
 	<dt class="dt" id={ id }>
@@ -34,7 +34,7 @@ func (p DlProps) labelID() string {
 		return p.ID + "-label"
 	}
 
-	return "dl-" + utils.Slugify(p.Detail)
+	return "dl-" + slug.Make(p.Detail)
 }
 
 templ DlItem(props DlProps) {

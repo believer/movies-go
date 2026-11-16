@@ -1,6 +1,7 @@
-package utils
+package handlers
 
 import (
+	"believer/movies/slug"
 	"mime"
 	"strings"
 	"time"
@@ -38,7 +39,7 @@ func (r Request) IsAuthenticated() bool {
 
 // MovieID returns the self-healed movie ID or "0" if parsing fails.
 func (r Request) MovieID() string {
-	id, err := SelfHealingNumericID(r.Params("id"))
+	id, err := slug.NumericID(r.Params("id"))
 	if err != nil {
 		return "0"
 	}
@@ -47,7 +48,7 @@ func (r Request) MovieID() string {
 
 // IDString returns the self-healed ID from path as a string.
 func (r Request) IDString() string {
-	return SelfHealingID(r.Params("id"))
+	return slug.ID(r.Params("id"))
 }
 
 // Year returns the "year" query parameter, defaulting to "All".

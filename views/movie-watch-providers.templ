@@ -1,6 +1,6 @@
 package views
 
-import "believer/movies/types"
+import "believer/movies/services/tmdb"
 import "believer/movies/components/section"
 import "believer/movies/components/link"
 import "believer/movies/components/list"
@@ -8,11 +8,11 @@ import "believer/movies/components/empty-state"
 import "believer/movies/components/details"
 
 type WatchProviderCategories struct {
-	Ads          []types.Provider
-	Buy          []types.Provider
-	Free         []types.Provider
-	Rent         []types.Provider
-	Subscription []types.Provider
+	Ads          []tmdb.Provider
+	Buy          []tmdb.Provider
+	Free         []tmdb.Provider
+	Rent         []tmdb.Provider
+	Subscription []tmdb.Provider
 }
 
 type WatchProvidersProps struct {
@@ -72,7 +72,7 @@ templ WatchProviders(props WatchProvidersProps) {
 	}
 }
 
-templ providers(p []types.Provider, title string) {
+templ providers(p []tmdb.Provider, title string) {
 	if len(p) > 0 {
 		<section class="section" style="--gap: var(--spacing-4); --trailing-gap: var(--spacing-4);">
 			<h3>{ title }</h3>

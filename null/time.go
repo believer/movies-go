@@ -1,4 +1,4 @@
-package utils
+package null
 
 import (
 	"database/sql"
@@ -6,11 +6,11 @@ import (
 	"time"
 )
 
-type NullTime struct {
+type Time struct {
 	sql.NullTime
 }
 
-func (nt *NullTime) UnmarshalJSON(b []byte) error {
+func (nt *Time) UnmarshalJSON(b []byte) error {
 	// Handle "null"
 	if string(b) == "null" {
 		nt.Valid = false
@@ -33,14 +33,14 @@ func (nt *NullTime) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-func (nt NullTime) MarshalJSON() ([]byte, error) {
+func (nt Time) MarshalJSON() ([]byte, error) {
 	if !nt.Valid {
 		return []byte("null"), nil
 	}
 	return json.Marshal(nt.Time.Format(time.RFC3339))
 }
 
-func (nt NullTime) Format() string {
+func (nt Time) Format() string {
 	if !nt.Valid {
 		return ""
 	}

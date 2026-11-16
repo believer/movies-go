@@ -1,9 +1,9 @@
 package handlers
 
 import (
-	"believer/movies/mocks"
+	"believer/movies/db/mocks"
 	"believer/movies/services/intake"
-	"believer/movies/types"
+	"believer/movies/services/tmdb"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -15,7 +15,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var shawshank = types.MovieDetailsResponse{ImdbId: "tt0111161", TmdbId: 278, Title: "The Shawshank Redemption"}
+var shawshank = tmdb.MovieDetailsResponse{ImdbId: "tt0111161", TmdbId: 278, Title: "The Shawshank Redemption"}
 
 // setupIntakeMovieApp signs in as user 1, a real user in the test database.
 func setupIntakeMovieApp(h *MovieHandler) *fiber.App {
@@ -50,7 +50,7 @@ func TestPostMovieNew(t *testing.T) {
 	t.Run("logs a watch of a new movie", func(t *testing.T) {
 		movies := setupIntake(t)
 		movies.seedUser(t, 1)
-		movies.tmdb.Add(shawshank, types.MovieCreditsResponse{}, "tt0111161")
+		movies.tmdb.Add(shawshank, tmdb.MovieCreditsResponse{}, "tt0111161")
 
 		app := setupIntakeMovieApp(NewMovieHandler(mocks.NewMockMovieQuerier(t), movies.intake))
 
@@ -69,7 +69,7 @@ func TestPostMovieNew(t *testing.T) {
 	t.Run("adds to watchlist without a watch or rating", func(t *testing.T) {
 		movies := setupIntake(t)
 		movies.seedUser(t, 1)
-		movies.tmdb.Add(shawshank, types.MovieCreditsResponse{}, "tt0111161")
+		movies.tmdb.Add(shawshank, tmdb.MovieCreditsResponse{}, "tt0111161")
 
 		app := setupIntakeMovieApp(NewMovieHandler(mocks.NewMockMovieQuerier(t), movies.intake))
 		form := url.Values{"imdb_id": {"tt0111161"}, "watchlist": {"true"}, "rating": {"8"}}
@@ -87,7 +87,7 @@ func TestPostMovieNew(t *testing.T) {
 	t.Run("dry run only adds the movie", func(t *testing.T) {
 		movies := setupIntake(t)
 		movies.seedUser(t, 1)
-		movies.tmdb.Add(shawshank, types.MovieCreditsResponse{}, "tt0111161")
+		movies.tmdb.Add(shawshank, tmdb.MovieCreditsResponse{}, "tt0111161")
 
 		app := setupIntakeMovieApp(NewMovieHandler(mocks.NewMockMovieQuerier(t), movies.intake))
 
@@ -104,7 +104,7 @@ func TestCreateSeenMovie(t *testing.T) {
 	t.Run("logs another watch and clears the watchlist", func(t *testing.T) {
 		movies := setupIntake(t)
 		movies.seedUser(t, 1)
-		movies.tmdb.Add(shawshank, types.MovieCreditsResponse{}, "tt0111161")
+		movies.tmdb.Add(shawshank, tmdb.MovieCreditsResponse{}, "tt0111161")
 
 		id, err := movies.intake.AddToWatchlist("1", intake.ByExternalID("tt0111161"), intake.MovieOptions{})
 		require.NoError(t, err)
@@ -123,7 +123,7 @@ func TestPlaybackProgress(t *testing.T) {
 	t.Run("logs a watch when playback completes", func(t *testing.T) {
 		movies := setupIntake(t)
 		movies.seedUser(t, 1)
-		movies.tmdb.Add(shawshank, types.MovieCreditsResponse{}, "tt0111161")
+		movies.tmdb.Add(shawshank, tmdb.MovieCreditsResponse{}, "tt0111161")
 
 		app := setupIntakeMovieApp(NewMovieHandler(mocks.NewMockMovieQuerier(t), movies.intake))
 
@@ -136,7 +136,7 @@ func TestPlaybackProgress(t *testing.T) {
 	t.Run("updates now playing without fetching an existing movie", func(t *testing.T) {
 		movies := setupIntake(t)
 		movies.seedUser(t, 1)
-		movies.tmdb.Add(shawshank, types.MovieCreditsResponse{}, "tt0111161")
+		movies.tmdb.Add(shawshank, tmdb.MovieCreditsResponse{}, "tt0111161")
 
 		id, err := movies.intake.EnsureMovie(intake.ByExternalID("tt0111161"), intake.MovieOptions{})
 		require.NoError(t, err)

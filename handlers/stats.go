@@ -3,8 +3,8 @@ package handlers
 import (
 	"believer/movies/components/graph"
 	"believer/movies/db"
+	"believer/movies/format"
 	"believer/movies/types"
-	"believer/movies/utils"
 	"believer/movies/views"
 	"cmp"
 	"fmt"
@@ -29,7 +29,7 @@ func NewStatsHandler(repo db.StatsQuerier) *StatsHandler {
 
 // Handler for /stats.
 func (h *StatsHandler) GetStats(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	userId := req.UserID()
 
 	// Check cache
@@ -42,7 +42,7 @@ func (h *StatsHandler) GetStats(c *fiber.Ctx) error {
 			return c.JSON(cached.props)
 		}
 
-		return utils.Render(c, views.Stats(cached.props))
+		return Render(c, views.Stats(cached.props))
 	}
 
 	var reviews int
@@ -242,7 +242,7 @@ func (h *StatsHandler) GetStats(c *fiber.Ctx) error {
 		AwardNominations:        awardNominations,
 		AwardWins:               awardWins,
 		BestYear:                bestYear,
-		FormattedTotalRuntime:   utils.FormatRuntime(stats.TotalRuntime),
+		FormattedTotalRuntime:   format.Runtime(stats.TotalRuntime),
 		MostAwardedMovies:       mostAwardedMovies,
 		MostWatchedCast:         cast,
 		MostWatchedMovies:       movies,
@@ -251,7 +251,7 @@ func (h *StatsHandler) GetStats(c *fiber.Ctx) error {
 		Reviews:                 reviews,
 		SeenThisYear:            seenThisYearByMonthBars,
 		Stats:                   stats,
-		TotalCast:               utils.FormatNumber(totalCast),
+		TotalCast:               format.Number(totalCast),
 		WatchedByYear:           watchedByYearBar,
 		WatchedByWeekday:        watchedByWeekdayBar,
 		Year:                    year,
@@ -273,11 +273,11 @@ func (h *StatsHandler) GetStats(c *fiber.Ctx) error {
 	}
 	statsCacheMutex.Unlock()
 
-	return utils.Render(c, views.Stats(props))
+	return Render(c, views.Stats(props))
 }
 
 func (h *StatsHandler) GetMostWatchedByJob(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	var persons []types.ListItem
 	var totals []types.ListItem
 
@@ -302,19 +302,19 @@ func (h *StatsHandler) GetMostWatchedByJob(c *fiber.Ctx) error {
 	if len(totals) > 0 {
 		totalJob = totals[0].Count
 	}
-	return utils.Render(c, views.MostWatchedPerson(
+	return Render(c, views.MostWatchedPerson(
 		views.MostWatchedPersonProps{
 			Data:  persons,
 			Job:   job,
 			Title: cases.Title(language.English).String(job),
-			Total: utils.FormatNumber(totalJob),
+			Total: format.Number(totalJob),
 			Year:  year,
 			Years: years,
 		}))
 }
 
 func (h *StatsHandler) GetHighestRankedPersonByJob(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	var persons []types.HighestRated
 
 	job := req.QueryDefault("job", "cast")
@@ -329,7 +329,7 @@ func (h *StatsHandler) GetHighestRankedPersonByJob(c *fiber.Ctx) error {
 
 	jobs := []string{"Cast", "Composer", "Director", "Producer", "Writer"}
 
-	return utils.Render(c, views.HighestRating(
+	return Render(c, views.HighestRating(
 		views.HighestRatingProps{
 			Data:  persons,
 			Job:   job,
@@ -410,7 +410,7 @@ func constructGraphFromData(data []graph.GraphData) ([]graph.Bar, error) {
 }
 
 func (h *StatsHandler) GetRatingsByYear(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	userId := req.UserID()
 	year := req.Query("year")
 	currentYear := time.Now().Format("2006")
@@ -432,7 +432,7 @@ func (h *StatsHandler) GetRatingsByYear(c *fiber.Ctx) error {
 		title = "Ratings this year"
 	}
 
-	return utils.Render(c, graph.WithYear(
+	return Render(c, graph.WithYear(
 		graph.WithYearProps{
 			SectionHref: fmt.Sprintf("/stats/ratings/%s", year),
 			BarHref:     "/rating",
@@ -447,7 +447,7 @@ func (h *StatsHandler) GetRatingsByYear(c *fiber.Ctx) error {
 }
 
 func (h *StatsHandler) GetRatingsForYear(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	userId := req.UserID()
 	year := req.Params("year")
 
@@ -466,14 +466,14 @@ func (h *StatsHandler) GetRatingsForYear(c *fiber.Ctx) error {
 
 	slices.Reverse(sorted)
 
-	return utils.Render(c, views.Ratings(views.RatingsProps{
+	return Render(c, views.Ratings(views.RatingsProps{
 		Movies: sorted,
 		Title:  fmt.Sprintf("Ratings in %s", year),
 	}))
 }
 
 func (h *StatsHandler) GetThisYearByMonth(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	userId := req.UserID()
 	year := req.Query("year")
 	currentYear := time.Now().Format("2006")
@@ -495,7 +495,7 @@ func (h *StatsHandler) GetThisYearByMonth(c *fiber.Ctx) error {
 		title = "Seen this year by month"
 	}
 
-	return utils.Render(c, graph.WithYear(
+	return Render(c, graph.WithYear(
 		graph.WithYearProps{
 			Props: graph.Props{
 				Bars:  yearRatings,
@@ -508,7 +508,7 @@ func (h *StatsHandler) GetThisYearByMonth(c *fiber.Ctx) error {
 }
 
 func (h *StatsHandler) GetThisYearByWeekday(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	userId := req.UserID()
 	year := req.Query("year")
 	yearTime, err := pgSelectedYear(year)
@@ -529,7 +529,7 @@ func (h *StatsHandler) GetThisYearByWeekday(c *fiber.Ctx) error {
 		title = "Seen by weekday"
 	}
 
-	return utils.Render(c, graph.WithYear(
+	return Render(c, graph.WithYear(
 		graph.WithYearProps{
 			Props: graph.Props{
 				Bars:  yearRatings,
@@ -570,7 +570,7 @@ func availableYears() []string {
 }
 
 func (h *StatsHandler) GetBestOfTheYear(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	userId := req.UserID()
 	currentYear := time.Now().Format("2006")
 	year := req.QueryDefault("year", currentYear)
@@ -582,7 +582,7 @@ func (h *StatsHandler) GetBestOfTheYear(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.Render(c, views.StatsSection(views.StatsSectionProps{
+	return Render(c, views.StatsSection(views.StatsSectionProps{
 		Data:  movies,
 		Title: "Best of the Year",
 		Route: "/stats/best-of-the-year",
@@ -593,7 +593,7 @@ func (h *StatsHandler) GetBestOfTheYear(c *fiber.Ctx) error {
 }
 
 func (h *StatsHandler) GetWilhelmScream(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	page := req.Page()
 	userId := req.UserID()
 
@@ -603,7 +603,7 @@ func (h *StatsHandler) GetWilhelmScream(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.Render(c, views.ListView(views.ListViewProps{
+	return Render(c, views.ListView(views.ListViewProps{
 		EmptyState: "No movies with the Wilhelm scream",
 		Name:       "Wilhelm screams",
 		NextPage:   fmt.Sprintf("/stats/wilhelm-scream?page=%d", page+1),
@@ -618,14 +618,14 @@ func (h *StatsHandler) GetSeenWith(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.Render(c, views.StatsSection(views.StatsSectionProps{
+	return Render(c, views.StatsSection(views.StatsSectionProps{
 		Data:  items,
 		Title: "Seen with",
 	}))
 }
 
 func (h *StatsHandler) GetMoviesByYearStat(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	userId := req.UserID()
 	year := req.Year()
 
@@ -645,7 +645,7 @@ func (h *StatsHandler) GetMoviesByYearStat(c *fiber.Ctx) error {
 		}
 	}
 
-	return utils.Render(c, views.MoviesByYear(views.MoviesByYearProps{
+	return Render(c, views.MoviesByYear(views.MoviesByYearProps{
 		BestYear: bestYear,
 		Movies:   moviesByYear,
 		Year:     year,

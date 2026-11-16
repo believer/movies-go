@@ -8,8 +8,8 @@ import (
 	"believer/movies/db"
 	"believer/movies/services/intake"
 	"believer/movies/services/tmdb"
+	"believer/movies/slug"
 	"believer/movies/types"
-	"believer/movies/utils"
 	"believer/movies/views"
 	"database/sql"
 	"errors"
@@ -33,7 +33,7 @@ func NewMovieHandler(repo db.MovieQuerier, intake *intake.Intake) *MovieHandler 
 }
 
 func (h *MovieHandler) GetMovieByID(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	backParam := req.QueryBool("back", false)
 	id := req.MovieID()
 	userID := req.UserID()
@@ -42,12 +42,12 @@ func (h *MovieHandler) GetMovieByID(c *fiber.Ctx) error {
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return utils.Render(c, views.NotFound())
+			return Render(c, views.NotFound())
 		}
 
 		if pgErr, ok := err.(*pq.Error); ok {
 			if strings.Contains(pgErr.Message, "is out of range for type integer") {
-				return utils.Render(c, views.NotFound())
+				return Render(c, views.NotFound())
 			}
 		}
 
@@ -95,7 +95,7 @@ func (h *MovieHandler) GetMovieByID(c *fiber.Ctx) error {
 		})
 	}
 
-	return utils.Render(c, views.Movie(
+	return Render(c, views.Movie(
 		views.MovieProps{
 			Cast:          cast,
 			HasCharacters: hasCharacters,
@@ -109,7 +109,7 @@ func (h *MovieHandler) GetMovieByID(c *fiber.Ctx) error {
 }
 
 func (h *MovieHandler) GetMovieOthersSeenByID(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	id := req.MovieID()
 
 	idAsInt, err := strconv.Atoi(id)
@@ -124,7 +124,7 @@ func (h *MovieHandler) GetMovieOthersSeenByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.Render(c, seen.MovieOthersSeen(seen.MovieOthersSeenProps{
+	return Render(c, seen.MovieOthersSeen(seen.MovieOthersSeenProps{
 		ID:     idAsInt,
 		Others: others,
 	}))
@@ -132,7 +132,7 @@ func (h *MovieHandler) GetMovieOthersSeenByID(c *fiber.Ctx) error {
 
 // Render the add movie page
 func (h *MovieHandler) GetMovieNew(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	var movieData types.Movie
 
 	isAuth := req.IsAuthenticated()
@@ -159,7 +159,7 @@ func (h *MovieHandler) GetMovieNew(c *fiber.Ctx) error {
 			})
 		}
 
-		return utils.Render(c, views.NewMovie(views.NewMovieProps{
+		return Render(c, views.NewMovie(views.NewMovieProps{
 			Friends:     friends,
 			ImdbID:      imdbId,
 			InWatchlist: false,
@@ -187,7 +187,7 @@ func (h *MovieHandler) GetMovieNew(c *fiber.Ctx) error {
 		})
 	}
 
-	return utils.Render(c, views.NewMovie(views.NewMovieProps{
+	return Render(c, views.NewMovie(views.NewMovieProps{
 		Friends:     friends,
 		ImdbID:      imdbId,
 		InWatchlist: isInWatchlist,
@@ -196,7 +196,7 @@ func (h *MovieHandler) GetMovieNew(c *fiber.Ctx) error {
 }
 
 func (h *MovieHandler) GetMovieNewSeries(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 
 	if !req.IsAuthenticated() {
 		return c.SendStatus(fiber.StatusUnauthorized)
@@ -208,12 +208,12 @@ func (h *MovieHandler) GetMovieNewSeries(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.Render(c, list.DataList(options, "series_list"))
+	return Render(c, list.DataList(options, "series_list"))
 }
 
 // Handle adding a movie
 func (h *MovieHandler) PostMovieNew(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	if !req.IsAuthenticated() {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
@@ -236,7 +236,7 @@ func (h *MovieHandler) PostMovieNew(c *fiber.Ctx) error {
 		return err
 	}
 
-	imdbId, err := utils.ParseID(data.ImdbID)
+	imdbId, err := ParseID(data.ImdbID)
 	userId := req.UserID()
 
 	if err != nil {
@@ -269,7 +269,7 @@ func (h *MovieHandler) PostMovieNew(c *fiber.Ctx) error {
 		movieId, err = h.intake.AddToWatchlist(userId, ref, opts)
 	default:
 		watch := intake.Watch{
-			WatchedAt: utils.ParseWatchedAt(data.WatchedAt, time.Now()),
+			WatchedAt: ParseWatchedAt(data.WatchedAt, time.Now()),
 			Friends:   data.Friend,
 			Rating:    data.Rating,
 		}
@@ -297,7 +297,7 @@ func (h *MovieHandler) PostMovieNew(c *fiber.Ctx) error {
 
 	InvalidateStatsCache(userId)
 
-	if utils.NewRequest(c).Accepts("text/plain") {
+	if NewRequest(c).Accepts("text/plain") {
 		return c.SendString(strconv.Itoa(movieId))
 	}
 
@@ -307,7 +307,7 @@ func (h *MovieHandler) PostMovieNew(c *fiber.Ctx) error {
 }
 
 func (h *MovieHandler) GetByImdbId(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	imdbId := req.Query("imdbId")
 
 	movieData, err := h.repo.GetMovieByImdbID(imdbId)
@@ -316,11 +316,11 @@ func (h *MovieHandler) GetByImdbId(c *fiber.Ctx) error {
 		return c.SendString("")
 	}
 
-	return utils.Render(c, views.MovieExists(movieData))
+	return Render(c, views.MovieExists(movieData))
 }
 
 func (h *MovieHandler) DeleteSeenMovie(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	movieId, err := req.ParamsInt("id")
 	seenId := req.Params("seenId")
 	isAuth := req.IsAuthenticated()
@@ -363,14 +363,14 @@ func (h *MovieHandler) DeleteSeenMovie(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.Render(c, movie.Watched(movie.WatchedProps{
+	return Render(c, movie.Watched(movie.WatchedProps{
 		WatchedAt: watchedAt,
 		ID:        movieId,
 	}))
 }
 
 func (h *MovieHandler) DeleteNowPlaying(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	movieIdStr := req.Params("id")
 	movieId, err := strconv.Atoi(movieIdStr)
 	if err != nil {
@@ -405,7 +405,7 @@ func (h *MovieHandler) DeleteNowPlaying(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.Render(c, movie.Watched(movie.WatchedProps{
+	return Render(c, movie.Watched(movie.WatchedProps{
 		WatchedAt:   watchedAt,
 		IsUnseen:    len(watchedAt) == 0,
 		InWatchlist: isInWatchlist,
@@ -416,7 +416,7 @@ func (h *MovieHandler) DeleteNowPlaying(c *fiber.Ctx) error {
 }
 
 func (h *MovieHandler) GetSeenMovie(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	movieId, err := req.ParamsInt("id")
 	seenId := req.Params("seenId")
 	userId := req.UserID()
@@ -445,7 +445,7 @@ func (h *MovieHandler) GetSeenMovie(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.Render(c, views.UpdateWatched(views.UpdateWatchedProps{
+	return Render(c, views.UpdateWatched(views.UpdateWatchedProps{
 		Friends: friends,
 		MovieId: movieId,
 		SeenId:  seenId,
@@ -454,7 +454,7 @@ func (h *MovieHandler) GetSeenMovie(c *fiber.Ctx) error {
 }
 
 func (h *MovieHandler) UpdateSeenMovie(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	movieId, err := req.ParamsInt("id")
 	seenID := req.Params("seenId")
 	isAuth := req.IsAuthenticated()
@@ -478,7 +478,7 @@ func (h *MovieHandler) UpdateSeenMovie(c *fiber.Ctx) error {
 		return err
 	}
 
-	watchedAt := utils.ParseWatchedAt(data.WatchedAt, time.Now())
+	watchedAt := ParseWatchedAt(data.WatchedAt, time.Now())
 
 	err = h.repo.UpdateSeenMovie(seenID, userID, watchedAt, data.Friend)
 
@@ -498,7 +498,7 @@ func (h *MovieHandler) UpdateSeenMovie(c *fiber.Ctx) error {
 }
 
 func (h *MovieHandler) CreateSeenMovie(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	isAuth := req.IsAuthenticated()
 	userID := req.UserID()
 	movieId := req.Params("id")
@@ -531,7 +531,7 @@ func (h *MovieHandler) CreateSeenMovie(c *fiber.Ctx) error {
 }
 
 func (h *MovieHandler) HandleSearch(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	query := req.Query("search")
 
 	if !req.IsAuthenticated() {
@@ -539,7 +539,7 @@ func (h *MovieHandler) HandleSearch(c *fiber.Ctx) error {
 	}
 
 	if query == "" {
-		return utils.Render(c, views.MovieSearch([]types.SearchResult{}))
+		return Render(c, views.MovieSearch([]tmdb.SearchResult{}))
 	}
 
 	tmdbApi := tmdb.New("")
@@ -548,7 +548,7 @@ func (h *MovieHandler) HandleSearch(c *fiber.Ctx) error {
 	// Treat a failed search like one with no results
 	if err != nil {
 		slog.Error("failed to search TMDB", "query", query, "error", err)
-		movies = types.SearchMovieResponse{}
+		movies = tmdb.SearchMovieResponse{}
 	}
 
 	if req.IsJSON() {
@@ -556,16 +556,16 @@ func (h *MovieHandler) HandleSearch(c *fiber.Ctx) error {
 	}
 
 	if len(movies.Results) == 0 {
-		return utils.Render(c, views.MovieSearchEmpty())
+		return Render(c, views.MovieSearchEmpty())
 	}
 
 	maxResults := min(max(len(movies.Results), 1), 5)
 
-	return utils.Render(c, views.MovieSearch(movies.Results[:maxResults]))
+	return Render(c, views.MovieSearch(movies.Results[:maxResults]))
 }
 
 func (h *MovieHandler) DeleteRating(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	isAuth := req.IsAuthenticated()
 	movieId, err := req.ParamsInt("id")
 	userId := req.UserID()
@@ -597,13 +597,13 @@ func (h *MovieHandler) DeleteRating(c *fiber.Ctx) error {
 
 	InvalidateStatsCache(userId)
 
-	return utils.Render(c, rating.AddRating(rating.AddRatingProps{
+	return Render(c, rating.AddRating(rating.AddRatingProps{
 		MovieId: movieId,
 	}))
 }
 
 func (h *MovieHandler) GetRating(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	isAuth := req.IsAuthenticated()
 	movieId, err := req.ParamsInt("id")
 	currentRating := req.QueryInt("rating")
@@ -616,14 +616,14 @@ func (h *MovieHandler) GetRating(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	return utils.Render(c, rating.EditRating(rating.EditRatingProps{
+	return Render(c, rating.EditRating(rating.EditRatingProps{
 		CurrentRating: currentRating,
 		MovieId:       movieId,
 	}))
 }
 
 func (h *MovieHandler) GetEditRating(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	isAuth := req.IsAuthenticated()
 	movieId, err := req.ParamsInt("id")
 
@@ -635,13 +635,13 @@ func (h *MovieHandler) GetEditRating(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	return utils.Render(c, rating.AddRatingForm(rating.AddRatingProps{
+	return Render(c, rating.AddRatingForm(rating.AddRatingProps{
 		MovieId: movieId,
 	}))
 }
 
 func (h *MovieHandler) PostRating(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	isAuth := req.IsAuthenticated()
 	movieId, err := req.ParamsInt("id")
 	userId := req.UserID()
@@ -688,7 +688,7 @@ func (h *MovieHandler) PostRating(c *fiber.Ctx) error {
 
 	movieRating := int64(ratingVal)
 
-	return utils.Render(c, rating.GetRating(rating.Props{
+	return Render(c, rating.GetRating(rating.Props{
 		MovieId: movieId,
 		Rating:  movieRating,
 		RatedAt: time.Now(),
@@ -696,7 +696,7 @@ func (h *MovieHandler) PostRating(c *fiber.Ctx) error {
 }
 
 func (h *MovieHandler) UpdateRating(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	isAuth := req.IsAuthenticated()
 	movieId, err := req.ParamsInt("id")
 	userId := req.UserID()
@@ -727,7 +727,7 @@ func (h *MovieHandler) UpdateRating(c *fiber.Ctx) error {
 
 	movieRating, _ := strconv.ParseInt(data.Rating, 10, 0)
 
-	return utils.Render(c, rating.GetRating(rating.Props{
+	return Render(c, rating.GetRating(rating.Props{
 		MovieId: movieId,
 		Rating:  movieRating,
 		RatedAt: time.Now(),
@@ -735,7 +735,7 @@ func (h *MovieHandler) UpdateRating(c *fiber.Ctx) error {
 }
 
 func (h *MovieHandler) GetMovieAwards(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	var year string
 
 	imdbId := req.Params("imdbId")
@@ -757,7 +757,7 @@ func (h *MovieHandler) GetMovieAwards(c *fiber.Ctx) error {
 		}
 	}
 
-	return utils.Render(c, views.MovieAwards(views.MovieAwardsProps{
+	return Render(c, views.MovieAwards(views.MovieAwardsProps{
 		Awards: awardsList,
 		Type:   awardType,
 		Year:   year,
@@ -766,7 +766,7 @@ func (h *MovieHandler) GetMovieAwards(c *fiber.Ctx) error {
 }
 
 func (h *MovieHandler) UpdateMovieByID(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	isAuth := req.IsAuthenticated()
 
 	if !isAuth {
@@ -801,7 +801,7 @@ func (h *MovieHandler) UpdateMovieByID(c *fiber.Ctx) error {
 }
 
 func (h *MovieHandler) WatchProviders(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	id := req.MovieID()
 	userID := req.UserID()
 
@@ -827,7 +827,7 @@ func (h *MovieHandler) WatchProviders(c *fiber.Ctx) error {
 	// Treat a failed lookup like a movie with no providers
 	if err != nil {
 		slog.Error("failed to get TMDB watch providers", "imdbId", movieObj.ImdbId, "error", err)
-		watchProviders = types.MovieWatchProvidersResponse{}
+		watchProviders = tmdb.MovieWatchProvidersResponse{}
 	}
 
 	hasProviders := len(watchProviders.Results.SE.Buy) > 0 || len(watchProviders.Results.SE.Rent) > 0 || len(watchProviders.Results.SE.Subscription) > 0
@@ -838,7 +838,7 @@ func (h *MovieHandler) WatchProviders(c *fiber.Ctx) error {
 	}
 
 	// Only Swedish providers supported
-	justWatchUrl := fmt.Sprintf("https://www.justwatch.com/se/film/%s", utils.Slugify(movieObj.Title))
+	justWatchUrl := fmt.Sprintf("https://www.justwatch.com/se/film/%s", slug.Make(movieObj.Title))
 
 	var myProviders views.WatchProviderCategories
 	var otherProviders views.WatchProviderCategories
@@ -895,7 +895,7 @@ func (h *MovieHandler) WatchProviders(c *fiber.Ctx) error {
 		}
 	}
 
-	return utils.Render(c, views.WatchProviders(views.WatchProvidersProps{
+	return Render(c, views.WatchProviders(views.WatchProvidersProps{
 		HasMyProviders:         hasMyProviders,
 		HasOtherProviders:      hasOtherProviders,
 		MissingStoredProviders: storedProviders == "",
@@ -914,7 +914,7 @@ type Progress struct {
 
 func (h *MovieHandler) PlaybackProgress(c *fiber.Ctx) error {
 	var data Progress
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 
 	if !req.IsAuthenticated() {
 		return c.SendStatus(fiber.StatusUnauthorized)
@@ -924,7 +924,7 @@ func (h *MovieHandler) PlaybackProgress(c *fiber.Ctx) error {
 		return err
 	}
 
-	imdbID, err := utils.ParseID(data.ImdbID)
+	imdbID, err := ParseID(data.ImdbID)
 
 	if err != nil {
 		return c.SendStatus(fiber.StatusUnprocessableEntity)

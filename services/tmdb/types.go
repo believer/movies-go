@@ -1,4 +1,4 @@
-package types
+package tmdb
 
 type SearchResult struct {
 	Overview    string `json:"overview"`
@@ -12,41 +12,41 @@ type SearchMovieResponse struct {
 	Results []SearchResult `json:"results"`
 }
 
-type TmdbGenre struct {
+type Genre struct {
 	Name string `json:"name"`
 }
 
-type TmdbLanguage struct {
+type Language struct {
 	ISO639      string `json:"iso_639_1"`
 	EnglishName string `json:"english_name"`
 	Name        string `json:"name"`
 }
 
-type TmdbCompany struct {
+type Company struct {
 	ID            int    `json:"id"`
 	Name          string `json:"name"`
 	OriginCountry string `json:"origin_country"`
 }
 
-type TmdbCountry struct {
+type Country struct {
 	ID   string `json:"iso_3166_1"`
 	Name string `json:"name"`
 }
 
 // https://api.themoviedb.org/3/movie/{id}
 type MovieDetailsResponse struct {
-	Genres              []TmdbGenre    `json:"genres"`
-	ImdbId              string         `json:"imdb_id"`
-	Overview            string         `json:"overview"`
-	Poster              string         `json:"poster_path"`
-	ProductionCompanies []TmdbCompany  `json:"production_companies"`
-	ProductionCountries []TmdbCountry  `json:"production_countries"`
-	ReleaseDate         string         `json:"release_date"`
-	Runtime             int            `json:"runtime"`
-	SpokenLanguages     []TmdbLanguage `json:"spoken_languages"`
-	Tagline             string         `json:"tagline"`
-	Title               string         `json:"title"`
-	TmdbId              int            `json:"id"`
+	Genres              []Genre    `json:"genres"`
+	ImdbId              string     `json:"imdb_id"`
+	Overview            string     `json:"overview"`
+	Poster              string     `json:"poster_path"`
+	ProductionCompanies []Company  `json:"production_companies"`
+	ProductionCountries []Country  `json:"production_countries"`
+	ReleaseDate         string     `json:"release_date"`
+	Runtime             int        `json:"runtime"`
+	SpokenLanguages     []Language `json:"spoken_languages"`
+	Tagline             string     `json:"tagline"`
+	Title               string     `json:"title"`
+	TmdbId              int        `json:"id"`
 }
 
 type CastResult struct {

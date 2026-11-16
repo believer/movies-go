@@ -3,7 +3,7 @@ package seen
 import (
 	"believer/movies/components/list"
 	"believer/movies/types"
-	"believer/movies/utils"
+	"believer/movies/format"
 	"fmt"
 	"strconv"
 )
@@ -14,7 +14,7 @@ type MovieOthersSeenProps struct {
 }
 
 func (m *MovieOthersSeenProps) users() string {
-	return utils.PluralMessage(utils.UsersKey, m.Others.Seen)
+	return format.Plural(format.Users, m.Others.Seen)
 }
 
 templ MovieOthersSeen(props MovieOthersSeenProps) {

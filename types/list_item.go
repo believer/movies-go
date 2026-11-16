@@ -1,7 +1,8 @@
 package types
 
 import (
-	"believer/movies/utils"
+	"believer/movies/format"
+	"believer/movies/slug"
 	"fmt"
 )
 
@@ -30,7 +31,7 @@ func (l List) Trailing() string {
 }
 
 func (l List) Href() string {
-	return utils.CreateSelfHealingURL("list", l.Slug, l.ID)
+	return slug.URL("list", l.Slug, l.ID)
 }
 
 type ListItem struct {
@@ -42,11 +43,11 @@ type ListItem struct {
 
 func (l ListItem) LinkTo(root string) string {
 	if l.LinkName != "" {
-		return fmt.Sprintf("/%s/%s-%s", root, utils.Slugify(l.LinkName), l.ID)
+		return fmt.Sprintf("/%s/%s-%s", root, slug.Make(l.LinkName), l.ID)
 	}
-	return fmt.Sprintf("/%s/%s-%s", root, utils.Slugify(l.Name), l.ID)
+	return fmt.Sprintf("/%s/%s-%s", root, slug.Make(l.Name), l.ID)
 }
 
 func (l ListItem) FormattedCount() string {
-	return utils.FormatNumber(l.Count)
+	return format.Number(l.Count)
 }

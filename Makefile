@@ -83,7 +83,7 @@ bench:
 	@BENCH_DATABASE_URL="$(BENCH_DATABASE_URL)" go test ./db -run '^$$' -bench '$(BENCH)' -benchmem -benchtime=$(BENCH_TIME) -count=$(BENCH_COUNT)
 
 # Each E2E server port gets a database of its own, so checkouts on different
-# ports run E2E side by side. tests/env.ts names it the same way.
+# ports run E2E side by side. e2e/env.ts names it the same way.
 E2E_PORT ?= 8090
 E2E_DB = movies_e2e_$(E2E_PORT)
 
@@ -98,13 +98,13 @@ TEMPL_SUMS = find . -name '*_templ.go' -not -path './node_modules/*' | sort | xa
 # Pinned, and built with go.mod's Go: an installed mockery built with an older
 # Go can't read this Go's export data
 MOCKERY := go run github.com/vektra/mockery/v3@v3.9.1
-MOCK_SUMS = find mocks -name '*.go' | sort | xargs shasum
+MOCK_SUMS = find db/mocks -name '*.go' | sort | xargs shasum
 
 # Pinned like mockery. Runs go vet with staticcheck, errcheck and the
 # forbidigo rules in .golangci.yml.
 GOLANGCI_LINT := go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.15.0
 
-# Regenerate mocks/ from the interfaces in db/. Phony, since mocks/ exists.
+# Regenerate db/mocks/ from the interfaces in db/. Phony, since db/mocks/ exists.
 .PHONY: mocks
 mocks:
 	@out=$$($(MOCKERY) 2>&1) || { echo "$$out"; exit 1; }
@@ -122,7 +122,7 @@ check:
 	@before=$$($(MOCK_SUMS)); \
 		$(MAKE) -s mocks || exit 1; \
 		if [ "$$before" != "$$($(MOCK_SUMS))" ]; then \
-			echo "❌ mocks/ was stale and has been regenerated with make mocks, commit it"; \
+			echo "❌ db/mocks/ was stale and has been regenerated with make mocks, commit it"; \
 			exit 1; \
 		fi
 	@unformatted=$$(gofmt -l $$(git ls-files '*.go')); \
@@ -140,7 +140,7 @@ test-all: test e2e
 
 # Read-only check that production pages render, run after each deploy.
 # Override the site with SMOKE_URL, e.g. make smoke SMOKE_URL=http://localhost:8080.
-# Phony because the spec lives in smoke/.
+# Phony because the spec lives in e2e/smoke/.
 .PHONY: smoke
 smoke:
 	@pnpm exec playwright test -c playwright.smoke.config.ts
