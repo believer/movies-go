@@ -65,19 +65,37 @@ func (ts testStats) rate(t *testing.T, userID int, movieID int, rating int, crea
 	ts.exec(t, `INSERT INTO rating (user_id, movie_id, rating, created_at) VALUES ($1, $2, $3, $4)`, userID, movieID, rating, createdAt)
 }
 
-// director adds a person who directed the given movies.
-func (ts testStats) director(t *testing.T, name string, movieIDs ...int) {
+// person adds a person and returns their ID. Each gets the next original_id,
+// which is unique.
+func (ts testStats) person(t *testing.T, name string, popularity float64) int {
 	t.Helper()
 
 	var id int
 
-	if err := ts.db.Get(&id, `INSERT INTO person (name, original_id) VALUES ($1, 0) RETURNING id`, name); err != nil {
+	if err := ts.db.Get(&id, `INSERT INTO person (name, original_id, popularity) SELECT $1, COALESCE(MAX(original_id), 0) + 1, $2 FROM person RETURNING id`, name, popularity); err != nil {
 		t.Fatal(err)
 	}
 
+	return id
+}
+
+// credit gives a person a job on a movie.
+func (ts testStats) credit(t *testing.T, movieID int, personID int, job string) {
+	t.Helper()
+	ts.exec(t, `INSERT INTO movie_person (movie_id, person_id, job) VALUES ($1, $2, $3)`, movieID, personID, job)
+}
+
+// director adds a person who directed the given movies and returns their ID.
+func (ts testStats) director(t *testing.T, name string, movieIDs ...int) int {
+	t.Helper()
+
+	id := ts.person(t, name, 0)
+
 	for _, movieID := range movieIDs {
-		ts.exec(t, `INSERT INTO movie_person (movie_id, person_id, job) VALUES ($1, $2, 'director')`, movieID, id)
+		ts.credit(t, movieID, id, "director")
 	}
+
+	return id
 }
 
 // watchedAndRated adds a movie that user 1 watched once on date and rated on

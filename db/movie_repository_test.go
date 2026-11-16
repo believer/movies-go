@@ -90,24 +90,6 @@ func TestUpdateSeenMovie(t *testing.T) {
 	})
 }
 
-// person adds a person and returns their ID.
-func (ts testStats) person(t *testing.T, name string, popularity float64) int {
-	t.Helper()
-
-	var id int
-
-	if err := ts.db.Get(&id, `INSERT INTO person (name, original_id, popularity) SELECT $1, COALESCE(MAX(original_id), 0) + 1, $2 FROM person RETURNING id`, name, popularity); err != nil {
-		t.Fatal(err)
-	}
-
-	return id
-}
-
-func (ts testStats) credit(t *testing.T, movieID int, personID int, job string) {
-	t.Helper()
-	ts.exec(t, `INSERT INTO movie_person (movie_id, person_id, job) VALUES ($1, $2, $3)`, movieID, personID, job)
-}
-
 func castNames(people []views.CastAndCrewDTO) []string {
 	names := make([]string, len(people))
 
