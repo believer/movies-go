@@ -236,26 +236,27 @@ SELECT
     ELSE
         INITCAP(mp.job::text)
     END AS job,
-    ARRAY_AGG(p.name ORDER BY num_movies DESC, p.popularity DESC, p.name ASC) AS people_names,
-    ARRAY_AGG(p.id ORDER BY num_movies DESC, p.popularity DESC, p.name ASC) AS people_ids,
+    ARRAY_AGG(p.name ORDER BY num_movies DESC, p.popularity DESC, p.name ASC, p.id ASC) AS people_names,
+    ARRAY_AGG(p.id ORDER BY num_movies DESC, p.popularity DESC, p.name ASC, p.id ASC) AS people_ids,
     CASE mp.job
     WHEN 'cast' THEN
         ARRAY_AGG(COALESCE(mp.character, '')
-        ORDER BY num_movies DESC, p.popularity DESC, p.name ASC)
+        ORDER BY num_movies DESC, p.popularity DESC, p.name ASC, p.id ASC)
     ELSE
         ARRAY[]::text[]
     END AS characters
 FROM
     movie_person AS mp
     INNER JOIN person AS p ON p.id = mp.person_id
-    INNER JOIN (
+    -- Counts only this movie's people, through idx_person_id. A GROUP BY
+    -- over movie_person joined here counts every person in the table.
+    CROSS JOIN LATERAL (
         SELECT
-            person_id,
             COUNT(*) AS num_movies
         FROM
-            movie_person
-        GROUP BY
-            person_id) AS movie_counts ON p.id = movie_counts.person_id
+            movie_person AS c
+        WHERE
+            c.person_id = p.id) AS movie_counts
 WHERE
     mp.movie_id = $1
 GROUP BY
