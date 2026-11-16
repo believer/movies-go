@@ -10,8 +10,8 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"believer/movies/components/list"
+	"believer/movies/format"
 	"believer/movies/types"
-	"believer/movies/utils"
 	"fmt"
 	"strconv"
 )
@@ -22,7 +22,7 @@ type MovieOthersSeenProps struct {
 }
 
 func (m *MovieOthersSeenProps) users() string {
-	return utils.PluralMessage(utils.UsersKey, m.Others.Seen)
+	return format.Plural(format.Users, m.Others.Seen)
 }
 
 func MovieOthersSeen(props MovieOthersSeenProps) templ.Component {

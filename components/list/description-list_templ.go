@@ -8,7 +8,7 @@ package list
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "believer/movies/utils"
+import "believer/movies/slug"
 
 func dt(text, id string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -184,7 +184,7 @@ func (p DlProps) labelID() string {
 		return p.ID + "-label"
 	}
 
-	return "dl-" + utils.Slugify(p.Detail)
+	return "dl-" + slug.Make(p.Detail)
 }
 
 func DlItem(props DlProps) templ.Component {

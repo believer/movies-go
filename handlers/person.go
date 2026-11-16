@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"believer/movies/db"
-	"believer/movies/utils"
 	"believer/movies/views"
 	"database/sql"
 
@@ -18,7 +17,7 @@ func NewPersonHandler(repo db.PersonQuerier) *PersonHandler {
 }
 
 func (h *PersonHandler) GetPersonByID(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	id := req.IDString()
 	person, err := h.repo.GetPersonByID(id, req.UserID())
 
@@ -68,7 +67,7 @@ func (h *PersonHandler) GetPersonByID(c *fiber.Ctx) error {
 		})
 	}
 
-	return utils.Render(c, views.Person(views.PersonProps{
+	return Render(c, views.Person(views.PersonProps{
 		AcademyAwards:      academyAwards,
 		AcademyAwardsOrder: academyOrder,
 		AcademyAwardsWon:   academyWins,

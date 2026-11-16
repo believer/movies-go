@@ -8,7 +8,7 @@ import (
 	"believer/movies/components/list"
 	"believer/movies/components/section"
 	"believer/movies/types"
-	"believer/movies/utils"
+	"believer/movies/format"
 	"fmt"
 )
 
@@ -94,7 +94,7 @@ templ Stats(props StatsProps) {
 										{ props.ShortestAndLongestMovie[0].Title }
 									}
 									<div class="detail">
-										{ utils.FormatRuntime(props.ShortestAndLongestMovie[0].Runtime) }
+										{ format.Runtime(props.ShortestAndLongestMovie[0].Runtime) }
 									</div>
 								}
 								@list.DlItem(list.DlProps{
@@ -105,7 +105,7 @@ templ Stats(props StatsProps) {
 										{ props.ShortestAndLongestMovie[1].Title }
 									}
 									<div class="detail">
-										{ utils.FormatRuntime(props.ShortestAndLongestMovie[1].Runtime) }
+										{ format.Runtime(props.ShortestAndLongestMovie[1].Runtime) }
 									</div>
 								}
 							}

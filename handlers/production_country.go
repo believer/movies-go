@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"believer/movies/db"
-	"believer/movies/utils"
+	"believer/movies/slug"
 	"believer/movies/views"
 	"fmt"
 
@@ -27,7 +27,7 @@ func (p ProductionItem) Trailing() string {
 }
 
 func (p ProductionItem) Href() string {
-	return utils.CreateSelfHealingURL("production-country", p.Name, p.ID)
+	return slug.URL("production-country", p.Name, p.ID)
 }
 
 type ProductionCountryHandler struct {
@@ -39,7 +39,7 @@ func NewProductionCountryHandler(repo db.ProductionCountryQuerier) *ProductionCo
 }
 
 func (h *ProductionCountryHandler) ListProductionCountries(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	countries, err := h.repo.ListProductionCountries()
 
 	if err != nil {
@@ -50,7 +50,7 @@ func (h *ProductionCountryHandler) ListProductionCountries(c *fiber.Ctx) error {
 		return c.JSON(countries)
 	}
 
-	return utils.Render(c, views.RootView(views.RootViewProps{
+	return Render(c, views.RootView(views.RootViewProps{
 		EmptyState: "No production countries",
 		Title:      "Production countries",
 		Items:      views.ToViewItems(countries),
@@ -58,7 +58,7 @@ func (h *ProductionCountryHandler) ListProductionCountries(c *fiber.Ctx) error {
 }
 
 func (h *ProductionCountryHandler) GetProductionCountry(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	id := req.IDString()
 	country, err := h.repo.GetProductionCountryName(id)
 
@@ -79,7 +79,7 @@ func (h *ProductionCountryHandler) GetProductionCountry(c *fiber.Ctx) error {
 		})
 	}
 
-	return utils.Render(c, views.ListView(views.ListViewProps{
+	return Render(c, views.ListView(views.ListViewProps{
 		EmptyState: "No movies for this production country",
 		Name:       country.Name,
 		NextPage:   fmt.Sprintf("/production-country/%s?page=%d", id, req.Page()+1),
@@ -88,14 +88,14 @@ func (h *ProductionCountryHandler) GetProductionCountry(c *fiber.Ctx) error {
 }
 
 func (h *ProductionCountryHandler) GetProductionCountryStats(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	productionCountries, err := h.repo.GetProductionCountryStats(req.UserID(), req.Year())
 
 	if err != nil {
 		return err
 	}
 
-	return utils.Render(c, views.StatsSection(views.StatsSectionProps{
+	return Render(c, views.StatsSection(views.StatsSectionProps{
 		Data:  productionCountries,
 		Href:  "/production-country",
 		Route: "/production-country/stats",

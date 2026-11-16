@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"believer/movies/mocks"
+	"believer/movies/db/mocks"
 	"believer/movies/types"
 	"database/sql"
 	"fmt"

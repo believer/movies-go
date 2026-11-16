@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"believer/movies/db"
-	"believer/movies/mocks"
+	"believer/movies/db/mocks"
 	"believer/movies/types"
 	"fmt"
 	"net/http"

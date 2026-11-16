@@ -4,7 +4,6 @@ import (
 	"believer/movies/components/review"
 	"believer/movies/db"
 	"believer/movies/types"
-	"believer/movies/utils"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -18,7 +17,7 @@ func NewReviewHandler(repo db.ReviewQuerier) *ReviewHandler {
 }
 
 func (h *ReviewHandler) AddMovieReview(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	isAuth := req.IsAuthenticated()
 	movieID := req.Query("movieId")
 
@@ -26,11 +25,11 @@ func (h *ReviewHandler) AddMovieReview(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	return utils.Render(c, review.AddReview(movieID))
+	return Render(c, review.AddReview(movieID))
 }
 
 func (h *ReviewHandler) InsertMovieReview(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	isAuth := req.IsAuthenticated()
 	movieID := req.QueryInt("movieId")
 	userID := req.UserID()
@@ -55,11 +54,11 @@ func (h *ReviewHandler) InsertMovieReview(c *fiber.Ctx) error {
 
 	InvalidateStatsCache(userID)
 
-	return utils.Render(c, review.Review(reviewData, movieID))
+	return Render(c, review.Review(reviewData, movieID))
 }
 
 func (h *ReviewHandler) EditMovieReview(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	isAuth := req.IsAuthenticated()
 	movieID := req.QueryInt("movieId")
 
@@ -73,11 +72,11 @@ func (h *ReviewHandler) EditMovieReview(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.Render(c, review.EditReview(reviewData, movieID))
+	return Render(c, review.EditReview(reviewData, movieID))
 }
 
 func (h *ReviewHandler) UpdateMovieReview(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	movieID := req.QueryInt("movieId")
 	id := req.Params("id")
 	isAuth := req.IsAuthenticated()
@@ -104,11 +103,11 @@ func (h *ReviewHandler) UpdateMovieReview(c *fiber.Ctx) error {
 		InvalidateStatsCache(userID)
 	}
 
-	return utils.Render(c, review.ReviewContent(reviewData, movieID))
+	return Render(c, review.ReviewContent(reviewData, movieID))
 }
 
 func (h *ReviewHandler) DeleteMovieReview(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	id := req.Params("id")
 	isAuth := req.IsAuthenticated()
 	movieID := req.QueryInt("movieId")
@@ -126,5 +125,5 @@ func (h *ReviewHandler) DeleteMovieReview(c *fiber.Ctx) error {
 		InvalidateStatsCache(userID)
 	}
 
-	return utils.Render(c, review.Review(types.Review{}, movieID))
+	return Render(c, review.Review(types.Review{}, movieID))
 }

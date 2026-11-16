@@ -3,9 +3,8 @@
 package intake
 
 import (
+	"believer/movies/services/awards"
 	"believer/movies/services/tmdb"
-	"believer/movies/types"
-	"believer/movies/utils/awards"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -30,7 +29,7 @@ var (
 // returns tmdb.ErrNotFound for unknown movies. tmdb.Client is the production
 // source, tmdbtest.Fake the one used in tests.
 type MovieSource interface {
-	Fetch(id string) (types.MovieDetailsResponse, types.MovieCreditsResponse, error)
+	Fetch(id string) (tmdb.MovieDetailsResponse, tmdb.MovieCreditsResponse, error)
 }
 
 type Intake struct {
@@ -174,8 +173,8 @@ WHERE
 // before the transaction opens, so no HTTP call holds a transaction.
 type pending struct {
 	id      int
-	details types.MovieDetailsResponse
-	credits types.MovieCreditsResponse
+	details tmdb.MovieDetailsResponse
+	credits tmdb.MovieCreditsResponse
 }
 
 func (i *Intake) resolve(ref MovieRef) (pending, error) {
@@ -217,7 +216,7 @@ func (i *Intake) resolve(ref MovieRef) (pending, error) {
 	return pending{details: details, credits: credits}, nil
 }
 
-func (i *Intake) fetch(id string) (types.MovieDetailsResponse, types.MovieCreditsResponse, error) {
+func (i *Intake) fetch(id string) (tmdb.MovieDetailsResponse, tmdb.MovieCreditsResponse, error) {
 	details, credits, err := i.source.Fetch(id)
 
 	if errors.Is(err, tmdb.ErrNotFound) {
@@ -250,7 +249,7 @@ func (i *Intake) write(tx *sqlx.Tx, p pending, opts MovieOptions) (int, error) {
 	return id, nil
 }
 
-func insertMovie(tx *sqlx.Tx, details types.MovieDetailsResponse, credits types.MovieCreditsResponse, wilhelm bool) (int, error) {
+func insertMovie(tx *sqlx.Tx, details tmdb.MovieDetailsResponse, credits tmdb.MovieCreditsResponse, wilhelm bool) (int, error) {
 	var id int
 
 	// A movie looked up by TMDB ID can already exist under its IMDb ID
@@ -298,7 +297,7 @@ ON CONFLICT (imdb_id)
 
 // writeMetadata writes everything that comes with a movie from TMDB. Awards
 // go last since they are matched against the movie's people.
-func writeMetadata(tx *sqlx.Tx, id int, details types.MovieDetailsResponse, credits types.MovieCreditsResponse) error {
+func writeMetadata(tx *sqlx.Tx, id int, details tmdb.MovieDetailsResponse, credits tmdb.MovieCreditsResponse) error {
 	if err := addLanguages(tx, id, details); err != nil {
 		return err
 	}

@@ -13,7 +13,7 @@ import (
 	"believer/movies/components/list"
 	"believer/movies/components/section"
 	"believer/movies/components/separator"
-	"believer/movies/utils"
+	"believer/movies/slug"
 	"fmt"
 )
 
@@ -24,7 +24,7 @@ type CastAndCrewDTO struct {
 }
 
 func (p CastAndCrewDTO) LinkTo() string {
-	return fmt.Sprintf("/person/%s-%d", utils.Slugify(p.Name), p.ID)
+	return fmt.Sprintf("/person/%s-%d", slug.Make(p.Name), p.ID)
 }
 
 type CastDTO struct {

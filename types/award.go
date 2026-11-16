@@ -1,7 +1,8 @@
 package types
 
 import (
-	"believer/movies/utils"
+	"believer/movies/null"
+	"believer/movies/slug"
 	"fmt"
 )
 
@@ -11,36 +12,36 @@ import (
 type Nominees []Person
 
 func (u *Nominees) Scan(v any) error {
-	return utils.ScanJSON(v, u)
+	return scanJSON(v, u)
 }
 
 // Award
 // ======================================================
 
 type Award struct {
-	Category string           `db:"category" json:"category"`
-	Detail   utils.NullString `db:"detail" json:"detail"`
-	ID       string           `db:"id" json:"id"`
-	ImdbID   string           `db:"imdb_id" json:"imdbId"`
-	MovieID  utils.NullInt64  `db:"movie_id" json:"movieId"`
-	Nominees Nominees         `db:"nominees" json:"nominees"`
-	Person   utils.NullString `db:"person" json:"person"`
-	PersonId utils.NullInt64  `db:"person_id" json:"personId"`
-	Title    utils.NullString `db:"title" json:"title"`
-	Type     string           `db:"type" json:"type"`
-	Winner   bool             `db:"winner" json:"winner"`
-	Year     string           `db:"year" json:"year"`
+	Category string      `db:"category" json:"category"`
+	Detail   null.String `db:"detail" json:"detail"`
+	ID       string      `db:"id" json:"id"`
+	ImdbID   string      `db:"imdb_id" json:"imdbId"`
+	MovieID  null.Int64  `db:"movie_id" json:"movieId"`
+	Nominees Nominees    `db:"nominees" json:"nominees"`
+	Person   null.String `db:"person" json:"person"`
+	PersonId null.Int64  `db:"person_id" json:"personId"`
+	Title    null.String `db:"title" json:"title"`
+	Type     string      `db:"type" json:"type"`
+	Winner   bool        `db:"winner" json:"winner"`
+	Year     string      `db:"year" json:"year"`
 }
 
 type Awards []Award
 
 func (u *Awards) Scan(v any) error {
-	return utils.ScanJSON(v, u)
+	return scanJSON(v, u)
 }
 
 func (a *Award) LinkToMovie() string {
 	if a.Title.Valid && a.MovieID.Valid {
-		return fmt.Sprintf("/movie/%s-%d", utils.Slugify(a.Title.String), a.MovieID.Int64)
+		return fmt.Sprintf("/movie/%s-%d", slug.Make(a.Title.String), a.MovieID.Int64)
 	}
 
 	return "#"
@@ -48,7 +49,7 @@ func (a *Award) LinkToMovie() string {
 
 func (a *Award) LinkToPerson() string {
 	if a.Person.Valid && a.PersonId.Valid {
-		return fmt.Sprintf("/person/%s-%d", utils.Slugify(a.Person.String), a.PersonId.Int64)
+		return fmt.Sprintf("/person/%s-%d", slug.Make(a.Person.String), a.PersonId.Int64)
 	}
 
 	return "#"
@@ -68,7 +69,7 @@ type AwardPersonStat struct {
 }
 
 func (a AwardPersonStat) LinkTo() string {
-	return fmt.Sprintf("/person/%s-%d", utils.Slugify(a.Name), a.ID)
+	return fmt.Sprintf("/person/%s-%d", slug.Make(a.Name), a.ID)
 }
 
 // Awards for movie
@@ -81,7 +82,7 @@ type AwardMovieStat struct {
 }
 
 func (a AwardMovieStat) LinkTo() string {
-	return fmt.Sprintf("/movie/%s-%d", utils.Slugify(a.Title), a.ID)
+	return fmt.Sprintf("/movie/%s-%d", slug.Make(a.Title), a.ID)
 }
 
 // Awards for person
@@ -105,7 +106,7 @@ type AwardsByYear struct {
 }
 
 func (g *AwardsByYear) LinkToMovie() string {
-	return fmt.Sprintf("/movie/%s-%d", utils.Slugify(g.Title), g.MovieID)
+	return fmt.Sprintf("/movie/%s-%d", slug.Make(g.Title), g.MovieID)
 }
 
 // Awards by category

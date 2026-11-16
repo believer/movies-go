@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"believer/movies/db"
-	"believer/movies/utils"
 	"believer/movies/views"
 	"fmt"
 
@@ -24,7 +23,7 @@ func (h *LanguageHandler) ListLanguages(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.Render(c, views.RootView(views.RootViewProps{
+	return Render(c, views.RootView(views.RootViewProps{
 		EmptyState: "No languages",
 		Title:      "Languages",
 		Items:      views.ToViewItems(languages),
@@ -32,7 +31,7 @@ func (h *LanguageHandler) ListLanguages(c *fiber.Ctx) error {
 }
 
 func (h *LanguageHandler) GetLanguage(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	id := req.IDString()
 	language, err := h.repo.GetLanguageName(id)
 
@@ -53,7 +52,7 @@ func (h *LanguageHandler) GetLanguage(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusOK)
 	}
 
-	return utils.Render(c, views.ListView(views.ListViewProps{
+	return Render(c, views.ListView(views.ListViewProps{
 		EmptyState: "No movies for this language",
 		Name:       language.Name,
 		NextPage:   fmt.Sprintf("/language/%s?page=%d", id, req.Page()+1),
@@ -62,14 +61,14 @@ func (h *LanguageHandler) GetLanguage(c *fiber.Ctx) error {
 }
 
 func (h *LanguageHandler) GetLanguageStats(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	languages, err := h.repo.GetLanguageStats(req.UserID(), req.Year())
 
 	if err != nil {
 		return err
 	}
 
-	return utils.Render(c, views.StatsSection(views.StatsSectionProps{
+	return Render(c, views.StatsSection(views.StatsSectionProps{
 		Data:  languages,
 		Title: "Language",
 		Root:  "language",

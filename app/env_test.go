@@ -1,4 +1,4 @@
-package utils
+package app
 
 import (
 	"os"
@@ -24,7 +24,7 @@ func TestLoadEnv(t *testing.T) {
 	write(".env", "ENV_TEST_SHARED=env\nENV_TEST_ONLY_ENV=env\n")
 	write(".env.local", "ENV_TEST_SHARED=\"local\"\n")
 
-	LoadEnv()
+	loadEnv()
 
 	assert.Equal(t, "local", os.Getenv("ENV_TEST_SHARED"))
 	assert.Equal(t, "env", os.Getenv("ENV_TEST_ONLY_ENV"))
@@ -46,7 +46,7 @@ func TestLoadEnvKeepsProcessEnv(t *testing.T) {
 	write(".env", "ENV_TEST_PROCESS=env\nENV_TEST_FILE=env\n")
 	write(".env.local", "ENV_TEST_PROCESS=local\nENV_TEST_FILE=local\n")
 
-	LoadEnv()
+	loadEnv()
 
 	assert.Equal(t, "process", os.Getenv("ENV_TEST_PROCESS"))
 	assert.Equal(t, "local", os.Getenv("ENV_TEST_FILE"))

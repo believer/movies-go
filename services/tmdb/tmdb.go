@@ -1,7 +1,6 @@
 package tmdb
 
 import (
-	"believer/movies/types"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -36,19 +35,19 @@ type Client struct{}
 
 // Fetch returns a movie's details and credits. The id is an IMDb or TMDB ID.
 // It returns ErrNotFound when TMDB doesn't know the movie.
-func (Client) Fetch(id string) (types.MovieDetailsResponse, types.MovieCreditsResponse, error) {
+func (Client) Fetch(id string) (MovieDetailsResponse, MovieCreditsResponse, error) {
 	t := New(id)
 
 	details, err := t.Movie()
 
 	if err != nil {
-		return types.MovieDetailsResponse{}, types.MovieCreditsResponse{}, fmt.Errorf("fetch movie %s: %w", id, err)
+		return MovieDetailsResponse{}, MovieCreditsResponse{}, fmt.Errorf("fetch movie %s: %w", id, err)
 	}
 
 	credits, err := t.Credits()
 
 	if err != nil {
-		return types.MovieDetailsResponse{}, types.MovieCreditsResponse{}, fmt.Errorf("fetch credits %s: %w", id, err)
+		return MovieDetailsResponse{}, MovieCreditsResponse{}, fmt.Errorf("fetch credits %s: %w", id, err)
 	}
 
 	return details, credits, nil
@@ -64,36 +63,36 @@ func New(id string) *Tmdb {
 	}
 }
 
-func (t *Tmdb) Movie() (types.MovieDetailsResponse, error) {
-	return fetchJSON[types.MovieDetailsResponse](
+func (t *Tmdb) Movie() (MovieDetailsResponse, error) {
+	return fetchJSON[MovieDetailsResponse](
 		[]string{"movie", t.ID},
 		map[string]string{},
 	)
 }
 
-func (t *Tmdb) Credits() (types.MovieCreditsResponse, error) {
-	return fetchJSON[types.MovieCreditsResponse](
+func (t *Tmdb) Credits() (MovieCreditsResponse, error) {
+	return fetchJSON[MovieCreditsResponse](
 		[]string{"movie", t.ID, "credits"},
 		map[string]string{},
 	)
 }
 
-func (t *Tmdb) Search(query string) (types.SearchMovieResponse, error) {
-	return fetchJSON[types.SearchMovieResponse](
+func (t *Tmdb) Search(query string) (SearchMovieResponse, error) {
+	return fetchJSON[SearchMovieResponse](
 		[]string{"search", "movie"},
 		map[string]string{"query": query},
 	)
 }
 
 // WatchProviders returns an empty response when TMDB has no providers.
-func (t *Tmdb) WatchProviders() (types.MovieWatchProvidersResponse, error) {
-	providers, err := fetchJSON[types.MovieWatchProvidersResponse](
+func (t *Tmdb) WatchProviders() (MovieWatchProvidersResponse, error) {
+	providers, err := fetchJSON[MovieWatchProvidersResponse](
 		[]string{"movie", t.ID, "watch", "providers"},
 		map[string]string{},
 	)
 
 	if errors.Is(err, ErrNotFound) {
-		return types.MovieWatchProvidersResponse{}, nil
+		return MovieWatchProvidersResponse{}, nil
 	}
 
 	return providers, err

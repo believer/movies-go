@@ -1,7 +1,7 @@
 package types
 
 import (
-	"believer/movies/utils"
+	"believer/movies/slug"
 	"fmt"
 )
 
@@ -13,11 +13,11 @@ type ParentSeries struct {
 type ParentSeriesMult []ParentSeries
 
 func (u *ParentSeriesMult) Scan(v any) error {
-	return utils.ScanJSON(v, u)
+	return scanJSON(v, u)
 }
 
 func seriesLink(name string, id int) string {
-	return fmt.Sprintf("/series/%s-%d", utils.Slugify(name), id)
+	return fmt.Sprintf("/series/%s-%d", slug.Make(name), id)
 }
 
 func (p *ParentSeries) LinkTo() string {
@@ -45,7 +45,7 @@ type SeriesMovies struct {
 type MoviesInSeries Movies
 
 func (u *MoviesInSeries) Scan(v any) error {
-	return utils.ScanJSON(v, u)
+	return scanJSON(v, u)
 }
 
 // Link to series

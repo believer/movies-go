@@ -15,8 +15,8 @@ import (
 	"believer/movies/components/link"
 	"believer/movies/components/list"
 	"believer/movies/components/section"
+	"believer/movies/format"
 	"believer/movies/types"
-	"believer/movies/utils"
 	"fmt"
 )
 
@@ -382,9 +382,9 @@ func Stats(props StatsProps) templ.Component {
 								return templ_7745c5c3_Err
 							}
 							var templ_7745c5c3_Var21 string
-							templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(utils.FormatRuntime(props.ShortestAndLongestMovie[0].Runtime))
+							templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(format.Runtime(props.ShortestAndLongestMovie[0].Runtime))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 97, Col: 73}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 97, Col: 68}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 							if templ_7745c5c3_Err != nil {
@@ -451,9 +451,9 @@ func Stats(props StatsProps) templ.Component {
 								return templ_7745c5c3_Err
 							}
 							var templ_7745c5c3_Var25 string
-							templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(utils.FormatRuntime(props.ShortestAndLongestMovie[1].Runtime))
+							templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(format.Runtime(props.ShortestAndLongestMovie[1].Runtime))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 108, Col: 73}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/stats.templ`, Line: 108, Col: 68}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 							if templ_7745c5c3_Err != nil {

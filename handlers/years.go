@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"believer/movies/db"
-	"believer/movies/utils"
 	"believer/movies/views"
 	"fmt"
 
@@ -18,7 +17,7 @@ func NewYearsHandler(repo db.YearsQuerier) *YearsHandler {
 }
 
 func (h *YearsHandler) GetMoviesByYear(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	year := req.Params("year")
 
 	movies, err := h.repo.GetMoviesByYear(req.UserID(), year, req.Offset())
@@ -27,7 +26,7 @@ func (h *YearsHandler) GetMoviesByYear(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.Render(c, views.ListView(views.ListViewProps{
+	return Render(c, views.ListView(views.ListViewProps{
 		EmptyState: "No movies this year",
 		NextPage:   fmt.Sprintf("/year/%s?page=%d", year, req.Page()+1),
 		Movies:     movies,

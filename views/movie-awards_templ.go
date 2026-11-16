@@ -13,8 +13,8 @@ import (
 	"believer/movies/components/list"
 	"believer/movies/components/section"
 	"believer/movies/components/separator"
+	"believer/movies/format"
 	"believer/movies/types"
-	"believer/movies/utils"
 	"fmt"
 )
 
@@ -91,10 +91,10 @@ func (p MovieAwardsProps) Subtitle() string {
 	wins := p.Wins()
 
 	if p.Wins() == 0 {
-		return fmt.Sprintf("%s", utils.PluralMessage(utils.NominationKey, p.NumberOfAwards()))
+		return fmt.Sprintf("%s", format.Plural(format.Nominations, p.NumberOfAwards()))
 	}
 
-	return fmt.Sprintf("%s / %s", utils.PluralMessage(utils.NominationKey, p.NumberOfAwards()), utils.PluralMessage(utils.WinKey, wins))
+	return fmt.Sprintf("%s / %s", format.Plural(format.Nominations, p.NumberOfAwards()), format.Plural(format.Wins, wins))
 }
 
 func (p MovieAwardsProps) NumberOfAwards() int {
@@ -119,11 +119,11 @@ func (p MovieAwardsProps) Href() string {
 }
 
 func (p MovieAwardsProps) NominationMsg() string {
-	return utils.PluralMessage(utils.NominationKey, p.NumberOfAwards())
+	return format.Plural(format.Nominations, p.NumberOfAwards())
 }
 
 func (p MovieAwardsProps) WinMsg() string {
-	return utils.PluralMessage(utils.WinKey, p.Wins())
+	return format.Plural(format.Wins, p.Wins())
 }
 
 func MovieAwards(props MovieAwardsProps) templ.Component {
@@ -424,7 +424,7 @@ type PersonAwardsProps struct {
 }
 
 func (p PersonAwardsProps) Subtitle() string {
-	return fmt.Sprintf("%s / %s", utils.PluralMessage(utils.NominationKey, p.NumberOfAwards()), utils.PluralMessage(utils.WinKey, p.Wins()))
+	return fmt.Sprintf("%s / %s", format.Plural(format.Nominations, p.NumberOfAwards()), format.Plural(format.Wins, p.Wins()))
 }
 
 func (p PersonAwardsProps) NumberOfAwards() int {

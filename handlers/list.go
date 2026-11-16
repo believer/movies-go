@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"believer/movies/db"
-	"believer/movies/utils"
+	"believer/movies/slug"
 	"believer/movies/views"
 
 	"github.com/gofiber/fiber/v2"
@@ -17,14 +17,14 @@ func NewListHandler(repo db.ListQuerier) *ListHandler {
 }
 
 func (h *ListHandler) GetLists(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	listData, err := h.repo.GetLists(req.UserID())
 
 	if err != nil {
-		return utils.Render(c, views.NotFound())
+		return Render(c, views.NotFound())
 	}
 
-	return utils.Render(c, views.RootView(views.RootViewProps{
+	return Render(c, views.RootView(views.RootViewProps{
 		EmptyState: "No lists",
 		Title:      "Official lists",
 		Items:      views.ToViewItems(listData),
@@ -32,19 +32,19 @@ func (h *ListHandler) GetLists(c *fiber.Ctx) error {
 }
 
 func (h *ListHandler) GetListById(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	id := req.IDString()
 	sort := req.QueryDefault("sort", "seen")
 	l, err := h.repo.GetList(id)
 
 	if err != nil {
-		return utils.Render(c, views.NotFound())
+		return Render(c, views.NotFound())
 	}
 
 	movies, err := h.repo.GetListMovies(id, req.UserID())
 
 	if err != nil {
-		return utils.Render(c, views.NotFound())
+		return Render(c, views.NotFound())
 	}
 
 	seen := 0
@@ -54,12 +54,12 @@ func (h *ListHandler) GetListById(c *fiber.Ctx) error {
 		}
 	}
 
-	return utils.Render(c, views.ListPage(views.ListPageProps{
+	return Render(c, views.ListPage(views.ListPageProps{
 		Description: l.Description,
 		Title:       l.Name,
 		Subtitle:    l.Source,
 		Movies:      movies,
-		Slug:        utils.CreateSelfHealingURL("list", l.Slug, l.ID),
+		Slug:        slug.URL("list", l.Slug, l.ID),
 		Sort:        views.ToListSort(sort),
 		Seen:        seen,
 		Unseen:      len(movies) - seen,
@@ -67,7 +67,7 @@ func (h *ListHandler) GetListById(c *fiber.Ctx) error {
 }
 
 func (h *ListHandler) GetListsByMovieId(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	movieID := req.IDString()
 
 	lists, err := h.repo.GetListsByMovieID(movieID)
@@ -76,7 +76,7 @@ func (h *ListHandler) GetListsByMovieId(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.Render(c, views.MovieLists(views.MovieListsProps{
+	return Render(c, views.MovieLists(views.MovieListsProps{
 		Lists: lists,
 	}))
 }

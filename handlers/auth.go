@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"believer/movies/db"
-	"believer/movies/utils"
 	"believer/movies/views"
 	"os"
 	"time"
@@ -27,7 +26,7 @@ type authFormData struct {
 
 // Display the login view
 func (h *AuthHandler) GetLogin(c *fiber.Ctx) error {
-	return utils.Render(c, views.Login())
+	return Render(c, views.Login())
 }
 
 // Login

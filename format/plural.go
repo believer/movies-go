@@ -1,4 +1,4 @@
-package utils
+package format
 
 import (
 	"log/slog"
@@ -12,15 +12,15 @@ import (
 var registerMessagesOnce sync.Once
 
 const (
-	NominationKey = "%d nomination"
-	UsersKey      = "%d user"
-	WinKey        = "%d win"
+	Nominations = "%d nomination"
+	Users       = "%d user"
+	Wins        = "%d win"
 )
 
 func initMessages() {
-	register(NominationKey, "%d nomination", "%d nominations")
-	register(WinKey, "%d win", "%d wins")
-	register(UsersKey, "%d user", "%d users")
+	register(Nominations, "%d nomination", "%d nominations")
+	register(Wins, "%d win", "%d wins")
+	register(Users, "%d user", "%d users")
 }
 
 func register(key, one, other string) {
@@ -36,9 +36,9 @@ func register(key, one, other string) {
 	}
 }
 
-// PluralMessage formats a plural message with the given count and key.
+// Plural formats a plural message with the given count and key.
 // It ensures messages are registered only once.
-func PluralMessage(key string, count int) string {
+func Plural(key string, count int) string {
 	registerMessagesOnce.Do(initMessages)
 
 	p := message.NewPrinter(language.English)

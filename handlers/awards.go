@@ -3,7 +3,6 @@ package handlers
 import (
 	"believer/movies/db"
 	"believer/movies/types"
-	"believer/movies/utils"
 	"believer/movies/views"
 	"fmt"
 
@@ -19,7 +18,7 @@ func NewAwardsHandler(repo db.AwardsQuerier) *AwardsHandler {
 }
 
 func (h *AwardsHandler) GetMoviesByNumberOfAwards(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	userID := req.UserID()
 	numberOfAwards, err := req.ParamsInt("awards")
 	if err != nil {
@@ -50,7 +49,7 @@ func (h *AwardsHandler) GetMoviesByNumberOfAwards(c *fiber.Ctx) error {
 		return err
 	}
 
-	return utils.Render(c, views.ListView(views.ListViewProps{
+	return Render(c, views.ListView(views.ListViewProps{
 		EmptyState: cfg.EmptyState,
 		Name:       name,
 		Movies:     movies,
@@ -58,7 +57,7 @@ func (h *AwardsHandler) GetMoviesByNumberOfAwards(c *fiber.Ctx) error {
 }
 
 func (h *AwardsHandler) GetAwardsByYear(c *fiber.Ctx) error {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	year := req.Params("year")
 	sort := req.QueryDefault("sort", "Movie")
 	awardType := req.Query("type")
@@ -83,7 +82,7 @@ func (h *AwardsHandler) GetAwardsByYear(c *fiber.Ctx) error {
 			return err
 		}
 
-		return utils.Render(c, views.AwardsPage(views.AwardsPageProps{
+		return Render(c, views.AwardsPage(views.AwardsPageProps{
 			GroupedAwards: awards,
 			Sort:          sort,
 			Type:          awardType,
@@ -96,7 +95,7 @@ func (h *AwardsHandler) GetAwardsByYear(c *fiber.Ctx) error {
 			return err
 		}
 
-		return utils.Render(c, views.AwardsCategory(views.AwardsCategoryProps{
+		return Render(c, views.AwardsCategory(views.AwardsCategoryProps{
 			Awards: awards,
 			Sort:   sort,
 			Type:   awardType,
@@ -104,11 +103,11 @@ func (h *AwardsHandler) GetAwardsByYear(c *fiber.Ctx) error {
 		}))
 	}
 
-	return utils.Render(c, views.NotFound())
+	return Render(c, views.NotFound())
 }
 
 func awardConfigFromQuery(c *fiber.Ctx) (types.AwardConfig, error) {
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 	awardType := req.Query("type")
 
 	if awardType == "" {

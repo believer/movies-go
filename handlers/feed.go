@@ -3,7 +3,6 @@ package handlers
 import (
 	"believer/movies/db"
 	"believer/movies/types"
-	"believer/movies/utils"
 	"believer/movies/views"
 	"fmt"
 	"log/slog"
@@ -26,7 +25,7 @@ func (h *FeedHandler) GetFeed(c *fiber.Ctx) error {
 	var movies types.Movies
 	var persons types.Persons
 	var nowPlaying types.Movies
-	req := utils.NewRequest(c)
+	req := NewRequest(c)
 
 	page := c.QueryInt("page", 1)
 	lastHeader := c.Query("last-header", "0000-00-January")
@@ -157,5 +156,5 @@ func (h *FeedHandler) GetFeed(c *fiber.Ctx) error {
 		QueryType:     searchQueryType,
 	})
 
-	return utils.Render(c, feed)
+	return Render(c, feed)
 }

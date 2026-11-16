@@ -1,7 +1,7 @@
 package intake
 
 import (
-	"believer/movies/types"
+	"believer/movies/services/tmdb"
 	"database/sql"
 	"log/slog"
 
@@ -18,7 +18,7 @@ type newPerson struct {
 	MovieId        int            `db:"movie_id"`
 }
 
-func addCast(tx *sqlx.Tx, movieCast types.MovieCreditsResponse, movieId int) error {
+func addCast(tx *sqlx.Tx, movieCast tmdb.MovieCreditsResponse, movieId int) error {
 	var err error
 	var castStructs []newPerson
 	var crewStructs []newPerson
@@ -207,7 +207,7 @@ func personExists(arr []newPerson, id int, job any) (int, bool) {
 	return 0, false
 }
 
-func addLanguages(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse) error {
+func addLanguages(tx *sqlx.Tx, id int, movie tmdb.MovieDetailsResponse) error {
 	type Language struct {
 		ISO639      string `db:"iso_639_1"`
 		EnglishName string `db:"english_name"`
@@ -262,7 +262,7 @@ ON CONFLICT
 	return nil
 }
 
-func addGenres(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse) error {
+func addGenres(tx *sqlx.Tx, id int, movie tmdb.MovieDetailsResponse) error {
 	type Genre struct {
 		Name    string `db:"name"`
 		MovieId int    `db:"movie_id"`
@@ -308,7 +308,7 @@ ON CONFLICT
 	return nil
 }
 
-func addCountries(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse) error {
+func addCountries(tx *sqlx.Tx, id int, movie tmdb.MovieDetailsResponse) error {
 	for _, c := range movie.ProductionCountries {
 		_, err := tx.Exec(`
 			INSERT INTO production_country (id, name)
@@ -338,7 +338,7 @@ func addCountries(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse) error {
 // addProductionCompanies stores a company's country only when it is already in
 // production_country, since TMDB gives companies a country code but no name. A
 // company without a country gets it filled in by a later intake.
-func addProductionCompanies(tx *sqlx.Tx, id int, movie types.MovieDetailsResponse) error {
+func addProductionCompanies(tx *sqlx.Tx, id int, movie tmdb.MovieDetailsResponse) error {
 	for _, c := range movie.ProductionCompanies {
 		var pcID int
 
