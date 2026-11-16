@@ -5,10 +5,12 @@ import (
 	"believer/movies/db/dbtest"
 	"believer/movies/types"
 	"fmt"
+	"math"
 	"testing"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 type testStats struct {
@@ -350,5 +352,70 @@ func TestGetHighestRankedPersonByJob(t *testing.T) {
 		assert.Equal(t, "Director", persons[0].Name)
 		assert.Equal(t, 2, persons[0].Appearances)
 		assert.Equal(t, 14, persons[0].TotalRating)
+	})
+
+	t.Run("ranks by average weighted by appearances, top 10", func(t *testing.T) {
+		ts := setupStats(t)
+
+		// 8 × log(3) beats 10 × log(2), so ranking by plain average fails
+		ts.director(t, "Steady",
+			ts.watchedAndRated(t, "Eight 1", 8, "2024-01-01"),
+			ts.watchedAndRated(t, "Eight 2", 8, "2024-01-02"),
+			ts.watchedAndRated(t, "Eight 3", 8, "2024-01-03"))
+		ts.director(t, "Brilliant",
+			ts.watchedAndRated(t, "Ten 1", 10, "2024-02-01"),
+			ts.watchedAndRated(t, "Ten 2", 10, "2024-02-02"))
+
+		// Ten more, ranked below, so the cutoff leaves the last one out
+		for i := range 10 {
+			ts.director(t, fmt.Sprintf("Fair %d", i),
+				ts.watchedAndRated(t, fmt.Sprintf("Fair %d a", i), 10-i, "2024-03-01"),
+				ts.watchedAndRated(t, fmt.Sprintf("Fair %d b", i), 1, "2024-03-02"))
+		}
+
+		persons, err := NewStatsRepository(ts.db).GetHighestRankedPersonByJob("1", "director")
+
+		require.NoError(t, err)
+		require.Len(t, persons, 10)
+		assert.Equal(t, "Steady", persons[0].Name)
+		assert.Equal(t, 24, persons[0].TotalRating)
+		assert.InDelta(t, 8*math.Log10(3), persons[0].WeightedAverageRating, 1e-9)
+		assert.Equal(t, "Brilliant", persons[1].Name)
+		assert.Equal(t, "Fair 7", persons[9].Name)
+	})
+
+	t.Run("breaks ties on the weighted average by ID", func(t *testing.T) {
+		ts := setupStats(t)
+
+		tied := make([]int, 15)
+
+		for i := range tied {
+			tied[i] = ts.director(t, "Tied")
+		}
+
+		// Credited in reverse ID order, so the order of the rows doesn't
+		// pass for the tiebreak
+		for i := len(tied) - 1; i >= 0; i-- {
+			ts.credit(t, ts.watchedAndRated(t, fmt.Sprintf("Tied %d a", i), 7, "2024-01-01"), tied[i], "director")
+			ts.credit(t, ts.watchedAndRated(t, fmt.Sprintf("Tied %d b", i), 7, "2024-01-02"), tied[i], "director")
+		}
+
+		// With statistics the planner groups by hashing, as it does on
+		// production data. Unanalyzed, it groups by sorting on person_id,
+		// which returns ties in ID order without a tiebreak.
+		ts.exec(t, `ANALYZE rating, movie_person`)
+
+		persons, err := NewStatsRepository(ts.db).GetHighestRankedPersonByJob("1", "director")
+
+		require.NoError(t, err)
+
+		ids := make([]int, len(persons))
+
+		for i, p := range persons {
+			ids[i] = p.ID
+		}
+
+		// More ties than the top 10, so the cutoff picks the lowest IDs
+		assert.Equal(t, tied[:10], ids)
 	})
 }
