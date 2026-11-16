@@ -7,6 +7,7 @@ import (
 	"go/token"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 	"testing"
@@ -35,14 +36,26 @@ func sqlLiterals(t *testing.T) []sqlLiteral {
 		t.Fatal(err)
 	}
 
+	files = slices.DeleteFunc(files, func(file string) bool { return strings.HasSuffix(file, "_test.go") })
+	literals := sqlLiteralsIn(t, files...)
+
+	// Guards the finder itself: if it stopped matching, the tests using it
+	// would pass without checking anything
+	if len(literals) < 50 {
+		t.Fatalf("found only %d queries, expected the repositories' queries", len(literals))
+	}
+
+	return literals
+}
+
+// sqlLiteralsIn returns every SQL string literal in the given files.
+func sqlLiteralsIn(t *testing.T, files ...string) []sqlLiteral {
+	t.Helper()
+
 	fset := token.NewFileSet()
 	literals := []sqlLiteral{}
 
 	for _, file := range files {
-		if strings.HasSuffix(file, "_test.go") {
-			continue
-		}
-
 		f, err := parser.ParseFile(fset, file, nil, 0)
 
 		if err != nil {
@@ -70,12 +83,6 @@ func sqlLiterals(t *testing.T) []sqlLiteral {
 				})
 			}
 		}
-	}
-
-	// Guards the finder itself: if it stopped matching, the tests using it
-	// would pass without checking anything
-	if len(literals) < 50 {
-		t.Fatalf("found only %d queries, expected the repositories' queries", len(literals))
 	}
 
 	return literals
@@ -133,9 +140,19 @@ func ownedNodes(decl ast.Decl) []ownedNode {
 // source, so a syntax error or an unknown table or column fails here even when
 // no other test runs the query. It needs no data: preparing checks the SQL
 // against the schema without running it.
+//
+// It prepares the benchmarks' queries too: they only run under make bench,
+// so a schema change that breaks them would otherwise wait for the next
+// performance check.
 func TestQueriesPrepare(t *testing.T) {
 	db := dbtest.Open(t)
-	literals := sqlLiterals(t)
+	bench := sqlLiteralsIn(t, "bench_test.go")
+
+	if len(bench) == 0 {
+		t.Fatal("found no queries in bench_test.go")
+	}
+
+	literals := append(sqlLiterals(t), bench...)
 
 	for _, lit := range literals {
 		stmt, err := db.Preparex(lit.Query)
