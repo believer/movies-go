@@ -27,6 +27,8 @@ type benchArgs struct {
 	UserID string `db:"user_id"`
 	// The user's most watched movie
 	MovieID int `db:"movie_id"`
+	// The movie with the most cast and crew
+	CreditedMovieID int `db:"credited_movie_id"`
 	// The user's most watched movie with a single Rating, so UpdateRating
 	// rewrites no history
 	RatedMovieID int `db:"rated_movie_id"`
@@ -99,6 +101,7 @@ series_tree AS (
 SELECT
     (SELECT id FROM bench_user)::text AS user_id,
     (SELECT movie_id FROM user_movie ORDER BY watches DESC, movie_id LIMIT 1) AS movie_id,
+    (SELECT movie_id FROM movie_person GROUP BY movie_id ORDER BY count(*) DESC, movie_id LIMIT 1) AS credited_movie_id,
     (SELECT um.movie_id FROM user_movie um
         INNER JOIN rating r ON r.movie_id = um.movie_id AND r.user_id = (SELECT id FROM bench_user)
         GROUP BY um.movie_id, um.watches
@@ -344,6 +347,8 @@ GROUP BY
 		}},
 		{name: "SeenByUser", run: func() error { _, err := r.SeenByUser(movieID, a.UserID); return err }},
 		{name: "IsWatchlisted", run: func() error { _, err := r.IsWatchlisted(movieID, a.UserID); return err }},
+		{name: "Cast", run: func() error { _, _, err := r.Cast(movieID); return err }},
+		{name: "CastMostCredited", run: func() error { _, _, err := r.Cast(strconv.Itoa(a.CreditedMovieID)); return err }},
 		{name: "GetFriends", run: func() error { _, err := r.GetFriends(a.UserID); return err }},
 		{name: "GetSeenMovie", run: func() error { _, err := r.GetSeenMovie(a.SeenID, a.UserID); return err }},
 		{name: "DeleteSeenMovie", before: begin, after: rollback, run: func() error {

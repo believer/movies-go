@@ -1,6 +1,7 @@
 package db
 
 import (
+	"believer/movies/views"
 	"database/sql"
 	"strconv"
 	"testing"
@@ -86,6 +87,64 @@ func TestUpdateSeenMovie(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, "2026-05-06T20:00", watch.Date)
 		assert.Equal(t, []string{"1"}, []string(watch.SeenWith))
+	})
+}
+
+func castNames(people []views.CastAndCrewDTO) []string {
+	names := make([]string, len(people))
+
+	for i, p := range people {
+		names[i] = p.Name
+	}
+
+	return names
+}
+
+func TestCast(t *testing.T) {
+	t.Run("orders people by their movies in any job, then popularity", func(t *testing.T) {
+		ts := setupStats(t)
+		heat := ts.movie(t, "Heat")
+		other := ts.movie(t, "Other")
+		another := ts.movie(t, "Another")
+
+		// Director credits count, so counting only cast credits would put
+		// Cast twice first
+		director := ts.person(t, "Directs too", 1)
+		ts.credit(t, heat, director, "cast")
+		ts.credit(t, other, director, "director")
+		ts.credit(t, another, director, "director")
+
+		twice := ts.person(t, "Cast twice", 5)
+		ts.credit(t, heat, twice, "cast")
+		ts.credit(t, other, twice, "cast")
+
+		popular := ts.person(t, "Popular", 9)
+		ts.credit(t, heat, popular, "cast")
+
+		cast, _, err := NewMovieRepository(ts.db).Cast(strconv.Itoa(heat))
+
+		require.NoError(t, err)
+		require.Len(t, cast, 1)
+		assert.Equal(t, "Cast", cast[0].Job)
+		assert.Equal(t, []string{"Directs too", "Cast twice", "Popular"}, castNames(cast[0].People))
+	})
+
+	t.Run("breaks ties on movies, popularity and name by ID", func(t *testing.T) {
+		ts := setupStats(t)
+		heat := ts.movie(t, "Heat")
+		first := ts.person(t, "Namesake", 1)
+		second := ts.person(t, "Namesake", 1)
+
+		// Credited in reverse ID order, so the order of the rows doesn't
+		// pass for the tiebreak
+		ts.credit(t, heat, second, "cast")
+		ts.credit(t, heat, first, "cast")
+
+		cast, _, err := NewMovieRepository(ts.db).Cast(strconv.Itoa(heat))
+
+		require.NoError(t, err)
+		require.Len(t, cast, 1)
+		assert.Equal(t, []int32{int32(first), int32(second)}, []int32{cast[0].People[0].ID, cast[0].People[1].ID})
 	})
 }
 
