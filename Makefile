@@ -104,6 +104,9 @@ MOCK_SUMS = find db/mocks -name '*.go' | sort | xargs shasum
 # forbidigo rules in .golangci.yml.
 GOLANGCI_LINT := go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.15.0
 
+# Biome from node_modules. CI runs a standalone binary, with BIOME=biome.
+BIOME ?= pnpm exec biome
+
 # Regenerate db/mocks/ from the interfaces in db/. Phony, since db/mocks/ exists.
 .PHONY: mocks
 mocks:
@@ -133,7 +136,7 @@ check:
 		fi
 	@out=$$($(GOLANGCI_LINT) run ./... 2>&1) || { echo "$$out"; exit 1; }
 	@out=$$(go test -short ./... 2>&1) || { echo "$$out"; exit 1; }
-	@pnpm exec biome check .
+	@$(BIOME) check .
 	@echo "\033[0;32m(✓)\033[0;37m Checks passed"
 
 test-all: test e2e
