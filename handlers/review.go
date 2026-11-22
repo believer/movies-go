@@ -4,6 +4,8 @@ import (
 	"believer/movies/components/review"
 	"believer/movies/db"
 	"believer/movies/types"
+	"database/sql"
+	"errors"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -67,7 +69,11 @@ func (h *ReviewHandler) EditMovieReview(c *fiber.Ctx) error {
 	}
 
 	id := req.Params("id")
-	reviewData, err := h.repo.GetReviewByID(id)
+	reviewData, err := h.repo.GetReviewByID(id, req.UserID())
+	if errors.Is(err, sql.ErrNoRows) {
+		return c.SendStatus(fiber.StatusNotFound)
+	}
+
 	if err != nil {
 		return err
 	}
@@ -94,7 +100,11 @@ func (h *ReviewHandler) UpdateMovieReview(c *fiber.Ctx) error {
 		return err
 	}
 
-	reviewData, err := h.repo.UpdateReview(id, data.Review, data.IsPrivateReview)
+	reviewData, err := h.repo.UpdateReview(id, req.UserID(), data.Review, data.IsPrivateReview)
+	if errors.Is(err, sql.ErrNoRows) {
+		return c.SendStatus(fiber.StatusNotFound)
+	}
+
 	if err != nil {
 		return err
 	}
@@ -116,7 +126,11 @@ func (h *ReviewHandler) DeleteMovieReview(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	err := h.repo.DeleteReview(id)
+	err := h.repo.DeleteReview(id, req.UserID())
+	if errors.Is(err, sql.ErrNoRows) {
+		return c.SendStatus(fiber.StatusNotFound)
+	}
+
 	if err != nil {
 		return err
 	}
