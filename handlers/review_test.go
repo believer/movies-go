@@ -4,6 +4,7 @@ import (
 	"believer/movies/db/mocks"
 	"believer/movies/types"
 	"bytes"
+	"database/sql"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -109,7 +110,7 @@ func TestEditMovieReview(t *testing.T) {
 			Content: "Great movie",
 			Private: false,
 		}
-		repo.On("GetReviewByID", "1").Return(mockReview, nil)
+		repo.On("GetReviewByID", "1", "user-123").Return(mockReview, nil)
 
 		app := setupReviewApp(NewReviewHandler(repo))
 
@@ -140,7 +141,7 @@ func TestUpdateMovieReview(t *testing.T) {
 			Content: "Updated content",
 			Private: true,
 		}
-		repo.On("UpdateReview", "1", "Updated content", true).Return(mockReview, nil)
+		repo.On("UpdateReview", "1", "user-123", "Updated content", true).Return(mockReview, nil)
 
 		app := setupReviewApp(NewReviewHandler(repo))
 
@@ -171,7 +172,7 @@ func TestDeleteMovieReview(t *testing.T) {
 
 	t.Run("authorized", func(t *testing.T) {
 		repo := mocks.NewMockReviewQuerier(t)
-		repo.On("DeleteReview", "1").Return(nil)
+		repo.On("DeleteReview", "1", "user-123").Return(nil)
 
 		app := setupReviewApp(NewReviewHandler(repo))
 
@@ -181,5 +182,46 @@ func TestDeleteMovieReview(t *testing.T) {
 		resp, err := app.Test(req)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusOK, resp.StatusCode)
+	})
+}
+
+func TestReviewOfAnotherUser(t *testing.T) {
+	send := func(t *testing.T, app *fiber.App, method string, path string, body string) int {
+		t.Helper()
+
+		req := httptest.NewRequest(method, path, bytes.NewBufferString(body))
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+		req.AddCookie(&http.Cookie{Name: "token", Value: "active"})
+		resp, err := app.Test(req)
+		assert.NoError(t, err)
+
+		return resp.StatusCode
+	}
+
+	t.Run("edit form returns 404", func(t *testing.T) {
+		repo := mocks.NewMockReviewQuerier(t)
+		repo.On("GetReviewByID", "99", "user-123").Return(types.Review{}, sql.ErrNoRows)
+
+		app := setupReviewApp(NewReviewHandler(repo))
+
+		assert.Equal(t, http.StatusNotFound, send(t, app, http.MethodGet, "/review/99/edit?movieId=456", ""))
+	})
+
+	t.Run("update returns 404", func(t *testing.T) {
+		repo := mocks.NewMockReviewQuerier(t)
+		repo.On("UpdateReview", "99", "user-123", "Changed", false).Return(types.Review{}, sql.ErrNoRows)
+
+		app := setupReviewApp(NewReviewHandler(repo))
+
+		assert.Equal(t, http.StatusNotFound, send(t, app, http.MethodPut, "/review/99?movieId=456", "review=Changed"))
+	})
+
+	t.Run("delete returns 404", func(t *testing.T) {
+		repo := mocks.NewMockReviewQuerier(t)
+		repo.On("DeleteReview", "99", "user-123").Return(sql.ErrNoRows)
+
+		app := setupReviewApp(NewReviewHandler(repo))
+
+		assert.Equal(t, http.StatusNotFound, send(t, app, http.MethodDelete, "/review/99?movieId=456", ""))
 	})
 }

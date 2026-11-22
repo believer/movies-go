@@ -47,16 +47,16 @@ func (_m *MockReviewQuerier) EXPECT() *MockReviewQuerier_Expecter {
 }
 
 // DeleteReview provides a mock function for the type MockReviewQuerier
-func (_mock *MockReviewQuerier) DeleteReview(id string) error {
-	ret := _mock.Called(id)
+func (_mock *MockReviewQuerier) DeleteReview(id string, userID string) error {
+	ret := _mock.Called(id, userID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for DeleteReview")
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(string) error); ok {
-		r0 = returnFunc(id)
+	if returnFunc, ok := ret.Get(0).(func(string, string) error); ok {
+		r0 = returnFunc(id, userID)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -70,18 +70,24 @@ type MockReviewQuerier_DeleteReview_Call struct {
 
 // DeleteReview is a helper method to define mock.On call
 //   - id string
-func (_e *MockReviewQuerier_Expecter) DeleteReview(id any) *MockReviewQuerier_DeleteReview_Call {
-	return &MockReviewQuerier_DeleteReview_Call{Call: _e.mock.On("DeleteReview", id)}
+//   - userID string
+func (_e *MockReviewQuerier_Expecter) DeleteReview(id any, userID any) *MockReviewQuerier_DeleteReview_Call {
+	return &MockReviewQuerier_DeleteReview_Call{Call: _e.mock.On("DeleteReview", id, userID)}
 }
 
-func (_c *MockReviewQuerier_DeleteReview_Call) Run(run func(id string)) *MockReviewQuerier_DeleteReview_Call {
+func (_c *MockReviewQuerier_DeleteReview_Call) Run(run func(id string, userID string)) *MockReviewQuerier_DeleteReview_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 string
 		if args[0] != nil {
 			arg0 = args[0].(string)
 		}
+		var arg1 string
+		if args[1] != nil {
+			arg1 = args[1].(string)
+		}
 		run(
 			arg0,
+			arg1,
 		)
 	})
 	return _c
@@ -92,14 +98,14 @@ func (_c *MockReviewQuerier_DeleteReview_Call) Return(err error) *MockReviewQuer
 	return _c
 }
 
-func (_c *MockReviewQuerier_DeleteReview_Call) RunAndReturn(run func(id string) error) *MockReviewQuerier_DeleteReview_Call {
+func (_c *MockReviewQuerier_DeleteReview_Call) RunAndReturn(run func(id string, userID string) error) *MockReviewQuerier_DeleteReview_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetReviewByID provides a mock function for the type MockReviewQuerier
-func (_mock *MockReviewQuerier) GetReviewByID(id string) (types.Review, error) {
-	ret := _mock.Called(id)
+func (_mock *MockReviewQuerier) GetReviewByID(id string, userID string) (types.Review, error) {
+	ret := _mock.Called(id, userID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetReviewByID")
@@ -107,16 +113,16 @@ func (_mock *MockReviewQuerier) GetReviewByID(id string) (types.Review, error) {
 
 	var r0 types.Review
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(string) (types.Review, error)); ok {
-		return returnFunc(id)
+	if returnFunc, ok := ret.Get(0).(func(string, string) (types.Review, error)); ok {
+		return returnFunc(id, userID)
 	}
-	if returnFunc, ok := ret.Get(0).(func(string) types.Review); ok {
-		r0 = returnFunc(id)
+	if returnFunc, ok := ret.Get(0).(func(string, string) types.Review); ok {
+		r0 = returnFunc(id, userID)
 	} else {
 		r0 = ret.Get(0).(types.Review)
 	}
-	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
-		r1 = returnFunc(id)
+	if returnFunc, ok := ret.Get(1).(func(string, string) error); ok {
+		r1 = returnFunc(id, userID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -130,18 +136,24 @@ type MockReviewQuerier_GetReviewByID_Call struct {
 
 // GetReviewByID is a helper method to define mock.On call
 //   - id string
-func (_e *MockReviewQuerier_Expecter) GetReviewByID(id any) *MockReviewQuerier_GetReviewByID_Call {
-	return &MockReviewQuerier_GetReviewByID_Call{Call: _e.mock.On("GetReviewByID", id)}
+//   - userID string
+func (_e *MockReviewQuerier_Expecter) GetReviewByID(id any, userID any) *MockReviewQuerier_GetReviewByID_Call {
+	return &MockReviewQuerier_GetReviewByID_Call{Call: _e.mock.On("GetReviewByID", id, userID)}
 }
 
-func (_c *MockReviewQuerier_GetReviewByID_Call) Run(run func(id string)) *MockReviewQuerier_GetReviewByID_Call {
+func (_c *MockReviewQuerier_GetReviewByID_Call) Run(run func(id string, userID string)) *MockReviewQuerier_GetReviewByID_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 string
 		if args[0] != nil {
 			arg0 = args[0].(string)
 		}
+		var arg1 string
+		if args[1] != nil {
+			arg1 = args[1].(string)
+		}
 		run(
 			arg0,
+			arg1,
 		)
 	})
 	return _c
@@ -152,7 +164,7 @@ func (_c *MockReviewQuerier_GetReviewByID_Call) Return(review types.Review, err 
 	return _c
 }
 
-func (_c *MockReviewQuerier_GetReviewByID_Call) RunAndReturn(run func(id string) (types.Review, error)) *MockReviewQuerier_GetReviewByID_Call {
+func (_c *MockReviewQuerier_GetReviewByID_Call) RunAndReturn(run func(id string, userID string) (types.Review, error)) *MockReviewQuerier_GetReviewByID_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -236,8 +248,8 @@ func (_c *MockReviewQuerier_InsertReview_Call) RunAndReturn(run func(content str
 }
 
 // UpdateReview provides a mock function for the type MockReviewQuerier
-func (_mock *MockReviewQuerier) UpdateReview(id string, content string, private bool) (types.Review, error) {
-	ret := _mock.Called(id, content, private)
+func (_mock *MockReviewQuerier) UpdateReview(id string, userID string, content string, private bool) (types.Review, error) {
+	ret := _mock.Called(id, userID, content, private)
 
 	if len(ret) == 0 {
 		panic("no return value specified for UpdateReview")
@@ -245,16 +257,16 @@ func (_mock *MockReviewQuerier) UpdateReview(id string, content string, private 
 
 	var r0 types.Review
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(string, string, bool) (types.Review, error)); ok {
-		return returnFunc(id, content, private)
+	if returnFunc, ok := ret.Get(0).(func(string, string, string, bool) (types.Review, error)); ok {
+		return returnFunc(id, userID, content, private)
 	}
-	if returnFunc, ok := ret.Get(0).(func(string, string, bool) types.Review); ok {
-		r0 = returnFunc(id, content, private)
+	if returnFunc, ok := ret.Get(0).(func(string, string, string, bool) types.Review); ok {
+		r0 = returnFunc(id, userID, content, private)
 	} else {
 		r0 = ret.Get(0).(types.Review)
 	}
-	if returnFunc, ok := ret.Get(1).(func(string, string, bool) error); ok {
-		r1 = returnFunc(id, content, private)
+	if returnFunc, ok := ret.Get(1).(func(string, string, string, bool) error); ok {
+		r1 = returnFunc(id, userID, content, private)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -268,13 +280,14 @@ type MockReviewQuerier_UpdateReview_Call struct {
 
 // UpdateReview is a helper method to define mock.On call
 //   - id string
+//   - userID string
 //   - content string
 //   - private bool
-func (_e *MockReviewQuerier_Expecter) UpdateReview(id any, content any, private any) *MockReviewQuerier_UpdateReview_Call {
-	return &MockReviewQuerier_UpdateReview_Call{Call: _e.mock.On("UpdateReview", id, content, private)}
+func (_e *MockReviewQuerier_Expecter) UpdateReview(id any, userID any, content any, private any) *MockReviewQuerier_UpdateReview_Call {
+	return &MockReviewQuerier_UpdateReview_Call{Call: _e.mock.On("UpdateReview", id, userID, content, private)}
 }
 
-func (_c *MockReviewQuerier_UpdateReview_Call) Run(run func(id string, content string, private bool)) *MockReviewQuerier_UpdateReview_Call {
+func (_c *MockReviewQuerier_UpdateReview_Call) Run(run func(id string, userID string, content string, private bool)) *MockReviewQuerier_UpdateReview_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 string
 		if args[0] != nil {
@@ -284,14 +297,19 @@ func (_c *MockReviewQuerier_UpdateReview_Call) Run(run func(id string, content s
 		if args[1] != nil {
 			arg1 = args[1].(string)
 		}
-		var arg2 bool
+		var arg2 string
 		if args[2] != nil {
-			arg2 = args[2].(bool)
+			arg2 = args[2].(string)
+		}
+		var arg3 bool
+		if args[3] != nil {
+			arg3 = args[3].(bool)
 		}
 		run(
 			arg0,
 			arg1,
 			arg2,
+			arg3,
 		)
 	})
 	return _c
@@ -302,7 +320,7 @@ func (_c *MockReviewQuerier_UpdateReview_Call) Return(review types.Review, err e
 	return _c
 }
 
-func (_c *MockReviewQuerier_UpdateReview_Call) RunAndReturn(run func(id string, content string, private bool) (types.Review, error)) *MockReviewQuerier_UpdateReview_Call {
+func (_c *MockReviewQuerier_UpdateReview_Call) RunAndReturn(run func(id string, userID string, content string, private bool) (types.Review, error)) *MockReviewQuerier_UpdateReview_Call {
 	_c.Call.Return(run)
 	return _c
 }

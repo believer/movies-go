@@ -440,7 +440,35 @@ func BenchmarkReview(b *testing.B) {
 	db, a := benchDB(b)
 	r := NewReviewRepository(db)
 
+	// UpdateReview writes the Review's own content back, and DeleteReview
+	// puts it back as it was
+	var review struct {
+		ID      int    `db:"id"`
+		Content string `db:"content"`
+		Private bool   `db:"private"`
+	}
+
+	err := db.Get(&review, `SELECT id, content, private FROM review WHERE movie_id = $1 AND user_id = $2`, a.ReviewedMovieID, a.UserID)
+
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	reviewID := strconv.Itoa(review.ID)
+
 	runBench(b, []benchCase{
+		{name: "GetReviewByID", run: func() error { _, err := r.GetReviewByID(reviewID, a.UserID); return err }},
+		{name: "UpdateReview", run: func() error {
+			_, err := r.UpdateReview(reviewID, a.UserID, review.Content, review.Private)
+			return err
+		}},
+		{name: "DeleteReview",
+			run: func() error { return r.DeleteReview(reviewID, a.UserID) },
+			after: func(b *testing.B) {
+				benchExec(b, db, `INSERT INTO review (id, user_id, movie_id, content, private) VALUES ($1, $2, $3, $4, $5)`,
+					review.ID, a.UserID, a.ReviewedMovieID, review.Content, review.Private)
+			},
+		},
 		{name: "InsertReview",
 			run: func() error {
 				_, err := r.InsertReview("Benchmark review", true, a.UserID, a.UnreviewedMovieID)

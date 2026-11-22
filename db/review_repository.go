@@ -8,10 +8,10 @@ import (
 )
 
 type ReviewQuerier interface {
-	GetReviewByID(id string) (types.Review, error)
+	GetReviewByID(id string, userID string) (types.Review, error)
 	InsertReview(content string, private bool, userID string, movieID int) (types.Review, error)
-	DeleteReview(id string) error
-	UpdateReview(id string, content string, private bool) (types.Review, error)
+	DeleteReview(id string, userID string) error
+	UpdateReview(id string, userID string, content string, private bool) (types.Review, error)
 }
 
 type ReviewRepository struct {
@@ -22,7 +22,9 @@ func NewReviewRepository(db *sqlx.DB) *ReviewRepository {
 	return &ReviewRepository{db}
 }
 
-func (r *ReviewRepository) GetReviewByID(id string) (types.Review, error) {
+// GetReviewByID returns the user's Review, or sql.ErrNoRows when the user
+// has no Review with the ID.
+func (r *ReviewRepository) GetReviewByID(id string, userID string) (types.Review, error) {
 	var review types.Review
 	err := r.db.Get(&review, `
 SELECT
@@ -33,7 +35,8 @@ FROM
     review
 WHERE
     id = $1
-	`, id)
+    AND user_id = $2
+	`, id, userID)
 	return review, err
 }
 
@@ -49,11 +52,13 @@ RETURNING
 		return types.Review{}, err
 	}
 
-	return r.GetReviewByID(fmt.Sprintf("%d", id))
+	return r.GetReviewByID(fmt.Sprintf("%d", id), userID)
 }
 
-func (r *ReviewRepository) UpdateReview(id string, content string, private bool) (types.Review, error) {
-	_, err := r.db.Exec(`
+// UpdateReview updates the user's Review, or returns sql.ErrNoRows when the
+// user has no Review with the ID.
+func (r *ReviewRepository) UpdateReview(id string, userID string, content string, private bool) (types.Review, error) {
+	res, err := r.db.Exec(`
 UPDATE
     review
 SET
@@ -61,18 +66,30 @@ SET
     private = $2
 WHERE
     id = $3
-	`, content, private, id)
+    AND user_id = $4
+	`, content, private, id, userID)
 	if err != nil {
 		return types.Review{}, err
 	}
 
-	return r.GetReviewByID(id)
+	if err := requireRow(res); err != nil {
+		return types.Review{}, err
+	}
+
+	return r.GetReviewByID(id, userID)
 }
 
-func (r *ReviewRepository) DeleteReview(id string) error {
-	_, err := r.db.Exec(`
+// DeleteReview deletes the user's Review, or returns sql.ErrNoRows when the
+// user has no Review with the ID.
+func (r *ReviewRepository) DeleteReview(id string, userID string) error {
+	res, err := r.db.Exec(`
 DELETE FROM review
 WHERE id = $1
-	`, id)
-	return err
+    AND user_id = $2
+	`, id, userID)
+	if err != nil {
+		return err
+	}
+
+	return requireRow(res)
 }
