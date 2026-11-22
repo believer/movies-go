@@ -44,6 +44,7 @@ jobs:
           path: |
             ~/go/pkg/mod
             ~/.cache/go-build
+            ~/.cache/golangci-lint
           # The Makefile pins the versions of templ, mockery and golangci-lint.
           # Keep the key in step with the E2E job's.
           key: go-${{ runner.os }}-${{ hashFiles('go.mod', 'go.sum', 'Makefile') }}
@@ -97,12 +98,14 @@ jobs:
         with:
           go-version-file: "go.mod"
           cache: false
-      # The Test job saves this cache
+      # The Test job saves this cache. The paths are part of the cache's
+      # version, so they match the Test job's, golangci-lint's included.
       - uses: actions/cache/restore@v6
         with:
           path: |
             ~/go/pkg/mod
             ~/.cache/go-build
+            ~/.cache/golangci-lint
           key: go-${{ runner.os }}-${{ hashFiles('go.mod', 'go.sum', 'Makefile') }}
           restore-keys: go-${{ runner.os }}-
       - uses: pnpm/action-setup@v6
