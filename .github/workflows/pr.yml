@@ -35,23 +35,34 @@ jobs:
       - uses: actions/setup-go@v7
         with:
           go-version-file: "go.mod"
-      - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v7
+          # setup-go's cache is saved by whichever job finishes first, often
+          # an E2E job that never builds the linters, mocks or tests. This job
+          # saves the cache instead, and the E2E jobs only restore it.
+          cache: false
+      - uses: actions/cache@v6
         with:
-          node-version: lts/*
-          cache: pnpm
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          # The Makefile pins the versions of templ, mockery and golangci-lint.
+          # Keep the key in step with the E2E job's.
+          key: go-${{ runner.os }}-${{ hashFiles('go.mod', 'go.sum', 'Makefile') }}
+          restore-keys: go-${{ runner.os }}-
+      # Biome is the only thing make check needs from node_modules. The version
+      # comes from pnpm-lock.yaml.
+      - uses: biomejs/setup-biome@v2
       - name: Check
-        run: make check
+        run: make check BIOME=biome
       - name: Check schema.sql matches the migrations
         # Migrates an empty database and dumps it, as make schema does
         run: make schema && git diff --exit-code db/schema.sql
       - name: Load schema
         run: psql "$TEST_DATABASE_URL" -v ON_ERROR_STOP=1 -q -f db/schema.sql
       - name: Run tests
-        # Packages share the test database, so run them one at a time
-        run: go test -p 1 ./...
+        # Packages share the test database, so run them one at a time.
+        # -count=1 skips go test's cache, which is now restored between runs
+        # and can't tell that the database changed.
+        run: go test -count=1 -p 1 ./...
 
   e2e:
     name: E2E (${{ matrix.browser }})
@@ -85,6 +96,15 @@ jobs:
       - uses: actions/setup-go@v7
         with:
           go-version-file: "go.mod"
+          cache: false
+      # The Test job saves this cache
+      - uses: actions/cache/restore@v6
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: go-${{ runner.os }}-${{ hashFiles('go.mod', 'go.sum', 'Makefile') }}
+          restore-keys: go-${{ runner.os }}-
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with:
