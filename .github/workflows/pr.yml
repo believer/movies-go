@@ -52,7 +52,7 @@ jobs:
       # comes from pnpm-lock.yaml.
       - uses: biomejs/setup-biome@v2
       - name: Check
-        run: make check BIOME=biome
+        run: make --trace check BIOME=biome
       - name: Check schema.sql matches the migrations
         # Migrates an empty database and dumps it, as make schema does
         run: make schema && git diff --exit-code db/schema.sql
