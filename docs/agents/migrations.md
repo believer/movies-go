@@ -7,4 +7,6 @@ The schema changes only through a migration (`docs/adr/0002-migrations-run-on-st
 
 The app applies pending migrations when it starts, so production gets them on deploy. Keep a migration safe to run while the previous release still serves traffic: add a column or view before the code that reads it, and drop one only after no deployed code uses it.
 
+Production's role has a 10 second `statement_timeout`, and migrations run as that role. A migration with a slower statement, like an index on a large table or a backfill, starts with `SET LOCAL statement_timeout = 0;` under `-- +goose Up`.
+
 Never edit a migration that has been merged, or `db/migrations/baseline.sql`: production has already run them.
