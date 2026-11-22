@@ -108,7 +108,9 @@ jobs:
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with:
-          node-version: lts/*
+          # A version the runner image has cached, so setup-node doesn't download
+          # one. Node only runs Playwright here.
+          node-version: 24
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile

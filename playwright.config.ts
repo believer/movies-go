@@ -16,8 +16,9 @@ export default defineConfig({
 	forbidOnly: !!process.env.CI,
 	/* Retry on CI only */
 	retries: process.env.CI ? 2 : 0,
-	/* Opt out of parallel tests on CI. */
-	workers: process.env.CI ? 1 : undefined,
+	/* Half the cores, locally and on CI. Tests that write log in as a fresh
+	 * user, so workers don't step on each other's data. */
+	workers: "50%",
 	/* Reporter to use. See https://playwright.dev/docs/test-reporters
 	 * Locally the HTML report is written but never opened: opening it serves
 	 * the report on failure and blocks until killed. */
