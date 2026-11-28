@@ -9,9 +9,9 @@
 	"license": "ISC",
 	"packageManager": "pnpm@10.12.4",
 	"devDependencies": {
-		"@biomejs/biome": "2.6.8",
+		"@biomejs/biome": "2.6.9",
 		"@playwright/test": "1.65.1",
-		"@types/node": "26.6.6",
+		"@types/node": "26.6.10",
 		"@types/pg": "8.23.1",
 		"pg": "8.23.1"
 	}
