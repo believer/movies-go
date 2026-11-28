@@ -6,7 +6,7 @@ Run `make verify E2E_PORT=<free port>` before finishing a change: `make check`, 
 
 **Performance checks**: timing queries on the production backup → `docs/agents/performance.md`.
 
-Implement in a worktree off a fresh `origin/main`: `git fetch`, then `git worktree add ../movies-<slug> -b <type>/<slug> origin/main`, with `<type>` the commit type and a `<slug>` missing from `git worktree list`, then `pnpm install` in it. Read `AGENTS.md`, `CODING_STANDARDS.md` and `docs/agents/` in the worktree: the main checkout's copies can lag `origin/main`. Once its PR merges, `git worktree remove` it. The main checkout is shared with a human, so leave it on whatever they have checked out.
+Implement an issue, and reference it in the commits: for work agreed in chat, first file one listing what was agreed. Implement in a worktree off a fresh `origin/main`: `git fetch`, then `git worktree add ../movies-<slug> -b <type>/<slug> origin/main`, with `<type>` the commit type and a `<slug>` missing from `git worktree list`, then `pnpm install` in it. Read `AGENTS.md`, `CODING_STANDARDS.md` and `docs/agents/` in the worktree: the main checkout's copies can lag `origin/main`. Once its PR merges, `git worktree remove` it. The main checkout is shared with a human, so leave it on whatever they have checked out.
 
 ## Agent skills
 

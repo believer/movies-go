@@ -11,6 +11,9 @@ PROXY_PORT ?= 7331
 # Override PORT and PROXY_PORT to run beside another checkout, e.g.
 # make dev PORT=8099 PROXY_PORT=7399. A change to any watched file restarts
 # --cmd, which rebuilds the embedded stylesheet and works out its hash again.
+# A worktree has no .env: copy .env and .env.local from the main checkout.
+# make check (and so make verify) regenerates the templ files outside watch
+# mode, which leaves a running make dev failing every render: restart it.
 dev:
 	@PORT=$(PORT) templ generate --watch \
 		--open-browser=false \
@@ -47,6 +50,7 @@ PKG ?= ./...
 
 # Packages share the checkout's test database, so run them one at a time.
 # Narrow with PKG and RUN, e.g. make test PKG=./db RUN=TestGetBestOfTheYear.
+# GOFLAGS=-v make test ... lists each test, to tell passed from skipped.
 # Pointing TEST_DATABASE_URL at another server needs PSQL pointed there too,
 # and TEST_DB set to the database in the URL. -count=1 skips go test's cache,
 # which can't tell that test-db rebuilt the database.
