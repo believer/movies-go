@@ -55,3 +55,60 @@ test("ratings for a past year are grouped by Rating", async ({ page }) => {
 	await expect(ratingGroup("8")).toHaveText(["Dune"])
 	await expect(ratingGroup("6")).toHaveText(["Ant-Man"])
 })
+
+test("hot takes compare the latest Ratings with IMDb's", async ({ page }) => {
+	await page.goto("/stats")
+
+	const hotTakes = section(page, "Hot takes", true)
+	const titles = (title: string) =>
+		hotTakes.getByRole("region", { name: title }).getByRole("link")
+
+	// The Dark Knight's latest Rating, 9, matches IMDb's, so it's in neither
+	await expect(titles("Above IMDb")).toHaveText([
+		"Spirited Away",
+		"Parasite",
+		"Interstellar",
+		"Inception",
+	])
+	await expect(titles("Below IMDb")).toHaveText([
+		"Ant-Man",
+		"Amélie",
+		"Kingsman: The Secret Service",
+		"Batman Begins",
+		"Jurassic Park",
+	])
+	await expect(
+		hotTakes
+			.getByRole("region", { name: "Above IMDb" })
+			.getByRole("listitem")
+			.first()
+	).toContainText(/10 vs 8\.6\s*\+1\.4/)
+	await expect(hotTakes.getByLabel("Compared to IMDb")).toContainText(
+		/0\.1 below IMDb on average\s*11 movies/
+	)
+})
+
+test("streaks show the records of the days with Watches", async ({ page }) => {
+	await page.goto("/stats")
+
+	const streaks = section(page, "Streaks", true)
+
+	await expect(streaks.getByLabel("Longest streak")).toContainText(
+		/1 day\s*March 2 2019/
+	)
+	await expect(streaks.getByLabel("Longest break")).toContainText(
+		/279 days\s*Between January 16 2021 and October 23 2021/
+	)
+	await expect(streaks.getByLabel("Most in one day")).toContainText(
+		/1 movie\s*March 2 2019/
+	)
+})
+
+test("actor and director pairs need more than one movie", async ({ page }) => {
+	await page.goto("/stats")
+
+	// Christopher Nolan directed Bale twice, and the rest of his cast once
+	await expect(
+		section(page, "Actor & director pairs", true).getByRole("listitem")
+	).toHaveText([/^Christian Bale\s*&\s*Christopher Nolan\s*2$/])
+})

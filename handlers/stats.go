@@ -652,3 +652,51 @@ func (h *StatsHandler) GetMoviesByYearStat(c *fiber.Ctx) error {
 		Years:    append([]string{"All"}, availableYears()...),
 	}))
 }
+
+func (h *StatsHandler) GetHotTakes(c *fiber.Ctx) error {
+	userId := NewRequest(c).UserID()
+
+	takes, err := h.repo.GetHotTakes(userId)
+
+	if err != nil {
+		return err
+	}
+
+	comparison, err := h.repo.GetIMDbComparison(userId)
+
+	if err != nil {
+		return err
+	}
+
+	props := views.HotTakesProps{Comparison: comparison}
+
+	for _, take := range takes {
+		if take.Difference > 0 {
+			props.Above = append(props.Above, take)
+		} else {
+			props.Below = append(props.Below, take)
+		}
+	}
+
+	return Render(c, views.HotTakes(props))
+}
+
+func (h *StatsHandler) GetStreaks(c *fiber.Ctx) error {
+	streaks, err := h.repo.GetStreaks(NewRequest(c).UserID())
+
+	if err != nil {
+		return err
+	}
+
+	return Render(c, views.Streaks(streaks))
+}
+
+func (h *StatsHandler) GetActorDirectorPairs(c *fiber.Ctx) error {
+	pairs, err := h.repo.GetActorDirectorPairs(NewRequest(c).UserID())
+
+	if err != nil {
+		return err
+	}
+
+	return Render(c, views.ActorDirectorPairs(pairs))
+}

@@ -1,0 +1,63 @@
+package views
+
+import (
+	"believer/movies/components/empty-state"
+	"believer/movies/components/list"
+	"believer/movies/components/section"
+	"believer/movies/format"
+	"believer/movies/types"
+	"database/sql"
+)
+
+func streakDate(d sql.NullTime) string {
+	return d.Time.Format("January 2 2006")
+}
+
+templ Streaks(s types.Streaks) {
+	@section.Section(section.Props{Title: "Streaks"}) {
+		if s.StreakDays > 0 {
+			@list.Dl() {
+				@list.DlItem(list.DlProps{
+					Detail:   "Longest streak",
+					IsColumn: true,
+				}) {
+					{ format.Plural(format.Days, s.StreakDays) }
+					<div class="detail">
+						if s.StreakDays == 1 {
+							{ streakDate(s.StreakStart) }
+						} else {
+							{ streakDate(s.StreakStart) } – { streakDate(s.StreakEnd) }
+						}
+					</div>
+				}
+				if s.BreakStart.Valid {
+					@list.DlItem(list.DlProps{
+						Detail:   "Longest break",
+						IsColumn: true,
+					}) {
+						{ format.Plural(format.Days, s.BreakDays) }
+						<div class="detail">
+							Between { streakDate(s.BreakStart) } and { streakDate(s.BreakEnd) }
+						</div>
+					}
+				}
+				@list.DlItem(list.DlProps{
+					Detail:   "Most in one day",
+					IsColumn: true,
+				}) {
+					{ format.Plural(format.Movies, s.BusiestDayWatches) }
+					<div class="detail">
+						{ streakDate(s.BusiestDay) }
+					</div>
+				}
+			}
+			<div class="note">
+				Counts Watches from 2012 on.
+			</div>
+		} else {
+			@emptystate.EmptyState() {
+				No movies seen
+			}
+		}
+	}
+}

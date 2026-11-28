@@ -29,6 +29,10 @@ type StatsQuerier interface {
 	GetWilhelmMovies(userID string, offset int) (types.Movies, error)
 	GetSeenWith() ([]types.ListItem, error)
 	GetHighestRankedPersonByJob(userID string, job string) ([]types.HighestRated, error)
+	GetHotTakes(userID string) ([]types.HotTake, error)
+	GetIMDbComparison(userID string) (types.IMDbComparison, error)
+	GetStreaks(userID string) (types.Streaks, error)
+	GetActorDirectorPairs(userID string) ([]types.PersonPair, error)
 }
 
 type StatsRepository struct {
@@ -601,4 +605,223 @@ ORDER BY
     p.id
 	`, userID, job)
 	return persons, err
+}
+
+func (r *StatsRepository) GetHotTakes(userID string) ([]types.HotTake, error) {
+	var takes []types.HotTake
+	err := r.db.Select(&takes, `
+WITH compared AS (
+    SELECT
+        m.id,
+        m.title,
+        lr.rating,
+        i.imdb_rating,
+        lr.rating - i.imdb_rating AS difference
+    FROM
+        latest_rating AS lr
+        INNER JOIN movie AS m ON m.id = lr.movie_id
+        -- Checked before the cast, which a malformed rating would fail
+        CROSS JOIN LATERAL (
+            SELECT
+                CASE WHEN m.imdb_rating ~ '^[0-9]+(\.[0-9]+)?$' THEN
+                    m.imdb_rating::numeric
+                END AS imdb_rating) AS i
+    WHERE
+        lr.user_id = $1
+        -- IMDb's 0 means the movie has no rating there
+        AND i.imdb_rating > 0
+)
+(
+    SELECT
+        id,
+        title,
+        rating,
+        imdb_rating::float8 AS imdb_rating,
+        difference::float8 AS difference
+    FROM
+        compared
+    WHERE
+        difference > 0
+    ORDER BY
+        difference DESC,
+        id
+    LIMIT 10)
+UNION ALL (
+    SELECT
+        id,
+        title,
+        rating,
+        imdb_rating::float8 AS imdb_rating,
+        difference::float8 AS difference
+    FROM
+        compared
+    WHERE
+        difference < 0
+    ORDER BY
+        difference ASC,
+        id
+    LIMIT 10)
+	`, userID)
+	return takes, err
+}
+
+func (r *StatsRepository) GetIMDbComparison(userID string) (types.IMDbComparison, error) {
+	var comparison types.IMDbComparison
+	err := r.db.Get(&comparison, `
+SELECT
+    COUNT(*) AS movies,
+    COALESCE(AVG(lr.rating - i.imdb_rating), 0)::float8 AS average_difference
+FROM
+    latest_rating AS lr
+    INNER JOIN movie AS m ON m.id = lr.movie_id
+    -- Checked before the cast, which a malformed rating would fail
+    CROSS JOIN LATERAL (
+        SELECT
+            CASE WHEN m.imdb_rating ~ '^[0-9]+(\.[0-9]+)?$' THEN
+                m.imdb_rating::numeric
+            END AS imdb_rating) AS i
+WHERE
+    lr.user_id = $1
+    -- IMDb's 0 means the movie has no rating there
+    AND i.imdb_rating > 0
+	`, userID)
+	return comparison, err
+}
+
+func (r *StatsRepository) GetStreaks(userID string) (types.Streaks, error) {
+	var streaks types.Streaks
+	err := r.db.Get(&streaks, `
+WITH watch_days AS (
+    SELECT
+        date::date AS day,
+        COUNT(*) AS watches,
+        -- Numbers the days in order, so the earliest record wins a tie
+        ROW_NUMBER() OVER (ORDER BY date::date) AS day_id
+    FROM
+        seen
+    WHERE
+        user_id = $1
+        -- Watches dated 2011 are a bulk import of the years before
+        -- tracking started
+        AND date >= '2012-01-01'
+    GROUP BY
+        date::date
+),
+streak AS (
+    SELECT
+        MIN(day) AS start_day,
+        MAX(day) AS end_day,
+        COUNT(*) AS days,
+        MIN(day_id) AS streak_id
+    FROM
+        watch_days
+    GROUP BY
+        -- Is the same for every day of a run of consecutive days
+        day - day_id::int
+    ORDER BY
+        days DESC,
+        streak_id
+    LIMIT 1
+),
+gap AS (
+    SELECT
+        prev.day AS start_day,
+        next.day AS end_day,
+        next.day - prev.day - 1 AS days
+    FROM
+        watch_days AS prev
+        INNER JOIN watch_days AS next ON next.day_id = prev.day_id + 1
+    ORDER BY
+        days DESC,
+        prev.day_id
+    LIMIT 1
+),
+busiest AS (
+    SELECT
+        day,
+        watches
+    FROM
+        watch_days
+    ORDER BY
+        watches DESC,
+        day_id
+    LIMIT 1
+)
+SELECT
+    COALESCE(s.days, 0) AS streak_days,
+    s.start_day AS streak_start,
+    s.end_day AS streak_end,
+    COALESCE(g.days, 0) AS break_days,
+    g.start_day AS break_start,
+    g.end_day AS break_end,
+    COALESCE(b.watches, 0) AS busiest_day_watches,
+    b.day AS busiest_day
+FROM (
+    SELECT) AS one
+    LEFT JOIN streak AS s ON TRUE
+    LEFT JOIN gap AS g ON TRUE
+    LEFT JOIN busiest AS b ON TRUE
+	`, userID)
+	return streaks, err
+}
+
+func (r *StatsRepository) GetActorDirectorPairs(userID string) ([]types.PersonPair, error) {
+	var pairs []types.PersonPair
+	err := r.db.Select(&pairs, `
+WITH billed AS (
+    SELECT
+        mp.movie_id,
+        mp.person_id,
+        -- Movie intake adds the cast in billing order
+        ROW_NUMBER() OVER (PARTITION BY mp.movie_id ORDER BY mp.id) AS billing
+    FROM
+        watched_movie AS w
+        INNER JOIN movie_person AS mp ON mp.movie_id = w.movie_id
+            AND mp.job = 'cast'
+    WHERE
+        w.user_id = $1
+),
+-- Ranks before joining person, so only the top 10 pairs get their names
+-- looked up
+pairs AS (
+    SELECT
+        c.person_id AS actor_id,
+        d.person_id AS director_id,
+        COUNT(*) AS movies
+    FROM
+        billed AS c
+        INNER JOIN movie_person AS d ON d.movie_id = c.movie_id
+            AND d.job = 'director'
+            -- An actor directing themselves isn't a pair
+            AND d.person_id <> c.person_id
+    WHERE
+        -- The leads, not every bit part
+        c.billing <= 5
+    GROUP BY
+        c.person_id,
+        d.person_id
+    HAVING
+        COUNT(*) > 1
+    ORDER BY
+        movies DESC,
+        actor_id,
+        director_id
+    LIMIT 10
+)
+SELECT
+    p.actor_id,
+    a.name AS actor_name,
+    p.director_id,
+    d.name AS director_name,
+    p.movies
+FROM
+    pairs AS p
+    INNER JOIN person AS a ON a.id = p.actor_id
+    INNER JOIN person AS d ON d.id = p.director_id
+ORDER BY
+    p.movies DESC,
+    p.actor_id,
+    p.director_id
+	`, userID)
+	return pairs, err
 }

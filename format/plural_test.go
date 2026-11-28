@@ -14,4 +14,8 @@ func TestPlural(t *testing.T) {
 	assert.Equal(t, "3 wins", Plural(Wins, 3))
 	assert.Equal(t, "1 user", Plural(Users, 1))
 	assert.Equal(t, "5 users", Plural(Users, 5))
+	assert.Equal(t, "1 day", Plural(Days, 1))
+	assert.Equal(t, "49 days", Plural(Days, 49))
+	assert.Equal(t, "1 movie", Plural(Movies, 1))
+	assert.Equal(t, "3 movies", Plural(Movies, 3))
 }

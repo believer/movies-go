@@ -1,0 +1,69 @@
+package views
+
+import (
+	"believer/movies/components/empty-state"
+	"believer/movies/components/link"
+	"believer/movies/components/list"
+	"believer/movies/components/section"
+	"believer/movies/components/separator"
+	"believer/movies/format"
+	"believer/movies/types"
+	"fmt"
+)
+
+type HotTakesProps struct {
+	Above      []types.HotTake
+	Below      []types.HotTake
+	Comparison types.IMDbComparison
+}
+
+templ hotTakesList(id string, title string, takes []types.HotTake) {
+	<section class="section" aria-labelledby={ id }>
+		<h3 id={ id }>{ title }</h3>
+		@list.Ol() {
+			for _, take := range takes {
+				@list.Li(list.LiProps{Items: len(takes), Style: list.Numbered}) {
+					@link.Link(link.Props{Href: take.LinkTo()}) {
+						{ take.Title }
+					}
+					@separator.Separator()
+					<span class="hot-take__ratings">
+						<span class="hot-take__versus">{ fmt.Sprintf("%d vs %.1f", take.Rating, take.IMDbRating) }</span>
+						<span>{ take.FormattedDifference() }</span>
+					</span>
+				}
+			}
+		}
+	</section>
+}
+
+templ HotTakes(props HotTakesProps) {
+	@section.Section(section.Props{Title: "Hot takes"}) {
+		if props.Comparison.Movies > 0 {
+			@list.Dl() {
+				@list.DlItem(list.DlProps{
+					Detail:   "Compared to IMDb",
+					IsColumn: true,
+				}) {
+					{ props.Comparison.Summary() }
+					<div class="detail">
+						{ format.Plural(format.Movies, props.Comparison.Movies) }
+					</div>
+				}
+			}
+			if len(props.Above) > 0 {
+				@hotTakesList("hot-takes-above", "Above IMDb", props.Above)
+			}
+			if len(props.Below) > 0 {
+				@hotTakesList("hot-takes-below", "Below IMDb", props.Below)
+			}
+			<div class="note">
+				Your latest rating against IMDb's.
+			</div>
+		} else {
+			@emptystate.EmptyState() {
+				No rated movies with an IMDb rating
+			}
+		}
+	}
+}

@@ -12,12 +12,16 @@ import (
 var registerMessagesOnce sync.Once
 
 const (
+	Days        = "%d day"
+	Movies      = "%d movie"
 	Nominations = "%d nomination"
 	Users       = "%d user"
 	Wins        = "%d win"
 )
 
 func initMessages() {
+	register(Days, "%d day", "%d days")
+	register(Movies, "%d movie", "%d movies")
 	register(Nominations, "%d nomination", "%d nominations")
 	register(Wins, "%d win", "%d wins")
 	register(Users, "%d user", "%d users")

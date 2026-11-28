@@ -4,9 +4,11 @@ import (
 	"believer/movies/components/graph"
 	"believer/movies/db/dbtest"
 	"believer/movies/types"
+	"database/sql"
 	"fmt"
 	"math"
 	"testing"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/stretchr/testify/assert"
@@ -417,5 +419,504 @@ func TestGetHighestRankedPersonByJob(t *testing.T) {
 
 		// More ties than the top 10, so the cutoff picks the lowest IDs
 		assert.Equal(t, tied[:10], ids)
+	})
+}
+
+// imdbMovie adds a movie with an IMDb rating, stored as text like production
+// stores it, and returns its ID.
+func (ts testStats) imdbMovie(t *testing.T, title string, imdbRating any) int {
+	t.Helper()
+
+	var id int
+
+	if err := ts.db.Get(&id, `INSERT INTO movie (title, imdb_id, imdb_rating) VALUES ($1, $1, $2) RETURNING id`, title, imdbRating); err != nil {
+		t.Fatal(err)
+	}
+
+	return id
+}
+
+// ratedAgainstIMDb adds a movie with an IMDb rating that user 1 rated.
+func (ts testStats) ratedAgainstIMDb(t *testing.T, title string, imdbRating string, rating int) int {
+	t.Helper()
+
+	id := ts.imdbMovie(t, title, imdbRating)
+	ts.rate(t, 1, id, rating, "2024-01-01")
+
+	return id
+}
+
+func hotTakeTitles(t *testing.T, takes []types.HotTake, err error) []string {
+	t.Helper()
+	require.NoError(t, err)
+
+	titles := []string{}
+
+	for _, take := range takes {
+		titles = append(titles, take.Title)
+	}
+
+	return titles
+}
+
+func TestGetHotTakes(t *testing.T) {
+	t.Run("returns the top 10 above IMDb, then the top 10 below", func(t *testing.T) {
+		ts := setupStats(t)
+
+		// Eleven each way, so the cutoff leaves the smallest one out
+		for i := range 11 {
+			ts.ratedAgainstIMDb(t, fmt.Sprintf("Above %02d", i), fmt.Sprintf("%.1f", 1+float64(i)/10), 10)
+			ts.ratedAgainstIMDb(t, fmt.Sprintf("Below %02d", i), fmt.Sprintf("%.1f", 9.9-float64(i)/10), 1)
+		}
+
+		ts.ratedAgainstIMDb(t, "Agrees", "7.0", 7)
+
+		takes, err := NewStatsRepository(ts.db).GetHotTakes("1")
+
+		assert.Equal(t, []string{
+			"Above 00", "Above 01", "Above 02", "Above 03", "Above 04",
+			"Above 05", "Above 06", "Above 07", "Above 08", "Above 09",
+			"Below 00", "Below 01", "Below 02", "Below 03", "Below 04",
+			"Below 05", "Below 06", "Below 07", "Below 08", "Below 09",
+		}, hotTakeTitles(t, takes, err))
+	})
+
+	t.Run("returns the ratings and their exact difference", func(t *testing.T) {
+		ts := setupStats(t)
+
+		id := ts.ratedAgainstIMDb(t, "Vertical Limit", "5.9", 9)
+
+		takes, err := NewStatsRepository(ts.db).GetHotTakes("1")
+
+		require.NoError(t, err)
+		assert.Equal(t, []types.HotTake{{
+			ID:         id,
+			Title:      "Vertical Limit",
+			Rating:     9,
+			IMDbRating: 5.9,
+			Difference: 3.1,
+		}}, takes)
+	})
+
+	t.Run("leaves out movies without an IMDb rating", func(t *testing.T) {
+		ts := setupStats(t)
+
+		for _, imdbRating := range []any{nil, "", "0"} {
+			ts.rate(t, 1, ts.imdbMovie(t, fmt.Sprintf("No rating %v", imdbRating), imdbRating), 9, "2024-01-01")
+		}
+
+		ts.ratedAgainstIMDb(t, "Rated", "6.0", 9)
+
+		takes, err := NewStatsRepository(ts.db).GetHotTakes("1")
+
+		assert.Equal(t, []string{"Rated"}, hotTakeTitles(t, takes, err))
+	})
+
+	t.Run("uses the latest rating of a movie rated again", func(t *testing.T) {
+		ts := setupStats(t)
+
+		// The earlier rating is far above IMDb, the latest below it
+		id := ts.ratedAgainstIMDb(t, "Rated down", "7.0", 10)
+		ts.rate(t, 1, id, 5, "2024-09-01")
+
+		takes, err := NewStatsRepository(ts.db).GetHotTakes("1")
+
+		require.NoError(t, err)
+		require.Len(t, takes, 1)
+		assert.Equal(t, 5, takes[0].Rating)
+		assert.InDelta(t, -2.0, takes[0].Difference, 1e-9)
+	})
+
+	t.Run("ignores other users' ratings", func(t *testing.T) {
+		ts := setupStats(t)
+
+		id := ts.imdbMovie(t, "Theirs", "5.0")
+		ts.rate(t, 2, id, 10, "2024-01-01")
+
+		takes, err := NewStatsRepository(ts.db).GetHotTakes("1")
+
+		assert.Empty(t, hotTakeTitles(t, takes, err))
+	})
+
+	t.Run("breaks ties on the difference by ID", func(t *testing.T) {
+		ts := setupStats(t)
+
+		// More than twice the cutoff, so Postgres sorts with a bounded heap,
+		// which doesn't keep the rows' order
+		ids := make([]int, 25)
+
+		for i := range ids {
+			ids[i] = ts.imdbMovie(t, fmt.Sprintf("Tied %02d", i), "5.0")
+		}
+
+		// Rated in reverse ID order, so the order of the rows doesn't pass
+		// for the tiebreak
+		for i := len(ids) - 1; i >= 0; i-- {
+			ts.rate(t, 1, ids[i], 8, "2024-01-01")
+		}
+
+		ts.exec(t, `ANALYZE rating, movie`)
+
+		takes, err := NewStatsRepository(ts.db).GetHotTakes("1")
+
+		assert.Equal(t, []string{
+			"Tied 00", "Tied 01", "Tied 02", "Tied 03", "Tied 04",
+			"Tied 05", "Tied 06", "Tied 07", "Tied 08", "Tied 09",
+		}, hotTakeTitles(t, takes, err))
+	})
+}
+
+func TestGetIMDbComparison(t *testing.T) {
+	t.Run("averages the latest ratings minus IMDb's", func(t *testing.T) {
+		ts := setupStats(t)
+
+		ts.ratedAgainstIMDb(t, "Above", "6.5", 9)
+		ts.ratedAgainstIMDb(t, "Below", "8.0", 7)
+		id := ts.ratedAgainstIMDb(t, "Rated down", "7.0", 10)
+		ts.rate(t, 1, id, 6, "2024-09-01")
+		ts.rate(t, 1, ts.imdbMovie(t, "No rating", "0"), 1, "2024-01-01")
+		ts.rate(t, 2, ts.imdbMovie(t, "Theirs", "5.0"), 10, "2024-01-01")
+
+		comparison, err := NewStatsRepository(ts.db).GetIMDbComparison("1")
+
+		require.NoError(t, err)
+		assert.Equal(t, 3, comparison.Movies)
+		// (2.5 - 1.0 - 1.0) / 3
+		assert.InDelta(t, 0.5/3, comparison.AverageDifference, 1e-9)
+	})
+
+	t.Run("is zero without rated movies", func(t *testing.T) {
+		ts := setupStats(t)
+
+		comparison, err := NewStatsRepository(ts.db).GetIMDbComparison("1")
+
+		require.NoError(t, err)
+		assert.Equal(t, types.IMDbComparison{}, comparison)
+	})
+}
+
+func (ts testStats) streaks(t *testing.T) types.Streaks {
+	t.Helper()
+
+	streaks, err := NewStatsRepository(ts.db).GetStreaks("1")
+	require.NoError(t, err)
+
+	return streaks
+}
+
+func day(t *testing.T, nt sql.NullTime) string {
+	t.Helper()
+
+	if !nt.Valid {
+		return ""
+	}
+
+	return nt.Time.Format("2006-01-02")
+}
+
+func TestGetStreaks(t *testing.T) {
+	t.Run("finds the most consecutive days with a Watch", func(t *testing.T) {
+		ts := setupStats(t)
+		id := ts.movie(t, "Movie")
+
+		for _, date := range []string{"2024-01-01", "2024-01-02", "2024-01-03"} {
+			ts.watch(t, 1, id, date)
+		}
+
+		// Four days over a year end, with two Watches on one of them, so
+		// counting Watches rather than days gives the wrong streak
+		for _, date := range []string{"2024-12-30", "2024-12-31", "2024-12-31 22:00", "2025-01-01", "2025-01-02"} {
+			ts.watch(t, 1, id, date)
+		}
+
+		ts.watch(t, 1, id, "2025-03-01")
+
+		s := ts.streaks(t)
+
+		assert.Equal(t, 4, s.StreakDays)
+		assert.Equal(t, "2024-12-30", day(t, s.StreakStart))
+		assert.Equal(t, "2025-01-02", day(t, s.StreakEnd))
+	})
+
+	t.Run("finds the most days without a Watch between two", func(t *testing.T) {
+		ts := setupStats(t)
+		id := ts.movie(t, "Movie")
+
+		for _, date := range []string{"2024-01-01", "2024-01-11", "2024-03-01 23:00", "2024-03-05"} {
+			ts.watch(t, 1, id, date)
+		}
+
+		s := ts.streaks(t)
+
+		// January 12 to February 29
+		assert.Equal(t, 49, s.BreakDays)
+		assert.Equal(t, "2024-01-11", day(t, s.BreakStart))
+		assert.Equal(t, "2024-03-01", day(t, s.BreakEnd))
+	})
+
+	t.Run("finds the day with the most Watches", func(t *testing.T) {
+		ts := setupStats(t)
+		id := ts.movie(t, "Movie")
+
+		for _, date := range []string{"2024-01-01", "2024-01-01 12:00", "2024-02-01 10:00", "2024-02-01 14:00", "2024-02-01 23:59"} {
+			ts.watch(t, 1, id, date)
+		}
+
+		s := ts.streaks(t)
+
+		assert.Equal(t, 3, s.BusiestDayWatches)
+		assert.Equal(t, "2024-02-01", day(t, s.BusiestDay))
+	})
+
+	t.Run("breaks ties with the earliest record", func(t *testing.T) {
+		ts := setupStats(t)
+		id := ts.movie(t, "Movie")
+
+		// Added latest first, so the order of the rows doesn't pass for the
+		// tiebreak. Two-day streaks with two Watches on their first day, ten
+		// days apart.
+		for _, start := range []string{"2024-03-01", "2024-02-10", "2024-01-21", "2024-01-01"} {
+			date, err := time.Parse("2006-01-02", start)
+			require.NoError(t, err)
+
+			ts.watch(t, 1, id, date.Format(time.DateOnly))
+			ts.watch(t, 1, id, date.Format(time.DateOnly)+" 12:00")
+			ts.watch(t, 1, id, date.AddDate(0, 0, 1).Format(time.DateOnly))
+		}
+
+		ts.exec(t, `ANALYZE seen`)
+
+		s := ts.streaks(t)
+
+		assert.Equal(t, "2024-01-01", day(t, s.StreakStart))
+		assert.Equal(t, "2024-01-02", day(t, s.BreakStart))
+		assert.Equal(t, "2024-01-01", day(t, s.BusiestDay))
+	})
+
+	t.Run("leaves out the 2011 bulk import", func(t *testing.T) {
+		ts := setupStats(t)
+		id := ts.movie(t, "Movie")
+
+		for _, date := range []string{"2011-12-30", "2011-12-30 12:00", "2011-12-31", "2012-01-01"} {
+			ts.watch(t, 1, id, date)
+		}
+
+		ts.watch(t, 1, id, "2012-02-01")
+
+		s := ts.streaks(t)
+
+		assert.Equal(t, 1, s.StreakDays)
+		assert.Equal(t, "2012-01-01", day(t, s.StreakStart))
+		assert.Equal(t, 1, s.BusiestDayWatches)
+		assert.Equal(t, "2012-01-01", day(t, s.BreakStart))
+	})
+
+	t.Run("ignores other users' Watches", func(t *testing.T) {
+		ts := setupStats(t)
+		id := ts.movie(t, "Movie")
+
+		ts.watch(t, 1, id, "2024-01-01")
+		ts.watch(t, 1, id, "2024-01-05")
+
+		for _, date := range []string{"2024-01-02", "2024-01-02 12:00", "2024-01-03"} {
+			ts.watch(t, 2, id, date)
+		}
+
+		s := ts.streaks(t)
+
+		assert.Equal(t, 1, s.StreakDays)
+		assert.Equal(t, 3, s.BreakDays)
+		assert.Equal(t, 1, s.BusiestDayWatches)
+	})
+
+	t.Run("has no break with a single day of Watches", func(t *testing.T) {
+		ts := setupStats(t)
+		ts.watch(t, 1, ts.movie(t, "Movie"), "2024-01-01")
+
+		s := ts.streaks(t)
+
+		assert.Equal(t, 1, s.StreakDays)
+		assert.Equal(t, 0, s.BreakDays)
+		assert.False(t, s.BreakStart.Valid)
+	})
+
+	t.Run("has no records without Watches", func(t *testing.T) {
+		ts := setupStats(t)
+
+		assert.Equal(t, types.Streaks{}, ts.streaks(t))
+	})
+}
+
+// cast credits people as the movie's cast in billing order.
+func (ts testStats) cast(t *testing.T, movieID int, personIDs ...int) {
+	t.Helper()
+
+	for _, personID := range personIDs {
+		ts.credit(t, movieID, personID, "cast")
+	}
+}
+
+func pairNames(t *testing.T, pairs []types.PersonPair, err error) []string {
+	t.Helper()
+	require.NoError(t, err)
+
+	names := []string{}
+
+	for _, p := range pairs {
+		names = append(names, fmt.Sprintf("%s & %s (%d)", p.ActorName, p.DirectorName, p.Movies))
+	}
+
+	return names
+}
+
+func TestGetActorDirectorPairs(t *testing.T) {
+	t.Run("counts the movies each pair made, most first", func(t *testing.T) {
+		ts := setupStats(t)
+
+		bale := ts.person(t, "Christian Bale", 0)
+		caine := ts.person(t, "Michael Caine", 0)
+		movies := []int{
+			ts.watchedAndRated(t, "Batman Begins", 8, "2024-01-01"),
+			ts.watchedAndRated(t, "The Dark Knight", 9, "2024-01-02"),
+			ts.watchedAndRated(t, "The Prestige", 9, "2024-01-03"),
+		}
+
+		ts.director(t, "Christopher Nolan", movies...)
+		ts.cast(t, movies[0], bale, caine)
+		ts.cast(t, movies[1], bale, caine)
+		ts.cast(t, movies[2], caine, bale)
+
+		// A rewatch counts the movie once
+		ts.watch(t, 1, movies[2], "2024-06-01")
+
+		pairs, err := NewStatsRepository(ts.db).GetActorDirectorPairs("1")
+
+		// Ordered by ID within a count, and Bale was added first
+		assert.Equal(t, []string{
+			"Christian Bale & Christopher Nolan (3)",
+			"Michael Caine & Christopher Nolan (3)",
+		}, pairNames(t, pairs, err))
+	})
+
+	t.Run("leaves out pairs with a single movie", func(t *testing.T) {
+		ts := setupStats(t)
+
+		once := ts.watchedAndRated(t, "Once", 8, "2024-01-01")
+		ts.director(t, "Director", once)
+		ts.cast(t, once, ts.person(t, "Actor", 0))
+
+		pairs, err := NewStatsRepository(ts.db).GetActorDirectorPairs("1")
+
+		assert.Empty(t, pairNames(t, pairs, err))
+	})
+
+	t.Run("counts the top 5 billed cast only", func(t *testing.T) {
+		ts := setupStats(t)
+
+		billed := make([]int, 6)
+
+		for i := range billed {
+			billed[i] = ts.person(t, fmt.Sprintf("Billed %d", i+1), 0)
+		}
+
+		first := ts.watchedAndRated(t, "First", 8, "2024-01-01")
+		second := ts.watchedAndRated(t, "Second", 8, "2024-01-02")
+		ts.director(t, "Director", first, second)
+		ts.cast(t, first, billed...)
+		// Billed sixth here too, but fifth would count
+		ts.cast(t, second, billed...)
+
+		pairs, err := NewStatsRepository(ts.db).GetActorDirectorPairs("1")
+
+		assert.Equal(t, []string{
+			"Billed 1 & Director (2)",
+			"Billed 2 & Director (2)",
+			"Billed 3 & Director (2)",
+			"Billed 4 & Director (2)",
+			"Billed 5 & Director (2)",
+		}, pairNames(t, pairs, err))
+	})
+
+	t.Run("leaves out actors who directed themselves", func(t *testing.T) {
+		ts := setupStats(t)
+
+		first := ts.watchedAndRated(t, "First", 8, "2024-01-01")
+		second := ts.watchedAndRated(t, "Second", 8, "2024-01-02")
+		eastwood := ts.director(t, "Clint Eastwood", first, second)
+		ts.cast(t, first, eastwood)
+		ts.cast(t, second, eastwood)
+
+		pairs, err := NewStatsRepository(ts.db).GetActorDirectorPairs("1")
+
+		assert.Empty(t, pairNames(t, pairs, err))
+	})
+
+	t.Run("counts the user's watched movies only", func(t *testing.T) {
+		ts := setupStats(t)
+
+		actor := ts.person(t, "Actor", 0)
+		mine := ts.watchedAndRated(t, "Mine", 8, "2024-01-01")
+		theirs := ts.movie(t, "Theirs")
+		unseen := ts.movie(t, "Unseen")
+		ts.watch(t, 2, theirs, "2024-01-01")
+		ts.director(t, "Director", mine, theirs, unseen)
+
+		for _, id := range []int{mine, theirs, unseen} {
+			ts.cast(t, id, actor)
+		}
+
+		pairs, err := NewStatsRepository(ts.db).GetActorDirectorPairs("1")
+
+		assert.Empty(t, pairNames(t, pairs, err))
+	})
+
+	t.Run("returns the top 10, ties by actor and director ID", func(t *testing.T) {
+		ts := setupStats(t)
+
+		first := ts.watchedAndRated(t, "First", 8, "2024-01-01")
+		second := ts.watchedAndRated(t, "Second", 8, "2024-01-02")
+		directors := []int{
+			ts.director(t, "Director A", first, second),
+			ts.director(t, "Director B", first, second),
+			ts.director(t, "Director C", first, second),
+		}
+
+		actors := make([]int, 3)
+
+		for i := range actors {
+			actors[i] = ts.person(t, fmt.Sprintf("Actor %d", i), 0)
+		}
+
+		ts.cast(t, first, actors...)
+		ts.cast(t, second, actors...)
+
+		// A third movie puts one pair on top, despite its higher IDs
+		third := ts.watchedAndRated(t, "Third", 8, "2024-01-03")
+		ts.credit(t, third, directors[1], "director")
+		ts.cast(t, third, actors[2])
+
+		// Two more actors make 15 pairs, so the cutoff leaves 5 out
+		for i := range 2 {
+			actor := ts.person(t, fmt.Sprintf("Later %d", i), 0)
+			ts.cast(t, first, actor)
+			ts.cast(t, second, actor)
+		}
+
+		ts.exec(t, `ANALYZE movie_person, seen`)
+
+		pairs, err := NewStatsRepository(ts.db).GetActorDirectorPairs("1")
+
+		assert.Equal(t, []string{
+			"Actor 2 & Director B (3)",
+			"Actor 0 & Director A (2)",
+			"Actor 0 & Director B (2)",
+			"Actor 0 & Director C (2)",
+			"Actor 1 & Director A (2)",
+			"Actor 1 & Director B (2)",
+			"Actor 1 & Director C (2)",
+			"Actor 2 & Director A (2)",
+			"Actor 2 & Director C (2)",
+			"Later 0 & Director A (2)",
+		}, pairNames(t, pairs, err))
 	})
 }
