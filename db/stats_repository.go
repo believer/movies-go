@@ -29,7 +29,7 @@ type StatsQuerier interface {
 	GetWilhelmMovies(userID string, offset int) (types.Movies, error)
 	GetSeenWith() ([]types.ListItem, error)
 	GetHighestRankedPersonByJob(userID string, job string) ([]types.HighestRated, error)
-	GetHotTakes(userID string) ([]types.HotTake, error)
+	GetHotTakes(userID string) (types.HotTakes, error)
 	GetIMDbComparison(userID string) (types.IMDbComparison, error)
 	GetStreaks(userID string) (types.Streaks, error)
 	GetActorDirectorPairs(userID string) ([]types.PersonPair, error)
@@ -607,61 +607,43 @@ ORDER BY
 	return persons, err
 }
 
-func (r *StatsRepository) GetHotTakes(userID string) ([]types.HotTake, error) {
-	var takes []types.HotTake
-	err := r.db.Select(&takes, `
-WITH compared AS (
-    SELECT
-        m.id,
-        m.title,
-        lr.rating,
-        i.imdb_rating,
-        lr.rating - i.imdb_rating AS difference
-    FROM
-        latest_rating AS lr
-        INNER JOIN movie AS m ON m.id = lr.movie_id
-        -- Checked before the cast, which a malformed rating would fail
-        CROSS JOIN LATERAL (
-            SELECT
-                CASE WHEN m.imdb_rating ~ '^[0-9]+(\.[0-9]+)?$' THEN
-                    m.imdb_rating::numeric
-                END AS imdb_rating) AS i
-    WHERE
-        lr.user_id = $1
-        -- IMDb's 0 means the movie has no rating there
-        AND i.imdb_rating > 0
-)
-(
-    SELECT
-        id,
-        title,
-        rating,
-        imdb_rating::float8 AS imdb_rating,
-        difference::float8 AS difference
-    FROM
-        compared
-    WHERE
-        difference > 0
-    ORDER BY
-        difference DESC,
-        id
-    LIMIT 10)
-UNION ALL (
-    SELECT
-        id,
-        title,
-        rating,
-        imdb_rating::float8 AS imdb_rating,
-        difference::float8 AS difference
-    FROM
-        compared
-    WHERE
-        difference < 0
-    ORDER BY
-        difference ASC,
-        id
-    LIMIT 10)
-	`, userID)
+// hotTakesQuery returns the user's 10 movies rated furthest from IMDb on one
+// side of it: $2 is 1 for above and -1 for below.
+const hotTakesQuery = `
+SELECT
+    m.id,
+    m.title,
+    lr.rating,
+    i.imdb_rating::float8 AS imdb_rating,
+    (lr.rating - i.imdb_rating)::float8 AS difference
+FROM
+    latest_rating AS lr
+    INNER JOIN movie AS m ON m.id = lr.movie_id
+    -- Checked before the cast, which a malformed rating would fail
+    CROSS JOIN LATERAL (
+        SELECT
+            CASE WHEN m.imdb_rating ~ '^[0-9]+(\.[0-9]+)?$' THEN
+                m.imdb_rating::numeric
+            END AS imdb_rating) AS i
+WHERE
+    lr.user_id = $1
+    -- IMDb's 0 means the movie has no rating there
+    AND i.imdb_rating > 0
+    AND SIGN(lr.rating - i.imdb_rating) = $2
+ORDER BY
+    ABS(lr.rating - i.imdb_rating) DESC,
+    m.id
+LIMIT 10
+`
+
+func (r *StatsRepository) GetHotTakes(userID string) (types.HotTakes, error) {
+	var takes types.HotTakes
+
+	if err := r.db.Select(&takes.Above, hotTakesQuery, userID, 1); err != nil {
+		return takes, err
+	}
+
+	err := r.db.Select(&takes.Below, hotTakesQuery, userID, -1)
 	return takes, err
 }
 
@@ -755,7 +737,14 @@ SELECT
     g.start_day AS break_start,
     g.end_day AS break_end,
     COALESCE(b.watches, 0) AS busiest_day_watches,
-    b.day AS busiest_day
+    b.day AS busiest_day,
+    (
+        SELECT
+            COUNT(*)
+        FROM
+            watch_days
+        WHERE
+            watches > 1) AS binge_days
 FROM (
     SELECT) AS one
     LEFT JOIN streak AS s ON TRUE

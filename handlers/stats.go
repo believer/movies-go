@@ -668,17 +668,10 @@ func (h *StatsHandler) GetHotTakes(c *fiber.Ctx) error {
 		return err
 	}
 
-	props := views.HotTakesProps{Comparison: comparison}
-
-	for _, take := range takes {
-		if take.Difference > 0 {
-			props.Above = append(props.Above, take)
-		} else {
-			props.Below = append(props.Below, take)
-		}
-	}
-
-	return Render(c, views.HotTakes(props))
+	return Render(c, views.HotTakes(views.HotTakesProps{
+		Takes:      takes,
+		Comparison: comparison,
+	}))
 }
 
 func (h *StatsHandler) GetStreaks(c *fiber.Ctx) error {

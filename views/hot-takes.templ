@@ -12,8 +12,7 @@ import (
 )
 
 type HotTakesProps struct {
-	Above      []types.HotTake
-	Below      []types.HotTake
+	Takes      types.HotTakes
 	Comparison types.IMDbComparison
 }
 
@@ -51,11 +50,11 @@ templ HotTakes(props HotTakesProps) {
 					</div>
 				}
 			}
-			if len(props.Above) > 0 {
-				@hotTakesList("hot-takes-above", "Above IMDb", props.Above)
+			if len(props.Takes.Above) > 0 {
+				@hotTakesList("hot-takes-above", "Above IMDb", props.Takes.Above)
 			}
-			if len(props.Below) > 0 {
-				@hotTakesList("hot-takes-below", "Below IMDb", props.Below)
+			if len(props.Takes.Below) > 0 {
+				@hotTakesList("hot-takes-below", "Below IMDb", props.Takes.Below)
 			}
 			<div class="note">
 				Your latest rating against IMDb's.

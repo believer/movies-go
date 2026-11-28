@@ -446,10 +446,7 @@ func (ts testStats) ratedAgainstIMDb(t *testing.T, title string, imdbRating stri
 	return id
 }
 
-func hotTakeTitles(t *testing.T, takes []types.HotTake, err error) []string {
-	t.Helper()
-	require.NoError(t, err)
-
+func titlesOf(takes []types.HotTake) []string {
 	titles := []string{}
 
 	for _, take := range takes {
@@ -459,8 +456,18 @@ func hotTakeTitles(t *testing.T, takes []types.HotTake, err error) []string {
 	return titles
 }
 
+// hotTakes returns user 1's hot takes.
+func (ts testStats) hotTakes(t *testing.T) types.HotTakes {
+	t.Helper()
+
+	takes, err := NewStatsRepository(ts.db).GetHotTakes("1")
+	require.NoError(t, err)
+
+	return takes
+}
+
 func TestGetHotTakes(t *testing.T) {
-	t.Run("returns the top 10 above IMDb, then the top 10 below", func(t *testing.T) {
+	t.Run("returns the top 10 above IMDb and the top 10 below", func(t *testing.T) {
 		ts := setupStats(t)
 
 		// Eleven each way, so the cutoff leaves the smallest one out
@@ -471,14 +478,16 @@ func TestGetHotTakes(t *testing.T) {
 
 		ts.ratedAgainstIMDb(t, "Agrees", "7.0", 7)
 
-		takes, err := NewStatsRepository(ts.db).GetHotTakes("1")
+		takes := ts.hotTakes(t)
 
 		assert.Equal(t, []string{
 			"Above 00", "Above 01", "Above 02", "Above 03", "Above 04",
 			"Above 05", "Above 06", "Above 07", "Above 08", "Above 09",
+		}, titlesOf(takes.Above))
+		assert.Equal(t, []string{
 			"Below 00", "Below 01", "Below 02", "Below 03", "Below 04",
 			"Below 05", "Below 06", "Below 07", "Below 08", "Below 09",
-		}, hotTakeTitles(t, takes, err))
+		}, titlesOf(takes.Below))
 	})
 
 	t.Run("returns the ratings and their exact difference", func(t *testing.T) {
@@ -486,16 +495,15 @@ func TestGetHotTakes(t *testing.T) {
 
 		id := ts.ratedAgainstIMDb(t, "Vertical Limit", "5.9", 9)
 
-		takes, err := NewStatsRepository(ts.db).GetHotTakes("1")
-
-		require.NoError(t, err)
-		assert.Equal(t, []types.HotTake{{
-			ID:         id,
-			Title:      "Vertical Limit",
-			Rating:     9,
-			IMDbRating: 5.9,
-			Difference: 3.1,
-		}}, takes)
+		assert.Equal(t, types.HotTakes{
+			Above: []types.HotTake{{
+				ID:         id,
+				Title:      "Vertical Limit",
+				Rating:     9,
+				IMDbRating: 5.9,
+				Difference: 3.1,
+			}},
+		}, ts.hotTakes(t))
 	})
 
 	t.Run("leaves out movies without an IMDb rating", func(t *testing.T) {
@@ -507,9 +515,10 @@ func TestGetHotTakes(t *testing.T) {
 
 		ts.ratedAgainstIMDb(t, "Rated", "6.0", 9)
 
-		takes, err := NewStatsRepository(ts.db).GetHotTakes("1")
+		takes := ts.hotTakes(t)
 
-		assert.Equal(t, []string{"Rated"}, hotTakeTitles(t, takes, err))
+		assert.Equal(t, []string{"Rated"}, titlesOf(takes.Above))
+		assert.Empty(t, takes.Below)
 	})
 
 	t.Run("uses the latest rating of a movie rated again", func(t *testing.T) {
@@ -519,12 +528,12 @@ func TestGetHotTakes(t *testing.T) {
 		id := ts.ratedAgainstIMDb(t, "Rated down", "7.0", 10)
 		ts.rate(t, 1, id, 5, "2024-09-01")
 
-		takes, err := NewStatsRepository(ts.db).GetHotTakes("1")
+		takes := ts.hotTakes(t)
 
-		require.NoError(t, err)
-		require.Len(t, takes, 1)
-		assert.Equal(t, 5, takes[0].Rating)
-		assert.InDelta(t, -2.0, takes[0].Difference, 1e-9)
+		assert.Empty(t, takes.Above)
+		require.Len(t, takes.Below, 1)
+		assert.Equal(t, 5, takes.Below[0].Rating)
+		assert.InDelta(t, -2.0, takes.Below[0].Difference, 1e-9)
 	})
 
 	t.Run("ignores other users' ratings", func(t *testing.T) {
@@ -533,36 +542,41 @@ func TestGetHotTakes(t *testing.T) {
 		id := ts.imdbMovie(t, "Theirs", "5.0")
 		ts.rate(t, 2, id, 10, "2024-01-01")
 
-		takes, err := NewStatsRepository(ts.db).GetHotTakes("1")
-
-		assert.Empty(t, hotTakeTitles(t, takes, err))
+		assert.Equal(t, types.HotTakes{}, ts.hotTakes(t))
 	})
 
 	t.Run("breaks ties on the difference by ID", func(t *testing.T) {
 		ts := setupStats(t)
 
-		// More than twice the cutoff, so Postgres sorts with a bounded heap,
-		// which doesn't keep the rows' order
-		ids := make([]int, 25)
+		// More than twice the cutoff each way, so Postgres sorts with a
+		// bounded heap, which doesn't keep the rows' order
+		above := make([]int, 25)
+		below := make([]int, 25)
 
-		for i := range ids {
-			ids[i] = ts.imdbMovie(t, fmt.Sprintf("Tied %02d", i), "5.0")
+		for i := range above {
+			above[i] = ts.imdbMovie(t, fmt.Sprintf("Above %02d", i), "5.0")
+			below[i] = ts.imdbMovie(t, fmt.Sprintf("Below %02d", i), "5.0")
 		}
 
 		// Rated in reverse ID order, so the order of the rows doesn't pass
 		// for the tiebreak
-		for i := len(ids) - 1; i >= 0; i-- {
-			ts.rate(t, 1, ids[i], 8, "2024-01-01")
+		for i := len(above) - 1; i >= 0; i-- {
+			ts.rate(t, 1, below[i], 2, "2024-01-01")
+			ts.rate(t, 1, above[i], 8, "2024-01-01")
 		}
 
 		ts.exec(t, `ANALYZE rating, movie`)
 
-		takes, err := NewStatsRepository(ts.db).GetHotTakes("1")
+		takes := ts.hotTakes(t)
 
 		assert.Equal(t, []string{
-			"Tied 00", "Tied 01", "Tied 02", "Tied 03", "Tied 04",
-			"Tied 05", "Tied 06", "Tied 07", "Tied 08", "Tied 09",
-		}, hotTakeTitles(t, takes, err))
+			"Above 00", "Above 01", "Above 02", "Above 03", "Above 04",
+			"Above 05", "Above 06", "Above 07", "Above 08", "Above 09",
+		}, titlesOf(takes.Above))
+		assert.Equal(t, []string{
+			"Below 00", "Below 01", "Below 02", "Below 03", "Below 04",
+			"Below 05", "Below 06", "Below 07", "Below 08", "Below 09",
+		}, titlesOf(takes.Below))
 	})
 }
 
@@ -668,6 +682,19 @@ func TestGetStreaks(t *testing.T) {
 		assert.Equal(t, "2024-02-01", day(t, s.BusiestDay))
 	})
 
+	t.Run("counts the days with more than one Watch", func(t *testing.T) {
+		ts := setupStats(t)
+		id := ts.movie(t, "Movie")
+
+		// Exactly two on one day counts, so "more than two" gives the wrong
+		// count, and so does counting the Watches on those days
+		for _, date := range []string{"2024-01-01", "2024-01-01 21:00", "2024-01-02", "2024-02-01 10:00", "2024-02-01 14:00", "2024-02-01 23:59"} {
+			ts.watch(t, 1, id, date)
+		}
+
+		assert.Equal(t, 2, ts.streaks(t).BingeDays)
+	})
+
 	t.Run("breaks ties with the earliest record", func(t *testing.T) {
 		ts := setupStats(t)
 		id := ts.movie(t, "Movie")
@@ -708,6 +735,7 @@ func TestGetStreaks(t *testing.T) {
 		assert.Equal(t, 1, s.StreakDays)
 		assert.Equal(t, "2012-01-01", day(t, s.StreakStart))
 		assert.Equal(t, 1, s.BusiestDayWatches)
+		assert.Equal(t, 0, s.BingeDays)
 		assert.Equal(t, "2012-01-01", day(t, s.BreakStart))
 	})
 
@@ -727,6 +755,7 @@ func TestGetStreaks(t *testing.T) {
 		assert.Equal(t, 1, s.StreakDays)
 		assert.Equal(t, 3, s.BreakDays)
 		assert.Equal(t, 1, s.BusiestDayWatches)
+		assert.Equal(t, 0, s.BingeDays)
 	})
 
 	t.Run("has no break with a single day of Watches", func(t *testing.T) {
@@ -873,50 +902,56 @@ func TestGetActorDirectorPairs(t *testing.T) {
 	t.Run("returns the top 10, ties by actor and director ID", func(t *testing.T) {
 		ts := setupStats(t)
 
-		first := ts.watchedAndRated(t, "First", 8, "2024-01-01")
-		second := ts.watchedAndRated(t, "Second", 8, "2024-01-02")
-		directors := []int{
-			ts.director(t, "Director A", first, second),
-			ts.director(t, "Director B", first, second),
-			ts.director(t, "Director C", first, second),
+		directors := make([]int, 5)
+
+		for i := range directors {
+			directors[i] = ts.person(t, fmt.Sprintf("Director %c", 'A'+i), 0)
 		}
 
-		actors := make([]int, 3)
+		actors := make([]int, 5)
 
 		for i := range actors {
 			actors[i] = ts.person(t, fmt.Sprintf("Actor %d", i), 0)
 		}
 
-		ts.cast(t, first, actors...)
-		ts.cast(t, second, actors...)
+		// Credited in reverse ID order, so the order of the rows doesn't
+		// pass for the tiebreak. Five actors stay within the top 5 billed,
+		// and with five directors make 25 pairs: more than twice the cutoff,
+		// so Postgres sorts with a bounded heap, which doesn't keep the
+		// rows' order.
+		for _, movie := range []int{
+			ts.watchedAndRated(t, "First", 8, "2024-01-01"),
+			ts.watchedAndRated(t, "Second", 8, "2024-01-02"),
+		} {
+			for i := len(directors) - 1; i >= 0; i-- {
+				ts.credit(t, movie, directors[i], "director")
+			}
 
-		// A third movie puts one pair on top, despite its higher IDs
-		third := ts.watchedAndRated(t, "Third", 8, "2024-01-03")
-		ts.credit(t, third, directors[1], "director")
-		ts.cast(t, third, actors[2])
-
-		// Two more actors make 15 pairs, so the cutoff leaves 5 out
-		for i := range 2 {
-			actor := ts.person(t, fmt.Sprintf("Later %d", i), 0)
-			ts.cast(t, first, actor)
-			ts.cast(t, second, actor)
+			for i := len(actors) - 1; i >= 0; i-- {
+				ts.credit(t, movie, actors[i], "cast")
+			}
 		}
+
+		// A third movie puts the pair with the highest IDs on top
+		third := ts.watchedAndRated(t, "Third", 8, "2024-01-03")
+		ts.credit(t, third, directors[4], "director")
+		ts.cast(t, third, actors[4])
 
 		ts.exec(t, `ANALYZE movie_person, seen`)
 
 		pairs, err := NewStatsRepository(ts.db).GetActorDirectorPairs("1")
 
 		assert.Equal(t, []string{
-			"Actor 2 & Director B (3)",
+			"Actor 4 & Director E (3)",
 			"Actor 0 & Director A (2)",
 			"Actor 0 & Director B (2)",
 			"Actor 0 & Director C (2)",
+			"Actor 0 & Director D (2)",
+			"Actor 0 & Director E (2)",
 			"Actor 1 & Director A (2)",
 			"Actor 1 & Director B (2)",
 			"Actor 1 & Director C (2)",
-			"Actor 2 & Director A (2)",
-			"Actor 2 & Director C (2)",
-			"Later 0 & Director A (2)",
+			"Actor 1 & Director D (2)",
 		}, pairNames(t, pairs, err))
 	})
 }

@@ -77,6 +77,12 @@ func (h HotTake) FormattedDifference() string {
 	return strings.Replace(fmt.Sprintf("%+.1f", h.Difference), "-", "−", 1)
 }
 
+// HotTakes are the movies a user rated furthest above and below IMDb.
+type HotTakes struct {
+	Above []HotTake
+	Below []HotTake
+}
+
 // IMDbComparison is how a user's ratings compare with IMDb's, across the
 // movies that have both.
 type IMDbComparison struct {
@@ -109,6 +115,8 @@ type Streaks struct {
 	BreakEnd          sql.NullTime `db:"break_end"`
 	BusiestDayWatches int          `db:"busiest_day_watches"`
 	BusiestDay        sql.NullTime `db:"busiest_day"`
+	// BingeDays counts the days with more than one Watch
+	BingeDays int `db:"binge_days"`
 }
 
 // PersonPair is an actor and a director who made movies together.

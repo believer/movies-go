@@ -50,6 +50,15 @@ templ Streaks(s types.Streaks) {
 						{ streakDate(s.BusiestDay) }
 					</div>
 				}
+				@list.DlItem(list.DlProps{
+					Detail:   "Binge days",
+					IsColumn: true,
+				}) {
+					{ format.Plural(format.Days, s.BingeDays) }
+					<div class="detail">
+						With more than one movie
+					</div>
+				}
 			}
 			<div class="note">
 				Counts Watches from 2012 on.

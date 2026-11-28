@@ -102,6 +102,9 @@ test("streaks show the records of the days with Watches", async ({ page }) => {
 	await expect(streaks.getByLabel("Most in one day")).toContainText(
 		/1 movie\s*March 2 2019/
 	)
+	await expect(streaks.getByLabel("Binge days")).toContainText(
+		/0 days\s*With more than one movie/
+	)
 })
 
 test("actor and director pairs need more than one movie", async ({ page }) => {

@@ -20,8 +20,7 @@ import (
 )
 
 type HotTakesProps struct {
-	Above      []types.HotTake
-	Below      []types.HotTake
+	Takes      types.HotTakes
 	Comparison types.IMDbComparison
 }
 
@@ -53,7 +52,7 @@ func hotTakesList(id string, title string, takes []types.HotTake) templ.Componen
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(id)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/hot-takes.templ`, Line: 21, Col: 46}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/hot-takes.templ`, Line: 20, Col: 46}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 		if templ_7745c5c3_Err != nil {
@@ -66,7 +65,7 @@ func hotTakesList(id string, title string, takes []types.HotTake) templ.Componen
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(id)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/hot-takes.templ`, Line: 22, Col: 13}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/hot-takes.templ`, Line: 21, Col: 13}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {
@@ -79,7 +78,7 @@ func hotTakesList(id string, title string, takes []types.HotTake) templ.Componen
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/hot-takes.templ`, Line: 22, Col: 23}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/hot-takes.templ`, Line: 21, Col: 23}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -129,7 +128,7 @@ func hotTakesList(id string, title string, takes []types.HotTake) templ.Componen
 						var templ_7745c5c3_Var8 string
 						templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(take.Title)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/hot-takes.templ`, Line: 27, Col: 18}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/hot-takes.templ`, Line: 26, Col: 18}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 						if templ_7745c5c3_Err != nil {
@@ -156,7 +155,7 @@ func hotTakesList(id string, title string, takes []types.HotTake) templ.Componen
 					var templ_7745c5c3_Var9 string
 					templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d vs %.1f", take.Rating, take.IMDbRating))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/hot-takes.templ`, Line: 31, Col: 94}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/hot-takes.templ`, Line: 30, Col: 94}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 					if templ_7745c5c3_Err != nil {
@@ -169,7 +168,7 @@ func hotTakesList(id string, title string, takes []types.HotTake) templ.Componen
 					var templ_7745c5c3_Var10 string
 					templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(take.FormattedDifference())
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/hot-takes.templ`, Line: 32, Col: 40}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/hot-takes.templ`, Line: 31, Col: 40}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 					if templ_7745c5c3_Err != nil {
@@ -261,7 +260,7 @@ func HotTakes(props HotTakesProps) templ.Component {
 						var templ_7745c5c3_Var15 string
 						templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(props.Comparison.Summary())
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/hot-takes.templ`, Line: 48, Col: 33}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/hot-takes.templ`, Line: 47, Col: 33}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 						if templ_7745c5c3_Err != nil {
@@ -274,7 +273,7 @@ func HotTakes(props HotTakesProps) templ.Component {
 						var templ_7745c5c3_Var16 string
 						templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(format.Plural(format.Movies, props.Comparison.Movies))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/hot-takes.templ`, Line: 50, Col: 61}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/hot-takes.templ`, Line: 49, Col: 61}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 						if templ_7745c5c3_Err != nil {
@@ -303,8 +302,8 @@ func HotTakes(props HotTakesProps) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				if len(props.Above) > 0 {
-					templ_7745c5c3_Err = hotTakesList("hot-takes-above", "Above IMDb", props.Above).Render(ctx, templ_7745c5c3_Buffer)
+				if len(props.Takes.Above) > 0 {
+					templ_7745c5c3_Err = hotTakesList("hot-takes-above", "Above IMDb", props.Takes.Above).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -313,8 +312,8 @@ func HotTakes(props HotTakesProps) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				if len(props.Below) > 0 {
-					templ_7745c5c3_Err = hotTakesList("hot-takes-below", "Below IMDb", props.Below).Render(ctx, templ_7745c5c3_Buffer)
+				if len(props.Takes.Below) > 0 {
+					templ_7745c5c3_Err = hotTakesList("hot-takes-below", "Below IMDb", props.Takes.Below).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

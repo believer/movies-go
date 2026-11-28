@@ -246,24 +246,22 @@ func (_c *MockStatsQuerier_GetHighestRankedPersonByJob_Call) RunAndReturn(run fu
 }
 
 // GetHotTakes provides a mock function for the type MockStatsQuerier
-func (_mock *MockStatsQuerier) GetHotTakes(userID string) ([]types.HotTake, error) {
+func (_mock *MockStatsQuerier) GetHotTakes(userID string) (types.HotTakes, error) {
 	ret := _mock.Called(userID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetHotTakes")
 	}
 
-	var r0 []types.HotTake
+	var r0 types.HotTakes
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(string) ([]types.HotTake, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(string) (types.HotTakes, error)); ok {
 		return returnFunc(userID)
 	}
-	if returnFunc, ok := ret.Get(0).(func(string) []types.HotTake); ok {
+	if returnFunc, ok := ret.Get(0).(func(string) types.HotTakes); ok {
 		r0 = returnFunc(userID)
 	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]types.HotTake)
-		}
+		r0 = ret.Get(0).(types.HotTakes)
 	}
 	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
 		r1 = returnFunc(userID)
@@ -297,12 +295,12 @@ func (_c *MockStatsQuerier_GetHotTakes_Call) Run(run func(userID string)) *MockS
 	return _c
 }
 
-func (_c *MockStatsQuerier_GetHotTakes_Call) Return(hotTakes []types.HotTake, err error) *MockStatsQuerier_GetHotTakes_Call {
+func (_c *MockStatsQuerier_GetHotTakes_Call) Return(hotTakes types.HotTakes, err error) *MockStatsQuerier_GetHotTakes_Call {
 	_c.Call.Return(hotTakes, err)
 	return _c
 }
 
-func (_c *MockStatsQuerier_GetHotTakes_Call) RunAndReturn(run func(userID string) ([]types.HotTake, error)) *MockStatsQuerier_GetHotTakes_Call {
+func (_c *MockStatsQuerier_GetHotTakes_Call) RunAndReturn(run func(userID string) (types.HotTakes, error)) *MockStatsQuerier_GetHotTakes_Call {
 	_c.Call.Return(run)
 	return _c
 }

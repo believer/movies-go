@@ -124,11 +124,11 @@ func getBody(t *testing.T, app *fiber.App, path string) string {
 }
 
 func TestGetHotTakes(t *testing.T) {
-	t.Run("splits the movies above and below IMDb", func(t *testing.T) {
+	t.Run("shows the movies above and below IMDb", func(t *testing.T) {
 		repo := mocks.NewMockStatsQuerier(t)
-		repo.On("GetHotTakes", "user-123").Return([]types.HotTake{
-			{ID: 1057, Title: "Vertical Limit", Rating: 9, IMDbRating: 5.9, Difference: 3.1},
-			{ID: 1164, Title: "Amadeus", Rating: 2, IMDbRating: 8.3, Difference: -6.3},
+		repo.On("GetHotTakes", "user-123").Return(types.HotTakes{
+			Above: []types.HotTake{{ID: 1057, Title: "Vertical Limit", Rating: 9, IMDbRating: 5.9, Difference: 3.1}},
+			Below: []types.HotTake{{ID: 1164, Title: "Amadeus", Rating: 2, IMDbRating: 8.3, Difference: -6.3}},
 		}, nil)
 		repo.On("GetIMDbComparison", "user-123").Return(types.IMDbComparison{Movies: 2080, AverageDifference: -0.19}, nil)
 
@@ -149,7 +149,7 @@ func TestGetHotTakes(t *testing.T) {
 
 	t.Run("shows an empty state without rated movies", func(t *testing.T) {
 		repo := mocks.NewMockStatsQuerier(t)
-		repo.On("GetHotTakes", "user-123").Return([]types.HotTake{}, nil)
+		repo.On("GetHotTakes", "user-123").Return(types.HotTakes{}, nil)
 		repo.On("GetIMDbComparison", "user-123").Return(types.IMDbComparison{}, nil)
 
 		body := getBody(t, setupStatsApp(NewStatsHandler(repo)), "/stats/hot-takes")
@@ -181,16 +181,20 @@ func TestGetStreaks(t *testing.T) {
 			BreakEnd:          date(t, "2026-10-02"),
 			BusiestDayWatches: 8,
 			BusiestDay:        date(t, "2012-07-20"),
+			BingeDays:         366,
 		}, nil)
 
 		body := getBody(t, setupStatsApp(NewStatsHandler(repo)), "/stats/streaks")
 
 		assert.Contains(t, body, "10 days")
 		assert.Contains(t, body, "December 25 2025 – January 3 2026")
+		assert.Contains(t, body, "Longest break")
 		assert.Contains(t, body, "155 days")
 		assert.Contains(t, body, "Between April 29 2026 and October 2 2026")
 		assert.Contains(t, body, "8 movies")
 		assert.Contains(t, body, "July 20 2012")
+		assert.Contains(t, body, "Binge days")
+		assert.Contains(t, body, "366 days")
 	})
 
 	t.Run("leaves out the break with a single day of Watches", func(t *testing.T) {
