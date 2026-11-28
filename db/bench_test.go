@@ -540,6 +540,10 @@ func BenchmarkStats(b *testing.B) {
 			_, err := r.GetHighestRankedPersonByJob(a.UserID, "cast")
 			return err
 		}},
+		{name: "GetHotTakes", run: func() error { _, err := r.GetHotTakes(a.UserID); return err }},
+		{name: "GetIMDbComparison", run: func() error { _, err := r.GetIMDbComparison(a.UserID); return err }},
+		{name: "GetStreaks", run: func() error { _, err := r.GetStreaks(a.UserID); return err }},
+		{name: "GetActorDirectorPairs", run: func() error { _, err := r.GetActorDirectorPairs(a.UserID); return err }},
 	})
 }
 

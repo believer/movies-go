@@ -237,6 +237,9 @@ func SetupRoutes(app *fiber.App) {
 	statsGroup.Get("/best-of-the-year", statsHandler.GetBestOfTheYear)
 	statsGroup.Get("/most-watched-person/:job", statsHandler.GetMostWatchedByJob)
 	statsGroup.Get("/seen-with", statsHandler.GetSeenWith)
+	statsGroup.Get("/hot-takes", statsHandler.GetHotTakes)
+	statsGroup.Get("/streaks", statsHandler.GetStreaks)
+	statsGroup.Get("/actor-director-pairs", statsHandler.GetActorDirectorPairs)
 
 	// Series
 	// --------------------------

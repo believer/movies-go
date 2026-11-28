@@ -146,6 +146,11 @@ templ Stats(props StatsProps) {
 							}
 						}
 					}
+					<section
+						hx-get="/stats/streaks"
+						hx-trigger="load"
+						hx-swap="outerHTML"
+					></section>
 					@graph.Graph(graph.Props{
 						Bars:  props.WatchedByYear,
 						Title: "Watched by year",
@@ -189,6 +194,11 @@ templ Stats(props StatsProps) {
 						hx-trigger="load"
 						hx-swap="outerHTML"
 					></section>
+					<section
+						hx-get="/stats/hot-takes"
+						hx-trigger="load"
+						hx-swap="outerHTML"
+					></section>
 					@MoviesByYear(MoviesByYearProps{
 						BestYear: props.BestYear,
 						Movies:   props.MoviesByYear,
@@ -223,6 +233,11 @@ templ Stats(props StatsProps) {
 					@statsSection("producer")
 					<section
 						hx-get="/stats/highest-ranked-person"
+						hx-trigger="load"
+						hx-swap="outerHTML"
+					></section>
+					<section
+						hx-get="/stats/actor-director-pairs"
 						hx-trigger="load"
 						hx-swap="outerHTML"
 					></section>

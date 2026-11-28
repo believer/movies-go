@@ -744,6 +744,10 @@ func Stats(props StatsProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<section hx-get=\"/stats/streaks\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 			templ_7745c5c3_Err = graph.Graph(graph.Props{
 				Bars:  props.WatchedByYear,
 				Title: "Watched by year",
@@ -797,7 +801,7 @@ func Stats(props StatsProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<section hx-get=\"/stats/best-of-the-year\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<section hx-get=\"/stats/best-of-the-year\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/stats/hot-takes\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -810,7 +814,7 @@ func Stats(props StatsProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</div><div class=\"stats__column\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</div><div class=\"stats__column\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -847,7 +851,7 @@ func Stats(props StatsProps) templ.Component {
 							}()
 						}
 						ctx = templ.InitializeContext(ctx)
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "No movies seen")
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "No movies seen")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
@@ -891,7 +895,7 @@ func Stats(props StatsProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<section hx-get=\"/stats/highest-ranked-person\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/genre/stats\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/language/stats\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/production-company/stats\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/production-country/stats\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/stats/seen-with\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section></div></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<section hx-get=\"/stats/highest-ranked-person\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/stats/actor-director-pairs\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/genre/stats\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/language/stats\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/production-company/stats\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/production-country/stats\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section><section hx-get=\"/stats/seen-with\" hx-trigger=\"load\" hx-swap=\"outerHTML\"></section></div></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

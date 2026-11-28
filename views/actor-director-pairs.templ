@@ -1,0 +1,44 @@
+package views
+
+import (
+	"believer/movies/components/empty-state"
+	"believer/movies/components/link"
+	"believer/movies/components/list"
+	"believer/movies/components/section"
+	"believer/movies/components/separator"
+	"believer/movies/format"
+	"believer/movies/types"
+)
+
+templ ActorDirectorPairs(pairs []types.PersonPair) {
+	@section.Section(section.Props{Title: "Actor & director pairs"}) {
+		if len(pairs) > 0 {
+			@list.Ol() {
+				for _, p := range pairs {
+					@list.Li(list.LiProps{Items: len(pairs), Style: list.Numbered}) {
+						<span>
+							@link.Link(link.Props{Href: p.ActorLink()}) {
+								{ p.ActorName }
+							}
+							{ " & " }
+							@link.Link(link.Props{Href: p.DirectorLink()}) {
+								{ p.DirectorName }
+							}
+						</span>
+						@separator.Separator()
+						@list.Trailing() {
+							{ format.Number(p.Movies) }
+						}
+					}
+				}
+			}
+			<div class="note">
+				Movies seen with the actor among the top 5 billed.
+			</div>
+		} else {
+			@emptystate.EmptyState() {
+				No actor and director with more than one movie together
+			}
+		}
+	}
+}

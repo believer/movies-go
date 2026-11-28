@@ -47,6 +47,68 @@ func (_m *MockStatsQuerier) EXPECT() *MockStatsQuerier_Expecter {
 	return &MockStatsQuerier_Expecter{mock: &_m.Mock}
 }
 
+// GetActorDirectorPairs provides a mock function for the type MockStatsQuerier
+func (_mock *MockStatsQuerier) GetActorDirectorPairs(userID string) ([]types.PersonPair, error) {
+	ret := _mock.Called(userID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetActorDirectorPairs")
+	}
+
+	var r0 []types.PersonPair
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(string) ([]types.PersonPair, error)); ok {
+		return returnFunc(userID)
+	}
+	if returnFunc, ok := ret.Get(0).(func(string) []types.PersonPair); ok {
+		r0 = returnFunc(userID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]types.PersonPair)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
+		r1 = returnFunc(userID)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockStatsQuerier_GetActorDirectorPairs_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetActorDirectorPairs'
+type MockStatsQuerier_GetActorDirectorPairs_Call struct {
+	*mock.Call
+}
+
+// GetActorDirectorPairs is a helper method to define mock.On call
+//   - userID string
+func (_e *MockStatsQuerier_Expecter) GetActorDirectorPairs(userID any) *MockStatsQuerier_GetActorDirectorPairs_Call {
+	return &MockStatsQuerier_GetActorDirectorPairs_Call{Call: _e.mock.On("GetActorDirectorPairs", userID)}
+}
+
+func (_c *MockStatsQuerier_GetActorDirectorPairs_Call) Run(run func(userID string)) *MockStatsQuerier_GetActorDirectorPairs_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockStatsQuerier_GetActorDirectorPairs_Call) Return(personPairs []types.PersonPair, err error) *MockStatsQuerier_GetActorDirectorPairs_Call {
+	_c.Call.Return(personPairs, err)
+	return _c
+}
+
+func (_c *MockStatsQuerier_GetActorDirectorPairs_Call) RunAndReturn(run func(userID string) ([]types.PersonPair, error)) *MockStatsQuerier_GetActorDirectorPairs_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetBestOfTheYear provides a mock function for the type MockStatsQuerier
 func (_mock *MockStatsQuerier) GetBestOfTheYear(userID string, year string) ([]types.ListItem, error) {
 	ret := _mock.Called(userID, year)
@@ -179,6 +241,126 @@ func (_c *MockStatsQuerier_GetHighestRankedPersonByJob_Call) Return(highestRated
 }
 
 func (_c *MockStatsQuerier_GetHighestRankedPersonByJob_Call) RunAndReturn(run func(userID string, job string) ([]types.HighestRated, error)) *MockStatsQuerier_GetHighestRankedPersonByJob_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetHotTakes provides a mock function for the type MockStatsQuerier
+func (_mock *MockStatsQuerier) GetHotTakes(userID string) (types.HotTakes, error) {
+	ret := _mock.Called(userID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetHotTakes")
+	}
+
+	var r0 types.HotTakes
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(string) (types.HotTakes, error)); ok {
+		return returnFunc(userID)
+	}
+	if returnFunc, ok := ret.Get(0).(func(string) types.HotTakes); ok {
+		r0 = returnFunc(userID)
+	} else {
+		r0 = ret.Get(0).(types.HotTakes)
+	}
+	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
+		r1 = returnFunc(userID)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockStatsQuerier_GetHotTakes_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetHotTakes'
+type MockStatsQuerier_GetHotTakes_Call struct {
+	*mock.Call
+}
+
+// GetHotTakes is a helper method to define mock.On call
+//   - userID string
+func (_e *MockStatsQuerier_Expecter) GetHotTakes(userID any) *MockStatsQuerier_GetHotTakes_Call {
+	return &MockStatsQuerier_GetHotTakes_Call{Call: _e.mock.On("GetHotTakes", userID)}
+}
+
+func (_c *MockStatsQuerier_GetHotTakes_Call) Run(run func(userID string)) *MockStatsQuerier_GetHotTakes_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockStatsQuerier_GetHotTakes_Call) Return(hotTakes types.HotTakes, err error) *MockStatsQuerier_GetHotTakes_Call {
+	_c.Call.Return(hotTakes, err)
+	return _c
+}
+
+func (_c *MockStatsQuerier_GetHotTakes_Call) RunAndReturn(run func(userID string) (types.HotTakes, error)) *MockStatsQuerier_GetHotTakes_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetIMDbComparison provides a mock function for the type MockStatsQuerier
+func (_mock *MockStatsQuerier) GetIMDbComparison(userID string) (types.IMDbComparison, error) {
+	ret := _mock.Called(userID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetIMDbComparison")
+	}
+
+	var r0 types.IMDbComparison
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(string) (types.IMDbComparison, error)); ok {
+		return returnFunc(userID)
+	}
+	if returnFunc, ok := ret.Get(0).(func(string) types.IMDbComparison); ok {
+		r0 = returnFunc(userID)
+	} else {
+		r0 = ret.Get(0).(types.IMDbComparison)
+	}
+	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
+		r1 = returnFunc(userID)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockStatsQuerier_GetIMDbComparison_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetIMDbComparison'
+type MockStatsQuerier_GetIMDbComparison_Call struct {
+	*mock.Call
+}
+
+// GetIMDbComparison is a helper method to define mock.On call
+//   - userID string
+func (_e *MockStatsQuerier_Expecter) GetIMDbComparison(userID any) *MockStatsQuerier_GetIMDbComparison_Call {
+	return &MockStatsQuerier_GetIMDbComparison_Call{Call: _e.mock.On("GetIMDbComparison", userID)}
+}
+
+func (_c *MockStatsQuerier_GetIMDbComparison_Call) Run(run func(userID string)) *MockStatsQuerier_GetIMDbComparison_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockStatsQuerier_GetIMDbComparison_Call) Return(iMDbComparison types.IMDbComparison, err error) *MockStatsQuerier_GetIMDbComparison_Call {
+	_c.Call.Return(iMDbComparison, err)
+	return _c
+}
+
+func (_c *MockStatsQuerier_GetIMDbComparison_Call) RunAndReturn(run func(userID string) (types.IMDbComparison, error)) *MockStatsQuerier_GetIMDbComparison_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -938,6 +1120,66 @@ func (_c *MockStatsQuerier_GetStatsData_Call) Return(stats types.Stats, err erro
 }
 
 func (_c *MockStatsQuerier_GetStatsData_Call) RunAndReturn(run func(userID string) (types.Stats, error)) *MockStatsQuerier_GetStatsData_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetStreaks provides a mock function for the type MockStatsQuerier
+func (_mock *MockStatsQuerier) GetStreaks(userID string) (types.Streaks, error) {
+	ret := _mock.Called(userID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetStreaks")
+	}
+
+	var r0 types.Streaks
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(string) (types.Streaks, error)); ok {
+		return returnFunc(userID)
+	}
+	if returnFunc, ok := ret.Get(0).(func(string) types.Streaks); ok {
+		r0 = returnFunc(userID)
+	} else {
+		r0 = ret.Get(0).(types.Streaks)
+	}
+	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
+		r1 = returnFunc(userID)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockStatsQuerier_GetStreaks_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetStreaks'
+type MockStatsQuerier_GetStreaks_Call struct {
+	*mock.Call
+}
+
+// GetStreaks is a helper method to define mock.On call
+//   - userID string
+func (_e *MockStatsQuerier_Expecter) GetStreaks(userID any) *MockStatsQuerier_GetStreaks_Call {
+	return &MockStatsQuerier_GetStreaks_Call{Call: _e.mock.On("GetStreaks", userID)}
+}
+
+func (_c *MockStatsQuerier_GetStreaks_Call) Run(run func(userID string)) *MockStatsQuerier_GetStreaks_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockStatsQuerier_GetStreaks_Call) Return(streaks types.Streaks, err error) *MockStatsQuerier_GetStreaks_Call {
+	_c.Call.Return(streaks, err)
+	return _c
+}
+
+func (_c *MockStatsQuerier_GetStreaks_Call) RunAndReturn(run func(userID string) (types.Streaks, error)) *MockStatsQuerier_GetStreaks_Call {
 	_c.Call.Return(run)
 	return _c
 }

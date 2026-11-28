@@ -74,6 +74,9 @@ var publicRoutes = map[string]bool{
 	"GET /stats/best-of-the-year":         true,
 	"GET /stats/most-watched-person/:job": true,
 	"GET /stats/seen-with":                true,
+	"GET /stats/hot-takes":                true,
+	"GET /stats/streaks":                  true,
+	"GET /stats/actor-director-pairs":     true,
 
 	"GET /series/:id": true,
 
