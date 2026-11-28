@@ -158,7 +158,7 @@ func TestQueriesPrepare(t *testing.T) {
 		stmt, err := db.Preparex(lit.Query)
 
 		if err != nil {
-			t.Errorf("%s: %v", lit.Pos, err)
+			t.Errorf("%s: %v. Each SQL literal is prepared on its own, so write each query as one complete literal", lit.Pos, err)
 			continue
 		}
 

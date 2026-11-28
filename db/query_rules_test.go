@@ -47,6 +47,13 @@ var queryRules = []queryRule{
 			"productionCountryStatsQuery",
 		},
 	},
+	{
+		standard: "Deterministic order",
+		check:    unorderedUnion,
+		known: []string{
+			"StatsRepository.GetShortestAndLongestMovie",
+		},
+	},
 }
 
 // TestQueryRules checks every SQL literal in this package against
@@ -121,18 +128,7 @@ var (
 // can't tell which other keys are unique, so it asks for an id-named key.
 func cutoffWithoutUniqueKey(query string) string {
 	q := maskSQL(strings.ToLower(query))
-	depth := make([]int, len(q)+1)
-
-	for i, c := range q {
-		depth[i+1] = depth[i]
-
-		switch c {
-		case '(':
-			depth[i+1]++
-		case ')':
-			depth[i+1]--
-		}
-	}
+	depth := parenDepth(q)
 
 	for _, m := range orderBy.FindAllStringIndex(q, -1) {
 		d := depth[m[0]]
@@ -166,6 +162,95 @@ func cutoffWithoutUniqueKey(query string) string {
 	}
 
 	return ""
+}
+
+var (
+	unionKeyword = regexp.MustCompile(`\bunion\b`)
+	branchStart  = regexp.MustCompile(`^\s*(select|with)\b`)
+	unionBefore  = regexp.MustCompile(`\bunion(\s+(all|distinct))?\s*$`)
+	unionAfter   = regexp.MustCompile(`^\s*union\b`)
+)
+
+// unorderedUnion flags a query that is a UNION of branches with an ORDER BY
+// and has no ORDER BY of its own. SQL doesn't keep the branches' order in the
+// union's result, so the rows come back in no promised order. A union deeper
+// in the query feeds a query that orders, or not, on its own.
+func unorderedUnion(query string) string {
+	q := maskSQL(strings.ToLower(query))
+	depth := parenDepth(q)
+	firstUnion := -1
+
+	for _, u := range unionKeyword.FindAllStringIndex(q, -1) {
+		if depth[u[0]] == 0 {
+			firstUnion = u[0]
+			break
+		}
+	}
+
+	if firstUnion == -1 {
+		return ""
+	}
+
+	ordersBranch := false
+
+	for _, o := range orderBy.FindAllStringIndex(q, -1) {
+		switch depth[o[0]] {
+		case 0:
+			if o[0] > firstUnion {
+				return ""
+			}
+		case 1:
+			ordersBranch = ordersBranch || inUnionBranch(q, depth, o[0])
+		}
+	}
+
+	if !ordersBranch {
+		return ""
+	}
+
+	return "the UNION's branches have an ORDER BY but the UNION has none, which its result doesn't keep: order the UNION itself"
+}
+
+// inUnionBranch reports whether the ORDER BY at i, one parenthesis deep, is
+// a top-level union's branch's: a parenthesized SELECT next to a UNION, not a
+// window, an aggregate or a CTE.
+func inUnionBranch(q string, depth []int, i int) bool {
+	open := i - 1
+
+	for open >= 0 && (q[open] != '(' || depth[open] != 0) {
+		open--
+	}
+
+	closing := i
+
+	for closing < len(q) && (q[closing] != ')' || depth[closing+1] != 0) {
+		closing++
+	}
+
+	if open < 0 || closing == len(q) || !branchStart.MatchString(q[open+1:i]) {
+		return false
+	}
+
+	return unionBefore.MatchString(q[:open]) || unionAfter.MatchString(q[closing+1:])
+}
+
+// parenDepth returns the parenthesis depth before each byte of q, and after
+// its last byte at len(q).
+func parenDepth(q string) []int {
+	depth := make([]int, len(q)+1)
+
+	for i, c := range q {
+		depth[i+1] = depth[i]
+
+		switch c {
+		case '(':
+			depth[i+1]++
+		case ')':
+			depth[i+1]--
+		}
+	}
+
+	return depth
 }
 
 // lastKey returns the last comma-separated key of an ORDER BY clause,
@@ -235,6 +320,37 @@ func TestCutoffWithoutUniqueKey(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			reason := cutoffWithoutUniqueKey(tt.query)
+
+			if (reason != "") != tt.broken {
+				t.Errorf("got %q, want broken = %v", reason, tt.broken)
+			}
+		})
+	}
+}
+
+func TestUnorderedUnion(t *testing.T) {
+	tests := []struct {
+		name   string
+		query  string
+		broken bool
+	}{
+		{"ordered branches, no outer ORDER BY", `(SELECT id FROM movie ORDER BY runtime, id LIMIT 1) UNION ALL (SELECT id FROM movie ORDER BY runtime DESC, id LIMIT 1)`, true},
+		{"ordered branches with an outer ORDER BY", `(SELECT id, 1 AS side FROM movie ORDER BY runtime, id LIMIT 1) UNION ALL (SELECT id, 2 FROM movie ORDER BY runtime DESC, id LIMIT 1) ORDER BY side, id`, false},
+		{"unordered branches", `SELECT id FROM movie UNION SELECT movie_id FROM seen`, false},
+		{"ORDER BY of the whole union", `SELECT id FROM movie UNION ALL SELECT movie_id FROM seen ORDER BY id`, false},
+		{"window in a branch", `SELECT ROW_NUMBER() OVER (ORDER BY id) FROM movie UNION ALL SELECT 1`, false},
+		// The branches pick the rows, and the query orders them
+		{"union in a CTE, ordered outside", `WITH u AS ((SELECT id FROM movie ORDER BY id LIMIT 1) UNION ALL (SELECT id FROM movie ORDER BY id DESC LIMIT 1)) SELECT id FROM u ORDER BY id`, false},
+		{"union after a CTE", `WITH m AS (SELECT id FROM movie) (SELECT id FROM m ORDER BY id LIMIT 1) UNION ALL (SELECT id FROM m ORDER BY id DESC LIMIT 1)`, true},
+		{"ordered CTE before a union", `WITH m AS (SELECT id FROM movie ORDER BY id LIMIT 5) SELECT id FROM m UNION SELECT movie_id FROM seen`, false},
+		{"function call in an ordered branch", `(SELECT COUNT(*) AS n, id FROM seen GROUP BY id ORDER BY n, id LIMIT 1) UNION ALL (SELECT 1, 2)`, true},
+		{"union in a subquery with its own ORDER BY", `SELECT * FROM ((SELECT id FROM movie ORDER BY id LIMIT 1) UNION ALL (SELECT id FROM movie ORDER BY id DESC LIMIT 1) ORDER BY id) AS u`, false},
+		{"union keyword in a string", `SELECT (SELECT 'union' FROM movie ORDER BY id LIMIT 1)`, false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			reason := unorderedUnion(tt.query)
 
 			if (reason != "") != tt.broken {
 				t.Errorf("got %q, want broken = %v", reason, tt.broken)
